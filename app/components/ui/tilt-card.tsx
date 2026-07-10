@@ -6,7 +6,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from "react";
-import { useMediaQuery, usePrefersReducedMotion } from "./use-media-query";
+import { useMediaQuery, usePrefersReducedMotion } from "@/app/hooks/use-media-query";
 
 type TiltCardProps = {
   children: ReactNode;

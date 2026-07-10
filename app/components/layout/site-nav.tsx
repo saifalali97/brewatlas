@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { RippleLink } from "./ripple-link";
+import { RippleLink } from "@/app/components/ui/ripple-link";
 
 const navLinks = [
   { href: "#recipes", label: "Recipes", id: "recipes" },

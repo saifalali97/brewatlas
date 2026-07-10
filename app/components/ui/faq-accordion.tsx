@@ -2,11 +2,7 @@
 
 import { useId, useState } from "react";
 import { ChevronDown } from "lucide-react";
-
-export type Faq = {
-  question: string;
-  answer: string;
-};
+import type { Faq } from "@/types/homepage";
 
 type FaqAccordionProps = {
   faqs: Faq[];

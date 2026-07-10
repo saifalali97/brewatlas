@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePrefersReducedMotion } from "./use-media-query";
+import { usePrefersReducedMotion } from "@/app/hooks/use-media-query";
 
 export function PageLoader() {
   const reducedMotion = usePrefersReducedMotion();

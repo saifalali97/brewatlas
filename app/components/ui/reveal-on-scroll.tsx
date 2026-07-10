@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { usePrefersReducedMotion } from "./use-media-query";
+import { usePrefersReducedMotion } from "@/app/hooks/use-media-query";
 
 type RevealOnScrollProps = {
   children: ReactNode;

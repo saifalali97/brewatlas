@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { ReactNode } from "react";
 import {
   ArrowRight,
@@ -14,25 +15,10 @@ import {
   WifiOff,
   X,
 } from "lucide-react";
-import { RevealOnScroll } from "./reveal-on-scroll";
-import { RippleLink } from "./ripple-link";
-
-export type PricingPlan = {
-  name: string;
-  price: string;
-  period: string;
-  description: string;
-  recipeCount: string;
-  accessLevel: string;
-  offlineAccess: boolean;
-  favorites: string;
-  aiRecommendations: boolean;
-  brewTracking: string;
-  prioritySupport: boolean;
-  features: string[];
-  cta: string;
-  highlighted?: boolean;
-};
+import { RippleLink } from "@/app/components/ui/ripple-link";
+import { SectionFrame } from "@/app/components/ui/section-frame";
+import { cards, typography } from "@/lib/constants/styles";
+import type { PricingPlan } from "@/types/homepage";
 
 type PricingSectionProps = {
   plans: PricingPlan[];
@@ -114,10 +100,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
           : "border-white/[0.11] bg-gradient-to-br from-white/[0.08] via-white/[0.035] to-white/[0.01] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] hover:border-amber-500/28 hover:shadow-[0_24px_56px_-18px_rgba(180,120,60,0.2),0_0_0_1px_rgba(217,119,6,0.06)]"
       }`}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-[1.5rem] bg-gradient-to-b from-white/[0.07] via-transparent to-transparent"
-      />
+      <div aria-hidden className={cards.premiumSheen} />
       {highlighted && (
         <>
           <div
@@ -206,47 +189,33 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
   );
 }
 
+const MemoizedPricingCard = memo(PricingCard);
+
 export function PricingSection({ plans }: PricingSectionProps) {
   return (
-    <section
+    <SectionFrame
       id="pricing"
-      className="relative border-y border-white/[0.04] px-5 py-40 sm:px-6 md:px-7 md:py-44 lg:px-8 lg:py-48"
+      className="border-y border-white/[0.04]"
+      beforeContent={
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(ellipse_at_50%_100%,rgba(217,119,6,0.06),transparent_70%)]"
+        />
+      }
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#0a0705] via-[#0a0705]/80 to-transparent"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(ellipse_at_50%_100%,rgba(217,119,6,0.06),transparent_70%)]"
-      />
+      <div className="mb-14 max-w-2xl text-center md:mb-16 lg:mx-auto lg:mb-20">
+        <p className={typography.eyebrow}>Membership</p>
+        <h2 className={typography.sectionTitleModern}>Premium Plans</h2>
+        <p className={typography.sectionLeadCentered}>
+          Unlock the full BrewAtlas experience. Choose the plan that fits your craft and upgrade anytime as your coffee journey evolves.
+        </p>
+      </div>
 
-      <RevealOnScroll>
-        <div className="relative mx-auto max-w-6xl">
-          <div className="mb-14 max-w-2xl text-center md:mb-16 lg:mx-auto lg:mb-20">
-            <p className="text-[0.8125rem] font-medium uppercase tracking-[0.24em] text-amber-500/90">
-              Membership
-            </p>
-            <h2 className="mt-5 text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-stone-50 sm:text-4xl lg:text-[3.25rem]">
-              Premium Plans
-            </h2>
-            <p className="mx-auto mt-7 max-w-xl text-lg leading-[1.78] text-stone-400 md:text-xl md:leading-[1.72]">
-              Unlock the full BrewAtlas experience. Choose the plan that fits your
-              craft and upgrade anytime as your coffee journey evolves.
-            </p>
-          </div>
-
-          <div className="grid items-stretch gap-6 sm:gap-7 lg:grid-cols-3 lg:gap-8">
-            {plans.map((plan) => (
-              <PricingCard key={plan.name} plan={plan} />
-            ))}
-          </div>
-        </div>
-      </RevealOnScroll>
-    </section>
+      <div className="grid items-stretch gap-6 sm:gap-7 lg:grid-cols-3 lg:gap-8">
+        {plans.map((plan) => (
+          <MemoizedPricingCard key={plan.name} plan={plan} />
+        ))}
+      </div>
+    </SectionFrame>
   );
 }

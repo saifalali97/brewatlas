@@ -11,8 +11,9 @@ import {
   Rss,
   Share2,
 } from "lucide-react";
-import { RevealOnScroll } from "./reveal-on-scroll";
-import { RippleLink } from "./ripple-link";
+import { RevealOnScroll } from "@/app/components/ui/reveal-on-scroll";
+import { RippleLink } from "@/app/components/ui/ripple-link";
+import { buttons } from "@/lib/constants/styles";
 
 const exploreLinks = [
   { href: "#recipes", label: "Recipes" },
@@ -112,13 +113,13 @@ export function SiteFooter() {
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <RippleLink
                   href="#pricing"
-                  className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-stone-50 px-8 text-sm font-medium text-stone-900 transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-stone-200 hover:shadow-[0_14px_44px_rgba(255,255,255,0.16)] active:scale-[0.97] motion-reduce:hover:scale-100"
+                  className={`${buttons.primary} motion-reduce:hover:scale-100`}
                 >
                   Start Premium
                 </RippleLink>
                 <RippleLink
                   href="#recipes"
-                  className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-stone-600/45 bg-white/[0.04] px-8 text-sm font-medium text-stone-100 backdrop-blur-sm transition-all duration-300 ease-out hover:scale-[1.04] hover:border-amber-600/40 hover:bg-white/[0.08] hover:shadow-[0_0_40px_rgba(217,119,6,0.16)] active:scale-[0.97] motion-reduce:hover:scale-100"
+                  className={`${buttons.secondary} motion-reduce:hover:scale-100`}
                 >
                   Browse Recipes
                 </RippleLink>

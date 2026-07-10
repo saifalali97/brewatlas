@@ -1,59 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
-import { RevealOnScroll } from "./reveal-on-scroll";
-import { RippleLink } from "./ripple-link";
-
-export type FeaturedRecipe = {
-  name: string;
-  country: string;
-  origin: string;
-  brewMethod: string;
-  roastLevel: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
-  ratio: string;
-  time: string;
-  notes: string;
-  image: string;
-  premium?: boolean;
-  featured?: boolean;
-};
+import { memo, useMemo, useState } from "react";
+import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
+import { RippleLink } from "@/app/components/ui/ripple-link";
+import { SectionFrame } from "@/app/components/ui/section-frame";
+import { SectionIntro } from "@/app/components/ui/section-intro";
+import type { FeaturedRecipe } from "@/types/homepage";
 
 const filters = ["All", "V60", "Espresso", "Chemex", "Aeropress", "Cold Brew"] as const;
 
 type Filter = (typeof filters)[number];
 
-const difficultyLevel: Record<FeaturedRecipe["difficulty"], number> = {
-  Beginner: 1,
-  Intermediate: 2,
-  Advanced: 3,
-};
-
 type FeaturedRecipesSectionProps = {
   recipes: FeaturedRecipe[];
   btnSecondary: string;
 };
-
-function DifficultyIndicator({ level }: { level: FeaturedRecipe["difficulty"] }) {
-  const filled = difficultyLevel[level];
-
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex gap-1">
-        {[1, 2, 3].map((dot) => (
-          <span
-            key={dot}
-            className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
-              dot <= filled ? "bg-amber-500/80" : "bg-white/15"
-            }`}
-          />
-        ))}
-      </div>
-      <span className="text-xs text-stone-500">{level}</span>
-    </div>
-  );
-}
 
 function RecipeCard({
   recipe,
@@ -130,7 +92,11 @@ function RecipeCard({
         </div>
 
         <div className="mt-7 border-t border-white/[0.06] pt-6">
-          <DifficultyIndicator level={recipe.difficulty} />
+          <DifficultyIndicator
+            level={recipe.difficulty}
+            labelClassName="text-xs text-stone-500"
+            className="flex items-center gap-2"
+          />
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-stone-500">
             <span>
               Ratio{" "}
@@ -147,6 +113,8 @@ function RecipeCard({
   );
 }
 
+const MemoizedRecipeCard = memo(RecipeCard);
+
 export function FeaturedRecipesSection({
   recipes,
   btnSecondary,
@@ -159,77 +127,58 @@ export function FeaturedRecipesSection({
   }, [activeFilter, recipes]);
 
   return (
-    <section id="recipes" className="relative px-5 py-40 sm:px-6 md:px-7 md:py-44 lg:px-8 lg:py-48">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#0a0705] via-[#0a0705]/80 to-transparent"
+    <SectionFrame id="recipes">
+      <SectionIntro
+        eyebrow="Curated Collection"
+        title="Featured Recipes"
+        description="Handpicked by our barista community. Each recipe includes grind size, water temperature, and step-by-step guidance."
       />
 
-      <RevealOnScroll>
-        <div className="relative mx-auto max-w-6xl">
-          <div className="mb-14 max-w-2xl md:mb-16 lg:mb-20">
-            <p className="text-[0.8125rem] font-medium uppercase tracking-[0.24em] text-amber-500/90">
-              Curated Collection
-            </p>
-            <h2 className="mt-5 text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-stone-50 sm:text-4xl lg:text-[3.25rem]">
-              Featured Recipes
-            </h2>
-            <p className="mt-7 max-w-xl text-lg leading-[1.78] text-stone-400 md:text-xl md:leading-[1.72]">
-              Handpicked by our barista community. Each recipe includes grind size,
-              water temperature, and step-by-step guidance.
-            </p>
-          </div>
-
-          <div className="mb-10 flex flex-wrap gap-2.5 md:mb-12">
-            {filters.map((filter) => {
-              const isActive = activeFilter === filter;
-              return (
-                <button
-                  key={filter}
-                  type="button"
-                  onClick={() => setActiveFilter(filter)}
-                  className={`rounded-full border px-4 py-2.5 text-sm font-medium backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.98] ${
-                    isActive
-                      ? "border-amber-600/45 bg-amber-950/50 text-amber-100 shadow-[0_0_32px_rgba(217,119,6,0.14)]"
-                      : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-amber-600/25 hover:bg-white/[0.06] hover:text-stone-200 hover:shadow-[0_0_24px_rgba(217,119,6,0.08)]"
-                  }`}
-                >
-                  {filter}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
-            {filteredRecipes.map((recipe) => (
-              <RecipeCard
-                key={recipe.name}
-                recipe={recipe}
-                featured={Boolean(recipe.featured) && activeFilter === "All"}
-              />
-            ))}
-          </div>
-
-          {filteredRecipes.length === 0 && (
-            <p className="py-16 text-center text-sm text-stone-500">
-              No recipes match this filter yet.
-            </p>
-          )}
-
-          <div className="mt-16 flex justify-center md:mt-20">
-            <RippleLink
-              href="#recipes"
-              className={`${btnSecondary} min-w-[240px] border-amber-600/30 bg-white/[0.05] px-10 backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-amber-500/45 hover:bg-white/[0.08] hover:shadow-[0_0_48px_rgba(217,119,6,0.18),0_16px_40px_-16px_rgba(0,0,0,0.4)] motion-reduce:hover:translate-y-0`}
+      <div className="mb-10 flex flex-wrap gap-2.5 md:mb-12">
+        {filters.map((filter) => {
+          const isActive = activeFilter === filter;
+          return (
+            <button
+              key={filter}
+              type="button"
+              onClick={() => setActiveFilter(filter)}
+              aria-pressed={isActive}
+              className={`rounded-full border px-4 py-2.5 text-sm font-medium backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.98] ${
+                isActive
+                  ? "border-amber-600/45 bg-amber-950/50 text-amber-100 shadow-[0_0_32px_rgba(217,119,6,0.14)]"
+                  : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-amber-600/25 hover:bg-white/[0.06] hover:text-stone-200 hover:shadow-[0_0_24px_rgba(217,119,6,0.08)]"
+              }`}
             >
-              View All Recipes
-            </RippleLink>
-          </div>
-        </div>
-      </RevealOnScroll>
-    </section>
+              {filter}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
+        {filteredRecipes.map((recipe) => (
+          <MemoizedRecipeCard
+            key={recipe.name}
+            recipe={recipe}
+            featured={Boolean(recipe.featured) && activeFilter === "All"}
+          />
+        ))}
+      </div>
+
+      {filteredRecipes.length === 0 && (
+        <p className="py-16 text-center text-sm text-stone-500">
+          No recipes match this filter yet.
+        </p>
+      )}
+
+      <div className="mt-16 flex justify-center md:mt-20">
+        <RippleLink
+          href="#recipes"
+          className={`${btnSecondary} min-w-[240px] border-amber-600/30 bg-white/[0.05] px-10 backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-amber-500/45 hover:bg-white/[0.08] hover:shadow-[0_0_48px_rgba(217,119,6,0.18),0_16px_40px_-16px_rgba(0,0,0,0.4)] motion-reduce:hover:translate-y-0`}
+        >
+          View All Recipes
+        </RippleLink>
+      </div>
+    </SectionFrame>
   );
 }

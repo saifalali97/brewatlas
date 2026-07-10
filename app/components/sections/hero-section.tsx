@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { AnimatedStat } from "./animated-stat";
-import { RippleLink } from "./ripple-link";
+import { AnimatedStat } from "@/app/components/ui/animated-stat";
+import { RippleLink } from "@/app/components/ui/ripple-link";
 
 const HERO_VISUAL_IMAGE =
   "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=2000&q=90";
