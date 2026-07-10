@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { FaqSection } from "./components/faq-section";
 import { BrewingMethodsSection } from "./components/brewing-methods-section";
 import { CoffeeOriginsSection } from "./components/coffee-origins-section";
@@ -8,6 +7,7 @@ import { HeroSection } from "./components/hero-section";
 import { PricingSection } from "./components/pricing-section";
 import { PremiumImage } from "./components/premium-image";
 import { RevealOnScroll } from "./components/reveal-on-scroll";
+import { SiteFooter } from "./components/site-footer";
 import { SiteNav } from "./components/site-nav";
 import { TopRoastersSection } from "./components/top-roasters-section";
 import { TiltCard } from "./components/tilt-card";
@@ -557,109 +557,7 @@ export default function Home() {
 
       <FloatingActions />
 
-      {/* Footer */}
-      <footer className="border-t border-white/[0.04] bg-[#080504] px-5 pt-28 pb-14 sm:px-6 md:px-7 lg:px-8">
-        <div className="mx-auto max-w-6xl">
-          <RevealOnScroll>
-            <div className="grid gap-16 sm:grid-cols-2 sm:gap-14 lg:grid-cols-4 lg:gap-20">
-              <div className="lg:col-span-1">
-                <Link
-                  href="/"
-                  className="text-xl font-semibold tracking-tight text-stone-50 transition-opacity duration-300 hover:opacity-80"
-                >
-                  BrewAtlas
-                </Link>
-                <p className="mt-6 max-w-xs text-sm leading-[1.8] text-stone-500">
-                  The definitive platform for specialty coffee recipes, origins,
-                  and brew science. Craft coffee, mapped.
-                </p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium uppercase tracking-wider text-stone-400">
-                  Product
-                </h4>
-                <ul className="mt-6 space-y-3.5 text-sm text-stone-500">
-                  <li>
-                    <a href="#recipes" className="transition-colors duration-300 hover:text-stone-300">
-                      Recipes
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#methods" className="transition-colors duration-300 hover:text-stone-300">
-                      Brew Methods
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#origins" className="transition-colors duration-300 hover:text-stone-300">
-                      Origins
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#pricing" className="transition-colors duration-300 hover:text-stone-300">
-                      Pricing
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium uppercase tracking-wider text-stone-400">
-                  Company
-                </h4>
-                <ul className="mt-6 space-y-3.5 text-sm text-stone-500">
-                  <li>
-                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
-                      About
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
-                      Roaster Partners
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
-                      Careers
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
-                      Contact
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium uppercase tracking-wider text-stone-400">
-                  Legal
-                </h4>
-                <ul className="mt-6 space-y-3.5 text-sm text-stone-500">
-                  <li>
-                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
-                      Privacy Policy
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
-                      Terms of Service
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
-                      Cookie Policy
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </RevealOnScroll>
-          <div className="mt-24 flex flex-col items-center justify-between gap-5 border-t border-white/[0.04] pt-12 sm:flex-row">
-            <p className="text-sm text-stone-600">
-              © {new Date().getFullYear()} BrewAtlas. All rights reserved.
-            </p>
-            <p className="text-sm text-stone-600">Crafted for coffee lovers worldwide.</p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
