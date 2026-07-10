@@ -9,6 +9,7 @@ import { PremiumImage } from "./components/premium-image";
 import { RevealOnScroll } from "./components/reveal-on-scroll";
 import { RippleLink } from "./components/ripple-link";
 import { SiteNav } from "./components/site-nav";
+import { TopRoastersSection } from "./components/top-roasters-section";
 import { TiltCard } from "./components/tilt-card";
 
 const unsplash = (id: string, w = 800) =>
@@ -259,45 +260,73 @@ const coffeeOrigins = [
 const topRoasters = [
   {
     name: "Onyx Coffee Lab",
-    location: "Rogers, Arkansas",
+    country: "United States",
+    founded: "2012",
     specialty: "Competition-grade single origins",
     rating: "4.9",
-    image: unsplash("photo-1442512595331-e89e73853f31"),
+    recipes: "142 recipes",
+    description:
+      "Award-winning roastery pushing boundaries with meticulous sourcing and innovative roast profiles.",
+    image: "/images/roasters/onyx.svg",
+    premium: true,
   },
   {
     name: "Counter Culture",
-    location: "Durham, North Carolina",
+    country: "United States",
+    founded: "1995",
     specialty: "Direct trade and education",
     rating: "4.8",
-    image: unsplash("photo-1498804103079-a6351b050096"),
+    recipes: "218 recipes",
+    description:
+      "Pioneer of transparent sourcing with deep farmer relationships and industry-leading training programs.",
+    image: "/images/roasters/counter-culture.svg",
+    premium: true,
   },
   {
     name: "Saint Frank",
-    location: "San Francisco, California",
+    country: "United States",
+    founded: "2013",
     specialty: "Light roasts with terroir focus",
     rating: "4.9",
-    image: unsplash("photo-1442512595331-e89e73853f31"),
+    recipes: "96 recipes",
+    description:
+      "San Francisco roastery celebrating origin expression through delicate, terroir-forward light roasts.",
+    image: "/images/roasters/saint-frank.svg",
   },
   {
     name: "Tim Wendelboe",
-    location: "Oslo, Norway",
+    country: "Norway",
+    founded: "2007",
     specialty: "Nordic-style precision roasting",
     rating: "5.0",
-    image: unsplash("photo-1495474472287-4d71bcdd2085"),
+    recipes: "84 recipes",
+    description:
+      "Oslo institution defining Nordic coffee with obsessive quality control and seasonal microlots.",
+    image: "/images/roasters/tim-wendelboe.svg",
+    premium: true,
   },
   {
     name: "La Cabra",
-    location: "Aarhus, Denmark",
+    country: "Denmark",
+    founded: "2012",
     specialty: "Scandinavian clarity and sweetness",
     rating: "4.9",
-    image: unsplash("photo-1495474472287-4d71bcdd2085"),
+    recipes: "112 recipes",
+    description:
+      "Aarhus-based roaster known for luminous clarity, gentle sweetness, and minimalist Nordic aesthetics.",
+    image: "/images/roasters/la-cabra.svg",
+    premium: true,
   },
   {
     name: "Koppi",
-    location: "Helsingborg, Sweden",
+    country: "Sweden",
+    founded: "2007",
     specialty: "Seasonal microlots and blends",
     rating: "4.8",
-    image: unsplash("photo-1517245386807-bb43f82c33c4"),
+    recipes: "78 recipes",
+    description:
+      "Helsingborg roastery crafting thoughtful seasonal offerings with a focus on balance and approachability.",
+    image: "/images/roasters/koppi.svg",
   },
 ];
 
@@ -454,57 +483,7 @@ export default function Home() {
 
         <CoffeeOriginsSection origins={coffeeOrigins} />
 
-        {/* Top Roasters */}
-        <section
-          id="roasters"
-          className={`border-t border-white/[0.04] bg-white/[0.008] ${sectionPad}`}
-        >
-          <RevealOnScroll>
-            <div className="mx-auto max-w-6xl">
-              <div className="mb-20 max-w-2xl md:mb-24">
-                <p className={eyebrow}>Roaster Partners</p>
-                <h2 className={sectionTitle}>Top Roasters</h2>
-                <p className={sectionLead}>
-                  Discover recipes tailored to beans from the world&apos;s most
-                  respected specialty roasters.
-                </p>
-              </div>
-              <div className="grid gap-7 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
-                {topRoasters.map((roaster) => (
-                  <TiltCard key={roaster.name}>
-                    <div
-                      className={`group flex flex-col justify-between overflow-hidden ${cardBase} from-stone-900/40 p-0`}
-                    >
-                      <PremiumImage
-                        src={roaster.image}
-                        alt={`${roaster.name} roastery`}
-                        overlay="card"
-                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                        className="h-36 w-full"
-                      />
-                      <div className="flex flex-1 flex-col justify-between p-8 md:p-10">
-                        <div>
-                          <div className="flex items-start justify-between gap-4">
-                            <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50">
-                              {roaster.name}
-                            </h3>
-                            <span className="shrink-0 rounded-full bg-amber-950/50 px-2.5 py-0.5 text-xs font-medium text-amber-400">
-                              {roaster.rating}
-                            </span>
-                          </div>
-                          <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{roaster.location}</p>
-                        </div>
-                        <p className="mt-7 text-sm leading-relaxed text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
-                          {roaster.specialty}
-                        </p>
-                      </div>
-                    </div>
-                  </TiltCard>
-                ))}
-              </div>
-            </div>
-          </RevealOnScroll>
-        </section>
+        <TopRoastersSection roasters={topRoasters} />
 
         {/* Testimonials */}
         <section id="testimonials" className={sectionPad}>
