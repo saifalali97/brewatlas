@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FaqAccordion } from "./components/faq-accordion";
 import { BrewingMethodsSection } from "./components/brewing-methods-section";
+import { CoffeeOriginsSection } from "./components/coffee-origins-section";
 import { FeaturedRecipesSection } from "./components/featured-recipes-section";
 import { FloatingActions } from "./components/floating-actions";
 import { HeroSection } from "./components/hero-section";
@@ -14,7 +15,6 @@ const unsplash = (id: string, w = 800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
 
 const heroImage = unsplash("photo-1511920170033-f8396924c348", 1600);
-const originsFarmImage = unsplash("photo-1447933601403-0c6688de566e", 1000);
 
 const featuredRecipes = [
   {
@@ -191,14 +191,69 @@ const brewMethods = [
 ];
 
 const coffeeOrigins = [
-  { name: "Ethiopia", region: "Birthplace of Arabica", recipes: "1,840", x: 58, y: 48 },
-  { name: "Colombia", region: "Andean highlands", recipes: "2,100", x: 28, y: 50 },
-  { name: "Brazil", region: "Cerrado & Minas Gerais", recipes: "1,620", x: 34, y: 58 },
-  { name: "Kenya", region: "Nyeri & Kirinyaga", recipes: "980", x: 59, y: 52 },
-  { name: "Guatemala", region: "Antigua & Huehuetenango", recipes: "740", x: 24, y: 46 },
-  { name: "Indonesia", region: "Sumatra & Java", recipes: "860", x: 82, y: 52 },
-  { name: "Panama", region: "Boquete Geisha", recipes: "320", x: 26, y: 48 },
-  { name: "Yemen", region: "Haraz & Matari", recipes: "180", x: 61, y: 44 },
+  {
+    country: "Ethiopia",
+    region: "Gedeo & Sidama",
+    tastingProfile: "Jasmine, bergamot, and bright stone fruit with tea-like clarity.",
+    altitude: "1,700–2,200m",
+    process: "Washed",
+    roastRecommendation: "Light Roast",
+    brewingMethod: "Pour Over",
+    image: "/images/recipes/ethiopian-pour-over.png",
+    premium: true,
+  },
+  {
+    country: "Colombia",
+    region: "Huila & Cauca",
+    tastingProfile: "Caramel, red apple, and gentle citrus with balanced sweetness.",
+    altitude: "1,400–2,000m",
+    process: "Washed",
+    roastRecommendation: "Medium Roast",
+    brewingMethod: "Chemex",
+    image: "/images/origins/colombia.svg",
+  },
+  {
+    country: "Kenya",
+    region: "Nyeri & Kirinyaga",
+    tastingProfile: "Blackcurrant, tomato, and juicy acidity with syrupy body.",
+    altitude: "1,600–2,100m",
+    process: "Double Washed",
+    roastRecommendation: "Light-Medium",
+    brewingMethod: "V60",
+    image: "/images/recipes/espresso-tonic.png",
+    premium: true,
+  },
+  {
+    country: "Guatemala",
+    region: "Antigua & Huehuetenango",
+    tastingProfile: "Dark chocolate, hazelnut, and honey sweetness with full body.",
+    altitude: "1,500–2,000m",
+    process: "Washed",
+    roastRecommendation: "Medium Roast",
+    brewingMethod: "Espresso",
+    image: "/images/recipes/cortado.png",
+  },
+  {
+    country: "Panama",
+    region: "Boquete & Volcán",
+    tastingProfile: "Jasmine, mango, and tea-like elegance with luminous acidity.",
+    altitude: "1,400–1,900m",
+    process: "Washed",
+    roastRecommendation: "Light Roast",
+    brewingMethod: "Pour Over",
+    image: "/images/recipes/chemex.png",
+    premium: true,
+  },
+  {
+    country: "Indonesia",
+    region: "Sumatra & Java",
+    tastingProfile: "Cedar, dark cocoa, and earthy depth with low acidity.",
+    altitude: "1,100–1,600m",
+    process: "Wet-Hulled",
+    roastRecommendation: "Dark Roast",
+    brewingMethod: "French Press",
+    image: "/images/recipes/sumatra-moka.png",
+  },
 ];
 
 const topRoasters = [
@@ -365,88 +420,6 @@ const btnSecondary =
 const btnPremium =
   "inline-flex h-12 items-center justify-center rounded-full bg-amber-600 px-8 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_44px_rgba(217,119,6,0.48)] active:scale-[0.97]";
 
-function WorldMap() {
-  return (
-    <svg
-      viewBox="0 0 800 400"
-      className="h-full w-full"
-      aria-label="World map showing coffee origins"
-      role="img"
-    >
-      <defs>
-        <radialGradient id="mapGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(180,120,60,0.12)" />
-          <stop offset="100%" stopColor="rgba(180,120,60,0)" />
-        </radialGradient>
-      </defs>
-      <rect width="800" height="400" fill="url(#mapGlow)" rx="16" />
-      {[...Array(9)].map((_, i) => (
-        <line
-          key={`h-${i}`}
-          x1="0"
-          y1={i * 50}
-          x2="800"
-          y2={i * 50}
-          stroke="rgba(255,255,255,0.03)"
-          strokeWidth="1"
-        />
-      ))}
-      {[...Array(17)].map((_, i) => (
-        <line
-          key={`v-${i}`}
-          x1={i * 50}
-          y1="0"
-          x2={i * 50}
-          y2="400"
-          stroke="rgba(255,255,255,0.03)"
-          strokeWidth="1"
-        />
-      ))}
-      <path
-        d="M120 120 Q160 100 200 110 T280 130 Q300 150 290 180 T260 220 Q220 240 180 230 T130 200 Q100 170 120 120Z"
-        fill="rgba(255,255,255,0.04)"
-        stroke="rgba(255,255,255,0.08)"
-        strokeWidth="1"
-      />
-      <path
-        d="M300 100 Q380 80 460 90 T580 110 Q620 130 600 160 T560 200 Q500 220 440 210 T360 190 Q310 160 300 100Z"
-        fill="rgba(255,255,255,0.04)"
-        stroke="rgba(255,255,255,0.08)"
-        strokeWidth="1"
-      />
-      <path
-        d="M340 220 Q400 210 460 230 T540 280 Q520 320 460 330 T380 310 Q340 280 340 220Z"
-        fill="rgba(255,255,255,0.04)"
-        stroke="rgba(255,255,255,0.08)"
-        strokeWidth="1"
-      />
-      <path
-        d="M560 140 Q640 130 700 150 T760 180 Q740 220 680 230 T600 210 Q560 180 560 140Z"
-        fill="rgba(255,255,255,0.04)"
-        stroke="rgba(255,255,255,0.08)"
-        strokeWidth="1"
-      />
-      <path
-        d="M620 240 Q680 230 720 260 T740 300 Q700 320 660 310 T620 280 Q610 260 620 240Z"
-        fill="rgba(255,255,255,0.04)"
-        stroke="rgba(255,255,255,0.08)"
-        strokeWidth="1"
-      />
-      {coffeeOrigins.map((origin) => {
-        const cx = (origin.x / 100) * 800;
-        const cy = (origin.y / 100) * 400;
-        return (
-          <g key={origin.name}>
-            <circle cx={cx} cy={cy} r="16" fill="rgba(217,119,6,0.08)" />
-            <circle cx={cx} cy={cy} r="6" fill="rgba(217,119,6,0.9)" />
-            <circle cx={cx} cy={cy} r="2.5" fill="#fef3c7" />
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
-
 export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0705] font-sans text-stone-100">
@@ -479,65 +452,7 @@ export default function Home() {
 
         <BrewingMethodsSection methods={brewMethods} />
 
-        {/* Coffee Origins */}
-        <section id="origins" className={sectionPad}>
-          <RevealOnScroll>
-            <div className="mx-auto max-w-6xl">
-              <div className="grid items-center gap-16 md:gap-24 lg:grid-cols-2 lg:gap-28">
-                <div>
-                  <p className={eyebrow}>From Farm to Cup</p>
-                  <h2 className={sectionTitle}>Coffee Origins</h2>
-                  <p className={sectionLead}>
-                    Trace every recipe to its source. Explore flavor profiles,
-                    altitude data, and processing methods from the world&apos;s
-                    greatest growing regions.
-                  </p>
-                  <div className="mt-14 space-y-4">
-                    {coffeeOrigins.slice(0, 5).map((origin) => (
-                      <div
-                        key={origin.name}
-                        className="group flex items-center justify-between rounded-2xl border border-white/[0.04] bg-gradient-to-r from-white/[0.03] to-transparent px-6 py-5 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-amber-800/20 hover:bg-white/[0.04] hover:shadow-[0_20px_40px_-20px_rgba(180,120,60,0.12)] md:px-7 md:py-6"
-                      >
-                        <div>
-                          <p className="font-medium text-stone-50">{origin.name}</p>
-                          <p className="mt-1.5 text-sm leading-relaxed text-stone-500">{origin.region}</p>
-                        </div>
-                        <span className="text-sm font-medium text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
-                          {origin.recipes}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="relative">
-                  <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-br from-amber-900/15 to-transparent blur-2xl" />
-                  <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-gradient-to-br from-stone-900/60 via-stone-950/80 to-[#0a0705]/60 shadow-[0_28px_56px_-24px_rgba(0,0,0,0.45)]">
-                    <PremiumImage
-                      src={originsFarmImage}
-                      alt="Coffee farm in a lush growing region"
-                      overlay="card"
-                      sizes="(min-width: 1024px) 50vw, 100vw"
-                      className="h-48 w-full sm:h-52"
-                    />
-                    <div className="p-8 sm:p-10 md:p-11">
-                      <WorldMap />
-                      <div className="mt-9 flex flex-wrap gap-3">
-                        {coffeeOrigins.map((origin) => (
-                          <span
-                            key={origin.name}
-                            className="rounded-full border border-white/[0.05] bg-white/[0.03] px-3.5 py-1.5 text-xs text-stone-400 transition-all duration-300 hover:border-amber-800/25 hover:text-stone-300"
-                          >
-                            {origin.name}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </RevealOnScroll>
-        </section>
+        <CoffeeOriginsSection origins={coffeeOrigins} />
 
         {/* Top Roasters */}
         <section
