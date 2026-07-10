@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { AnimatedStat } from "./components/animated-stat";
 import { FaqAccordion } from "./components/faq-accordion";
 import { FloatingActions } from "./components/floating-actions";
+import { HeroSection } from "./components/hero-section";
 import { PremiumImage } from "./components/premium-image";
 import { RevealOnScroll } from "./components/reveal-on-scroll";
 import { RippleLink } from "./components/ripple-link";
@@ -460,68 +460,14 @@ export default function Home() {
       <SiteNav />
 
       <main>
-        {/* Hero */}
-        <section className="relative overflow-hidden px-5 pb-32 pt-24 sm:px-6 md:px-7 md:pb-36 md:pt-28 lg:px-8 lg:pb-40 lg:pt-36">
-          {/* Cinematic hero imagery */}
-          <div aria-hidden className="pointer-events-none absolute inset-0">
-            <PremiumImage
-              src={heroImage}
-              alt=""
-              overlay="hero"
-              priority
-              sizes="100vw"
-              className="h-full w-full opacity-50"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0a0705] via-[#0a0705]/80 to-[#0a0705]/30" />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0a0705]/40 via-transparent to-[#0a0705]" />
-          </div>
-
-          <div className="relative z-10 mx-auto max-w-6xl">
-            <div className="grid items-center gap-16 lg:grid-cols-[1fr_0.9fr] lg:gap-20">
-              <RevealOnScroll>
-                <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:max-w-none lg:text-left">
-                  <p className={`mb-8 ${eyebrow}`}>Specialty Coffee, Perfected</p>
-                  <h1 className="bg-gradient-to-b from-stone-50 to-stone-400 bg-clip-text text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.035em] text-transparent sm:text-6xl lg:text-[4.5rem]">
-                    BrewAtlas
-                  </h1>
-                  <p className="mx-auto mt-8 max-w-xl text-lg leading-[1.8] text-stone-400 sm:text-xl sm:leading-[1.75] lg:mx-0">
-                    The world&apos;s largest specialty coffee recipe platform.
-                  </p>
-                  <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5 lg:justify-start">
-                    <RippleLink href="#recipes" className={btnPrimary}>
-                      Explore Recipes
-                    </RippleLink>
-                    <RippleLink href="#pricing" className={btnSecondary}>
-                      Join Premium
-                    </RippleLink>
-                  </div>
-                </div>
-              </RevealOnScroll>
-
-              <RevealOnScroll delay={120} className="relative hidden lg:block">
-                <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-br from-amber-900/25 to-transparent blur-2xl" />
-                <PremiumImage
-                  src={unsplash("photo-1509042239860-f550ce710b93", 900)}
-                  alt="Warm specialty coffee in a ceramic cup"
-                  overlay="banner"
-                  sizes="(min-width: 1024px) 40vw, 0px"
-                  className="relative h-[28rem] rounded-[1.75rem] border border-white/[0.06] shadow-[0_40px_80px_-32px_rgba(0,0,0,0.6)]"
-                />
-              </RevealOnScroll>
-            </div>
-
-            <RevealOnScroll delay={120} className="relative mx-auto mt-28 max-w-4xl md:mt-32">
-              <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-r from-amber-900/20 via-amber-700/10 to-stone-800/20 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-gradient-to-br from-stone-900/80 via-stone-950/90 to-[#0a0705]/80 p-10 shadow-[0_36px_72px_-28px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-12 md:p-14">
-                <div className="grid gap-10 sm:grid-cols-3 sm:gap-8">
-                  {heroStats.map((stat) => (
-                    <AnimatedStat key={stat.label} value={stat.value} label={stat.label} />
-                  ))}
-                </div>
-              </div>
-            </RevealOnScroll>
-          </div>
-        </section>
+        <HeroSection
+          heroImage={heroImage}
+          cupImage={unsplash("photo-1509042239860-f550ce710b93", 900)}
+          heroStats={heroStats}
+          eyebrow={eyebrow}
+          btnPrimary={btnPrimary}
+          btnSecondary={btnSecondary}
+        />
 
         {/* Featured Recipes */}
         <section id="recipes" className={sectionPad}>

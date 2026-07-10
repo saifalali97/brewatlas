@@ -79,3 +79,43 @@ html {
 .animate-loader-bar {
   animation: loader-bar 1.15s ease-in-out infinite;
 }
+
+@keyframes steam-rise {
+  0% {
+    transform: translateY(8px) scaleX(0.9);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(-48px) scaleX(1.15);
+    opacity: 0;
+  }
+}
+
+@keyframes bean-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--bean-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-12px) rotate(calc(var(--bean-rotate, 0deg) + 8deg));
+  }
+}
+
+.animate-steam {
+  animation: steam-rise 3.5s ease-in-out infinite;
+}
+
+.animate-bean-float {
+  animation: bean-float 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-steam,
+  .animate-bean-float {
+    animation: none;
+    opacity: 0.2;
+  }
+}
