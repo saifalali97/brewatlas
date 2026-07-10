@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FaqAccordion } from "./components/faq-accordion";
+import { FaqSection } from "./components/faq-section";
 import { BrewingMethodsSection } from "./components/brewing-methods-section";
 import { CoffeeOriginsSection } from "./components/coffee-origins-section";
 import { FeaturedRecipesSection } from "./components/featured-recipes-section";
@@ -423,29 +423,44 @@ const pricingPlans = [
 
 const faqs = [
   {
-    question: "What makes BrewAtlas different from other recipe sites?",
+    question: "What's included in Premium membership?",
     answer:
-      "Every recipe on BrewAtlas is tested by professional baristas across multiple equipment setups, water profiles, and grind settings. We document ratios, temperatures, and timing with the precision specialty coffee demands — not generic instructions.",
+      "Premium unlocks the full recipe library of 12,400+ recipes, advanced brew calculators, unlimited favorites, roaster-exclusive releases, offline mobile access, AI recommendations, and advanced brew tracking with priority email support.",
   },
   {
-    question: "Can I use BrewAtlas recipes with any equipment?",
+    question: "Can I access recipes offline?",
     answer:
-      "Yes. Recipes include equipment-specific variations for popular brewers like V60, Chemex, Kalita, espresso machines, and more. Grind size recommendations are calibrated for both home and commercial grinders.",
+      "Yes. Premium and Team members can download recipes for offline use on iOS and Android. Saved recipes sync automatically when you reconnect, so your library stays current across devices.",
   },
   {
-    question: "What's included in the Premium membership?",
+    question: "How does brew tracking work?",
     answer:
-      "Premium unlocks the full recipe library, advanced brew calculators, unlimited saves, roaster-exclusive recipes, and offline access. The Roaster plan adds team accounts and publishing tools for cafés.",
+      "Log each brew with grind size, dose, yield, and timing. BrewAtlas charts extraction trends over time and flags when a recipe drifts from its target profile. Premium includes advanced tracking; Team plans add shared logs for café staff.",
   },
   {
-    question: "Do roasters partner directly with BrewAtlas?",
+    question: "How do AI recommendations work?",
     answer:
-      "We work with over 840 specialty roasters worldwide. Partner roasters publish official recipes calibrated to their beans, so you always brew with confidence.",
+      "BrewAtlas analyzes your saved recipes, brew methods, and flavor preferences to suggest new recipes and dial-in adjustments. Recommendations improve as you log more brews and rate results.",
   },
   {
-    question: "Is there a free trial for Premium?",
+    question: "What is your refund policy?",
     answer:
-      "Barista members get a 14-day free trial with full access. No credit card required to explore the platform — upgrade only when you're ready.",
+      "Premium memberships include a 14-day money-back guarantee. Cancel anytime from your account settings. Team plans are billed monthly and can be adjusted at the end of each billing cycle with no long-term lock-in.",
+  },
+  {
+    question: "How often are recipes updated?",
+    answer:
+      "New recipes are added weekly from partner roasters and the barista community. Existing recipes are reviewed quarterly and updated when equipment standards, water profiles, or roast profiles change.",
+  },
+  {
+    question: "Which devices does BrewAtlas support?",
+    answer:
+      "BrewAtlas works on modern web browsers, plus native apps for iOS 16+ and Android 10+. Your account, favorites, and offline downloads stay in sync across all supported devices.",
+  },
+  {
+    question: "How do Team plans work?",
+    answer:
+      "Team plans include everything in Premium for up to 10 members, shared brew logs, custom recipe publishing, and an analytics dashboard. Contact sales to add seats, set permissions, or connect multiple café locations.",
   },
 ];
 
@@ -537,18 +552,7 @@ export default function Home() {
 
         <PricingSection plans={pricingPlans} />
 
-        {/* FAQ */}
-        <section id="faq" className={sectionPad}>
-          <RevealOnScroll>
-            <div className="mx-auto max-w-3xl">
-              <div className="mb-20 text-center md:mb-24">
-                <p className={eyebrow}>Support</p>
-                <h2 className={sectionTitle}>Frequently Asked Questions</h2>
-              </div>
-              <FaqAccordion faqs={faqs} />
-            </div>
-          </RevealOnScroll>
-        </section>
+        <FaqSection faqs={faqs} />
       </main>
 
       <FloatingActions />
