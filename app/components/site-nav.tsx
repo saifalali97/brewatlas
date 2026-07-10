@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { RippleLink } from "./ripple-link";
 
 const navLinks = [
   { href: "#recipes", label: "Recipes", id: "recipes" },
@@ -83,12 +84,12 @@ export function SiteNav() {
             );
           })}
         </div>
-        <Link
+        <RippleLink
           href="#pricing"
           className="rounded-full bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_36px_rgba(217,119,6,0.42)] active:scale-[0.97] sm:px-5"
         >
           Join Premium
-        </Link>
+        </RippleLink>
       </nav>
     </header>
   );

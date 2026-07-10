@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { AnimatedStat } from "./components/animated-stat";
+import { FaqAccordion } from "./components/faq-accordion";
+import { FloatingActions } from "./components/floating-actions";
 import { PremiumImage } from "./components/premium-image";
 import { RevealOnScroll } from "./components/reveal-on-scroll";
+import { RippleLink } from "./components/ripple-link";
 import { SiteNav } from "./components/site-nav";
+import { TiltCard } from "./components/tilt-card";
 
 const unsplash = (id: string, w = 800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
@@ -484,12 +488,12 @@ export default function Home() {
                     The world&apos;s largest specialty coffee recipe platform.
                   </p>
                   <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5 lg:justify-start">
-                    <Link href="#recipes" className={btnPrimary}>
+                    <RippleLink href="#recipes" className={btnPrimary}>
                       Explore Recipes
-                    </Link>
-                    <Link href="#pricing" className={btnSecondary}>
+                    </RippleLink>
+                    <RippleLink href="#pricing" className={btnSecondary}>
                       Join Premium
-                    </Link>
+                    </RippleLink>
                   </div>
                 </div>
               </RevealOnScroll>
@@ -533,10 +537,10 @@ export default function Home() {
               </div>
               <div className="grid gap-8 sm:grid-cols-2 md:gap-9 lg:grid-cols-3">
                 {featuredRecipes.map((recipe) => (
-                  <article
-                    key={recipe.name}
-                    className={`group relative overflow-hidden ${cardBase} p-0`}
-                  >
+                  <TiltCard key={recipe.name}>
+                    <article
+                      className={`group relative overflow-hidden ${cardBase} p-0`}
+                    >
                     <div className="relative">
                       <PremiumImage
                         src={recipe.image}
@@ -576,6 +580,7 @@ export default function Home() {
                       </div>
                     </div>
                   </article>
+                  </TiltCard>
                 ))}
               </div>
             </div>
@@ -599,7 +604,8 @@ export default function Home() {
               </div>
               <div className="grid gap-7 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
                 {brewMethods.map((method) => (
-                  <div key={method.name} className={`group overflow-hidden ${cardBase} bg-[#0a0705]/50 p-0`}>
+                  <TiltCard key={method.name}>
+                    <div className={`group overflow-hidden ${cardBase} bg-[#0a0705]/50 p-0`}>
                     <PremiumImage
                       src={method.image}
                       alt={`${method.name} brewing equipment`}
@@ -622,6 +628,7 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
+                  </TiltCard>
                 ))}
               </div>
             </div>
@@ -705,10 +712,10 @@ export default function Home() {
               </div>
               <div className="grid gap-7 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
                 {topRoasters.map((roaster) => (
-                  <div
-                    key={roaster.name}
-                    className={`group flex flex-col justify-between overflow-hidden ${cardBase} from-stone-900/40 p-0`}
-                  >
+                  <TiltCard key={roaster.name}>
+                    <div
+                      className={`group flex flex-col justify-between overflow-hidden ${cardBase} from-stone-900/40 p-0`}
+                    >
                     <PremiumImage
                       src={roaster.image}
                       alt={`${roaster.name} roastery`}
@@ -733,6 +740,7 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
+                  </TiltCard>
                 ))}
               </div>
             </div>
@@ -749,7 +757,8 @@ export default function Home() {
               </div>
               <div className="grid gap-8 lg:grid-cols-3">
                 {testimonials.map((item) => (
-                  <blockquote key={item.name} className={`group flex flex-col overflow-hidden ${cardBase} p-0`}>
+                  <TiltCard key={item.name}>
+                    <blockquote className={`group flex flex-col overflow-hidden ${cardBase} p-0`}>
                     <PremiumImage
                       src={item.image}
                       alt={`${item.name}, ${item.role}`}
@@ -768,6 +777,7 @@ export default function Home() {
                       </footer>
                     </div>
                   </blockquote>
+                  </TiltCard>
                 ))}
               </div>
             </div>
@@ -791,9 +801,9 @@ export default function Home() {
               </div>
               <div className="grid gap-8 lg:grid-cols-3">
                 {pricingPlans.map((plan) => (
-                  <div
-                    key={plan.name}
-                    className={`relative flex flex-col rounded-[1.5rem] border p-9 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 sm:p-10 md:p-11 ${
+                  <TiltCard key={plan.name}>
+                    <div
+                      className={`relative flex h-full flex-col rounded-[1.5rem] border p-9 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 sm:p-10 md:p-11 ${
                       plan.highlighted
                         ? "border-amber-700/35 bg-gradient-to-b from-amber-950/40 via-stone-950/50 to-[#0a0705]/80 shadow-[0_36px_72px_-24px_rgba(180,120,60,0.2)] hover:border-amber-600/45 hover:shadow-[0_44px_80px_-24px_rgba(180,120,60,0.26)]"
                         : `${cardBase} hover:border-white/10`
@@ -832,13 +842,14 @@ export default function Home() {
                         </li>
                       ))}
                     </ul>
-                    <Link
+                    <RippleLink
                       href="#"
                       className={`mt-11 ${plan.highlighted ? btnPremium : `${btnSecondary} w-full min-w-0`}`}
                     >
                       {plan.cta}
-                    </Link>
+                    </RippleLink>
                   </div>
+                  </TiltCard>
                 ))}
               </div>
             </div>
@@ -853,28 +864,13 @@ export default function Home() {
                 <p className={eyebrow}>Support</p>
                 <h2 className={sectionTitle}>Frequently Asked Questions</h2>
               </div>
-              <div className="space-y-4">
-                {faqs.map((faq) => (
-                  <details
-                    key={faq.question}
-                    className="group rounded-2xl border border-white/[0.05] bg-gradient-to-br from-white/[0.03] to-transparent transition-all duration-300 open:border-amber-800/20 open:bg-white/[0.04] hover:border-white/10"
-                  >
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-7 py-6 text-base font-medium leading-snug text-stone-50 md:px-8 md:py-7 [&::-webkit-details-marker]:hidden">
-                      {faq.question}
-                      <span className="shrink-0 text-lg text-stone-500 transition-transform duration-300 group-open:rotate-45">
-                        +
-                      </span>
-                    </summary>
-                    <div className="border-t border-white/[0.04] px-7 pb-7 pt-6 md:px-8">
-                      <p className="text-sm leading-[1.8] text-stone-400">{faq.answer}</p>
-                    </div>
-                  </details>
-                ))}
-              </div>
+              <FaqAccordion faqs={faqs} />
             </div>
           </RevealOnScroll>
         </section>
       </main>
+
+      <FloatingActions />
 
       {/* Footer */}
       <footer className="border-t border-white/[0.04] bg-[#080504] px-5 pt-28 pb-14 sm:px-6 md:px-7 lg:px-8">

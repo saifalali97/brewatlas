@@ -76,7 +76,7 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
 
   return (
     <div ref={ref} className="text-center sm:text-left">
-      <p className="text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl lg:text-[2.75rem] lg:leading-none">
+      <p className="text-3xl font-semibold tracking-tight text-stone-50 tabular-nums sm:text-4xl lg:text-[2.75rem] lg:leading-none">
         {display}
       </p>
       <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{label}</p>
