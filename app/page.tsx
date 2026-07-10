@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { AnimatedStat } from "./components/animated-stat";
+import { RevealOnScroll } from "./components/reveal-on-scroll";
+import { SiteNav } from "./components/site-nav";
 
 const featuredRecipes = [
   {
@@ -239,8 +242,29 @@ const faqs = [
   },
 ];
 
+const heroStats = [
+  { label: "Recipes", value: "12,400+" },
+  { label: "Roasters", value: "840+" },
+  { label: "Countries", value: "62" },
+];
+
+const sectionPad = "px-5 py-32 sm:px-6 md:py-36 lg:px-8 lg:py-40";
+const eyebrow = "text-sm font-medium uppercase tracking-[0.22em] text-amber-500/90";
+const sectionTitle =
+  "mt-4 text-3xl font-semibold leading-[1.12] tracking-tight text-stone-50 sm:text-4xl lg:text-[2.75rem]";
+const sectionLead = "mt-6 text-lg leading-[1.75] text-stone-400 md:text-xl md:leading-[1.7]";
+const cardBase =
+  "rounded-[1.375rem] border border-white/[0.06] bg-gradient-to-br from-white/[0.045] via-white/[0.02] to-transparent transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-amber-700/25 hover:shadow-[0_32px_64px_-20px_rgba(180,120,60,0.14)]";
+const btnPrimary =
+  "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-stone-50 px-8 text-sm font-medium text-stone-900 transition-all duration-300 ease-out hover:scale-[1.03] hover:bg-stone-200 hover:shadow-[0_12px_40px_rgba(255,255,255,0.14)] active:scale-[0.98]";
+const btnSecondary =
+  "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-stone-600/50 bg-white/[0.04] px-8 text-sm font-medium text-stone-100 backdrop-blur-sm transition-all duration-300 ease-out hover:scale-[1.03] hover:border-amber-600/45 hover:bg-white/[0.08] hover:shadow-[0_0_32px_rgba(217,119,6,0.12)] active:scale-[0.98]";
+const btnPremium =
+  "inline-flex h-12 items-center justify-center rounded-full bg-amber-600 px-8 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.03] hover:bg-amber-500 hover:shadow-[0_0_32px_rgba(217,119,6,0.4)] active:scale-[0.98]";
+
 function BrewMethodIcon({ method }: { method: string }) {
-  const className = "h-8 w-8 text-amber-500/90 transition-colors duration-300 group-hover:text-amber-400";
+  const className =
+    "h-8 w-8 text-amber-500/90 transition-all duration-500 ease-out group-hover:scale-110 group-hover:text-amber-400";
 
   switch (method) {
     case "Pour Over":
@@ -315,7 +339,6 @@ function WorldMap() {
         </radialGradient>
       </defs>
       <rect width="800" height="400" fill="url(#mapGlow)" rx="16" />
-      {/* Grid lines */}
       {[...Array(9)].map((_, i) => (
         <line
           key={`h-${i}`}
@@ -338,7 +361,6 @@ function WorldMap() {
           strokeWidth="1"
         />
       ))}
-      {/* Simplified continents */}
       <path
         d="M120 120 Q160 100 200 110 T280 130 Q300 150 290 180 T260 220 Q220 240 180 230 T130 200 Q100 170 120 120Z"
         fill="rgba(255,255,255,0.04)"
@@ -369,7 +391,6 @@ function WorldMap() {
         stroke="rgba(255,255,255,0.08)"
         strokeWidth="1"
       />
-      {/* Origin markers */}
       {coffeeOrigins.map((origin) => {
         const cx = (origin.x / 100) * 800;
         const cy = (origin.y / 100) * 400;
@@ -393,150 +414,99 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(180,120,60,0.35),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_20%,rgba(120,70,40,0.2),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_10%_80%,rgba(90,50,30,0.25),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_50%_50%,rgba(180,120,60,0.06),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(217,119,6,0.04),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_65%,rgba(120,70,40,0.05),transparent_35%)]" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f0a]/40 via-transparent to-[#0a0705]" />
       </div>
 
-      {/* Navigation */}
-      <header className="sticky top-0 z-50 border-b border-white/5 bg-[#0a0705]/70 backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
-          <Link
-            href="/"
-            className="text-lg font-semibold tracking-tight text-stone-50"
-          >
-            BrewAtlas
-          </Link>
-          <div className="hidden items-center gap-7 text-sm text-stone-400 lg:flex">
-            <a href="#recipes" className="transition-colors duration-200 hover:text-stone-100">
-              Recipes
-            </a>
-            <a href="#methods" className="transition-colors duration-200 hover:text-stone-100">
-              Methods
-            </a>
-            <a href="#origins" className="transition-colors duration-200 hover:text-stone-100">
-              Origins
-            </a>
-            <a href="#roasters" className="transition-colors duration-200 hover:text-stone-100">
-              Roasters
-            </a>
-            <a href="#pricing" className="transition-colors duration-200 hover:text-stone-100">
-              Pricing
-            </a>
-            <a href="#faq" className="transition-colors duration-200 hover:text-stone-100">
-              FAQ
-            </a>
-          </div>
-          <Link
-            href="#pricing"
-            className="rounded-full bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-amber-500 hover:shadow-[0_0_24px_rgba(217,119,6,0.3)]"
-          >
-            Join Premium
-          </Link>
-        </nav>
-      </header>
+      <SiteNav />
 
       <main>
         {/* Hero */}
-        <section className="relative px-6 pb-24 pt-20 lg:px-8 lg:pt-32">
+        <section className="relative px-5 pb-28 pt-24 sm:px-6 md:pb-32 md:pt-28 lg:px-8 lg:pb-36 lg:pt-36">
           <div className="mx-auto max-w-6xl">
-            <div className="mx-auto max-w-3xl text-center">
-              <p className="mb-6 text-sm font-medium uppercase tracking-[0.2em] text-amber-500/90">
-                Specialty Coffee, Perfected
-              </p>
-              <h1 className="bg-gradient-to-b from-stone-50 to-stone-400 bg-clip-text text-5xl font-semibold tracking-tight text-transparent sm:text-6xl lg:text-7xl">
-                BrewAtlas
-              </h1>
-              <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-stone-400 sm:text-xl">
-                The world&apos;s largest specialty coffee recipe platform.
-              </p>
-              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Link
-                  href="#recipes"
-                  className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-stone-50 px-8 text-sm font-medium text-stone-900 transition-all duration-300 hover:bg-stone-200 hover:shadow-[0_8px_30px_rgba(255,255,255,0.12)]"
-                >
-                  Explore Recipes
-                </Link>
-                <Link
-                  href="#pricing"
-                  className="inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-stone-600/60 bg-white/5 px-8 text-sm font-medium text-stone-100 backdrop-blur-sm transition-all duration-300 hover:border-amber-600/50 hover:bg-white/10"
-                >
-                  Join Premium
-                </Link>
+            <RevealOnScroll>
+              <div className="mx-auto max-w-3xl text-center">
+                <p className={`mb-7 ${eyebrow}`}>Specialty Coffee, Perfected</p>
+                <h1 className="bg-gradient-to-b from-stone-50 to-stone-400 bg-clip-text text-5xl font-semibold leading-[1.05] tracking-[-0.03em] text-transparent sm:text-6xl lg:text-7xl">
+                  BrewAtlas
+                </h1>
+                <p className="mx-auto mt-7 max-w-xl text-lg leading-[1.75] text-stone-400 sm:text-xl sm:leading-[1.7]">
+                  The world&apos;s largest specialty coffee recipe platform.
+                </p>
+                <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
+                  <Link href="#recipes" className={btnPrimary}>
+                    Explore Recipes
+                  </Link>
+                  <Link href="#pricing" className={btnSecondary}>
+                    Join Premium
+                  </Link>
+                </div>
               </div>
-            </div>
+            </RevealOnScroll>
 
-            <div className="relative mx-auto mt-20 max-w-4xl">
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-amber-900/20 via-amber-700/10 to-stone-800/20 blur-2xl" />
-              <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-stone-900/80 to-stone-950/90 p-8 shadow-2xl backdrop-blur-sm sm:p-12">
-                <div className="grid gap-6 sm:grid-cols-3">
-                  {[
-                    { label: "Recipes", value: "12,400+" },
-                    { label: "Roasters", value: "840+" },
-                    { label: "Countries", value: "62" },
-                  ].map((stat) => (
-                    <div key={stat.label} className="text-center sm:text-left">
-                      <p className="text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl">
-                        {stat.value}
-                      </p>
-                      <p className="mt-1 text-sm text-stone-500">{stat.label}</p>
-                    </div>
+            <RevealOnScroll delay={120} className="relative mx-auto mt-24 max-w-4xl md:mt-28">
+              <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-r from-amber-900/20 via-amber-700/10 to-stone-800/20 blur-2xl" />
+              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-stone-900/80 via-stone-950/90 to-[#0a0705]/80 p-9 shadow-[0_32px_64px_-24px_rgba(0,0,0,0.5)] backdrop-blur-sm sm:p-12 md:p-14">
+                <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
+                  {heroStats.map((stat) => (
+                    <AnimatedStat key={stat.label} value={stat.value} label={stat.label} />
                   ))}
                 </div>
               </div>
-            </div>
+            </RevealOnScroll>
           </div>
         </section>
 
         {/* Featured Recipes */}
-        <section id="recipes" className="px-6 py-28 lg:px-8">
+        <section id="recipes" className={sectionPad}>
           <div className="mx-auto max-w-6xl">
-            <div className="mb-16 max-w-2xl">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-amber-500/90">
-                Curated Collection
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl lg:text-5xl">
-                Featured Recipes
-              </h2>
-              <p className="mt-5 text-lg leading-relaxed text-stone-400">
-                Handpicked by our barista community. Each recipe includes grind
-                size, water temperature, and step-by-step guidance.
-              </p>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {featuredRecipes.map((recipe) => (
-                <article
-                  key={recipe.name}
-                  className="group relative rounded-2xl border border-white/8 bg-white/[0.03] p-7 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-amber-700/30 hover:bg-white/[0.05] hover:shadow-[0_24px_48px_-12px_rgba(180,120,60,0.12)]"
-                >
-                  <div className="absolute right-5 top-5 rounded-full border border-amber-800/30 bg-amber-950/40 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-400/90">
-                    Premium
-                  </div>
-                  <div className="pr-16">
-                    <h3 className="text-lg font-medium tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-100">
-                      {recipe.name}
-                    </h3>
-                    <p className="mt-1.5 text-sm text-stone-500">{recipe.origin}</p>
-                  </div>
-                  <span className="mt-4 inline-block rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-stone-400">
-                    {recipe.method}
-                  </span>
-                  <p className="mt-4 text-sm leading-relaxed text-stone-400">
-                    {recipe.notes}
-                  </p>
-                  <div className="mt-6 flex flex-wrap gap-4 border-t border-white/5 pt-5 text-xs text-stone-500">
-                    <span>
-                      Ratio{" "}
-                      <strong className="font-medium text-stone-300">{recipe.ratio}</strong>
+            <RevealOnScroll>
+              <div className="mb-16 max-w-2xl md:mb-20">
+                <p className={eyebrow}>Curated Collection</p>
+                <h2 className={sectionTitle}>Featured Recipes</h2>
+                <p className={sectionLead}>
+                  Handpicked by our barista community. Each recipe includes grind
+                  size, water temperature, and step-by-step guidance.
+                </p>
+              </div>
+            </RevealOnScroll>
+            <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
+              {featuredRecipes.map((recipe, index) => (
+                <RevealOnScroll key={recipe.name} delay={index * 80}>
+                  <article
+                    className={`group relative ${cardBase} p-8 md:p-9`}
+                  >
+                    <div className="absolute right-6 top-6 rounded-full border border-amber-800/25 bg-amber-950/40 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-400/90">
+                      Premium
+                    </div>
+                    <div className="pr-16">
+                      <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-100">
+                        {recipe.name}
+                      </h3>
+                      <p className="mt-2 text-sm leading-relaxed text-stone-500">{recipe.origin}</p>
+                    </div>
+                    <span className="mt-5 inline-block rounded-full bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-400">
+                      {recipe.method}
                     </span>
-                    <span>
-                      Time{" "}
-                      <strong className="font-medium text-stone-300">{recipe.time}</strong>
-                    </span>
-                    <span>
-                      Level{" "}
-                      <strong className="font-medium text-stone-300">{recipe.level}</strong>
-                    </span>
-                  </div>
-                </article>
+                    <p className="mt-5 text-sm leading-[1.7] text-stone-400">{recipe.notes}</p>
+                    <div className="mt-7 flex flex-wrap gap-5 border-t border-white/[0.04] pt-6 text-xs text-stone-500">
+                      <span>
+                        Ratio{" "}
+                        <strong className="font-medium text-stone-300">{recipe.ratio}</strong>
+                      </span>
+                      <span>
+                        Time{" "}
+                        <strong className="font-medium text-stone-300">{recipe.time}</strong>
+                      </span>
+                      <span>
+                        Level{" "}
+                        <strong className="font-medium text-stone-300">{recipe.level}</strong>
+                      </span>
+                    </div>
+                  </article>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
@@ -545,94 +515,91 @@ export default function Home() {
         {/* Brew Methods */}
         <section
           id="methods"
-          className="border-y border-white/5 bg-white/[0.02] px-6 py-28 lg:px-8"
+          className={`border-y border-white/[0.04] bg-white/[0.015] ${sectionPad}`}
         >
           <div className="mx-auto max-w-6xl">
-            <div className="mb-16 text-center">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-amber-500/90">
-                Master Every Technique
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl lg:text-5xl">
-                Brewing Methods
-              </h2>
-              <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-stone-400">
-                From first pour to competition dial-in. Explore recipes organized
-                by method, equipment, and skill level.
-              </p>
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {brewMethods.map((method) => (
-                <div
-                  key={method.name}
-                  className="group rounded-2xl border border-white/8 bg-[#0a0705]/60 p-7 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-amber-800/40 hover:bg-white/[0.03] hover:shadow-[0_20px_40px_-12px_rgba(180,120,60,0.1)]"
-                >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/5 bg-white/[0.03] transition-colors duration-300 group-hover:border-amber-800/30 group-hover:bg-amber-950/20">
-                    <BrewMethodIcon method={method.name} />
+            <RevealOnScroll>
+              <div className="mb-16 text-center md:mb-20">
+                <p className={eyebrow}>Master Every Technique</p>
+                <h2 className={sectionTitle}>Brewing Methods</h2>
+                <p className={`mx-auto max-w-xl ${sectionLead}`}>
+                  From first pour to competition dial-in. Explore recipes organized
+                  by method, equipment, and skill level.
+                </p>
+              </div>
+            </RevealOnScroll>
+            <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
+              {brewMethods.map((method, index) => (
+                <RevealOnScroll key={method.name} delay={index * 80}>
+                  <div className={`group ${cardBase} bg-[#0a0705]/50 p-8 md:p-9`}>
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.04] bg-white/[0.03] transition-all duration-500 ease-out group-hover:border-amber-800/30 group-hover:bg-amber-950/20 group-hover:shadow-[0_0_24px_rgba(217,119,6,0.08)]">
+                      <BrewMethodIcon method={method.name} />
+                    </div>
+                    <h3 className="mt-6 text-lg font-medium leading-snug tracking-tight text-stone-50">
+                      {method.name}
+                    </h3>
+                    <p className="mt-3 text-sm leading-[1.7] text-stone-500">
+                      {method.description}
+                    </p>
+                    <p className="mt-5 text-xs font-medium uppercase tracking-wider text-amber-600/70">
+                      {method.recipes} recipes
+                    </p>
                   </div>
-                  <h3 className="mt-5 text-lg font-medium tracking-tight text-stone-50">
-                    {method.name}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-stone-500">
-                    {method.description}
-                  </p>
-                  <p className="mt-4 text-xs font-medium uppercase tracking-wider text-amber-600/70">
-                    {method.recipes} recipes
-                  </p>
-                </div>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
         </section>
 
         {/* Coffee Origins */}
-        <section id="origins" className="px-6 py-28 lg:px-8">
+        <section id="origins" className={sectionPad}>
           <div className="mx-auto max-w-6xl">
-            <div className="grid items-center gap-16 lg:grid-cols-2">
-              <div>
-                <p className="text-sm font-medium uppercase tracking-[0.2em] text-amber-500/90">
-                  From Farm to Cup
-                </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl lg:text-5xl">
-                  Coffee Origins
-                </h2>
-                <p className="mt-5 text-lg leading-relaxed text-stone-400">
-                  Trace every recipe to its source. Explore flavor profiles,
-                  altitude data, and processing methods from the world&apos;s
-                  greatest growing regions.
-                </p>
-                <div className="mt-10 space-y-3">
-                  {coffeeOrigins.slice(0, 5).map((origin) => (
-                    <div
-                      key={origin.name}
-                      className="group flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.02] px-5 py-4 transition-all duration-300 hover:border-amber-800/30 hover:bg-white/[0.04]"
-                    >
-                      <div>
-                        <p className="font-medium text-stone-50">{origin.name}</p>
-                        <p className="text-sm text-stone-500">{origin.region}</p>
-                      </div>
-                      <span className="text-sm font-medium text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
-                        {origin.recipes}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="relative">
-                <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-amber-900/15 to-transparent blur-2xl" />
-                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-stone-900/60 to-stone-950/80 p-6 sm:p-8">
-                  <WorldMap />
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    {coffeeOrigins.map((origin) => (
-                      <span
+            <div className="grid items-center gap-16 md:gap-20 lg:grid-cols-2 lg:gap-24">
+              <RevealOnScroll>
+                <div>
+                  <p className={eyebrow}>From Farm to Cup</p>
+                  <h2 className={sectionTitle}>Coffee Origins</h2>
+                  <p className={sectionLead}>
+                    Trace every recipe to its source. Explore flavor profiles,
+                    altitude data, and processing methods from the world&apos;s
+                    greatest growing regions.
+                  </p>
+                  <div className="mt-12 space-y-4">
+                    {coffeeOrigins.slice(0, 5).map((origin) => (
+                      <div
                         key={origin.name}
-                        className="rounded-full border border-white/8 bg-white/[0.03] px-3 py-1 text-xs text-stone-400"
+                        className="group flex items-center justify-between rounded-2xl border border-white/[0.04] bg-gradient-to-r from-white/[0.03] to-transparent px-6 py-5 transition-all duration-500 ease-out hover:-translate-y-0.5 hover:border-amber-800/25 hover:bg-white/[0.04] hover:shadow-[0_16px_32px_-16px_rgba(180,120,60,0.1)]"
                       >
-                        {origin.name}
-                      </span>
+                        <div>
+                          <p className="font-medium text-stone-50">{origin.name}</p>
+                          <p className="mt-1 text-sm leading-relaxed text-stone-500">{origin.region}</p>
+                        </div>
+                        <span className="text-sm font-medium text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
+                          {origin.recipes}
+                        </span>
+                      </div>
                     ))}
                   </div>
                 </div>
-              </div>
+              </RevealOnScroll>
+              <RevealOnScroll delay={100}>
+                <div className="relative">
+                  <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-br from-amber-900/15 to-transparent blur-2xl" />
+                  <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-stone-900/60 via-stone-950/80 to-[#0a0705]/60 p-7 shadow-[0_24px_48px_-20px_rgba(0,0,0,0.4)] sm:p-9 md:p-10">
+                    <WorldMap />
+                    <div className="mt-8 flex flex-wrap gap-3">
+                      {coffeeOrigins.map((origin) => (
+                        <span
+                          key={origin.name}
+                          className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3.5 py-1.5 text-xs text-stone-400 transition-colors duration-300 hover:border-amber-800/25 hover:text-stone-300"
+                        >
+                          {origin.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </RevealOnScroll>
             </div>
           </div>
         </section>
@@ -640,181 +607,168 @@ export default function Home() {
         {/* Top Roasters */}
         <section
           id="roasters"
-          className="border-t border-white/5 bg-white/[0.01] px-6 py-28 lg:px-8"
+          className={`border-t border-white/[0.04] bg-white/[0.008] ${sectionPad}`}
         >
           <div className="mx-auto max-w-6xl">
-            <div className="mb-16 max-w-2xl">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-amber-500/90">
-                Roaster Partners
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl lg:text-5xl">
-                Top Roasters
-              </h2>
-              <p className="mt-5 text-lg leading-relaxed text-stone-400">
-                Discover recipes tailored to beans from the world&apos;s most
-                respected specialty roasters.
-              </p>
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {topRoasters.map((roaster) => (
-                <div
-                  key={roaster.name}
-                  className="group flex flex-col justify-between rounded-2xl border border-white/8 bg-gradient-to-br from-stone-900/40 to-transparent p-7 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-amber-800/30 hover:shadow-[0_20px_40px_-12px_rgba(180,120,60,0.1)]"
-                >
-                  <div>
-                    <div className="flex items-start justify-between">
-                      <h3 className="text-lg font-medium tracking-tight text-stone-50">
-                        {roaster.name}
-                      </h3>
-                      <span className="rounded-full bg-amber-950/50 px-2 py-0.5 text-xs font-medium text-amber-400">
-                        {roaster.rating}
-                      </span>
+            <RevealOnScroll>
+              <div className="mb-16 max-w-2xl md:mb-20">
+                <p className={eyebrow}>Roaster Partners</p>
+                <h2 className={sectionTitle}>Top Roasters</h2>
+                <p className={sectionLead}>
+                  Discover recipes tailored to beans from the world&apos;s most
+                  respected specialty roasters.
+                </p>
+              </div>
+            </RevealOnScroll>
+            <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
+              {topRoasters.map((roaster, index) => (
+                <RevealOnScroll key={roaster.name} delay={index * 80}>
+                  <div className={`group flex flex-col justify-between ${cardBase} from-stone-900/40 p-8 md:p-9`}>
+                    <div>
+                      <div className="flex items-start justify-between gap-4">
+                        <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50">
+                          {roaster.name}
+                        </h3>
+                        <span className="shrink-0 rounded-full bg-amber-950/50 px-2.5 py-0.5 text-xs font-medium text-amber-400">
+                          {roaster.rating}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-sm leading-relaxed text-stone-500">{roaster.location}</p>
                     </div>
-                    <p className="mt-1.5 text-sm text-stone-500">{roaster.location}</p>
+                    <p className="mt-6 text-sm leading-relaxed text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
+                      {roaster.specialty}
+                    </p>
                   </div>
-                  <p className="mt-5 text-sm text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
-                    {roaster.specialty}
-                  </p>
-                </div>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
         </section>
 
         {/* Testimonials */}
-        <section id="testimonials" className="px-6 py-28 lg:px-8">
+        <section id="testimonials" className={sectionPad}>
           <div className="mx-auto max-w-6xl">
-            <div className="mb-16 text-center">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-amber-500/90">
-                Trusted by Professionals
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl lg:text-5xl">
-                What Baristas Say
-              </h2>
-            </div>
-            <div className="grid gap-6 lg:grid-cols-3">
-              {testimonials.map((item) => (
-                <blockquote
-                  key={item.name}
-                  className="group flex flex-col rounded-2xl border border-white/8 bg-white/[0.02] p-8 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-amber-800/25 hover:bg-white/[0.04]"
-                >
-                  <p className="flex-1 text-base leading-relaxed text-stone-300">
-                    &ldquo;{item.quote}&rdquo;
-                  </p>
-                  <footer className="mt-8 border-t border-white/5 pt-6">
-                    <p className="font-medium text-stone-50">{item.name}</p>
-                    <p className="mt-1 text-sm text-stone-500">{item.role}</p>
-                    <p className="mt-0.5 text-xs text-amber-600/70">{item.location}</p>
-                  </footer>
-                </blockquote>
+            <RevealOnScroll>
+              <div className="mb-16 text-center md:mb-20">
+                <p className={eyebrow}>Trusted by Professionals</p>
+                <h2 className={sectionTitle}>What Baristas Say</h2>
+              </div>
+            </RevealOnScroll>
+            <div className="grid gap-7 lg:grid-cols-3 lg:gap-8">
+              {testimonials.map((item, index) => (
+                <RevealOnScroll key={item.name} delay={index * 100}>
+                  <blockquote className={`group flex flex-col ${cardBase} p-9 md:p-10`}>
+                    <p className="flex-1 text-base leading-[1.75] text-stone-300">
+                      &ldquo;{item.quote}&rdquo;
+                    </p>
+                    <footer className="mt-9 border-t border-white/[0.04] pt-7">
+                      <p className="font-medium text-stone-50">{item.name}</p>
+                      <p className="mt-1.5 text-sm leading-relaxed text-stone-500">{item.role}</p>
+                      <p className="mt-1 text-xs text-amber-600/70">{item.location}</p>
+                    </footer>
+                  </blockquote>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
         </section>
 
         {/* Premium Pricing */}
-        <section id="pricing" className="border-y border-white/5 px-6 py-28 lg:px-8">
+        <section
+          id="pricing"
+          className={`border-y border-white/[0.04] ${sectionPad}`}
+        >
           <div className="mx-auto max-w-6xl">
-            <div className="mb-16 text-center">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-amber-500/90">
-                Membership
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl lg:text-5xl">
-                Premium Plans
-              </h2>
-              <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-stone-400">
-                Choose the plan that fits your craft. Upgrade anytime as your
-                coffee journey evolves.
-              </p>
-            </div>
-            <div className="grid gap-6 lg:grid-cols-3">
-              {pricingPlans.map((plan) => (
-                <div
-                  key={plan.name}
-                  className={`relative flex flex-col rounded-3xl border p-8 transition-all duration-500 ease-out hover:-translate-y-1 sm:p-10 ${
-                    plan.highlighted
-                      ? "border-amber-700/40 bg-gradient-to-b from-amber-950/40 to-stone-950/60 shadow-[0_24px_48px_-12px_rgba(180,120,60,0.15)] hover:border-amber-600/50"
-                      : "border-white/8 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04]"
-                  }`}
-                >
-                  {plan.highlighted && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-1 text-xs font-medium text-white">
-                      Most Popular
-                    </span>
-                  )}
-                  <div>
-                    <h3 className="text-lg font-medium text-stone-50">{plan.name}</h3>
-                    <div className="mt-4 flex items-baseline gap-1">
-                      <span className="text-4xl font-semibold tracking-tight text-stone-50">
-                        {plan.price}
-                      </span>
-                      {plan.price !== "Free" && (
-                        <span className="text-sm text-stone-500">/{plan.period}</span>
-                      )}
-                    </div>
-                    {plan.price === "Free" && (
-                      <span className="text-sm text-stone-500">{plan.period}</span>
-                    )}
-                    <p className="mt-4 text-sm leading-relaxed text-stone-400">
-                      {plan.description}
-                    </p>
-                  </div>
-                  <ul className="mt-8 flex-1 space-y-3">
-                    {plan.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-start gap-3 text-sm text-stone-400"
-                      >
-                        <span className="mt-0.5 text-amber-600">✓</span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href="#"
-                    className={`mt-10 inline-flex h-12 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
+            <RevealOnScroll>
+              <div className="mb-16 text-center md:mb-20">
+                <p className={eyebrow}>Membership</p>
+                <h2 className={sectionTitle}>Premium Plans</h2>
+                <p className={`mx-auto max-w-xl ${sectionLead}`}>
+                  Choose the plan that fits your craft. Upgrade anytime as your
+                  coffee journey evolves.
+                </p>
+              </div>
+            </RevealOnScroll>
+            <div className="grid gap-7 lg:grid-cols-3 lg:gap-8">
+              {pricingPlans.map((plan, index) => (
+                <RevealOnScroll key={plan.name} delay={index * 100}>
+                  <div
+                    className={`relative flex flex-col rounded-[1.5rem] border p-9 transition-all duration-500 ease-out hover:-translate-y-1.5 sm:p-10 md:p-11 ${
                       plan.highlighted
-                        ? "bg-amber-600 text-white hover:bg-amber-500 hover:shadow-[0_0_24px_rgba(217,119,6,0.3)]"
-                        : "border border-white/10 bg-white/5 text-stone-100 hover:border-amber-700/40 hover:bg-white/10"
+                        ? "border-amber-700/35 bg-gradient-to-b from-amber-950/40 via-stone-950/50 to-[#0a0705]/80 shadow-[0_32px_64px_-20px_rgba(180,120,60,0.18)] hover:border-amber-600/45 hover:shadow-[0_40px_72px_-20px_rgba(180,120,60,0.22)]"
+                        : `${cardBase} hover:border-white/12`
                     }`}
                   >
-                    {plan.cta}
-                  </Link>
-                </div>
+                    {plan.highlighted && (
+                      <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-1 text-xs font-medium text-white shadow-[0_0_20px_rgba(217,119,6,0.3)]">
+                        Most Popular
+                      </span>
+                    )}
+                    <div>
+                      <h3 className="text-lg font-medium text-stone-50">{plan.name}</h3>
+                      <div className="mt-5 flex items-baseline gap-1">
+                        <span className="text-4xl font-semibold tracking-tight text-stone-50 lg:text-[2.5rem]">
+                          {plan.price}
+                        </span>
+                        {plan.price !== "Free" && (
+                          <span className="text-sm text-stone-500">/{plan.period}</span>
+                        )}
+                      </div>
+                      {plan.price === "Free" && (
+                        <span className="text-sm text-stone-500">{plan.period}</span>
+                      )}
+                      <p className="mt-5 text-sm leading-[1.7] text-stone-400">
+                        {plan.description}
+                      </p>
+                    </div>
+                    <ul className="mt-9 flex-1 space-y-3.5">
+                      {plan.features.map((feature) => (
+                        <li
+                          key={feature}
+                          className="flex items-start gap-3 text-sm leading-relaxed text-stone-400"
+                        >
+                          <span className="mt-0.5 text-amber-600">✓</span>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      href="#"
+                      className={`mt-10 ${plan.highlighted ? btnPremium : `${btnSecondary} w-full min-w-0`}`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  </div>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="px-6 py-28 lg:px-8">
+        <section id="faq" className={sectionPad}>
           <div className="mx-auto max-w-3xl">
-            <div className="mb-16 text-center">
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-amber-500/90">
-                Support
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl lg:text-5xl">
-                Frequently Asked Questions
-              </h2>
-            </div>
-            <div className="space-y-3">
-              {faqs.map((faq) => (
-                <details
-                  key={faq.question}
-                  className="group rounded-2xl border border-white/8 bg-white/[0.02] transition-all duration-300 open:border-amber-800/30 open:bg-white/[0.04] hover:border-white/12"
-                >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-base font-medium text-stone-50 [&::-webkit-details-marker]:hidden">
-                    {faq.question}
-                    <span className="shrink-0 text-stone-500 transition-transform duration-300 group-open:rotate-45">
-                      +
-                    </span>
-                  </summary>
-                  <div className="border-t border-white/5 px-6 pb-5 pt-4">
-                    <p className="text-sm leading-relaxed text-stone-400">
-                      {faq.answer}
-                    </p>
-                  </div>
-                </details>
+            <RevealOnScroll>
+              <div className="mb-16 text-center md:mb-20">
+                <p className={eyebrow}>Support</p>
+                <h2 className={sectionTitle}>Frequently Asked Questions</h2>
+              </div>
+            </RevealOnScroll>
+            <div className="space-y-4">
+              {faqs.map((faq, index) => (
+                <RevealOnScroll key={faq.question} delay={index * 60}>
+                  <details className="group rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-transparent transition-all duration-300 open:border-amber-800/25 open:bg-white/[0.04] hover:border-white/10">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-7 py-6 text-base font-medium leading-snug text-stone-50 [&::-webkit-details-marker]:hidden">
+                      {faq.question}
+                      <span className="shrink-0 text-lg text-stone-500 transition-transform duration-300 group-open:rotate-45">
+                        +
+                      </span>
+                    </summary>
+                    <div className="border-t border-white/[0.04] px-7 pb-6 pt-5">
+                      <p className="text-sm leading-[1.75] text-stone-400">{faq.answer}</p>
+                    </div>
+                  </details>
+                </RevealOnScroll>
               ))}
             </div>
           </div>
@@ -822,105 +776,105 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 bg-[#080504] px-6 pt-20 pb-10 lg:px-8">
+      <footer className="border-t border-white/[0.04] bg-[#080504] px-5 pt-24 pb-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="lg:col-span-1">
-              <Link
-                href="/"
-                className="text-xl font-semibold tracking-tight text-stone-50"
-              >
-                BrewAtlas
-              </Link>
-              <p className="mt-4 max-w-xs text-sm leading-relaxed text-stone-500">
-                The definitive platform for specialty coffee recipes, origins,
-                and brew science. Craft coffee, mapped.
-              </p>
+          <RevealOnScroll>
+            <div className="grid gap-14 sm:grid-cols-2 sm:gap-12 lg:grid-cols-4 lg:gap-16">
+              <div className="lg:col-span-1">
+                <Link
+                  href="/"
+                  className="text-xl font-semibold tracking-tight text-stone-50 transition-opacity duration-300 hover:opacity-80"
+                >
+                  BrewAtlas
+                </Link>
+                <p className="mt-5 max-w-xs text-sm leading-[1.75] text-stone-500">
+                  The definitive platform for specialty coffee recipes, origins,
+                  and brew science. Craft coffee, mapped.
+                </p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium uppercase tracking-wider text-stone-400">
+                  Product
+                </h4>
+                <ul className="mt-6 space-y-3.5 text-sm text-stone-500">
+                  <li>
+                    <a href="#recipes" className="transition-colors duration-300 hover:text-stone-300">
+                      Recipes
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#methods" className="transition-colors duration-300 hover:text-stone-300">
+                      Brew Methods
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#origins" className="transition-colors duration-300 hover:text-stone-300">
+                      Origins
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#pricing" className="transition-colors duration-300 hover:text-stone-300">
+                      Pricing
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium uppercase tracking-wider text-stone-400">
+                  Company
+                </h4>
+                <ul className="mt-6 space-y-3.5 text-sm text-stone-500">
+                  <li>
+                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                      About
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                      Roaster Partners
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                      Careers
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                      Contact
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium uppercase tracking-wider text-stone-400">
+                  Legal
+                </h4>
+                <ul className="mt-6 space-y-3.5 text-sm text-stone-500">
+                  <li>
+                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                      Privacy Policy
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                      Terms of Service
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                      Cookie Policy
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div>
-              <h4 className="text-sm font-medium uppercase tracking-wider text-stone-400">
-                Product
-              </h4>
-              <ul className="mt-5 space-y-3 text-sm text-stone-500">
-                <li>
-                  <a href="#recipes" className="transition-colors duration-200 hover:text-stone-300">
-                    Recipes
-                  </a>
-                </li>
-                <li>
-                  <a href="#methods" className="transition-colors duration-200 hover:text-stone-300">
-                    Brew Methods
-                  </a>
-                </li>
-                <li>
-                  <a href="#origins" className="transition-colors duration-200 hover:text-stone-300">
-                    Origins
-                  </a>
-                </li>
-                <li>
-                  <a href="#pricing" className="transition-colors duration-200 hover:text-stone-300">
-                    Pricing
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium uppercase tracking-wider text-stone-400">
-                Company
-              </h4>
-              <ul className="mt-5 space-y-3 text-sm text-stone-500">
-                <li>
-                  <Link href="#" className="transition-colors duration-200 hover:text-stone-300">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="transition-colors duration-200 hover:text-stone-300">
-                    Roaster Partners
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="transition-colors duration-200 hover:text-stone-300">
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="transition-colors duration-200 hover:text-stone-300">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium uppercase tracking-wider text-stone-400">
-                Legal
-              </h4>
-              <ul className="mt-5 space-y-3 text-sm text-stone-500">
-                <li>
-                  <Link href="#" className="transition-colors duration-200 hover:text-stone-300">
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="transition-colors duration-200 hover:text-stone-300">
-                    Terms of Service
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="transition-colors duration-200 hover:text-stone-300">
-                    Cookie Policy
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 sm:flex-row">
+          </RevealOnScroll>
+          <div className="mt-20 flex flex-col items-center justify-between gap-4 border-t border-white/[0.04] pt-10 sm:flex-row">
             <p className="text-sm text-stone-600">
               © {new Date().getFullYear()} BrewAtlas. All rights reserved.
             </p>
-            <p className="text-sm text-stone-600">
-              Crafted for coffee lovers worldwide.
-            </p>
+            <p className="text-sm text-stone-600">Crafted for coffee lovers worldwide.</p>
           </div>
         </div>
       </footer>
