@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Coffee placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a0f0a"/>
+      <stop offset="100%" stop-color="#0a0705"/>
+    </linearGradient>
+    <linearGradient id="cup" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d97706" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#92400e" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <ellipse cx="400" cy="520" rx="180" ry="24" fill="#000" fill-opacity="0.25"/>
+  <path d="M280 180h240c22 0 40 18 40 40v200c0 44-36 80-80 80H320c-44 0-80-36-80-80V220c0-22 18-40 40-40z" fill="url(#cup)" stroke="#b45309" stroke-opacity="0.4" stroke-width="2"/>
+  <path d="M520 260h36c28 0 50 22 50 50v20c0 28-22 50-50 50h-36" fill="none" stroke="#b45309" stroke-opacity="0.35" stroke-width="8" stroke-linecap="round"/>
+  <ellipse cx="400" cy="220" rx="120" ry="18" fill="#78350f" fill-opacity="0.35"/>
+</svg>

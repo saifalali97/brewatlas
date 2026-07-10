@@ -1,4 +1,9 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
+
+const FALLBACK_SRC = "/images/coffee-placeholder.svg";
 
 type PremiumImageProps = {
   src: string;
@@ -24,14 +29,22 @@ export function PremiumImage({
   priority = false,
   sizes = "100vw",
 }: PremiumImageProps) {
+  const [imageSrc, setImageSrc] = useState(src);
+
   return (
     <div className={`relative overflow-hidden ${className}`}>
       <Image
-        src={src}
+        src={imageSrc}
         alt={alt}
         fill
         priority={priority}
         sizes={sizes}
+        unoptimized={imageSrc === FALLBACK_SRC}
+        onError={() => {
+          if (imageSrc !== FALLBACK_SRC) {
+            setImageSrc(FALLBACK_SRC);
+          }
+        }}
         className="object-cover brightness-[0.62] contrast-[1.08] saturate-[0.8] transition-all duration-700 ease-out group-hover:scale-[1.04] group-hover:brightness-[0.72]"
       />
       <div className={`absolute inset-0 ${overlayStyles[overlay]}`} aria-hidden />

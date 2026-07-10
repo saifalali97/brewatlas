@@ -111,14 +111,18 @@ export function HeroSection({
 }: HeroSectionProps) {
   const [query, setQuery] = useState("");
 
+  const scrollToRecipes = () => {
+    document.getElementById("recipes")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
-    window.location.hash = "recipes";
+    scrollToRecipes();
   };
 
   const applyTag = (tag: string) => {
     setQuery(tag);
-    window.location.hash = "recipes";
+    scrollToRecipes();
   };
 
   return (

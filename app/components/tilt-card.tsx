@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  useEffect,
   useRef,
   useState,
   type MouseEvent,
   type ReactNode,
 } from "react";
+import { useMediaQuery, usePrefersReducedMotion } from "./use-media-query";
 
 type TiltCardProps = {
   children: ReactNode;
@@ -16,15 +16,9 @@ type TiltCardProps = {
 export function TiltCard({ children, className = "" }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState("");
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
-    setEnabled(!reducedMotion && !coarsePointer);
-  }, []);
+  const reducedMotion = usePrefersReducedMotion();
+  const coarsePointer = useMediaQuery("(pointer: coarse)");
+  const enabled = !reducedMotion && !coarsePointer;
 
   const handleMove = (event: MouseEvent<HTMLDivElement>) => {
     if (!enabled || !ref.current) return;

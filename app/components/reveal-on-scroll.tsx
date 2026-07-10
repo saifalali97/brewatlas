@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { usePrefersReducedMotion } from "./use-media-query";
 
 type RevealOnScrollProps = {
   children: ReactNode;
@@ -15,22 +16,14 @@ export function RevealOnScroll({
 }: RevealOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const reducedMotion = usePrefersReducedMotion();
+  const isVisible = reducedMotion || visible;
 
   useEffect(() => {
-    setReducedMotion(
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    );
-  }, []);
+    if (reducedMotion) return;
 
-  useEffect(() => {
     const element = ref.current;
     if (!element) return;
-
-    if (reducedMotion) {
-      setVisible(true);
-      return;
-    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -50,7 +43,7 @@ export function RevealOnScroll({
     <div
       ref={ref}
       className={`motion-safe:transition-all motion-safe:duration-[850ms] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)] ${
-        visible
+        isVisible
           ? "motion-safe:translate-y-0 motion-safe:opacity-100"
           : "motion-safe:translate-y-8 motion-safe:opacity-0"
       } ${className}`}

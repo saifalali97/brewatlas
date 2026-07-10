@@ -1,19 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePrefersReducedMotion } from "./use-media-query";
 
 export function PageLoader() {
+  const reducedMotion = usePrefersReducedMotion();
   const [phase, setPhase] = useState<"loading" | "exit" | "done">("loading");
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (reducedMotion) {
-      setPhase("done");
-      return;
-    }
+    if (reducedMotion) return;
 
     const exitTimer = window.setTimeout(() => setPhase("exit"), 520);
     const doneTimer = window.setTimeout(() => setPhase("done"), 980);
@@ -22,9 +17,9 @@ export function PageLoader() {
       window.clearTimeout(exitTimer);
       window.clearTimeout(doneTimer);
     };
-  }, []);
+  }, [reducedMotion]);
 
-  if (phase === "done") return null;
+  if (reducedMotion || phase === "done") return null;
 
   return (
     <div

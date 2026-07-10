@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePrefersReducedMotion } from "./use-media-query";
 
 type AnimatedStatProps = {
   value: string;
@@ -29,20 +30,15 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [display, setDisplay] = useState("0");
   const hasAnimated = useRef(false);
+  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
+    if (reducedMotion) return;
+
     const element = ref.current;
     if (!element) return;
 
     const { target, suffix, useComma } = parseStatValue(value);
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (reducedMotion) {
-      setDisplay(value);
-      return;
-    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -72,12 +68,12 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
 
     observer.observe(element);
     return () => observer.disconnect();
-  }, [value]);
+  }, [reducedMotion, value]);
 
   return (
     <div ref={ref} className="text-center sm:text-left">
       <p className="text-3xl font-semibold tracking-tight text-stone-50 tabular-nums sm:text-4xl lg:text-[2.75rem] lg:leading-none">
-        {display}
+        {reducedMotion ? value : display}
       </p>
       <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{label}</p>
     </div>

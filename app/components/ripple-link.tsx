@@ -15,6 +15,10 @@ export function RippleLink({ href, className = "", children }: RippleLinkProps) 
   const [ripples, setRipples] = useState<Ripple[]>([]);
 
   const handleClick = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
+    if (href === "#") {
+      event.preventDefault();
+    }
+
     const rect = event.currentTarget.getBoundingClientRect();
     const id = Date.now();
     const ripple = {
@@ -27,7 +31,7 @@ export function RippleLink({ href, className = "", children }: RippleLinkProps) 
     window.setTimeout(() => {
       setRipples((current) => current.filter((item) => item.id !== id));
     }, 650);
-  }, []);
+  }, [href]);
 
   return (
     <Link

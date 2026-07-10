@@ -868,24 +868,24 @@ export default function Home() {
                 </h4>
                 <ul className="mt-6 space-y-3.5 text-sm text-stone-500">
                   <li>
-                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
                       About
-                    </Link>
+                    </a>
                   </li>
                   <li>
-                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
                       Roaster Partners
-                    </Link>
+                    </a>
                   </li>
                   <li>
-                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
                       Careers
-                    </Link>
+                    </a>
                   </li>
                   <li>
-                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
                       Contact
-                    </Link>
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -895,19 +895,19 @@ export default function Home() {
                 </h4>
                 <ul className="mt-6 space-y-3.5 text-sm text-stone-500">
                   <li>
-                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
                       Privacy Policy
-                    </Link>
+                    </a>
                   </li>
                   <li>
-                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
                       Terms of Service
-                    </Link>
+                    </a>
                   </li>
                   <li>
-                    <Link href="#" className="transition-colors duration-300 hover:text-stone-300">
+                    <a href="#" className="transition-colors duration-300 hover:text-stone-300">
                       Cookie Policy
-                    </Link>
+                    </a>
                   </li>
                 </ul>
               </div>
