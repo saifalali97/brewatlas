@@ -5,9 +5,9 @@ import { CoffeeOriginsSection } from "./components/coffee-origins-section";
 import { FeaturedRecipesSection } from "./components/featured-recipes-section";
 import { FloatingActions } from "./components/floating-actions";
 import { HeroSection } from "./components/hero-section";
+import { PricingSection } from "./components/pricing-section";
 import { PremiumImage } from "./components/premium-image";
 import { RevealOnScroll } from "./components/reveal-on-scroll";
-import { RippleLink } from "./components/ripple-link";
 import { SiteNav } from "./components/site-nav";
 import { TopRoastersSection } from "./components/top-roasters-section";
 import { TiltCard } from "./components/tilt-card";
@@ -359,45 +359,62 @@ const testimonials = [
 
 const pricingPlans = [
   {
-    name: "Explorer",
-    price: "Free",
+    name: "Free",
+    price: "$0",
     period: "forever",
-    description: "Start your specialty coffee journey.",
+    description: "Start your specialty coffee journey with community recipes and essential tools.",
+    recipeCount: "500+",
+    accessLevel: "Community",
+    offlineAccess: false,
+    favorites: "10 saves",
+    aiRecommendations: false,
+    brewTracking: "Basic",
+    prioritySupport: false,
     features: [
-      "500+ community recipes",
       "Basic brew calculators",
-      "Save up to 10 favorites",
       "Weekly origin spotlights",
+      "Community recipe access",
     ],
     cta: "Get Started",
     highlighted: false,
   },
   {
-    name: "Barista",
+    name: "Premium",
     price: "$12",
-    period: "per month",
-    description: "For enthusiasts who brew daily.",
+    period: "month",
+    description: "For enthusiasts who brew daily and want the complete BrewAtlas experience.",
+    recipeCount: "12,400+",
+    accessLevel: "Full Library",
+    offlineAccess: true,
+    favorites: "Unlimited",
+    aiRecommendations: true,
+    brewTracking: "Advanced",
+    prioritySupport: true,
     features: [
-      "Full recipe library (12,400+)",
       "Advanced extraction tools",
-      "Unlimited saved recipes",
       "Roaster-exclusive releases",
-      "Offline mobile access",
+      "Personalized brew insights",
     ],
-    cta: "Start Free Trial",
+    cta: "Start Premium",
     highlighted: true,
   },
   {
-    name: "Roaster",
+    name: "Team",
     price: "$99",
-    period: "per year",
-    description: "Built for cafés and professionals.",
+    period: "month",
+    description: "Built for cafés and roaster teams who need collaboration and publishing tools.",
+    recipeCount: "12,400+",
+    accessLevel: "Team + Publishing",
+    offlineAccess: true,
+    favorites: "Unlimited",
+    aiRecommendations: true,
+    brewTracking: "Team Analytics",
+    prioritySupport: true,
     features: [
-      "Everything in Barista",
-      "Team accounts (up to 10)",
+      "Everything in Premium",
+      "Up to 10 team accounts",
       "Custom recipe publishing",
       "Analytics dashboard",
-      "Priority roaster support",
     ],
     cta: "Contact Sales",
     highlighted: false,
@@ -438,16 +455,12 @@ const eyebrow =
   "text-[0.8125rem] font-medium uppercase tracking-[0.24em] text-amber-500/90";
 const sectionTitle =
   "mt-5 text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-stone-50 sm:text-4xl lg:text-[2.875rem]";
-const sectionLead =
-  "mt-7 max-w-2xl text-lg leading-[1.8] text-stone-400 md:text-xl md:leading-[1.75]";
 const cardBase =
   "rounded-[1.5rem] border border-white/[0.05] bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-transparent shadow-[0_4px_24px_-8px_rgba(0,0,0,0.25)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:border-amber-700/20 hover:from-white/[0.06] hover:shadow-[0_36px_72px_-24px_rgba(180,120,60,0.16)]";
 const btnPrimary =
   "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-stone-50 px-8 text-sm font-medium text-stone-900 transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-stone-200 hover:shadow-[0_14px_44px_rgba(255,255,255,0.16)] active:scale-[0.97]";
 const btnSecondary =
   "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-stone-600/45 bg-white/[0.04] px-8 text-sm font-medium text-stone-100 backdrop-blur-sm transition-all duration-300 ease-out hover:scale-[1.04] hover:border-amber-600/40 hover:bg-white/[0.08] hover:shadow-[0_0_40px_rgba(217,119,6,0.16)] active:scale-[0.97]";
-const btnPremium =
-  "inline-flex h-12 items-center justify-center rounded-full bg-amber-600 px-8 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_44px_rgba(217,119,6,0.48)] active:scale-[0.97]";
 
 export default function Home() {
   return (
@@ -522,77 +535,7 @@ export default function Home() {
           </RevealOnScroll>
         </section>
 
-        {/* Premium Pricing */}
-        <section
-          id="pricing"
-          className={`border-y border-white/[0.04] ${sectionPad}`}
-        >
-          <RevealOnScroll>
-            <div className="mx-auto max-w-6xl">
-              <div className="mb-20 text-center md:mb-24">
-                <p className={eyebrow}>Membership</p>
-                <h2 className={sectionTitle}>Premium Plans</h2>
-                <p className={`mx-auto max-w-xl ${sectionLead}`}>
-                  Choose the plan that fits your craft. Upgrade anytime as your
-                  coffee journey evolves.
-                </p>
-              </div>
-              <div className="grid gap-8 lg:grid-cols-3">
-                {pricingPlans.map((plan) => (
-                  <TiltCard key={plan.name}>
-                    <div
-                      className={`relative flex h-full flex-col rounded-[1.5rem] border p-9 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 sm:p-10 md:p-11 ${
-                        plan.highlighted
-                          ? "border-amber-700/35 bg-gradient-to-b from-amber-950/40 via-stone-950/50 to-[#0a0705]/80 shadow-[0_36px_72px_-24px_rgba(180,120,60,0.2)] hover:border-amber-600/45 hover:shadow-[0_44px_80px_-24px_rgba(180,120,60,0.26)]"
-                          : `${cardBase} hover:border-white/10`
-                      }`}
-                    >
-                      {plan.highlighted && (
-                        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-1 text-xs font-medium text-white shadow-[0_0_24px_rgba(217,119,6,0.35)]">
-                          Most Popular
-                        </span>
-                      )}
-                      <div>
-                        <h3 className="text-lg font-medium text-stone-50">{plan.name}</h3>
-                        <div className="mt-6 flex items-baseline gap-1">
-                          <span className="text-4xl font-semibold tracking-tight text-stone-50 lg:text-[2.5rem]">
-                            {plan.price}
-                          </span>
-                          {plan.price !== "Free" && (
-                            <span className="text-sm text-stone-500">/{plan.period}</span>
-                          )}
-                        </div>
-                        {plan.price === "Free" && (
-                          <span className="text-sm text-stone-500">{plan.period}</span>
-                        )}
-                        <p className="mt-6 text-sm leading-[1.75] text-stone-400">
-                          {plan.description}
-                        </p>
-                      </div>
-                      <ul className="mt-10 flex-1 space-y-4">
-                        {plan.features.map((feature) => (
-                          <li
-                            key={feature}
-                            className="flex items-start gap-3 text-sm leading-relaxed text-stone-400"
-                          >
-                            <span className="mt-0.5 text-amber-600">✓</span>
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                      <RippleLink
-                        href="#"
-                        className={`mt-11 ${plan.highlighted ? btnPremium : `${btnSecondary} w-full min-w-0`}`}
-                      >
-                        {plan.cta}
-                      </RippleLink>
-                    </div>
-                  </TiltCard>
-                ))}
-              </div>
-            </div>
-          </RevealOnScroll>
-        </section>
+        <PricingSection plans={pricingPlans} />
 
         {/* FAQ */}
         <section id="faq" className={sectionPad}>
