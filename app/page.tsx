@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { AnimatedStat } from "./components/animated-stat";
+import { PremiumImage } from "./components/premium-image";
 import { RevealOnScroll } from "./components/reveal-on-scroll";
 import { SiteNav } from "./components/site-nav";
+
+const unsplash = (id: string, w = 800) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+const heroImage = unsplash("photo-1511920170033-f8396924c348", 1600);
+const originsFarmImage = unsplash("photo-1521017430731-691585ea914f", 1000);
 
 const featuredRecipes = [
   {
@@ -12,6 +19,7 @@ const featuredRecipes = [
     time: "3:30",
     level: "Intermediate",
     notes: "Jasmine, bergamot, and stone fruit with a silky finish.",
+    image: unsplash("photo-1447933601403-0c6688de566e"),
   },
   {
     name: "Kyoto Cold Brew",
@@ -21,6 +29,7 @@ const featuredRecipes = [
     time: "8 hr",
     level: "Beginner",
     notes: "Dark chocolate and caramel with zero bitterness.",
+    image: unsplash("photo-1559056199-641a0ac8b55c"),
   },
   {
     name: "Signature Cortado",
@@ -30,6 +39,7 @@ const featuredRecipes = [
     time: "25 sec",
     level: "Advanced",
     notes: "Velvety microfoam over a balanced double shot.",
+    image: unsplash("photo-1514432324607-a09d9b4aefdd"),
   },
   {
     name: "Espresso Tonic",
@@ -39,6 +49,7 @@ const featuredRecipes = [
     time: "30 sec",
     level: "Intermediate",
     notes: "Bright citrus sparkle over a syrupy Kenyan base.",
+    image: unsplash("photo-1461023058943-07fcbead316a"),
   },
   {
     name: "Panama Geisha Chemex",
@@ -48,6 +59,7 @@ const featuredRecipes = [
     time: "4:00",
     level: "Advanced",
     notes: "Jasmine tea, mango, and honey with extraordinary clarity.",
+    image: unsplash("photo-1559827260-dc66d52bef19"),
   },
   {
     name: "Sumatra Mandheling Moka",
@@ -57,6 +69,7 @@ const featuredRecipes = [
     time: "5:00",
     level: "Beginner",
     notes: "Earthy cedar, dark cocoa, and a heavy, syrupy body.",
+    image: unsplash("photo-1610889556528-9f7705c58f57"),
   },
 ];
 
@@ -65,31 +78,37 @@ const brewMethods = [
     name: "Pour Over",
     description: "Clarity and nuance. Full control over every variable.",
     recipes: "2,840",
+    image: unsplash("photo-1511920170033-f8396924c348"),
   },
   {
     name: "Espresso",
     description: "Pressure, precision, and the foundation of café culture.",
     recipes: "3,120",
+    image: unsplash("photo-1498804103079-a6351b050096"),
   },
   {
     name: "French Press",
     description: "Full-bodied immersion with rich oils and depth.",
     recipes: "980",
+    image: unsplash("photo-1517701551-1c35e3af0b39"),
   },
   {
     name: "Aeropress",
     description: "Versatile, fast, and endlessly experiment-friendly.",
     recipes: "1,450",
+    image: unsplash("photo-1521302080334-47528fbfd597"),
   },
   {
     name: "Cold Brew",
     description: "Slow extraction for smooth, low-acid refreshment.",
     recipes: "760",
+    image: unsplash("photo-1517487881594-278087154df5"),
   },
   {
     name: "Siphon",
     description: "Theatrical vacuum brewing with exceptional clarity.",
     recipes: "420",
+    image: unsplash("photo-1509042239860-f550ce710b93"),
   },
 ];
 
@@ -110,36 +129,42 @@ const topRoasters = [
     location: "Rogers, Arkansas",
     specialty: "Competition-grade single origins",
     rating: "4.9",
+    image: unsplash("photo-1552344947-4173216e31bf"),
   },
   {
     name: "Counter Culture",
     location: "Durham, North Carolina",
     specialty: "Direct trade and education",
     rating: "4.8",
+    image: unsplash("photo-1528965137801-d72e1a856814"),
   },
   {
     name: "Saint Frank",
     location: "San Francisco, California",
     specialty: "Light roasts with terroir focus",
     rating: "4.9",
+    image: unsplash("photo-1442512595331-e89e73853f31"),
   },
   {
     name: "Tim Wendelboe",
     location: "Oslo, Norway",
     specialty: "Nordic-style precision roasting",
     rating: "5.0",
+    image: unsplash("photo-1495474472287-4d71bcdd2085"),
   },
   {
     name: "La Cabra",
     location: "Aarhus, Denmark",
     specialty: "Scandinavian clarity and sweetness",
     rating: "4.9",
+    image: unsplash("photo-1501339846605-531d08d47bf7"),
   },
   {
     name: "Koppi",
     location: "Helsingborg, Sweden",
     specialty: "Seasonal microlots and blends",
     rating: "4.8",
+    image: unsplash("photo-145925786827c-6848b5d65fc0"),
   },
 ];
 
@@ -150,6 +175,7 @@ const testimonials = [
     name: "Elena Vasquez",
     role: "Head Barista, Formative Coffee",
     location: "Portland, OR",
+    image: unsplash("photo-1501339846605-531d08d47bf7", 600),
   },
   {
     quote:
@@ -157,6 +183,7 @@ const testimonials = [
     name: "James Okonkwo",
     role: "Roaster & Q Grader",
     location: "London, UK",
+    image: unsplash("photo-1517245386807-bb43f82c33c4", 600),
   },
   {
     quote:
@@ -164,6 +191,7 @@ const testimonials = [
     name: "Sofia Lindström",
     role: "Founder, Nord Roast Collective",
     location: "Stockholm, SE",
+    image: unsplash("photo-145925786827c-6848b5d65fc0", 600),
   },
 ];
 
@@ -429,27 +457,54 @@ export default function Home() {
 
       <main>
         {/* Hero */}
-        <section className="relative px-5 pb-32 pt-24 sm:px-6 md:px-7 md:pb-36 md:pt-28 lg:px-8 lg:pb-40 lg:pt-36">
-          <div className="mx-auto max-w-6xl">
-            <RevealOnScroll>
-              <div className="mx-auto max-w-3xl text-center">
-                <p className={`mb-8 ${eyebrow}`}>Specialty Coffee, Perfected</p>
-                <h1 className="bg-gradient-to-b from-stone-50 to-stone-400 bg-clip-text text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.035em] text-transparent sm:text-6xl lg:text-[4.5rem]">
-                  BrewAtlas
-                </h1>
-                <p className="mx-auto mt-8 max-w-xl text-lg leading-[1.8] text-stone-400 sm:text-xl sm:leading-[1.75]">
-                  The world&apos;s largest specialty coffee recipe platform.
-                </p>
-                <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
-                  <Link href="#recipes" className={btnPrimary}>
-                    Explore Recipes
-                  </Link>
-                  <Link href="#pricing" className={btnSecondary}>
-                    Join Premium
-                  </Link>
+        <section className="relative overflow-hidden px-5 pb-32 pt-24 sm:px-6 md:px-7 md:pb-36 md:pt-28 lg:px-8 lg:pb-40 lg:pt-36">
+          {/* Cinematic hero imagery */}
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <PremiumImage
+              src={heroImage}
+              alt=""
+              overlay="hero"
+              priority
+              sizes="100vw"
+              className="h-full w-full opacity-50"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0a0705] via-[#0a0705]/80 to-[#0a0705]/30" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0a0705]/40 via-transparent to-[#0a0705]" />
+          </div>
+
+          <div className="relative z-10 mx-auto max-w-6xl">
+            <div className="grid items-center gap-16 lg:grid-cols-[1fr_0.9fr] lg:gap-20">
+              <RevealOnScroll>
+                <div className="mx-auto max-w-3xl text-center lg:mx-0 lg:max-w-none lg:text-left">
+                  <p className={`mb-8 ${eyebrow}`}>Specialty Coffee, Perfected</p>
+                  <h1 className="bg-gradient-to-b from-stone-50 to-stone-400 bg-clip-text text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.035em] text-transparent sm:text-6xl lg:text-[4.5rem]">
+                    BrewAtlas
+                  </h1>
+                  <p className="mx-auto mt-8 max-w-xl text-lg leading-[1.8] text-stone-400 sm:text-xl sm:leading-[1.75] lg:mx-0">
+                    The world&apos;s largest specialty coffee recipe platform.
+                  </p>
+                  <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5 lg:justify-start">
+                    <Link href="#recipes" className={btnPrimary}>
+                      Explore Recipes
+                    </Link>
+                    <Link href="#pricing" className={btnSecondary}>
+                      Join Premium
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </RevealOnScroll>
+              </RevealOnScroll>
+
+              <RevealOnScroll delay={120} className="relative hidden lg:block">
+                <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-br from-amber-900/25 to-transparent blur-2xl" />
+                <PremiumImage
+                  src={unsplash("photo-1509042239860-f550ce710b93", 900)}
+                  alt="Warm specialty coffee in a ceramic cup"
+                  overlay="banner"
+                  sizes="(min-width: 1024px) 40vw, 0px"
+                  className="relative h-[28rem] rounded-[1.75rem] border border-white/[0.06] shadow-[0_40px_80px_-32px_rgba(0,0,0,0.6)]"
+                />
+              </RevealOnScroll>
+            </div>
 
             <RevealOnScroll delay={120} className="relative mx-auto mt-28 max-w-4xl md:mt-32">
               <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-r from-amber-900/20 via-amber-700/10 to-stone-800/20 blur-2xl" />
@@ -480,34 +535,45 @@ export default function Home() {
                 {featuredRecipes.map((recipe) => (
                   <article
                     key={recipe.name}
-                    className={`group relative ${cardBase} p-8 md:p-10`}
+                    className={`group relative overflow-hidden ${cardBase} p-0`}
                   >
-                    <div className="absolute right-7 top-7 rounded-full border border-amber-800/25 bg-amber-950/40 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-400/90">
-                      Premium
+                    <div className="relative">
+                      <PremiumImage
+                        src={recipe.image}
+                        alt={`${recipe.name} coffee`}
+                        overlay="card"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="h-44 w-full"
+                      />
+                      <div className="absolute right-5 top-5 rounded-full border border-amber-800/25 bg-amber-950/60 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-400/90 backdrop-blur-sm">
+                        Premium
+                      </div>
                     </div>
-                    <div className="pr-16">
-                      <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-100">
-                        {recipe.name}
-                      </h3>
-                      <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{recipe.origin}</p>
-                    </div>
-                    <span className="mt-6 inline-block rounded-full bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-400">
-                      {recipe.method}
-                    </span>
-                    <p className="mt-6 text-sm leading-[1.75] text-stone-400">{recipe.notes}</p>
-                    <div className="mt-8 flex flex-wrap gap-5 border-t border-white/[0.04] pt-7 text-xs text-stone-500">
-                      <span>
-                        Ratio{" "}
-                        <strong className="font-medium text-stone-300">{recipe.ratio}</strong>
+                    <div className="relative p-8 md:p-10">
+                      <div>
+                        <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-100">
+                          {recipe.name}
+                        </h3>
+                        <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{recipe.origin}</p>
+                      </div>
+                      <span className="mt-6 inline-block rounded-full bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-400">
+                        {recipe.method}
                       </span>
-                      <span>
-                        Time{" "}
-                        <strong className="font-medium text-stone-300">{recipe.time}</strong>
-                      </span>
-                      <span>
-                        Level{" "}
-                        <strong className="font-medium text-stone-300">{recipe.level}</strong>
-                      </span>
+                      <p className="mt-6 text-sm leading-[1.75] text-stone-400">{recipe.notes}</p>
+                      <div className="mt-8 flex flex-wrap gap-5 border-t border-white/[0.04] pt-7 text-xs text-stone-500">
+                        <span>
+                          Ratio{" "}
+                          <strong className="font-medium text-stone-300">{recipe.ratio}</strong>
+                        </span>
+                        <span>
+                          Time{" "}
+                          <strong className="font-medium text-stone-300">{recipe.time}</strong>
+                        </span>
+                        <span>
+                          Level{" "}
+                          <strong className="font-medium text-stone-300">{recipe.level}</strong>
+                        </span>
+                      </div>
                     </div>
                   </article>
                 ))}
@@ -533,19 +599,28 @@ export default function Home() {
               </div>
               <div className="grid gap-7 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
                 {brewMethods.map((method) => (
-                  <div key={method.name} className={`group ${cardBase} bg-[#0a0705]/50 p-8 md:p-10`}>
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.04] bg-white/[0.03] transition-all duration-500 ease-out group-hover:border-amber-800/30 group-hover:bg-amber-950/20 group-hover:shadow-[0_0_28px_rgba(217,119,6,0.1)]">
-                      <BrewMethodIcon method={method.name} />
+                  <div key={method.name} className={`group overflow-hidden ${cardBase} bg-[#0a0705]/50 p-0`}>
+                    <PremiumImage
+                      src={method.image}
+                      alt={`${method.name} brewing equipment`}
+                      overlay="card"
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="h-40 w-full"
+                    />
+                    <div className="p-8 md:p-10">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.04] bg-white/[0.03] transition-all duration-500 ease-out group-hover:border-amber-800/30 group-hover:bg-amber-950/20 group-hover:shadow-[0_0_28px_rgba(217,119,6,0.1)]">
+                        <BrewMethodIcon method={method.name} />
+                      </div>
+                      <h3 className="mt-7 text-lg font-medium leading-snug tracking-tight text-stone-50">
+                        {method.name}
+                      </h3>
+                      <p className="mt-3.5 text-sm leading-[1.75] text-stone-500">
+                        {method.description}
+                      </p>
+                      <p className="mt-6 text-xs font-medium uppercase tracking-wider text-amber-600/70">
+                        {method.recipes} recipes
+                      </p>
                     </div>
-                    <h3 className="mt-7 text-lg font-medium leading-snug tracking-tight text-stone-50">
-                      {method.name}
-                    </h3>
-                    <p className="mt-3.5 text-sm leading-[1.75] text-stone-500">
-                      {method.description}
-                    </p>
-                    <p className="mt-6 text-xs font-medium uppercase tracking-wider text-amber-600/70">
-                      {method.recipes} recipes
-                    </p>
                   </div>
                 ))}
               </div>
@@ -585,17 +660,26 @@ export default function Home() {
                 </div>
                 <div className="relative">
                   <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-br from-amber-900/15 to-transparent blur-2xl" />
-                  <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-gradient-to-br from-stone-900/60 via-stone-950/80 to-[#0a0705]/60 p-8 shadow-[0_28px_56px_-24px_rgba(0,0,0,0.45)] sm:p-10 md:p-11">
-                    <WorldMap />
-                    <div className="mt-9 flex flex-wrap gap-3">
-                      {coffeeOrigins.map((origin) => (
-                        <span
-                          key={origin.name}
-                          className="rounded-full border border-white/[0.05] bg-white/[0.03] px-3.5 py-1.5 text-xs text-stone-400 transition-all duration-300 hover:border-amber-800/25 hover:text-stone-300"
-                        >
-                          {origin.name}
-                        </span>
-                      ))}
+                  <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-gradient-to-br from-stone-900/60 via-stone-950/80 to-[#0a0705]/60 shadow-[0_28px_56px_-24px_rgba(0,0,0,0.45)]">
+                    <PremiumImage
+                      src={originsFarmImage}
+                      alt="Coffee farm in a lush growing region"
+                      overlay="card"
+                      sizes="(min-width: 1024px) 50vw, 100vw"
+                      className="h-48 w-full sm:h-52"
+                    />
+                    <div className="p-8 sm:p-10 md:p-11">
+                      <WorldMap />
+                      <div className="mt-9 flex flex-wrap gap-3">
+                        {coffeeOrigins.map((origin) => (
+                          <span
+                            key={origin.name}
+                            className="rounded-full border border-white/[0.05] bg-white/[0.03] px-3.5 py-1.5 text-xs text-stone-400 transition-all duration-300 hover:border-amber-800/25 hover:text-stone-300"
+                          >
+                            {origin.name}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -623,22 +707,31 @@ export default function Home() {
                 {topRoasters.map((roaster) => (
                   <div
                     key={roaster.name}
-                    className={`group flex flex-col justify-between ${cardBase} from-stone-900/40 p-8 md:p-10`}
+                    className={`group flex flex-col justify-between overflow-hidden ${cardBase} from-stone-900/40 p-0`}
                   >
-                    <div>
-                      <div className="flex items-start justify-between gap-4">
-                        <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50">
-                          {roaster.name}
-                        </h3>
-                        <span className="shrink-0 rounded-full bg-amber-950/50 px-2.5 py-0.5 text-xs font-medium text-amber-400">
-                          {roaster.rating}
-                        </span>
+                    <PremiumImage
+                      src={roaster.image}
+                      alt={`${roaster.name} roastery`}
+                      overlay="card"
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="h-36 w-full"
+                    />
+                    <div className="flex flex-1 flex-col justify-between p-8 md:p-10">
+                      <div>
+                        <div className="flex items-start justify-between gap-4">
+                          <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50">
+                            {roaster.name}
+                          </h3>
+                          <span className="shrink-0 rounded-full bg-amber-950/50 px-2.5 py-0.5 text-xs font-medium text-amber-400">
+                            {roaster.rating}
+                          </span>
+                        </div>
+                        <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{roaster.location}</p>
                       </div>
-                      <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{roaster.location}</p>
+                      <p className="mt-7 text-sm leading-relaxed text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
+                        {roaster.specialty}
+                      </p>
                     </div>
-                    <p className="mt-7 text-sm leading-relaxed text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
-                      {roaster.specialty}
-                    </p>
                   </div>
                 ))}
               </div>
@@ -656,15 +749,24 @@ export default function Home() {
               </div>
               <div className="grid gap-8 lg:grid-cols-3">
                 {testimonials.map((item) => (
-                  <blockquote key={item.name} className={`group flex flex-col ${cardBase} p-9 md:p-11`}>
-                    <p className="flex-1 text-base leading-[1.8] text-stone-300">
-                      &ldquo;{item.quote}&rdquo;
-                    </p>
-                    <footer className="mt-10 border-t border-white/[0.04] pt-8">
-                      <p className="font-medium text-stone-50">{item.name}</p>
-                      <p className="mt-2 text-sm leading-relaxed text-stone-500">{item.role}</p>
-                      <p className="mt-1 text-xs text-amber-600/70">{item.location}</p>
-                    </footer>
+                  <blockquote key={item.name} className={`group flex flex-col overflow-hidden ${cardBase} p-0`}>
+                    <PremiumImage
+                      src={item.image}
+                      alt={`${item.name}, ${item.role}`}
+                      overlay="portrait"
+                      sizes="(min-width: 1024px) 33vw, 100vw"
+                      className="h-52 w-full"
+                    />
+                    <div className="flex flex-1 flex-col p-9 md:p-11">
+                      <p className="flex-1 text-base leading-[1.8] text-stone-300">
+                        &ldquo;{item.quote}&rdquo;
+                      </p>
+                      <footer className="mt-10 border-t border-white/[0.04] pt-8">
+                        <p className="font-medium text-stone-50">{item.name}</p>
+                        <p className="mt-2 text-sm leading-relaxed text-stone-500">{item.role}</p>
+                        <p className="mt-1 text-xs text-amber-600/70">{item.location}</p>
+                      </footer>
+                    </div>
                   </blockquote>
                 ))}
               </div>
