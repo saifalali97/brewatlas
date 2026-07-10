@@ -64,45 +64,54 @@ function RecipeCard({
 }) {
   return (
     <article
-      className={`group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/[0.06] bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-transparent shadow-[0_8px_32px_-12px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:border-amber-700/25 hover:shadow-[0_28px_56px_-16px_rgba(180,120,60,0.18)] ${
-        featured ? "lg:col-span-2" : ""
+      className={`group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border bg-gradient-to-br from-white/[0.08] via-white/[0.035] to-white/[0.01] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 hover:shadow-[0_32px_68px_-20px_rgba(180,120,60,0.2)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
+        featured
+          ? "lg:col-span-2 border-amber-600/25 ring-1 ring-amber-500/20 shadow-[0_20px_56px_-20px_rgba(180,120,60,0.18)] hover:border-amber-500/35"
+          : "border-white/[0.11] hover:border-amber-600/28"
       }`}
     >
-      <div className={`relative overflow-hidden ${featured ? "h-56 sm:h-64 lg:h-72" : "h-48 sm:h-52"}`}>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-[1.5rem] bg-gradient-to-b from-white/[0.07] via-transparent to-transparent"
+      />
+
+      <div className={`relative overflow-hidden ${featured ? "h-56 sm:h-64 lg:h-[19rem]" : "h-48 sm:h-52 lg:h-56"}`}>
         <Image
           src={recipe.image}
           alt={`${recipe.name} — ${recipe.country}`}
           fill
-          unoptimized
           sizes={featured ? "(min-width: 1024px) 66vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"}
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          className="object-cover brightness-[0.88] contrast-[1.04] saturate-[0.92] transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] motion-reduce:transform-none"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0705] via-[#0a0705]/20 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-950/10 via-transparent to-[#0a0705]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0705] via-[#0a0705]/15 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-950/8 via-transparent to-[#0a0705]/25" />
 
         <div className="absolute left-5 top-5 flex flex-wrap gap-2">
-          <span className="rounded-full border border-white/10 bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-stone-300 backdrop-blur-md">
+          <span className="rounded-full border border-white/[0.14] bg-[#0a0705]/50 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-stone-200 backdrop-blur-xl">
             {recipe.brewMethod}
           </span>
-          <span className="rounded-full border border-amber-800/20 bg-amber-950/45 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-amber-400/90 backdrop-blur-md">
+          <span className="rounded-full border border-amber-700/25 bg-amber-950/50 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-amber-300/90 backdrop-blur-xl">
             {recipe.roastLevel}
           </span>
         </div>
 
         {recipe.premium && (
-          <div className="absolute right-5 top-5 rounded-full border border-amber-700/30 bg-amber-950/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-300/90 backdrop-blur-md">
+          <div className="absolute right-5 top-5 rounded-full border border-amber-700/35 bg-amber-950/65 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-200/90 backdrop-blur-xl">
             Premium
           </div>
         )}
 
         {recipe.featured && (
-          <div className="absolute bottom-5 left-5 rounded-full border border-amber-600/35 bg-amber-950/55 px-3.5 py-1.5 text-[11px] font-medium text-amber-200/90 backdrop-blur-md">
-            Recipe of the Week
+          <div className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-950/70 to-[#0a0705]/60 px-4 py-1.5 text-[11px] font-medium text-amber-100/95 shadow-[0_0_28px_rgba(217,119,6,0.15)] backdrop-blur-xl">
+            <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-amber-400" aria-hidden>
+              <path d="M8 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4L2.2 6.2l4-.6L8 2z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
+            </svg>
+            Editor&apos;s Choice
           </div>
         )}
       </div>
 
-      <div className={`flex flex-1 flex-col ${featured ? "p-8 lg:p-10" : "p-7 lg:p-8"}`}>
+      <div className={`relative flex flex-1 flex-col ${featured ? "p-8 lg:p-10" : "p-7 lg:p-8"}`}>
         <div className="flex-1">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-600/70">
             {recipe.country}
@@ -195,7 +204,7 @@ export function FeaturedRecipesSection({
             })}
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
+          <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
             {filteredRecipes.map((recipe) => (
               <RecipeCard
                 key={recipe.name}
@@ -211,10 +220,10 @@ export function FeaturedRecipesSection({
             </p>
           )}
 
-          <div className="mt-14 flex justify-center md:mt-16">
+          <div className="mt-16 flex justify-center md:mt-20">
             <RippleLink
               href="#recipes"
-              className={`${btnSecondary} min-w-[220px] border-amber-600/25 bg-white/[0.04] backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-amber-500/40 hover:bg-white/[0.07] hover:shadow-[0_0_40px_rgba(217,119,6,0.14)]`}
+              className={`${btnSecondary} min-w-[240px] border-amber-600/30 bg-white/[0.05] px-10 backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-amber-500/45 hover:bg-white/[0.08] hover:shadow-[0_0_48px_rgba(217,119,6,0.18),0_16px_40px_-16px_rgba(0,0,0,0.4)] motion-reduce:hover:translate-y-0`}
             >
               View All Recipes
             </RippleLink>
