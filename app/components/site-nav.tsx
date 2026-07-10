@@ -14,6 +14,14 @@ const navLinks = [
 
 export function SiteNav() {
   const [activeId, setActiveId] = useState<string>("");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const sections = navLinks
@@ -30,7 +38,7 @@ export function SiteNav() {
           setActiveId(visible[0].target.id);
         }
       },
-      { rootMargin: "-20% 0px -65% 0px", threshold: [0, 0.25, 0.5] },
+      { rootMargin: "-18% 0px -62% 0px", threshold: [0, 0.2, 0.45, 0.7] },
     );
 
     sections.forEach((section) => observer.observe(section));
@@ -38,29 +46,37 @@ export function SiteNav() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.04] bg-[#0a0705]/75 backdrop-blur-2xl backdrop-saturate-150">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6 lg:px-8 lg:py-5">
+    <header
+      className={`sticky top-0 z-50 border-b transition-all duration-500 ease-out backdrop-blur-2xl backdrop-saturate-150 ${
+        scrolled
+          ? "border-white/[0.06] bg-[#0a0705]/92 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.45)]"
+          : "border-white/[0.04] bg-[#0a0705]/70"
+      }`}
+    >
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6 md:py-4 lg:px-8 lg:py-5">
         <Link
           href="/"
           className="text-lg font-semibold tracking-tight text-stone-50 transition-opacity duration-300 hover:opacity-80"
         >
           BrewAtlas
         </Link>
-        <div className="hidden items-center gap-8 text-sm lg:flex xl:gap-9">
+        <div className="hidden items-center gap-7 text-sm lg:flex xl:gap-9">
           {navLinks.map((link) => {
             const isActive = activeId === link.id;
             return (
               <a
                 key={link.id}
                 href={link.href}
-                className={`group relative py-1 transition-colors duration-300 ${
+                className={`group relative px-0.5 py-1.5 transition-colors duration-300 ${
                   isActive ? "text-stone-100" : "text-stone-400 hover:text-stone-100"
                 }`}
               >
                 {link.label}
                 <span
-                  className={`absolute -bottom-0.5 left-0 h-px bg-amber-500/90 transition-all duration-300 ease-out ${
-                    isActive ? "w-full opacity-100" : "w-0 opacity-0 group-hover:w-full group-hover:opacity-70"
+                  className={`absolute -bottom-0.5 left-1/2 h-px -translate-x-1/2 bg-amber-500/90 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                    isActive
+                      ? "w-full opacity-100"
+                      : "w-0 opacity-0 group-hover:w-full group-hover:opacity-60"
                   }`}
                 />
               </a>
@@ -69,7 +85,7 @@ export function SiteNav() {
         </div>
         <Link
           href="#pricing"
-          className="rounded-full bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.03] hover:bg-amber-500 hover:shadow-[0_0_28px_rgba(217,119,6,0.35)] active:scale-[0.98] sm:px-5"
+          className="rounded-full bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_36px_rgba(217,119,6,0.42)] active:scale-[0.97] sm:px-5"
         >
           Join Premium
         </Link>

@@ -248,19 +248,22 @@ const heroStats = [
   { label: "Countries", value: "62" },
 ];
 
-const sectionPad = "px-5 py-32 sm:px-6 md:py-36 lg:px-8 lg:py-40";
-const eyebrow = "text-sm font-medium uppercase tracking-[0.22em] text-amber-500/90";
+const sectionPad =
+  "px-5 py-36 sm:px-6 md:px-7 md:py-40 lg:px-8 lg:py-44";
+const eyebrow =
+  "text-[0.8125rem] font-medium uppercase tracking-[0.24em] text-amber-500/90";
 const sectionTitle =
-  "mt-4 text-3xl font-semibold leading-[1.12] tracking-tight text-stone-50 sm:text-4xl lg:text-[2.75rem]";
-const sectionLead = "mt-6 text-lg leading-[1.75] text-stone-400 md:text-xl md:leading-[1.7]";
+  "mt-5 text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-stone-50 sm:text-4xl lg:text-[2.875rem]";
+const sectionLead =
+  "mt-7 max-w-2xl text-lg leading-[1.8] text-stone-400 md:text-xl md:leading-[1.75]";
 const cardBase =
-  "rounded-[1.375rem] border border-white/[0.06] bg-gradient-to-br from-white/[0.045] via-white/[0.02] to-transparent transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-amber-700/25 hover:shadow-[0_32px_64px_-20px_rgba(180,120,60,0.14)]";
+  "rounded-[1.5rem] border border-white/[0.05] bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-transparent shadow-[0_4px_24px_-8px_rgba(0,0,0,0.25)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:border-amber-700/20 hover:from-white/[0.06] hover:shadow-[0_36px_72px_-24px_rgba(180,120,60,0.16)]";
 const btnPrimary =
-  "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-stone-50 px-8 text-sm font-medium text-stone-900 transition-all duration-300 ease-out hover:scale-[1.03] hover:bg-stone-200 hover:shadow-[0_12px_40px_rgba(255,255,255,0.14)] active:scale-[0.98]";
+  "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-stone-50 px-8 text-sm font-medium text-stone-900 transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-stone-200 hover:shadow-[0_14px_44px_rgba(255,255,255,0.16)] active:scale-[0.97]";
 const btnSecondary =
-  "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-stone-600/50 bg-white/[0.04] px-8 text-sm font-medium text-stone-100 backdrop-blur-sm transition-all duration-300 ease-out hover:scale-[1.03] hover:border-amber-600/45 hover:bg-white/[0.08] hover:shadow-[0_0_32px_rgba(217,119,6,0.12)] active:scale-[0.98]";
+  "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-stone-600/45 bg-white/[0.04] px-8 text-sm font-medium text-stone-100 backdrop-blur-sm transition-all duration-300 ease-out hover:scale-[1.04] hover:border-amber-600/40 hover:bg-white/[0.08] hover:shadow-[0_0_40px_rgba(217,119,6,0.16)] active:scale-[0.97]";
 const btnPremium =
-  "inline-flex h-12 items-center justify-center rounded-full bg-amber-600 px-8 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.03] hover:bg-amber-500 hover:shadow-[0_0_32px_rgba(217,119,6,0.4)] active:scale-[0.98]";
+  "inline-flex h-12 items-center justify-center rounded-full bg-amber-600 px-8 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_44px_rgba(217,119,6,0.48)] active:scale-[0.97]";
 
 function BrewMethodIcon({ method }: { method: string }) {
   const className =
@@ -417,6 +420,8 @@ export default function Home() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_50%_50%,rgba(180,120,60,0.06),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(217,119,6,0.04),transparent_40%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_65%,rgba(120,70,40,0.05),transparent_35%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_100%,rgba(90,50,30,0.12),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(217,119,6,0.03),transparent_50%)]" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f0a]/40 via-transparent to-[#0a0705]" />
       </div>
 
@@ -424,15 +429,15 @@ export default function Home() {
 
       <main>
         {/* Hero */}
-        <section className="relative px-5 pb-28 pt-24 sm:px-6 md:pb-32 md:pt-28 lg:px-8 lg:pb-36 lg:pt-36">
+        <section className="relative px-5 pb-32 pt-24 sm:px-6 md:px-7 md:pb-36 md:pt-28 lg:px-8 lg:pb-40 lg:pt-36">
           <div className="mx-auto max-w-6xl">
             <RevealOnScroll>
               <div className="mx-auto max-w-3xl text-center">
-                <p className={`mb-7 ${eyebrow}`}>Specialty Coffee, Perfected</p>
-                <h1 className="bg-gradient-to-b from-stone-50 to-stone-400 bg-clip-text text-5xl font-semibold leading-[1.05] tracking-[-0.03em] text-transparent sm:text-6xl lg:text-7xl">
+                <p className={`mb-8 ${eyebrow}`}>Specialty Coffee, Perfected</p>
+                <h1 className="bg-gradient-to-b from-stone-50 to-stone-400 bg-clip-text text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.035em] text-transparent sm:text-6xl lg:text-[4.5rem]">
                   BrewAtlas
                 </h1>
-                <p className="mx-auto mt-7 max-w-xl text-lg leading-[1.75] text-stone-400 sm:text-xl sm:leading-[1.7]">
+                <p className="mx-auto mt-8 max-w-xl text-lg leading-[1.8] text-stone-400 sm:text-xl sm:leading-[1.75]">
                   The world&apos;s largest specialty coffee recipe platform.
                 </p>
                 <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-5">
@@ -446,10 +451,10 @@ export default function Home() {
               </div>
             </RevealOnScroll>
 
-            <RevealOnScroll delay={120} className="relative mx-auto mt-24 max-w-4xl md:mt-28">
+            <RevealOnScroll delay={120} className="relative mx-auto mt-28 max-w-4xl md:mt-32">
               <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-r from-amber-900/20 via-amber-700/10 to-stone-800/20 blur-2xl" />
-              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-stone-900/80 via-stone-950/90 to-[#0a0705]/80 p-9 shadow-[0_32px_64px_-24px_rgba(0,0,0,0.5)] backdrop-blur-sm sm:p-12 md:p-14">
-                <div className="grid gap-8 sm:grid-cols-3 sm:gap-6">
+              <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-gradient-to-br from-stone-900/80 via-stone-950/90 to-[#0a0705]/80 p-10 shadow-[0_36px_72px_-28px_rgba(0,0,0,0.55)] backdrop-blur-sm sm:p-12 md:p-14">
+                <div className="grid gap-10 sm:grid-cols-3 sm:gap-8">
                   {heroStats.map((stat) => (
                     <AnimatedStat key={stat.label} value={stat.value} label={stat.label} />
                   ))}
@@ -461,9 +466,9 @@ export default function Home() {
 
         {/* Featured Recipes */}
         <section id="recipes" className={sectionPad}>
-          <div className="mx-auto max-w-6xl">
-            <RevealOnScroll>
-              <div className="mb-16 max-w-2xl md:mb-20">
+          <RevealOnScroll>
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-20 max-w-2xl md:mb-24">
                 <p className={eyebrow}>Curated Collection</p>
                 <h2 className={sectionTitle}>Featured Recipes</h2>
                 <p className={sectionLead}>
@@ -471,27 +476,26 @@ export default function Home() {
                   size, water temperature, and step-by-step guidance.
                 </p>
               </div>
-            </RevealOnScroll>
-            <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3">
-              {featuredRecipes.map((recipe, index) => (
-                <RevealOnScroll key={recipe.name} delay={index * 80}>
+              <div className="grid gap-8 sm:grid-cols-2 md:gap-9 lg:grid-cols-3">
+                {featuredRecipes.map((recipe) => (
                   <article
-                    className={`group relative ${cardBase} p-8 md:p-9`}
+                    key={recipe.name}
+                    className={`group relative ${cardBase} p-8 md:p-10`}
                   >
-                    <div className="absolute right-6 top-6 rounded-full border border-amber-800/25 bg-amber-950/40 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-400/90">
+                    <div className="absolute right-7 top-7 rounded-full border border-amber-800/25 bg-amber-950/40 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-400/90">
                       Premium
                     </div>
                     <div className="pr-16">
                       <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-100">
                         {recipe.name}
                       </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-stone-500">{recipe.origin}</p>
+                      <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{recipe.origin}</p>
                     </div>
-                    <span className="mt-5 inline-block rounded-full bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-400">
+                    <span className="mt-6 inline-block rounded-full bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-400">
                       {recipe.method}
                     </span>
-                    <p className="mt-5 text-sm leading-[1.7] text-stone-400">{recipe.notes}</p>
-                    <div className="mt-7 flex flex-wrap gap-5 border-t border-white/[0.04] pt-6 text-xs text-stone-500">
+                    <p className="mt-6 text-sm leading-[1.75] text-stone-400">{recipe.notes}</p>
+                    <div className="mt-8 flex flex-wrap gap-5 border-t border-white/[0.04] pt-7 text-xs text-stone-500">
                       <span>
                         Ratio{" "}
                         <strong className="font-medium text-stone-300">{recipe.ratio}</strong>
@@ -506,10 +510,10 @@ export default function Home() {
                       </span>
                     </div>
                   </article>
-                </RevealOnScroll>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </RevealOnScroll>
         </section>
 
         {/* Brew Methods */}
@@ -517,9 +521,9 @@ export default function Home() {
           id="methods"
           className={`border-y border-white/[0.04] bg-white/[0.015] ${sectionPad}`}
         >
-          <div className="mx-auto max-w-6xl">
-            <RevealOnScroll>
-              <div className="mb-16 text-center md:mb-20">
+          <RevealOnScroll>
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-20 text-center md:mb-24">
                 <p className={eyebrow}>Master Every Technique</p>
                 <h2 className={sectionTitle}>Brewing Methods</h2>
                 <p className={`mx-auto max-w-xl ${sectionLead}`}>
@@ -527,35 +531,33 @@ export default function Home() {
                   by method, equipment, and skill level.
                 </p>
               </div>
-            </RevealOnScroll>
-            <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
-              {brewMethods.map((method, index) => (
-                <RevealOnScroll key={method.name} delay={index * 80}>
-                  <div className={`group ${cardBase} bg-[#0a0705]/50 p-8 md:p-9`}>
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.04] bg-white/[0.03] transition-all duration-500 ease-out group-hover:border-amber-800/30 group-hover:bg-amber-950/20 group-hover:shadow-[0_0_24px_rgba(217,119,6,0.08)]">
+              <div className="grid gap-7 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
+                {brewMethods.map((method) => (
+                  <div key={method.name} className={`group ${cardBase} bg-[#0a0705]/50 p-8 md:p-10`}>
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.04] bg-white/[0.03] transition-all duration-500 ease-out group-hover:border-amber-800/30 group-hover:bg-amber-950/20 group-hover:shadow-[0_0_28px_rgba(217,119,6,0.1)]">
                       <BrewMethodIcon method={method.name} />
                     </div>
-                    <h3 className="mt-6 text-lg font-medium leading-snug tracking-tight text-stone-50">
+                    <h3 className="mt-7 text-lg font-medium leading-snug tracking-tight text-stone-50">
                       {method.name}
                     </h3>
-                    <p className="mt-3 text-sm leading-[1.7] text-stone-500">
+                    <p className="mt-3.5 text-sm leading-[1.75] text-stone-500">
                       {method.description}
                     </p>
-                    <p className="mt-5 text-xs font-medium uppercase tracking-wider text-amber-600/70">
+                    <p className="mt-6 text-xs font-medium uppercase tracking-wider text-amber-600/70">
                       {method.recipes} recipes
                     </p>
                   </div>
-                </RevealOnScroll>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </RevealOnScroll>
         </section>
 
         {/* Coffee Origins */}
         <section id="origins" className={sectionPad}>
-          <div className="mx-auto max-w-6xl">
-            <div className="grid items-center gap-16 md:gap-20 lg:grid-cols-2 lg:gap-24">
-              <RevealOnScroll>
+          <RevealOnScroll>
+            <div className="mx-auto max-w-6xl">
+              <div className="grid items-center gap-16 md:gap-24 lg:grid-cols-2 lg:gap-28">
                 <div>
                   <p className={eyebrow}>From Farm to Cup</p>
                   <h2 className={sectionTitle}>Coffee Origins</h2>
@@ -564,15 +566,15 @@ export default function Home() {
                     altitude data, and processing methods from the world&apos;s
                     greatest growing regions.
                   </p>
-                  <div className="mt-12 space-y-4">
+                  <div className="mt-14 space-y-4">
                     {coffeeOrigins.slice(0, 5).map((origin) => (
                       <div
                         key={origin.name}
-                        className="group flex items-center justify-between rounded-2xl border border-white/[0.04] bg-gradient-to-r from-white/[0.03] to-transparent px-6 py-5 transition-all duration-500 ease-out hover:-translate-y-0.5 hover:border-amber-800/25 hover:bg-white/[0.04] hover:shadow-[0_16px_32px_-16px_rgba(180,120,60,0.1)]"
+                        className="group flex items-center justify-between rounded-2xl border border-white/[0.04] bg-gradient-to-r from-white/[0.03] to-transparent px-6 py-5 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-amber-800/20 hover:bg-white/[0.04] hover:shadow-[0_20px_40px_-20px_rgba(180,120,60,0.12)] md:px-7 md:py-6"
                       >
                         <div>
                           <p className="font-medium text-stone-50">{origin.name}</p>
-                          <p className="mt-1 text-sm leading-relaxed text-stone-500">{origin.region}</p>
+                          <p className="mt-1.5 text-sm leading-relaxed text-stone-500">{origin.region}</p>
                         </div>
                         <span className="text-sm font-medium text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
                           {origin.recipes}
@@ -581,17 +583,15 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
-              </RevealOnScroll>
-              <RevealOnScroll delay={100}>
                 <div className="relative">
                   <div className="absolute -inset-4 rounded-[1.75rem] bg-gradient-to-br from-amber-900/15 to-transparent blur-2xl" />
-                  <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-stone-900/60 via-stone-950/80 to-[#0a0705]/60 p-7 shadow-[0_24px_48px_-20px_rgba(0,0,0,0.4)] sm:p-9 md:p-10">
+                  <div className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.06] bg-gradient-to-br from-stone-900/60 via-stone-950/80 to-[#0a0705]/60 p-8 shadow-[0_28px_56px_-24px_rgba(0,0,0,0.45)] sm:p-10 md:p-11">
                     <WorldMap />
-                    <div className="mt-8 flex flex-wrap gap-3">
+                    <div className="mt-9 flex flex-wrap gap-3">
                       {coffeeOrigins.map((origin) => (
                         <span
                           key={origin.name}
-                          className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3.5 py-1.5 text-xs text-stone-400 transition-colors duration-300 hover:border-amber-800/25 hover:text-stone-300"
+                          className="rounded-full border border-white/[0.05] bg-white/[0.03] px-3.5 py-1.5 text-xs text-stone-400 transition-all duration-300 hover:border-amber-800/25 hover:text-stone-300"
                         >
                           {origin.name}
                         </span>
@@ -599,9 +599,9 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </RevealOnScroll>
+              </div>
             </div>
-          </div>
+          </RevealOnScroll>
         </section>
 
         {/* Top Roasters */}
@@ -609,9 +609,9 @@ export default function Home() {
           id="roasters"
           className={`border-t border-white/[0.04] bg-white/[0.008] ${sectionPad}`}
         >
-          <div className="mx-auto max-w-6xl">
-            <RevealOnScroll>
-              <div className="mb-16 max-w-2xl md:mb-20">
+          <RevealOnScroll>
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-20 max-w-2xl md:mb-24">
                 <p className={eyebrow}>Roaster Partners</p>
                 <h2 className={sectionTitle}>Top Roasters</h2>
                 <p className={sectionLead}>
@@ -619,11 +619,12 @@ export default function Home() {
                   respected specialty roasters.
                 </p>
               </div>
-            </RevealOnScroll>
-            <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
-              {topRoasters.map((roaster, index) => (
-                <RevealOnScroll key={roaster.name} delay={index * 80}>
-                  <div className={`group flex flex-col justify-between ${cardBase} from-stone-900/40 p-8 md:p-9`}>
+              <div className="grid gap-7 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
+                {topRoasters.map((roaster) => (
+                  <div
+                    key={roaster.name}
+                    className={`group flex flex-col justify-between ${cardBase} from-stone-900/40 p-8 md:p-10`}
+                  >
                     <div>
                       <div className="flex items-start justify-between gap-4">
                         <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50">
@@ -633,44 +634,42 @@ export default function Home() {
                           {roaster.rating}
                         </span>
                       </div>
-                      <p className="mt-2 text-sm leading-relaxed text-stone-500">{roaster.location}</p>
+                      <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{roaster.location}</p>
                     </div>
-                    <p className="mt-6 text-sm leading-relaxed text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
+                    <p className="mt-7 text-sm leading-relaxed text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
                       {roaster.specialty}
                     </p>
                   </div>
-                </RevealOnScroll>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </RevealOnScroll>
         </section>
 
         {/* Testimonials */}
         <section id="testimonials" className={sectionPad}>
-          <div className="mx-auto max-w-6xl">
-            <RevealOnScroll>
-              <div className="mb-16 text-center md:mb-20">
+          <RevealOnScroll>
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-20 text-center md:mb-24">
                 <p className={eyebrow}>Trusted by Professionals</p>
                 <h2 className={sectionTitle}>What Baristas Say</h2>
               </div>
-            </RevealOnScroll>
-            <div className="grid gap-7 lg:grid-cols-3 lg:gap-8">
-              {testimonials.map((item, index) => (
-                <RevealOnScroll key={item.name} delay={index * 100}>
-                  <blockquote className={`group flex flex-col ${cardBase} p-9 md:p-10`}>
-                    <p className="flex-1 text-base leading-[1.75] text-stone-300">
+              <div className="grid gap-8 lg:grid-cols-3">
+                {testimonials.map((item) => (
+                  <blockquote key={item.name} className={`group flex flex-col ${cardBase} p-9 md:p-11`}>
+                    <p className="flex-1 text-base leading-[1.8] text-stone-300">
                       &ldquo;{item.quote}&rdquo;
                     </p>
-                    <footer className="mt-9 border-t border-white/[0.04] pt-7">
+                    <footer className="mt-10 border-t border-white/[0.04] pt-8">
                       <p className="font-medium text-stone-50">{item.name}</p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-stone-500">{item.role}</p>
+                      <p className="mt-2 text-sm leading-relaxed text-stone-500">{item.role}</p>
                       <p className="mt-1 text-xs text-amber-600/70">{item.location}</p>
                     </footer>
                   </blockquote>
-                </RevealOnScroll>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </RevealOnScroll>
         </section>
 
         {/* Premium Pricing */}
@@ -678,9 +677,9 @@ export default function Home() {
           id="pricing"
           className={`border-y border-white/[0.04] ${sectionPad}`}
         >
-          <div className="mx-auto max-w-6xl">
-            <RevealOnScroll>
-              <div className="mb-16 text-center md:mb-20">
+          <RevealOnScroll>
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-20 text-center md:mb-24">
                 <p className={eyebrow}>Membership</p>
                 <h2 className={sectionTitle}>Premium Plans</h2>
                 <p className={`mx-auto max-w-xl ${sectionLead}`}>
@@ -688,25 +687,24 @@ export default function Home() {
                   coffee journey evolves.
                 </p>
               </div>
-            </RevealOnScroll>
-            <div className="grid gap-7 lg:grid-cols-3 lg:gap-8">
-              {pricingPlans.map((plan, index) => (
-                <RevealOnScroll key={plan.name} delay={index * 100}>
+              <div className="grid gap-8 lg:grid-cols-3">
+                {pricingPlans.map((plan) => (
                   <div
-                    className={`relative flex flex-col rounded-[1.5rem] border p-9 transition-all duration-500 ease-out hover:-translate-y-1.5 sm:p-10 md:p-11 ${
+                    key={plan.name}
+                    className={`relative flex flex-col rounded-[1.5rem] border p-9 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 sm:p-10 md:p-11 ${
                       plan.highlighted
-                        ? "border-amber-700/35 bg-gradient-to-b from-amber-950/40 via-stone-950/50 to-[#0a0705]/80 shadow-[0_32px_64px_-20px_rgba(180,120,60,0.18)] hover:border-amber-600/45 hover:shadow-[0_40px_72px_-20px_rgba(180,120,60,0.22)]"
-                        : `${cardBase} hover:border-white/12`
+                        ? "border-amber-700/35 bg-gradient-to-b from-amber-950/40 via-stone-950/50 to-[#0a0705]/80 shadow-[0_36px_72px_-24px_rgba(180,120,60,0.2)] hover:border-amber-600/45 hover:shadow-[0_44px_80px_-24px_rgba(180,120,60,0.26)]"
+                        : `${cardBase} hover:border-white/10`
                     }`}
                   >
                     {plan.highlighted && (
-                      <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-1 text-xs font-medium text-white shadow-[0_0_20px_rgba(217,119,6,0.3)]">
+                      <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-1 text-xs font-medium text-white shadow-[0_0_24px_rgba(217,119,6,0.35)]">
                         Most Popular
                       </span>
                     )}
                     <div>
                       <h3 className="text-lg font-medium text-stone-50">{plan.name}</h3>
-                      <div className="mt-5 flex items-baseline gap-1">
+                      <div className="mt-6 flex items-baseline gap-1">
                         <span className="text-4xl font-semibold tracking-tight text-stone-50 lg:text-[2.5rem]">
                           {plan.price}
                         </span>
@@ -717,11 +715,11 @@ export default function Home() {
                       {plan.price === "Free" && (
                         <span className="text-sm text-stone-500">{plan.period}</span>
                       )}
-                      <p className="mt-5 text-sm leading-[1.7] text-stone-400">
+                      <p className="mt-6 text-sm leading-[1.75] text-stone-400">
                         {plan.description}
                       </p>
                     </div>
-                    <ul className="mt-9 flex-1 space-y-3.5">
+                    <ul className="mt-10 flex-1 space-y-4">
                       {plan.features.map((feature) => (
                         <li
                           key={feature}
@@ -734,52 +732,53 @@ export default function Home() {
                     </ul>
                     <Link
                       href="#"
-                      className={`mt-10 ${plan.highlighted ? btnPremium : `${btnSecondary} w-full min-w-0`}`}
+                      className={`mt-11 ${plan.highlighted ? btnPremium : `${btnSecondary} w-full min-w-0`}`}
                     >
                       {plan.cta}
                     </Link>
                   </div>
-                </RevealOnScroll>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </RevealOnScroll>
         </section>
 
         {/* FAQ */}
         <section id="faq" className={sectionPad}>
-          <div className="mx-auto max-w-3xl">
-            <RevealOnScroll>
-              <div className="mb-16 text-center md:mb-20">
+          <RevealOnScroll>
+            <div className="mx-auto max-w-3xl">
+              <div className="mb-20 text-center md:mb-24">
                 <p className={eyebrow}>Support</p>
                 <h2 className={sectionTitle}>Frequently Asked Questions</h2>
               </div>
-            </RevealOnScroll>
-            <div className="space-y-4">
-              {faqs.map((faq, index) => (
-                <RevealOnScroll key={faq.question} delay={index * 60}>
-                  <details className="group rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-transparent transition-all duration-300 open:border-amber-800/25 open:bg-white/[0.04] hover:border-white/10">
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-7 py-6 text-base font-medium leading-snug text-stone-50 [&::-webkit-details-marker]:hidden">
+              <div className="space-y-4">
+                {faqs.map((faq) => (
+                  <details
+                    key={faq.question}
+                    className="group rounded-2xl border border-white/[0.05] bg-gradient-to-br from-white/[0.03] to-transparent transition-all duration-300 open:border-amber-800/20 open:bg-white/[0.04] hover:border-white/10"
+                  >
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-7 py-6 text-base font-medium leading-snug text-stone-50 md:px-8 md:py-7 [&::-webkit-details-marker]:hidden">
                       {faq.question}
                       <span className="shrink-0 text-lg text-stone-500 transition-transform duration-300 group-open:rotate-45">
                         +
                       </span>
                     </summary>
-                    <div className="border-t border-white/[0.04] px-7 pb-6 pt-5">
-                      <p className="text-sm leading-[1.75] text-stone-400">{faq.answer}</p>
+                    <div className="border-t border-white/[0.04] px-7 pb-7 pt-6 md:px-8">
+                      <p className="text-sm leading-[1.8] text-stone-400">{faq.answer}</p>
                     </div>
                   </details>
-                </RevealOnScroll>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </RevealOnScroll>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/[0.04] bg-[#080504] px-5 pt-24 pb-12 sm:px-6 lg:px-8">
+      <footer className="border-t border-white/[0.04] bg-[#080504] px-5 pt-28 pb-14 sm:px-6 md:px-7 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <RevealOnScroll>
-            <div className="grid gap-14 sm:grid-cols-2 sm:gap-12 lg:grid-cols-4 lg:gap-16">
+            <div className="grid gap-16 sm:grid-cols-2 sm:gap-14 lg:grid-cols-4 lg:gap-20">
               <div className="lg:col-span-1">
                 <Link
                   href="/"
@@ -787,7 +786,7 @@ export default function Home() {
                 >
                   BrewAtlas
                 </Link>
-                <p className="mt-5 max-w-xs text-sm leading-[1.75] text-stone-500">
+                <p className="mt-6 max-w-xs text-sm leading-[1.8] text-stone-500">
                   The definitive platform for specialty coffee recipes, origins,
                   and brew science. Craft coffee, mapped.
                 </p>
@@ -870,7 +869,7 @@ export default function Home() {
               </div>
             </div>
           </RevealOnScroll>
-          <div className="mt-20 flex flex-col items-center justify-between gap-4 border-t border-white/[0.04] pt-10 sm:flex-row">
+          <div className="mt-24 flex flex-col items-center justify-between gap-5 border-t border-white/[0.04] pt-12 sm:flex-row">
             <p className="text-sm text-stone-600">
               © {new Date().getFullYear()} BrewAtlas. All rights reserved.
             </p>

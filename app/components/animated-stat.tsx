@@ -35,13 +35,21 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
     if (!element) return;
 
     const { target, suffix, useComma } = parseStatValue(value);
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (reducedMotion) {
+      setDisplay(value);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting || hasAnimated.current) return;
         hasAnimated.current = true;
 
-        const duration = 1600;
+        const duration = 1800;
         const start = performance.now();
 
         const tick = (now: number) => {
@@ -59,7 +67,7 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
         requestAnimationFrame(tick);
         observer.unobserve(element);
       },
-      { threshold: 0.4 },
+      { threshold: 0.35 },
     );
 
     observer.observe(element);
@@ -71,7 +79,7 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
       <p className="text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl lg:text-[2.75rem] lg:leading-none">
         {display}
       </p>
-      <p className="mt-2 text-sm leading-relaxed text-stone-500">{label}</p>
+      <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{label}</p>
     </div>
   );
 }
