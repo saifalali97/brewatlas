@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FaqAccordion } from "./components/faq-accordion";
+import { BrewingMethodsSection } from "./components/brewing-methods-section";
 import { FeaturedRecipesSection } from "./components/featured-recipes-section";
 import { FloatingActions } from "./components/floating-actions";
 import { HeroSection } from "./components/hero-section";
@@ -124,38 +125,68 @@ const brewMethods = [
   {
     name: "Pour Over",
     description: "Clarity and nuance. Full control over every variable.",
-    recipes: "2,840",
-    image: unsplash("photo-1511920170033-f8396924c348"),
+    brewTime: "3–4 min",
+    difficulty: "Intermediate" as const,
+    body: 2,
+    acidity: 4,
+    sweetness: 3,
+    suitableRoast: "Light to Medium",
+    image: "/images/recipes/ethiopian-pour-over.png",
   },
   {
     name: "Espresso",
     description: "Pressure, precision, and the foundation of café culture.",
-    recipes: "3,120",
-    image: unsplash("photo-1498804103079-a6351b050096"),
+    brewTime: "25–30 sec",
+    difficulty: "Advanced" as const,
+    body: 4,
+    acidity: 3,
+    sweetness: 2,
+    suitableRoast: "Medium to Dark",
+    image: "/images/recipes/cortado.png",
   },
   {
     name: "French Press",
     description: "Full-bodied immersion with rich oils and depth.",
-    recipes: "980",
-    image: unsplash("photo-1509042239860-f550ce710b93"),
+    brewTime: "4 min",
+    difficulty: "Beginner" as const,
+    body: 5,
+    acidity: 2,
+    sweetness: 3,
+    suitableRoast: "Medium to Dark",
+    image: "/images/methods/french-press.svg",
   },
   {
     name: "Aeropress",
     description: "Versatile, fast, and endlessly experiment-friendly.",
-    recipes: "1,450",
-    image: unsplash("photo-1559827260-dc66d52bef19"),
+    brewTime: "1.5–2 min",
+    difficulty: "Intermediate" as const,
+    body: 3,
+    acidity: 3,
+    sweetness: 4,
+    suitableRoast: "Light to Medium",
+    image: "/images/recipes/costa-rica-aeropress.png",
   },
   {
     name: "Cold Brew",
     description: "Slow extraction for smooth, low-acid refreshment.",
-    recipes: "760",
-    image: unsplash("photo-1743389412243-7dbfdf6c48dd"),
+    brewTime: "12–18 hr",
+    difficulty: "Beginner" as const,
+    body: 4,
+    acidity: 1,
+    sweetness: 3,
+    suitableRoast: "Medium to Dark",
+    image: "/images/recipes/cold-brew.png",
   },
   {
     name: "Siphon",
     description: "Theatrical vacuum brewing with exceptional clarity.",
-    recipes: "420",
-    image: unsplash("photo-1509042239860-f550ce710b93"),
+    brewTime: "3–5 min",
+    difficulty: "Advanced" as const,
+    body: 2,
+    acidity: 4,
+    sweetness: 4,
+    suitableRoast: "Light Roast",
+    image: "/images/methods/siphon.svg",
   },
 ];
 
@@ -334,68 +365,6 @@ const btnSecondary =
 const btnPremium =
   "inline-flex h-12 items-center justify-center rounded-full bg-amber-600 px-8 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_44px_rgba(217,119,6,0.48)] active:scale-[0.97]";
 
-function BrewMethodIcon({ method }: { method: string }) {
-  const className =
-    "h-8 w-8 text-amber-500/90 transition-all duration-500 ease-out group-hover:scale-110 group-hover:text-amber-400";
-
-  switch (method) {
-    case "Pour Over":
-      return (
-        <svg className={className} viewBox="0 0 32 32" fill="none" aria-hidden>
-          <path d="M16 4L8 14h16L16 4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-          <path d="M10 14v4c0 4 2.5 8 6 10 3.5-2 6-6 6-10v-4" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M12 22h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      );
-    case "Espresso":
-      return (
-        <svg className={className} viewBox="0 0 32 32" fill="none" aria-hidden>
-          <rect x="6" y="10" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M10 10V8a6 6 0 0112 0v2" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M14 24v4M18 24v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <circle cx="16" cy="17" r="3" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
-      );
-    case "French Press":
-      return (
-        <svg className={className} viewBox="0 0 32 32" fill="none" aria-hidden>
-          <rect x="9" y="8" width="14" height="20" rx="2" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M9 14h14M9 20h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M23 12h2a2 2 0 012 2v8a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M13 6h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      );
-    case "Aeropress":
-      return (
-        <svg className={className} viewBox="0 0 32 32" fill="none" aria-hidden>
-          <rect x="11" y="6" width="10" height="20" rx="5" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M11 14h10M11 20h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M16 26v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      );
-    case "Cold Brew":
-      return (
-        <svg className={className} viewBox="0 0 32 32" fill="none" aria-hidden>
-          <path d="M10 8h12l2 20H8l2-20z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-          <path d="M12 14h8M12 18h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <circle cx="22" cy="10" r="2" stroke="currentColor" strokeWidth="1.5" />
-          <circle cx="24" cy="14" r="1.5" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
-      );
-    case "Siphon":
-      return (
-        <svg className={className} viewBox="0 0 32 32" fill="none" aria-hidden>
-          <circle cx="16" cy="10" r="6" stroke="currentColor" strokeWidth="1.5" />
-          <circle cx="16" cy="24" r="5" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M16 16v3" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M13 19h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      );
-    default:
-      return null;
-  }
-}
-
 function WorldMap() {
   return (
     <svg
@@ -508,53 +477,7 @@ export default function Home() {
           btnSecondary={btnSecondary}
         />
 
-        {/* Brew Methods */}
-        <section
-          id="methods"
-          className={`border-y border-white/[0.04] bg-white/[0.015] ${sectionPad}`}
-        >
-          <RevealOnScroll>
-            <div className="mx-auto max-w-6xl">
-              <div className="mb-20 text-center md:mb-24">
-                <p className={eyebrow}>Master Every Technique</p>
-                <h2 className={sectionTitle}>Brewing Methods</h2>
-                <p className={`mx-auto max-w-xl ${sectionLead}`}>
-                  From first pour to competition dial-in. Explore recipes organized
-                  by method, equipment, and skill level.
-                </p>
-              </div>
-              <div className="grid gap-7 sm:grid-cols-2 md:gap-8 lg:grid-cols-3">
-                {brewMethods.map((method) => (
-                  <TiltCard key={method.name}>
-                    <div className={`group overflow-hidden ${cardBase} bg-[#0a0705]/50 p-0`}>
-                      <PremiumImage
-                        src={method.image}
-                        alt={`${method.name} brewing equipment`}
-                        overlay="card"
-                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                        className="h-40 w-full"
-                      />
-                      <div className="p-8 md:p-10">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.04] bg-white/[0.03] transition-all duration-500 ease-out group-hover:border-amber-800/30 group-hover:bg-amber-950/20 group-hover:shadow-[0_0_28px_rgba(217,119,6,0.1)]">
-                          <BrewMethodIcon method={method.name} />
-                        </div>
-                        <h3 className="mt-7 text-lg font-medium leading-snug tracking-tight text-stone-50">
-                          {method.name}
-                        </h3>
-                        <p className="mt-3.5 text-sm leading-[1.75] text-stone-500">
-                          {method.description}
-                        </p>
-                        <p className="mt-6 text-xs font-medium uppercase tracking-wider text-amber-600/70">
-                          {method.recipes} recipes
-                        </p>
-                      </div>
-                    </div>
-                  </TiltCard>
-                ))}
-              </div>
-            </div>
-          </RevealOnScroll>
-        </section>
+        <BrewingMethodsSection methods={brewMethods} />
 
         {/* Coffee Origins */}
         <section id="origins" className={sectionPad}>
