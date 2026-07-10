@@ -274,12 +274,6 @@ const faqs = [
   },
 ];
 
-const heroStats = [
-  { label: "Recipes", value: "12,400+" },
-  { label: "Roasters", value: "840+" },
-  { label: "Countries", value: "62" },
-];
-
 const sectionPad =
   "px-5 py-36 sm:px-6 md:px-7 md:py-40 lg:px-8 lg:py-44";
 const eyebrow =
@@ -462,9 +456,6 @@ export default function Home() {
       <main>
         <HeroSection
           heroImage={heroImage}
-          cupImage={unsplash("photo-1509042239860-f550ce710b93", 900)}
-          heroStats={heroStats}
-          eyebrow={eyebrow}
           btnPrimary={btnPrimary}
           btnSecondary={btnSecondary}
         />
