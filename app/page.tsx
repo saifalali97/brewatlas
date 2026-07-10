@@ -487,45 +487,45 @@ export default function Home() {
                     <article
                       className={`group relative overflow-hidden ${cardBase} p-0`}
                     >
-                    <div className="relative">
-                      <PremiumImage
-                        src={recipe.image}
-                        alt={`${recipe.name} coffee`}
-                        overlay="card"
-                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                        className="h-44 w-full"
-                      />
-                      <div className="absolute right-5 top-5 rounded-full border border-amber-800/25 bg-amber-950/60 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-400/90 backdrop-blur-sm">
-                        Premium
+                      <div className="relative">
+                        <PremiumImage
+                          src={recipe.image}
+                          alt={`${recipe.name} coffee`}
+                          overlay="card"
+                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                          className="h-44 w-full"
+                        />
+                        <div className="absolute right-5 top-5 rounded-full border border-amber-800/25 bg-amber-950/60 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-400/90 backdrop-blur-sm">
+                          Premium
+                        </div>
                       </div>
-                    </div>
-                    <div className="relative p-8 md:p-10">
-                      <div>
-                        <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-100">
-                          {recipe.name}
-                        </h3>
-                        <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{recipe.origin}</p>
+                      <div className="relative p-8 md:p-10">
+                        <div>
+                          <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-100">
+                            {recipe.name}
+                          </h3>
+                          <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{recipe.origin}</p>
+                        </div>
+                        <span className="mt-6 inline-block rounded-full bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-400">
+                          {recipe.method}
+                        </span>
+                        <p className="mt-6 text-sm leading-[1.75] text-stone-400">{recipe.notes}</p>
+                        <div className="mt-8 flex flex-wrap gap-5 border-t border-white/[0.04] pt-7 text-xs text-stone-500">
+                          <span>
+                            Ratio{" "}
+                            <strong className="font-medium text-stone-300">{recipe.ratio}</strong>
+                          </span>
+                          <span>
+                            Time{" "}
+                            <strong className="font-medium text-stone-300">{recipe.time}</strong>
+                          </span>
+                          <span>
+                            Level{" "}
+                            <strong className="font-medium text-stone-300">{recipe.level}</strong>
+                          </span>
+                        </div>
                       </div>
-                      <span className="mt-6 inline-block rounded-full bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-400">
-                        {recipe.method}
-                      </span>
-                      <p className="mt-6 text-sm leading-[1.75] text-stone-400">{recipe.notes}</p>
-                      <div className="mt-8 flex flex-wrap gap-5 border-t border-white/[0.04] pt-7 text-xs text-stone-500">
-                        <span>
-                          Ratio{" "}
-                          <strong className="font-medium text-stone-300">{recipe.ratio}</strong>
-                        </span>
-                        <span>
-                          Time{" "}
-                          <strong className="font-medium text-stone-300">{recipe.time}</strong>
-                        </span>
-                        <span>
-                          Level{" "}
-                          <strong className="font-medium text-stone-300">{recipe.level}</strong>
-                        </span>
-                      </div>
-                    </div>
-                  </article>
+                    </article>
                   </TiltCard>
                 ))}
               </div>
@@ -552,28 +552,28 @@ export default function Home() {
                 {brewMethods.map((method) => (
                   <TiltCard key={method.name}>
                     <div className={`group overflow-hidden ${cardBase} bg-[#0a0705]/50 p-0`}>
-                    <PremiumImage
-                      src={method.image}
-                      alt={`${method.name} brewing equipment`}
-                      overlay="card"
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      className="h-40 w-full"
-                    />
-                    <div className="p-8 md:p-10">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.04] bg-white/[0.03] transition-all duration-500 ease-out group-hover:border-amber-800/30 group-hover:bg-amber-950/20 group-hover:shadow-[0_0_28px_rgba(217,119,6,0.1)]">
-                        <BrewMethodIcon method={method.name} />
+                      <PremiumImage
+                        src={method.image}
+                        alt={`${method.name} brewing equipment`}
+                        overlay="card"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="h-40 w-full"
+                      />
+                      <div className="p-8 md:p-10">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.04] bg-white/[0.03] transition-all duration-500 ease-out group-hover:border-amber-800/30 group-hover:bg-amber-950/20 group-hover:shadow-[0_0_28px_rgba(217,119,6,0.1)]">
+                          <BrewMethodIcon method={method.name} />
+                        </div>
+                        <h3 className="mt-7 text-lg font-medium leading-snug tracking-tight text-stone-50">
+                          {method.name}
+                        </h3>
+                        <p className="mt-3.5 text-sm leading-[1.75] text-stone-500">
+                          {method.description}
+                        </p>
+                        <p className="mt-6 text-xs font-medium uppercase tracking-wider text-amber-600/70">
+                          {method.recipes} recipes
+                        </p>
                       </div>
-                      <h3 className="mt-7 text-lg font-medium leading-snug tracking-tight text-stone-50">
-                        {method.name}
-                      </h3>
-                      <p className="mt-3.5 text-sm leading-[1.75] text-stone-500">
-                        {method.description}
-                      </p>
-                      <p className="mt-6 text-xs font-medium uppercase tracking-wider text-amber-600/70">
-                        {method.recipes} recipes
-                      </p>
                     </div>
-                  </div>
                   </TiltCard>
                 ))}
               </div>
@@ -662,30 +662,30 @@ export default function Home() {
                     <div
                       className={`group flex flex-col justify-between overflow-hidden ${cardBase} from-stone-900/40 p-0`}
                     >
-                    <PremiumImage
-                      src={roaster.image}
-                      alt={`${roaster.name} roastery`}
-                      overlay="card"
-                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      className="h-36 w-full"
-                    />
-                    <div className="flex flex-1 flex-col justify-between p-8 md:p-10">
-                      <div>
-                        <div className="flex items-start justify-between gap-4">
-                          <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50">
-                            {roaster.name}
-                          </h3>
-                          <span className="shrink-0 rounded-full bg-amber-950/50 px-2.5 py-0.5 text-xs font-medium text-amber-400">
-                            {roaster.rating}
-                          </span>
+                      <PremiumImage
+                        src={roaster.image}
+                        alt={`${roaster.name} roastery`}
+                        overlay="card"
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="h-36 w-full"
+                      />
+                      <div className="flex flex-1 flex-col justify-between p-8 md:p-10">
+                        <div>
+                          <div className="flex items-start justify-between gap-4">
+                            <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50">
+                              {roaster.name}
+                            </h3>
+                            <span className="shrink-0 rounded-full bg-amber-950/50 px-2.5 py-0.5 text-xs font-medium text-amber-400">
+                              {roaster.rating}
+                            </span>
+                          </div>
+                          <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{roaster.location}</p>
                         </div>
-                        <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{roaster.location}</p>
+                        <p className="mt-7 text-sm leading-relaxed text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
+                          {roaster.specialty}
+                        </p>
                       </div>
-                      <p className="mt-7 text-sm leading-relaxed text-amber-600/80 transition-colors duration-300 group-hover:text-amber-500">
-                        {roaster.specialty}
-                      </p>
                     </div>
-                  </div>
                   </TiltCard>
                 ))}
               </div>
@@ -705,24 +705,24 @@ export default function Home() {
                 {testimonials.map((item) => (
                   <TiltCard key={item.name}>
                     <blockquote className={`group flex flex-col overflow-hidden ${cardBase} p-0`}>
-                    <PremiumImage
-                      src={item.image}
-                      alt={`${item.name}, ${item.role}`}
-                      overlay="portrait"
-                      sizes="(min-width: 1024px) 33vw, 100vw"
-                      className="h-52 w-full"
-                    />
-                    <div className="flex flex-1 flex-col p-9 md:p-11">
-                      <p className="flex-1 text-base leading-[1.8] text-stone-300">
-                        &ldquo;{item.quote}&rdquo;
-                      </p>
-                      <footer className="mt-10 border-t border-white/[0.04] pt-8">
-                        <p className="font-medium text-stone-50">{item.name}</p>
-                        <p className="mt-2 text-sm leading-relaxed text-stone-500">{item.role}</p>
-                        <p className="mt-1 text-xs text-amber-600/70">{item.location}</p>
-                      </footer>
-                    </div>
-                  </blockquote>
+                      <PremiumImage
+                        src={item.image}
+                        alt={`${item.name}, ${item.role}`}
+                        overlay="portrait"
+                        sizes="(min-width: 1024px) 33vw, 100vw"
+                        className="h-52 w-full"
+                      />
+                      <div className="flex flex-1 flex-col p-9 md:p-11">
+                        <p className="flex-1 text-base leading-[1.8] text-stone-300">
+                          &ldquo;{item.quote}&rdquo;
+                        </p>
+                        <footer className="mt-10 border-t border-white/[0.04] pt-8">
+                          <p className="font-medium text-stone-50">{item.name}</p>
+                          <p className="mt-2 text-sm leading-relaxed text-stone-500">{item.role}</p>
+                          <p className="mt-1 text-xs text-amber-600/70">{item.location}</p>
+                        </footer>
+                      </div>
+                    </blockquote>
                   </TiltCard>
                 ))}
               </div>
@@ -750,51 +750,51 @@ export default function Home() {
                   <TiltCard key={plan.name}>
                     <div
                       className={`relative flex h-full flex-col rounded-[1.5rem] border p-9 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 sm:p-10 md:p-11 ${
-                      plan.highlighted
-                        ? "border-amber-700/35 bg-gradient-to-b from-amber-950/40 via-stone-950/50 to-[#0a0705]/80 shadow-[0_36px_72px_-24px_rgba(180,120,60,0.2)] hover:border-amber-600/45 hover:shadow-[0_44px_80px_-24px_rgba(180,120,60,0.26)]"
-                        : `${cardBase} hover:border-white/10`
-                    }`}
-                  >
-                    {plan.highlighted && (
-                      <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-1 text-xs font-medium text-white shadow-[0_0_24px_rgba(217,119,6,0.35)]">
-                        Most Popular
-                      </span>
-                    )}
-                    <div>
-                      <h3 className="text-lg font-medium text-stone-50">{plan.name}</h3>
-                      <div className="mt-6 flex items-baseline gap-1">
-                        <span className="text-4xl font-semibold tracking-tight text-stone-50 lg:text-[2.5rem]">
-                          {plan.price}
-                        </span>
-                        {plan.price !== "Free" && (
-                          <span className="text-sm text-stone-500">/{plan.period}</span>
-                        )}
-                      </div>
-                      {plan.price === "Free" && (
-                        <span className="text-sm text-stone-500">{plan.period}</span>
-                      )}
-                      <p className="mt-6 text-sm leading-[1.75] text-stone-400">
-                        {plan.description}
-                      </p>
-                    </div>
-                    <ul className="mt-10 flex-1 space-y-4">
-                      {plan.features.map((feature) => (
-                        <li
-                          key={feature}
-                          className="flex items-start gap-3 text-sm leading-relaxed text-stone-400"
-                        >
-                          <span className="mt-0.5 text-amber-600">✓</span>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <RippleLink
-                      href="#"
-                      className={`mt-11 ${plan.highlighted ? btnPremium : `${btnSecondary} w-full min-w-0`}`}
+                        plan.highlighted
+                          ? "border-amber-700/35 bg-gradient-to-b from-amber-950/40 via-stone-950/50 to-[#0a0705]/80 shadow-[0_36px_72px_-24px_rgba(180,120,60,0.2)] hover:border-amber-600/45 hover:shadow-[0_44px_80px_-24px_rgba(180,120,60,0.26)]"
+                          : `${cardBase} hover:border-white/10`
+                      }`}
                     >
-                      {plan.cta}
-                    </RippleLink>
-                  </div>
+                      {plan.highlighted && (
+                        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-600 px-4 py-1 text-xs font-medium text-white shadow-[0_0_24px_rgba(217,119,6,0.35)]">
+                          Most Popular
+                        </span>
+                      )}
+                      <div>
+                        <h3 className="text-lg font-medium text-stone-50">{plan.name}</h3>
+                        <div className="mt-6 flex items-baseline gap-1">
+                          <span className="text-4xl font-semibold tracking-tight text-stone-50 lg:text-[2.5rem]">
+                            {plan.price}
+                          </span>
+                          {plan.price !== "Free" && (
+                            <span className="text-sm text-stone-500">/{plan.period}</span>
+                          )}
+                        </div>
+                        {plan.price === "Free" && (
+                          <span className="text-sm text-stone-500">{plan.period}</span>
+                        )}
+                        <p className="mt-6 text-sm leading-[1.75] text-stone-400">
+                          {plan.description}
+                        </p>
+                      </div>
+                      <ul className="mt-10 flex-1 space-y-4">
+                        {plan.features.map((feature) => (
+                          <li
+                            key={feature}
+                            className="flex items-start gap-3 text-sm leading-relaxed text-stone-400"
+                          >
+                            <span className="mt-0.5 text-amber-600">✓</span>
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                      <RippleLink
+                        href="#"
+                        className={`mt-11 ${plan.highlighted ? btnPremium : `${btnSecondary} w-full min-w-0`}`}
+                      >
+                        {plan.cta}
+                      </RippleLink>
+                    </div>
                   </TiltCard>
                 ))}
               </div>
