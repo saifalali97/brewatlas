@@ -12,7 +12,7 @@ const unsplash = (id: string, w = 800) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
 
 const heroImage = unsplash("photo-1511920170033-f8396924c348", 1600);
-const originsFarmImage = unsplash("photo-1521017430731-691585ea914f", 1000);
+const originsFarmImage = unsplash("photo-1447933601403-0c6688de566e", 1000);
 
 const featuredRecipes = [
   {
@@ -33,7 +33,7 @@ const featuredRecipes = [
     time: "8 hr",
     level: "Beginner",
     notes: "Dark chocolate and caramel with zero bitterness.",
-    image: unsplash("photo-1559056199-641a0ac8b55c"),
+    image: unsplash("photo-1495474472287-4d71bcdd2085"),
   },
   {
     name: "Signature Cortado",
@@ -53,7 +53,7 @@ const featuredRecipes = [
     time: "30 sec",
     level: "Intermediate",
     notes: "Bright citrus sparkle over a syrupy Kenyan base.",
-    image: unsplash("photo-1461023058943-07fcbead316a"),
+    image: unsplash("photo-1498804103079-a6351b050096"),
   },
   {
     name: "Panama Geisha Chemex",
@@ -73,7 +73,7 @@ const featuredRecipes = [
     time: "5:00",
     level: "Beginner",
     notes: "Earthy cedar, dark cocoa, and a heavy, syrupy body.",
-    image: unsplash("photo-1610889556528-9f7705c58f57"),
+    image: unsplash("photo-1442512595331-e89e73853f31"),
   },
 ];
 
@@ -94,19 +94,19 @@ const brewMethods = [
     name: "French Press",
     description: "Full-bodied immersion with rich oils and depth.",
     recipes: "980",
-    image: unsplash("photo-1517701551-1c35e3af0b39"),
+    image: unsplash("photo-1509042239860-f550ce710b93"),
   },
   {
     name: "Aeropress",
     description: "Versatile, fast, and endlessly experiment-friendly.",
     recipes: "1,450",
-    image: unsplash("photo-1521302080334-47528fbfd597"),
+    image: unsplash("photo-1559827260-dc66d52bef19"),
   },
   {
     name: "Cold Brew",
     description: "Slow extraction for smooth, low-acid refreshment.",
     recipes: "760",
-    image: unsplash("photo-1517487881594-278087154df5"),
+    image: unsplash("photo-1743389412243-7dbfdf6c48dd"),
   },
   {
     name: "Siphon",
@@ -133,14 +133,14 @@ const topRoasters = [
     location: "Rogers, Arkansas",
     specialty: "Competition-grade single origins",
     rating: "4.9",
-    image: unsplash("photo-1552344947-4173216e31bf"),
+    image: unsplash("photo-1442512595331-e89e73853f31"),
   },
   {
     name: "Counter Culture",
     location: "Durham, North Carolina",
     specialty: "Direct trade and education",
     rating: "4.8",
-    image: unsplash("photo-1528965137801-d72e1a856814"),
+    image: unsplash("photo-1498804103079-a6351b050096"),
   },
   {
     name: "Saint Frank",
@@ -161,14 +161,14 @@ const topRoasters = [
     location: "Aarhus, Denmark",
     specialty: "Scandinavian clarity and sweetness",
     rating: "4.9",
-    image: unsplash("photo-1501339846605-531d08d47bf7"),
+    image: unsplash("photo-1495474472287-4d71bcdd2085"),
   },
   {
     name: "Koppi",
     location: "Helsingborg, Sweden",
     specialty: "Seasonal microlots and blends",
     rating: "4.8",
-    image: unsplash("photo-145925786827c-6848b5d65fc0"),
+    image: unsplash("photo-1517245386807-bb43f82c33c4"),
   },
 ];
 
@@ -179,7 +179,7 @@ const testimonials = [
     name: "Elena Vasquez",
     role: "Head Barista, Formative Coffee",
     location: "Portland, OR",
-    image: unsplash("photo-1501339846605-531d08d47bf7", 600),
+    image: unsplash("photo-1724910326117-66dc0406f4ed", 600),
   },
   {
     quote:
@@ -195,7 +195,7 @@ const testimonials = [
     name: "Sofia Lindström",
     role: "Founder, Nord Roast Collective",
     location: "Stockholm, SE",
-    image: unsplash("photo-145925786827c-6848b5d65fc0", 600),
+    image: unsplash("photo-1743389412243-7dbfdf6c48dd", 600),
   },
 ];
 
