@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Ethiopian pour over">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c1008"/>
+      <stop offset="100%" stop-color="#0a0705"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#d97706" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#d97706" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect width="800" height="600" fill="url(#glow)"/>
+  <path d="M320 120 L480 120 L440 480 L360 480 Z" fill="#2a1810" stroke="#b45309" stroke-opacity="0.4" stroke-width="2"/>
+  <ellipse cx="400" cy="120" rx="80" ry="14" fill="#3d2518"/>
+  <path d="M370 200 Q400 160 430 200" fill="none" stroke="#fbbf24" stroke-opacity="0.5" stroke-width="3"/>
+  <ellipse cx="400" cy="520" rx="120" ry="16" fill="#000" fill-opacity="0.3"/>
+</svg>

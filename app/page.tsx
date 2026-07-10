@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FaqAccordion } from "./components/faq-accordion";
+import { FeaturedRecipesSection } from "./components/featured-recipes-section";
 import { FloatingActions } from "./components/floating-actions";
 import { HeroSection } from "./components/hero-section";
 import { PremiumImage } from "./components/premium-image";
@@ -17,63 +18,80 @@ const originsFarmImage = unsplash("photo-1447933601403-0c6688de566e", 1000);
 const featuredRecipes = [
   {
     name: "Ethiopian Yirgacheffe Pour Over",
+    country: "Ethiopia",
     origin: "Gedeo Zone, Ethiopia",
-    method: "V60 · Light Roast",
+    brewMethod: "V60",
+    roastLevel: "Light Roast",
+    difficulty: "Intermediate" as const,
     ratio: "1:16",
     time: "3:30",
-    level: "Intermediate",
     notes: "Jasmine, bergamot, and stone fruit with a silky finish.",
-    image: unsplash("photo-1447933601403-0c6688de566e"),
+    image: "/images/recipes/ethiopian-pour-over.svg",
+    premium: true,
+    featured: true,
   },
   {
     name: "Kyoto Cold Brew",
+    country: "Colombia",
     origin: "Huila, Colombia",
-    method: "Slow Drip · Medium Roast",
+    brewMethod: "Cold Brew",
+    roastLevel: "Medium Roast",
+    difficulty: "Beginner" as const,
     ratio: "1:12",
     time: "8 hr",
-    level: "Beginner",
     notes: "Dark chocolate and caramel with zero bitterness.",
-    image: unsplash("photo-1495474472287-4d71bcdd2085"),
+    image: "/images/recipes/cold-brew.svg",
+    premium: true,
   },
   {
     name: "Signature Cortado",
+    country: "Guatemala",
     origin: "Antigua, Guatemala",
-    method: "Espresso · Medium-Dark",
+    brewMethod: "Espresso",
+    roastLevel: "Medium-Dark",
+    difficulty: "Advanced" as const,
     ratio: "1:1",
     time: "25 sec",
-    level: "Advanced",
     notes: "Velvety microfoam over a balanced double shot.",
-    image: unsplash("photo-1514432324607-a09d9b4aefdd"),
+    image: "/images/recipes/cortado.svg",
+    premium: true,
   },
   {
     name: "Espresso Tonic",
+    country: "Kenya",
     origin: "Nyeri, Kenya",
-    method: "Espresso · Light-Medium",
+    brewMethod: "Espresso",
+    roastLevel: "Light-Medium",
+    difficulty: "Intermediate" as const,
     ratio: "1:4",
     time: "30 sec",
-    level: "Intermediate",
     notes: "Bright citrus sparkle over a syrupy Kenyan base.",
-    image: unsplash("photo-1498804103079-a6351b050096"),
+    image: "/images/recipes/espresso-tonic.svg",
   },
   {
     name: "Panama Geisha Chemex",
+    country: "Panama",
     origin: "Boquete, Panama",
-    method: "Chemex · Light Roast",
+    brewMethod: "Chemex",
+    roastLevel: "Light Roast",
+    difficulty: "Advanced" as const,
     ratio: "1:15",
     time: "4:00",
-    level: "Advanced",
     notes: "Jasmine tea, mango, and honey with extraordinary clarity.",
-    image: unsplash("photo-1559827260-dc66d52bef19"),
+    image: "/images/recipes/chemex.svg",
+    premium: true,
   },
   {
     name: "Sumatra Mandheling Moka",
+    country: "Indonesia",
     origin: "North Sumatra, Indonesia",
-    method: "Moka Pot · Dark Roast",
+    brewMethod: "Moka Pot",
+    roastLevel: "Dark Roast",
+    difficulty: "Beginner" as const,
     ratio: "1:10",
     time: "5:00",
-    level: "Beginner",
     notes: "Earthy cedar, dark cocoa, and a heavy, syrupy body.",
-    image: unsplash("photo-1442512595331-e89e73853f31"),
+    image: "/images/recipes/sumatra-moka.svg",
   },
 ];
 
@@ -460,69 +478,10 @@ export default function Home() {
           btnSecondary={btnSecondary}
         />
 
-        {/* Featured Recipes */}
-        <section id="recipes" className={sectionPad}>
-          <RevealOnScroll>
-            <div className="mx-auto max-w-6xl">
-              <div className="mb-20 max-w-2xl md:mb-24">
-                <p className={eyebrow}>Curated Collection</p>
-                <h2 className={sectionTitle}>Featured Recipes</h2>
-                <p className={sectionLead}>
-                  Handpicked by our barista community. Each recipe includes grind
-                  size, water temperature, and step-by-step guidance.
-                </p>
-              </div>
-              <div className="grid gap-8 sm:grid-cols-2 md:gap-9 lg:grid-cols-3">
-                {featuredRecipes.map((recipe) => (
-                  <TiltCard key={recipe.name}>
-                    <article
-                      className={`group relative overflow-hidden ${cardBase} p-0`}
-                    >
-                      <div className="relative">
-                        <PremiumImage
-                          src={recipe.image}
-                          alt={`${recipe.name} coffee`}
-                          overlay="card"
-                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                          className="h-44 w-full"
-                        />
-                        <div className="absolute right-5 top-5 rounded-full border border-amber-800/25 bg-amber-950/60 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-400/90 backdrop-blur-sm">
-                          Premium
-                        </div>
-                      </div>
-                      <div className="relative p-8 md:p-10">
-                        <div>
-                          <h3 className="text-lg font-medium leading-snug tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-100">
-                            {recipe.name}
-                          </h3>
-                          <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{recipe.origin}</p>
-                        </div>
-                        <span className="mt-6 inline-block rounded-full bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-400">
-                          {recipe.method}
-                        </span>
-                        <p className="mt-6 text-sm leading-[1.75] text-stone-400">{recipe.notes}</p>
-                        <div className="mt-8 flex flex-wrap gap-5 border-t border-white/[0.04] pt-7 text-xs text-stone-500">
-                          <span>
-                            Ratio{" "}
-                            <strong className="font-medium text-stone-300">{recipe.ratio}</strong>
-                          </span>
-                          <span>
-                            Time{" "}
-                            <strong className="font-medium text-stone-300">{recipe.time}</strong>
-                          </span>
-                          <span>
-                            Level{" "}
-                            <strong className="font-medium text-stone-300">{recipe.level}</strong>
-                          </span>
-                        </div>
-                      </div>
-                    </article>
-                  </TiltCard>
-                ))}
-              </div>
-            </div>
-          </RevealOnScroll>
-        </section>
+        <FeaturedRecipesSection
+          recipes={featuredRecipes}
+          btnSecondary={btnSecondary}
+        />
 
         {/* Brew Methods */}
         <section
