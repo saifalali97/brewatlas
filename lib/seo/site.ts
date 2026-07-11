@@ -46,6 +46,6 @@ export const siteConfig = {
 } as const;
 
 export function getSiteUrl(): string {
-  const url = process.env.NEXT_PUBLIC_SITE_URL ?? "https://brewatlas.app";
+  const url = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.brewatlas.app";
   return url.replace(/\/$/, "");
 }

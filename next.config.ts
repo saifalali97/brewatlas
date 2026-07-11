@@ -5,6 +5,23 @@ import {
   staticAssetCacheHeaders,
 } from "./lib/security/headers";
 
+const seoRouteHeaders = [
+  {
+    source: "/sitemap.xml",
+    headers: [
+      { key: "Content-Type", value: "application/xml; charset=utf-8" },
+      ...documentCacheHeaders,
+    ],
+  },
+  {
+    source: "/robots.txt",
+    headers: [
+      { key: "Content-Type", value: "text/plain; charset=utf-8" },
+      ...documentCacheHeaders,
+    ],
+  },
+];
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
@@ -27,6 +44,7 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      ...seoRouteHeaders,
       {
         source: "/:path*",
         headers: securityHeaders,
