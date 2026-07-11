@@ -1,14 +1,16 @@
-import { SiteFooter } from "@/app/components/layout/site-footer";
 import { SiteNav } from "@/app/components/layout/site-nav";
-import { FloatingActions } from "@/app/components/layout/floating-actions";
-import { BrewingMethodsSection } from "@/app/components/sections/brewing-methods-section";
-import { CoffeeOriginsSection } from "@/app/components/sections/coffee-origins-section";
-import { FaqSection } from "@/app/components/sections/faq-section";
-import { FeaturedRecipesSection } from "@/app/components/sections/featured-recipes-section";
+import { FloatingActions } from "@/app/components/layout/client-chrome";
 import { HeroSection } from "@/app/components/sections/hero-section";
-import { PricingSection } from "@/app/components/sections/pricing-section";
-import { TestimonialsSection } from "@/app/components/sections/testimonials-section";
-import { TopRoastersSection } from "@/app/components/sections/top-roasters-section";
+import {
+  BrewingMethodsSection,
+  CoffeeOriginsSection,
+  FaqSection,
+  FeaturedRecipesSection,
+  PricingSection,
+  SiteFooter,
+  TestimonialsSection,
+  TopRoastersSection,
+} from "@/lib/dynamic-sections";
 import { buttons } from "@/lib/constants/styles";
 import {
   brewMethods,
@@ -38,7 +40,7 @@ export default function Home() {
 
       <SiteNav />
 
-      <main>
+      <main id="main-content">
         <HeroSection
           heroImage={heroImage}
           btnPrimary={buttons.primary}

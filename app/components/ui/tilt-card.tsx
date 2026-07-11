@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  useRef,
-  useState,
-  type MouseEvent,
-  type ReactNode,
-} from "react";
-import { useMediaQuery, usePrefersReducedMotion } from "@/app/hooks/use-media-query";
+import { useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useMediaQuery } from "@/app/hooks/use-media-query";
 
 type TiltCardProps = {
   children: ReactNode;
@@ -16,12 +11,10 @@ type TiltCardProps = {
 export function TiltCard({ children, className = "" }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [transform, setTransform] = useState("");
-  const reducedMotion = usePrefersReducedMotion();
   const coarsePointer = useMediaQuery("(pointer: coarse)");
-  const enabled = !reducedMotion && !coarsePointer;
 
   const handleMove = (event: MouseEvent<HTMLDivElement>) => {
-    if (!enabled || !ref.current) return;
+    if (coarsePointer || !ref.current) return;
 
     const rect = ref.current.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - 0.5;
@@ -41,8 +34,8 @@ export function TiltCard({ children, className = "" }: TiltCardProps) {
       ref={ref}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
-      className={`transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${className}`}
-      style={enabled && transform ? { transform } : undefined}
+      className={`motion-reduce:transform-none transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${className}`}
+      style={!coarsePointer && transform ? { transform } : undefined}
     >
       {children}
     </div>

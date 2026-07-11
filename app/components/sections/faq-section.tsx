@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowRight, Headphones, Mail } from "lucide-react";
 import { FaqAccordion } from "@/app/components/ui/faq-accordion";
 import { RippleLink } from "@/app/components/ui/ripple-link";
@@ -13,11 +11,13 @@ type FaqSectionProps = {
 
 export function FaqSection({ faqs }: FaqSectionProps) {
   return (
-    <SectionFrame id="faq">
+    <SectionFrame id="faq" ariaLabelledBy="faq-heading">
       <div className="grid gap-12 lg:grid-cols-2 lg:items-start lg:gap-16 xl:gap-20">
         <div className="lg:sticky lg:top-28">
           <p className={typography.eyebrow}>Support</p>
-          <h2 className={typography.sectionTitleModern}>Frequently Asked Questions</h2>
+          <h2 id="faq-heading" className={typography.sectionTitleModern}>
+            Frequently Asked Questions
+          </h2>
           <p className="mt-7 max-w-md text-lg leading-[1.78] text-stone-400 md:text-xl md:leading-[1.72]">
             Everything you need to know about BrewAtlas memberships, recipes, and
             brewing tools.
@@ -53,7 +53,7 @@ export function FaqSection({ faqs }: FaqSectionProps) {
         </div>
 
         <div>
-          <FaqAccordion faqs={faqs} />
+          <FaqAccordion faqs={faqs} headingId="faq-heading" />
         </div>
       </div>
     </SectionFrame>

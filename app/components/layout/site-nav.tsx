@@ -54,9 +54,10 @@ export function SiteNav() {
           : "border-white/[0.04] bg-[#0a0705]/70"
       }`}
     >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6 md:py-4 lg:px-8 lg:py-5">
+      <nav aria-label="Main navigation" className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6 md:py-4 lg:px-8 lg:py-5">
         <Link
           href="/"
+          aria-label="BrewAtlas home"
           className="text-lg font-semibold tracking-tight text-stone-50 transition-opacity duration-300 hover:opacity-80"
         >
           BrewAtlas
@@ -68,6 +69,7 @@ export function SiteNav() {
               <a
                 key={link.id}
                 href={link.href}
+                aria-current={isActive ? "page" : undefined}
                 className={`group relative px-0.5 py-1.5 transition-colors duration-300 ${
                   isActive ? "text-stone-100" : "text-stone-400 hover:text-stone-100"
                 }`}
@@ -86,6 +88,7 @@ export function SiteNav() {
         </div>
         <RippleLink
           href="#pricing"
+          aria-label="Join BrewAtlas Premium"
           className="rounded-full bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_36px_rgba(217,119,6,0.42)] active:scale-[0.97] sm:px-5"
         >
           Join Premium

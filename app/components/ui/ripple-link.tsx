@@ -1,20 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState, type MouseEvent, type ReactNode } from "react";
+import { useState, type ComponentPropsWithoutRef, type MouseEvent, type ReactNode } from "react";
 
 type RippleLinkProps = {
   href: string;
   className?: string;
   children: ReactNode;
-};
+} & Omit<ComponentPropsWithoutRef<typeof Link>, "href" | "className" | "children" | "onClick">;
 
 type Ripple = { id: number; x: number; y: number };
 
-export function RippleLink({ href, className = "", children }: RippleLinkProps) {
+export function RippleLink({
+  href,
+  className = "",
+  children,
+  ...props
+}: RippleLinkProps) {
   const [ripples, setRipples] = useState<Ripple[]>([]);
 
-  const handleClick = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (href === "#") {
       event.preventDefault();
     }
@@ -31,13 +36,14 @@ export function RippleLink({ href, className = "", children }: RippleLinkProps) 
     window.setTimeout(() => {
       setRipples((current) => current.filter((item) => item.id !== id));
     }, 650);
-  }, [href]);
+  };
 
   return (
     <Link
       href={href}
       onClick={handleClick}
       className={`relative isolate overflow-hidden ${className}`}
+      {...props}
     >
       {children}
       {ripples.map((ripple) => (

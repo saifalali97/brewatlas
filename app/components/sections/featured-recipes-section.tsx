@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { memo, useMemo, useState } from "react";
+import { useState } from "react";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { SectionIntro } from "@/app/components/ui/section-intro";
 import type { FeaturedRecipe } from "@/types/homepage";
+import { imageAlt } from "@/lib/seo/image-alt";
 
 const filters = ["All", "V60", "Espresso", "Chemex", "Aeropress", "Cold Brew"] as const;
 
@@ -40,8 +41,10 @@ function RecipeCard({
       <div className={`relative overflow-hidden ${featured ? "h-56 sm:h-64 lg:h-[19rem]" : "h-48 sm:h-52 lg:h-56"}`}>
         <Image
           src={recipe.image}
-          alt={`${recipe.name} — ${recipe.country}`}
+          alt={imageAlt.recipe(recipe.name, recipe.country, recipe.brewMethod, recipe.roastLevel)}
           fill
+          width={800}
+          height={600}
           sizes={featured ? "(min-width: 1024px) 66vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"}
           className="object-cover brightness-[0.88] contrast-[1.04] saturate-[0.92] transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] motion-reduce:transform-none"
         />
@@ -113,22 +116,21 @@ function RecipeCard({
   );
 }
 
-const MemoizedRecipeCard = memo(RecipeCard);
-
 export function FeaturedRecipesSection({
   recipes,
   btnSecondary,
 }: FeaturedRecipesSectionProps) {
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
 
-  const filteredRecipes = useMemo(() => {
-    if (activeFilter === "All") return recipes;
-    return recipes.filter((recipe) => recipe.brewMethod === activeFilter);
-  }, [activeFilter, recipes]);
+  const filteredRecipes =
+    activeFilter === "All"
+      ? recipes
+      : recipes.filter((recipe) => recipe.brewMethod === activeFilter);
 
   return (
-    <SectionFrame id="recipes">
+    <SectionFrame id="recipes" ariaLabelledBy="recipes-heading">
       <SectionIntro
+        headingId="recipes-heading"
         eyebrow="Curated Collection"
         title="Featured Recipes"
         description="Handpicked by our barista community. Each recipe includes grind size, water temperature, and step-by-step guidance."
@@ -141,8 +143,9 @@ export function FeaturedRecipesSection({
             <button
               key={filter}
               type="button"
-              onClick={() => setActiveFilter(filter)}
+              aria-label={`Filter recipes by ${filter}`}
               aria-pressed={isActive}
+              onClick={() => setActiveFilter(filter)}
               className={`rounded-full border px-4 py-2.5 text-sm font-medium backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.98] ${
                 isActive
                   ? "border-amber-600/45 bg-amber-950/50 text-amber-100 shadow-[0_0_32px_rgba(217,119,6,0.14)]"
@@ -157,7 +160,7 @@ export function FeaturedRecipesSection({
 
       <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
         {filteredRecipes.map((recipe) => (
-          <MemoizedRecipeCard
+          <RecipeCard
             key={recipe.name}
             recipe={recipe}
             featured={Boolean(recipe.featured) && activeFilter === "All"}

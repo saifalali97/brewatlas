@@ -9,6 +9,7 @@ type SectionFrameProps = {
   padding?: keyof typeof sectionPadding;
   showDividers?: boolean;
   beforeContent?: ReactNode;
+  ariaLabelledBy?: string;
 };
 
 export function SectionFrame({
@@ -18,9 +19,14 @@ export function SectionFrame({
   padding = "standard",
   showDividers = true,
   beforeContent,
+  ariaLabelledBy,
 }: SectionFrameProps) {
   return (
-    <section id={id} className={`relative ${sectionPadding[padding]} ${className}`.trim()}>
+    <section
+      id={id}
+      aria-labelledby={ariaLabelledBy}
+      className={`relative ${sectionPadding[padding]} [content-visibility:auto] [contain-intrinsic-size:auto_500px] ${className}`.trim()}
+    >
       {showDividers && (
         <>
           <div aria-hidden className={layout.sectionDividerTop} />

@@ -1,15 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePrefersReducedMotion } from "@/app/hooks/use-media-query";
 
 export function PageLoader() {
-  const reducedMotion = usePrefersReducedMotion();
   const [phase, setPhase] = useState<"loading" | "exit" | "done">("loading");
 
   useEffect(() => {
-    if (reducedMotion) return;
-
     const exitTimer = window.setTimeout(() => setPhase("exit"), 520);
     const doneTimer = window.setTimeout(() => setPhase("done"), 980);
 
@@ -17,14 +13,14 @@ export function PageLoader() {
       window.clearTimeout(exitTimer);
       window.clearTimeout(doneTimer);
     };
-  }, [reducedMotion]);
+  }, []);
 
-  if (reducedMotion || phase === "done") return null;
+  if (phase === "done") return null;
 
   return (
     <div
       aria-hidden
-      className={`fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0705] transition-opacity duration-[460ms] ease-out ${
+      className={`motion-reduce:hidden fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0705] transition-opacity duration-[460ms] ease-out ${
         phase === "exit" ? "pointer-events-none opacity-0" : "opacity-100"
       }`}
     >

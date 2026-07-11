@@ -3,6 +3,7 @@ import { layout, typography } from "@/lib/constants/styles";
 type SectionIntroProps = {
   eyebrow: string;
   title: string;
+  headingId?: string;
   description?: string;
   descriptionClassName?: string;
   centered?: boolean;
@@ -12,6 +13,7 @@ type SectionIntroProps = {
 export function SectionIntro({
   eyebrow,
   title,
+  headingId,
   description,
   descriptionClassName,
   centered = false,
@@ -26,7 +28,9 @@ export function SectionIntro({
   return (
     <div className={centered ? layout.introBlockCentered : layout.introBlock}>
       <p className={typography.eyebrow}>{eyebrow}</p>
-      <h2 className={titleClass}>{title}</h2>
+      <h2 id={headingId} className={titleClass}>
+        {title}
+      </h2>
       {description && <p className={leadClass}>{description}</p>}
     </div>
   );

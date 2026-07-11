@@ -1,7 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { memo } from "react";
 import { Clock, Droplets, Flame, Gauge } from "lucide-react";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
@@ -10,6 +7,7 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { SectionIntro } from "@/app/components/ui/section-intro";
 import { cards } from "@/lib/constants/styles";
 import type { BrewingMethod } from "@/types/homepage";
+import { imageAlt } from "@/lib/seo/image-alt";
 
 type BrewingMethodsSectionProps = {
   methods: BrewingMethod[];
@@ -54,8 +52,10 @@ function MethodCard({ method }: { method: BrewingMethod }) {
       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden sm:aspect-[5/3] lg:aspect-auto lg:h-auto lg:min-h-0 lg:w-[46%] lg:self-stretch xl:w-[48%]">
         <Image
           src={method.image}
-          alt={`${method.name} brewing method`}
+          alt={imageAlt.brewingMethod(method.name, method.suitableRoast)}
           fill
+          width={1600}
+          height={1000}
           sizes="(min-width: 1024px) 46vw, 100vw"
           unoptimized={method.image.endsWith(".svg")}
           className="object-cover brightness-[0.9] contrast-[1.04] saturate-[0.94] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
@@ -120,15 +120,15 @@ function MethodCard({ method }: { method: BrewingMethod }) {
   );
 }
 
-const MemoizedMethodCard = memo(MethodCard);
-
 export function BrewingMethodsSection({ methods }: BrewingMethodsSectionProps) {
   return (
     <SectionFrame
       id="methods"
+      ariaLabelledBy="methods-heading"
       className="border-y border-white/[0.04] bg-white/[0.015]"
     >
       <SectionIntro
+        headingId="methods-heading"
         eyebrow="Master Every Technique"
         title="Brewing Methods"
         description="From first pour to competition dial-in. Explore techniques with brew times, cup profiles, and roast pairings for every method."
@@ -136,7 +136,7 @@ export function BrewingMethodsSection({ methods }: BrewingMethodsSectionProps) {
 
       <div className="grid gap-6 sm:gap-7 lg:grid-cols-2 lg:gap-8">
         {methods.map((method) => (
-          <MemoizedMethodCard key={method.name} method={method} />
+          <MethodCard key={method.name} method={method} />
         ))}
       </div>
     </SectionFrame>

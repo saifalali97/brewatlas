@@ -1,7 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { memo } from "react";
 import { Coffee, Flame, Layers, MapPin, Mountain, Sparkles } from "lucide-react";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { MetaTile } from "@/app/components/ui/meta-tile";
@@ -9,6 +6,7 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { SectionIntro } from "@/app/components/ui/section-intro";
 import { cards } from "@/lib/constants/styles";
 import type { CoffeeOrigin } from "@/types/homepage";
+import { imageAlt } from "@/lib/seo/image-alt";
 
 type CoffeeOriginsSectionProps = {
   origins: CoffeeOrigin[];
@@ -23,8 +21,10 @@ function OriginCard({ origin }: { origin: CoffeeOrigin }) {
       <div className="relative h-44 shrink-0 overflow-hidden sm:h-48 lg:h-52">
         <Image
           src={origin.image}
-          alt={`${origin.country} — ${origin.region}`}
+          alt={imageAlt.origin(origin.country, origin.region, origin.process)}
           fill
+          width={1200}
+          height={800}
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           unoptimized={origin.image.endsWith(".svg")}
           className="object-cover brightness-[0.9] contrast-[1.04] saturate-[0.94] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
@@ -72,12 +72,11 @@ function OriginCard({ origin }: { origin: CoffeeOrigin }) {
   );
 }
 
-const MemoizedOriginCard = memo(OriginCard);
-
 export function CoffeeOriginsSection({ origins }: CoffeeOriginsSectionProps) {
   return (
-    <SectionFrame id="origins">
+    <SectionFrame id="origins" ariaLabelledBy="origins-heading">
       <SectionIntro
+        headingId="origins-heading"
         eyebrow="From Farm to Cup"
         title="Coffee Origins"
         description="Trace every recipe to its source. Explore flavor profiles, altitude data, and processing methods from the world's greatest growing regions."
@@ -85,7 +84,7 @@ export function CoffeeOriginsSection({ origins }: CoffeeOriginsSectionProps) {
 
       <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
         {origins.map((origin) => (
-          <MemoizedOriginCard key={origin.country} origin={origin} />
+          <OriginCard key={origin.country} origin={origin} />
         ))}
       </div>
     </SectionFrame>
