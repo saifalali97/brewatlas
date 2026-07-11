@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePrefersReducedMotion } from "@/app/hooks/use-media-query";
 
 type AnimatedStatProps = {
   value: string;
@@ -30,11 +29,8 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [display, setDisplay] = useState("0");
   const hasAnimated = useRef(false);
-  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    if (reducedMotion) return;
-
     const element = ref.current;
     if (!element) return;
 
@@ -68,12 +64,13 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
 
     observer.observe(element);
     return () => observer.disconnect();
-  }, [reducedMotion, value]);
+  }, [value]);
 
   return (
     <div ref={ref} className="text-center sm:text-left">
       <p className="text-3xl font-semibold tracking-tight text-stone-50 tabular-nums sm:text-4xl lg:text-[2.75rem] lg:leading-none">
-        {reducedMotion ? value : display}
+        <span className="motion-reduce:hidden">{display}</span>
+        <span className="hidden motion-reduce:inline">{value}</span>
       </p>
       <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{label}</p>
     </div>

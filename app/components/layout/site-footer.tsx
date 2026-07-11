@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import Link from "next/link";
 import {
@@ -132,10 +130,11 @@ export function SiteFooter() {
       <footer className="border-t border-white/[0.04] bg-[#080504] px-5 pb-8 pt-16 sm:px-6 md:px-7 lg:px-8 lg:pt-20">
         <div className="mx-auto max-w-6xl">
           <RevealOnScroll>
-            <div className="grid gap-12 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4 lg:gap-16">
+            <nav aria-label="Footer navigation" className="grid gap-12 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4 lg:gap-16">
               <div className="sm:col-span-2 lg:col-span-1">
                 <Link
                   href="/"
+                  aria-label="BrewAtlas home"
                   className="inline-flex items-center gap-2 text-xl font-semibold tracking-tight text-stone-50 transition-colors duration-300 hover:text-amber-100"
                 >
                   <span
@@ -151,7 +150,7 @@ export function SiteFooter() {
                   brew science. Craft coffee, mapped.
                 </p>
 
-                <div className="mt-6 flex items-center gap-2.5">
+                <div className="mt-6 flex items-center gap-2.5" aria-label="Social media links">
                   {socialLinks.map(({ href, label, icon: Icon }) => (
                     <a
                       key={label}
@@ -186,7 +185,7 @@ export function SiteFooter() {
                   <FooterLink key={link.label} {...link} />
                 ))}
               </FooterColumn>
-            </div>
+            </nav>
           </RevealOnScroll>
 
           <div className="mt-14 flex flex-col gap-5 border-t border-white/[0.06] pt-8 lg:mt-16 lg:flex-row lg:items-center lg:justify-between">

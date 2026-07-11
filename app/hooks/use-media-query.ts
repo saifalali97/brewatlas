@@ -23,7 +23,3 @@ export function useMediaQuery(query: string) {
     getMediaQueryServerSnapshot,
   );
 }
-
-export function usePrefersReducedMotion() {
-  return useMediaQuery("(prefers-reduced-motion: reduce)");
-}

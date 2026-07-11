@@ -9,7 +9,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +35,15 @@ body {
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 5.5rem;
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(217, 119, 6, 0.85);
+  outline-offset: 2px;
 }
 
 @keyframes ripple {

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AnimatedStat } from "@/app/components/ui/animated-stat";
 import { RippleLink } from "@/app/components/ui/ripple-link";
+import { imageAlt } from "@/lib/seo/image-alt";
 
 const HERO_VISUAL_IMAGE =
   "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=2000&q=90";
@@ -134,9 +135,11 @@ function HeroCoffeeVisual({ fallbackImage }: { fallbackImage: string }) {
         <div className="relative h-full w-full overflow-hidden rounded-[1.125rem]">
           <Image
             src={imageSrc}
-            alt="Premium V60 pour over coffee brewing"
+            alt={imageAlt.hero}
             fill
             priority
+            width={2000}
+            height={2400}
             sizes="(min-width: 1024px) 44vw, 0px"
             unoptimized={isFallback}
             onError={() => {
@@ -202,7 +205,7 @@ export function HeroSection({
   const ctaSecondary = `${btnSecondary} group relative isolate overflow-hidden border-amber-600/25 bg-white/[0.04] backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-amber-500/45 hover:bg-white/[0.07] hover:shadow-[0_0_40px_rgba(217,119,6,0.18),0_12px_32px_-16px_rgba(0,0,0,0.35)] active:translate-y-0 active:scale-[0.98]`;
 
   return (
-    <section className="hero-grain relative min-h-screen h-[100svh] overflow-hidden">
+    <section id="hero" aria-label="BrewAtlas specialty coffee platform" className="hero-grain relative min-h-screen h-[100svh] overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[#0a0705]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_12%_18%,rgba(217,119,6,0.1),transparent_55%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_88%_32%,rgba(180,120,60,0.09),transparent_52%)]" />
@@ -235,7 +238,12 @@ export function HeroSection({
               Discover, dial in, and brew with precision.
             </p>
 
-            <form onSubmit={handleSearch} className="mt-10 max-w-[34.5rem] lg:mt-11">
+            <form
+              onSubmit={handleSearch}
+              role="search"
+              aria-label="Search BrewAtlas recipes"
+              className="mt-10 max-w-[34.5rem] lg:mt-11"
+            >
               <div className="group relative rounded-[1.125rem] border border-white/[0.14] bg-white/[0.045] p-1 shadow-[0_28px_72px_-28px_rgba(0,0,0,0.8)] backdrop-blur-3xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-white/18 focus-within:border-amber-500/30 focus-within:bg-white/[0.065] focus-within:shadow-[0_36px_96px_-28px_rgba(217,119,6,0.28),0_0_48px_rgba(217,119,6,0.08)]">
                 <div
                   aria-hidden
@@ -274,6 +282,8 @@ export function HeroSection({
                 <button
                   key={filter.label}
                   type="button"
+                  aria-label={`Filter recipes by ${filter.label}`}
+                  aria-pressed={activeFilter === filter.label}
                   onClick={() => applyFilter(filter.label)}
                   className={`inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-[0.8125rem] font-medium backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(217,119,6,0.14)] active:scale-[0.98] ${
                     activeFilter === filter.label

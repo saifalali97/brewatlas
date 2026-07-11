@@ -1,7 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { memo } from "react";
 import { BookOpen, Calendar, MapPin, Sparkles, Star } from "lucide-react";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { MetaTile } from "@/app/components/ui/meta-tile";
@@ -9,6 +6,7 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { SectionIntro } from "@/app/components/ui/section-intro";
 import { cards } from "@/lib/constants/styles";
 import type { TopRoaster } from "@/types/homepage";
+import { imageAlt } from "@/lib/seo/image-alt";
 
 type TopRoastersSectionProps = {
   roasters: TopRoaster[];
@@ -23,8 +21,10 @@ function RoasterCard({ roaster }: { roaster: TopRoaster }) {
       <div className="relative h-40 shrink-0 overflow-hidden sm:h-44 lg:h-48">
         <Image
           src={roaster.image}
-          alt={`${roaster.name} roastery`}
+          alt={imageAlt.roaster(roaster.name, roaster.country, roaster.specialty)}
           fill
+          width={1200}
+          height={800}
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           unoptimized={roaster.image.endsWith(".svg")}
           className="object-cover brightness-[0.92] contrast-[1.04] saturate-[0.94] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
@@ -74,12 +74,11 @@ function RoasterCard({ roaster }: { roaster: TopRoaster }) {
   );
 }
 
-const MemoizedRoasterCard = memo(RoasterCard);
-
 export function TopRoastersSection({ roasters }: TopRoastersSectionProps) {
   return (
-    <SectionFrame id="roasters" className="border-t border-white/[0.04] bg-white/[0.008]">
+    <SectionFrame id="roasters" ariaLabelledBy="roasters-heading" className="border-t border-white/[0.04] bg-white/[0.008]">
       <SectionIntro
+        headingId="roasters-heading"
         eyebrow="Roaster Partners"
         title="Top Roasters"
         description="Discover recipes tailored to beans from the world's most respected specialty roasters."
@@ -87,7 +86,7 @@ export function TopRoastersSection({ roasters }: TopRoastersSectionProps) {
 
       <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
         {roasters.map((roaster) => (
-          <MemoizedRoasterCard key={roaster.name} roaster={roaster} />
+          <RoasterCard key={roaster.name} roaster={roaster} />
         ))}
       </div>
     </SectionFrame>

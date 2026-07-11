@@ -1,12 +1,10 @@
-"use client";
-
-import { memo } from "react";
 import { PremiumImage } from "@/app/components/ui/premium-image";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { SectionIntro } from "@/app/components/ui/section-intro";
 import { TiltCard } from "@/app/components/ui/tilt-card";
 import { cards } from "@/lib/constants/styles";
 import type { Testimonial } from "@/types/homepage";
+import { imageAlt } from "@/lib/seo/image-alt";
 
 type TestimonialsSectionProps = {
   testimonials: Testimonial[];
@@ -18,8 +16,10 @@ function TestimonialCard({ item }: { item: Testimonial }) {
       <blockquote className={`group flex flex-col overflow-hidden ${cards.testimonial} p-0`}>
         <PremiumImage
           src={item.image}
-          alt={`${item.name}, ${item.role}`}
+          alt={imageAlt.testimonial(item.name, item.role, item.location)}
           overlay="portrait"
+          width={600}
+          height={800}
           sizes="(min-width: 1024px) 33vw, 100vw"
           className="h-52 w-full"
         />
@@ -38,12 +38,11 @@ function TestimonialCard({ item }: { item: Testimonial }) {
   );
 }
 
-const MemoizedTestimonialCard = memo(TestimonialCard);
-
 export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
   return (
-    <SectionFrame id="testimonials" padding="compact" showDividers={false}>
+    <SectionFrame id="testimonials" padding="compact" showDividers={false} ariaLabelledBy="testimonials-heading">
       <SectionIntro
+        headingId="testimonials-heading"
         eyebrow="Trusted by Professionals"
         title="What Baristas Say"
         centered
@@ -51,7 +50,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
       />
       <div className="grid gap-8 lg:grid-cols-3">
         {testimonials.map((item) => (
-          <MemoizedTestimonialCard key={item.name} item={item} />
+          <TestimonialCard key={item.name} item={item} />
         ))}
       </div>
     </SectionFrame>
