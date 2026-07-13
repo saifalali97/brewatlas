@@ -15,6 +15,10 @@ const publicPages: Array<{
   { path: "/roasters", changeFrequency: "monthly", priority: 0.8 },
   { path: "/devices", changeFrequency: "monthly", priority: 0.7 },
   { path: "/premium", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/culture", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/culture/uae-coffee-culture", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/culture/arabic-coffee", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/culture/tea", changeFrequency: "monthly", priority: 0.6 },
   { path: "/about", changeFrequency: "yearly", priority: 0.5 },
   { path: "/contact", changeFrequency: "yearly", priority: 0.5 },
 ];
