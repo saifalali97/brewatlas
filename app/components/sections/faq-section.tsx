@@ -41,7 +41,7 @@ export function FaqSection({ faqs }: FaqSectionProps) {
 
             <div className="mt-5 border-t border-white/[0.06] pt-5">
               <RippleLink
-                href="#faq"
+                href="/contact"
                 className={`${buttons.ghostCta}${buttons.ghostCtaAutoWidth}`}
               >
                 <Mail className="h-3.5 w-3.5 text-amber-500/80" aria-hidden />

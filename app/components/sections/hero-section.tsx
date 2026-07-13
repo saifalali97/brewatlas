@@ -301,7 +301,7 @@ export function HeroSection({
               <RippleLink href="#recipes" className={`${btnPrimary} w-full sm:w-auto`}>
                 Explore Recipes
               </RippleLink>
-              <RippleLink href="#pricing" className={`${ctaSecondary} w-full sm:w-auto`}>
+              <RippleLink href="/premium" className={`${ctaSecondary} w-full sm:w-auto`}>
                 <span
                   aria-hidden
                   className="absolute inset-0 bg-gradient-to-r from-amber-600/0 via-amber-500/12 to-amber-600/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"

@@ -2,24 +2,18 @@
 
 import { useState } from "react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
-import { RippleLink } from "@/app/components/ui/ripple-link";
-import { SectionFrame } from "@/app/components/ui/section-frame";
-import { SectionIntro } from "@/app/components/ui/section-intro";
+import { getRecipeSlug } from "@/lib/data/recipes";
 import type { FeaturedRecipe } from "@/types/homepage";
 
 const filters = ["All", "V60", "Espresso", "Chemex", "Aeropress", "Cold Brew"] as const;
 
 type Filter = (typeof filters)[number];
 
-type FeaturedRecipesSectionProps = {
+type RecipesExplorerProps = {
   recipes: FeaturedRecipe[];
-  btnSecondary: string;
 };
 
-export function FeaturedRecipesSection({
-  recipes,
-  btnSecondary,
-}: FeaturedRecipesSectionProps) {
+export function RecipesExplorer({ recipes }: RecipesExplorerProps) {
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
 
   const filteredRecipes =
@@ -28,14 +22,7 @@ export function FeaturedRecipesSection({
       : recipes.filter((recipe) => recipe.brewMethod === activeFilter);
 
   return (
-    <SectionFrame id="recipes" ariaLabelledBy="recipes-heading">
-      <SectionIntro
-        headingId="recipes-heading"
-        eyebrow="Curated Collection"
-        title="Featured Recipes"
-        description="Handpicked by our barista community. Each recipe includes grind size, water temperature, and step-by-step guidance."
-      />
-
+    <div>
       <div className="mb-10 flex flex-wrap gap-2.5 md:mb-12">
         {filters.map((filter) => {
           const isActive = activeFilter === filter;
@@ -64,6 +51,7 @@ export function FeaturedRecipesSection({
             key={recipe.name}
             recipe={recipe}
             featured={Boolean(recipe.featured) && activeFilter === "All"}
+            href={`/recipes/${getRecipeSlug(recipe)}`}
           />
         ))}
       </div>
@@ -73,15 +61,6 @@ export function FeaturedRecipesSection({
           No recipes match this filter yet.
         </p>
       )}
-
-      <div className="mt-16 flex justify-center md:mt-20">
-        <RippleLink
-          href="/recipes"
-          className={`${btnSecondary} min-w-[240px] border-amber-600/30 bg-white/[0.05] px-10 backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-amber-500/45 hover:bg-white/[0.08] hover:shadow-[0_0_48px_rgba(217,119,6,0.18),0_16px_40px_-16px_rgba(0,0,0,0.4)] motion-reduce:hover:translate-y-0`}
-        >
-          View All Recipes
-        </RippleLink>
-      </div>
-    </SectionFrame>
+    </div>
   );
 }

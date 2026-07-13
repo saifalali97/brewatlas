@@ -14,24 +14,24 @@ import { RippleLink } from "@/app/components/ui/ripple-link";
 import { buttons } from "@/lib/constants/styles";
 
 const exploreLinks = [
-  { href: "#recipes", label: "Recipes" },
-  { href: "#methods", label: "Methods" },
-  { href: "#origins", label: "Origins" },
-  { href: "#roasters", label: "Roasters" },
-  { href: "#pricing", label: "Premium" },
+  { href: "/recipes", label: "Recipes" },
+  { href: "/methods", label: "Methods" },
+  { href: "/origins", label: "Origins" },
+  { href: "/roasters", label: "Roasters" },
+  { href: "/premium", label: "Premium" },
 ];
 
 const companyLinks = [
-  { href: "#", label: "About" },
+  { href: "/about", label: "About" },
   { href: "#", label: "Blog" },
   { href: "#", label: "Careers" },
-  { href: "#", label: "Contact" },
+  { href: "/contact", label: "Contact" },
   { href: "#", label: "Press" },
 ];
 
 const supportLinks = [
   { href: "#", label: "Help Center" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/#faq", label: "FAQ" },
   { href: "#", label: "Privacy Policy" },
   { href: "#", label: "Terms" },
   { href: "#", label: "Cookies" },
@@ -47,12 +47,12 @@ const socialLinks = [
 function FooterLink({ href, label }: { href: string; label: string }) {
   return (
     <li>
-      <a
+      <Link
         href={href}
         className="inline-block text-sm text-stone-500 underline-offset-4 transition-all duration-300 hover:text-amber-400/90 hover:underline"
       >
         {label}
-      </a>
+      </Link>
     </li>
   );
 }
@@ -110,13 +110,13 @@ export function SiteFooter() {
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <RippleLink
-                  href="#pricing"
+                  href="/premium"
                   className={`${buttons.primary} motion-reduce:hover:scale-100`}
                 >
                   Start Premium
                 </RippleLink>
                 <RippleLink
-                  href="#recipes"
+                  href="/recipes"
                   className={`${buttons.secondary} motion-reduce:hover:scale-100`}
                 >
                   Browse Recipes

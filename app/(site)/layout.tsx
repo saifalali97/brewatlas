@@ -1,29 +1,17 @@
 import { SiteNav } from "@/app/components/layout/site-nav";
 import { FloatingActions } from "@/app/components/layout/client-chrome";
-import { HeroSection } from "@/app/components/sections/hero-section";
-import {
-  BrewingMethodsSection,
-  CoffeeOriginsSection,
-  FaqSection,
-  FeaturedRecipesSection,
-  PricingSection,
-  SiteFooter,
-  TestimonialsSection,
-  TopRoastersSection,
-} from "@/lib/dynamic-sections";
-import { buttons } from "@/lib/constants/styles";
-import {
-  brewMethods,
-  coffeeOrigins,
-  faqs,
-  featuredRecipes,
-  heroImage,
-  pricingPlans,
-  testimonials,
-  topRoasters,
-} from "@/data/homepage";
+import { SiteFooter } from "@/lib/dynamic-sections";
 
-export default function Home() {
+/**
+ * Shared chrome (background, nav, footer) for every public marketing/app
+ * page. Markup is unchanged from the original homepage wrapper so "/"
+ * keeps rendering pixel-identical output after the move.
+ */
+export default function SiteLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0705] font-sans text-stone-100">
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
@@ -40,23 +28,7 @@ export default function Home() {
 
       <SiteNav />
 
-      <main id="main-content">
-        <HeroSection
-          heroImage={heroImage}
-          btnPrimary={buttons.primary}
-          btnSecondary={buttons.secondary}
-        />
-        <FeaturedRecipesSection
-          recipes={featuredRecipes}
-          btnSecondary={buttons.secondary}
-        />
-        <BrewingMethodsSection methods={brewMethods} />
-        <CoffeeOriginsSection origins={coffeeOrigins} />
-        <TopRoastersSection roasters={topRoasters} />
-        <TestimonialsSection testimonials={testimonials} />
-        <PricingSection plans={pricingPlans} />
-        <FaqSection faqs={faqs} />
-      </main>
+      <main id="main-content">{children}</main>
 
       <FloatingActions />
       <SiteFooter />

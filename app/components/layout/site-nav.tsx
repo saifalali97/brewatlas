@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 
 const navLinks = [
-  { href: "#recipes", label: "Recipes", id: "recipes" },
-  { href: "#methods", label: "Methods", id: "methods" },
-  { href: "#origins", label: "Origins", id: "origins" },
-  { href: "#roasters", label: "Roasters", id: "roasters" },
-  { href: "#pricing", label: "Pricing", id: "pricing" },
-  { href: "#faq", label: "FAQ", id: "faq" },
+  { href: "/recipes", label: "Recipes", id: "recipes" },
+  { href: "/methods", label: "Methods", id: "methods" },
+  { href: "/origins", label: "Origins", id: "origins" },
+  { href: "/roasters", label: "Roasters", id: "roasters" },
+  { href: "/premium", label: "Pricing", id: "pricing" },
+  { href: "/#faq", label: "FAQ", id: "faq" },
 ];
 
 export function SiteNav() {
@@ -66,7 +66,7 @@ export function SiteNav() {
           {navLinks.map((link) => {
             const isActive = activeId === link.id;
             return (
-              <a
+              <Link
                 key={link.id}
                 href={link.href}
                 aria-current={isActive ? "page" : undefined}
@@ -82,12 +82,12 @@ export function SiteNav() {
                       : "w-0 opacity-0 group-hover:w-full group-hover:opacity-60"
                   }`}
                 />
-              </a>
+              </Link>
             );
           })}
         </div>
         <RippleLink
-          href="#pricing"
+          href="/premium"
           aria-label="Join BrewAtlas Premium"
           className="rounded-full bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_36px_rgba(217,119,6,0.42)] active:scale-[0.97] sm:px-5"
         >

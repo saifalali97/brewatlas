@@ -25,7 +25,7 @@ export function FloatingActions() {
       }`}
     >
       <a
-        href="#pricing"
+        href="/premium"
         aria-label="Join BrewAtlas Premium"
         className="animate-float hidden items-center gap-2 rounded-full border border-amber-700/30 bg-amber-950/80 px-4 py-2.5 text-xs font-medium text-amber-100 shadow-[0_8px_32px_-8px_rgba(217,119,6,0.35)] backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:border-amber-600/40 hover:shadow-[0_12px_40px_-8px_rgba(217,119,6,0.45)] active:scale-[0.97] sm:inline-flex"
       >
