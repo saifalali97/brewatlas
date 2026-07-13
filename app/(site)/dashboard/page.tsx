@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
 import { redirect } from "next/navigation";
-import { BookOpen, Coffee, Heart } from "lucide-react";
+import { BookOpen, Coffee, Heart, Plus } from "lucide-react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { featuredRecipes } from "@/data/homepage";
 import { getRecipeSlug } from "@/lib/data/recipes";
+import { getUserFavoriteRecipes, getUserRecipes } from "@/lib/data/db-recipes";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/profile";
 import { signOutAction } from "@/lib/supabase/actions";
@@ -23,12 +26,6 @@ export const metadata: Metadata = {
   },
 };
 
-const stats = [
-  { icon: Heart, label: "Saved Recipes", value: "12" },
-  { icon: Coffee, label: "Brews Logged", value: "34" },
-  { icon: BookOpen, label: "Favorite Origin", value: "Ethiopia" },
-];
-
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
@@ -41,14 +38,26 @@ export default async function DashboardPage() {
 
   await ensureProfile(supabase, data.user);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("id", data.user.id)
-    .maybeSingle();
+  const [{ data: profile }, favoriteRecipes, ownRecipes] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("full_name, avatar_url, country, bio, brewing_methods(name), devices(name)")
+      .eq("id", data.user.id)
+      .maybeSingle(),
+    getUserFavoriteRecipes(supabase, data.user.id),
+    getUserRecipes(supabase, data.user.id),
+  ]);
 
   const displayName = profile?.full_name || data.user.email || "there";
+  const favoriteMethodName =
+    (profile as { brewing_methods?: { name: string } | null } | null)?.brewing_methods?.name ?? "Not set";
   const recentRecipes = featuredRecipes.slice(0, 3);
+
+  const stats = [
+    { icon: Heart, label: "Saved Recipes", value: String(favoriteRecipes.length) },
+    { icon: Coffee, label: "Recipes Created", value: String(ownRecipes.length) },
+    { icon: BookOpen, label: "Favorite Method", value: favoriteMethodName },
+  ];
 
   return (
     <SectionFrame id="dashboard-page" ariaLabelledBy="dashboard-page-heading" padding="compact">
@@ -82,6 +91,86 @@ export default async function DashboardPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="mt-10 flex flex-col gap-6 rounded-2xl border border-white/[0.09] bg-white/[0.035] p-6 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/[0.12] bg-white/[0.04]">
+            {profile?.avatar_url ? (
+              <Image src={profile.avatar_url} alt="" fill sizes="56px" className="object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-lg font-medium text-stone-500">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+          <div>
+            <p className="font-medium text-stone-100">{displayName}</p>
+            <p className="mt-0.5 text-sm text-stone-500">
+              {profile?.country || "Country not set"}
+              {profile?.bio ? ` · ${profile.bio}` : ""}
+            </p>
+          </div>
+        </div>
+        <Link href="/dashboard/profile" className={`${buttons.secondary} shrink-0`}>
+          Edit Profile
+        </Link>
+      </div>
+
+      <div className="mt-16">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-xl font-semibold tracking-tight text-stone-50">My Recipes</h2>
+          <div className="flex items-center gap-5">
+            {ownRecipes.length > 0 && (
+              <Link href="/dashboard/recipes" className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline">
+                Manage all
+              </Link>
+            )}
+            <Link href="/dashboard/recipes/new" className={`${buttons.secondary} h-10 min-w-0 gap-2 px-5 text-xs`}>
+              <Plus className="h-3.5 w-3.5" aria-hidden />
+              New Recipe
+            </Link>
+          </div>
+        </div>
+
+        {ownRecipes.length === 0 ? (
+          <p className="mt-6 rounded-2xl border border-white/[0.09] bg-white/[0.03] px-6 py-8 text-sm text-stone-500">
+            You haven&apos;t created any recipes yet. Share your first brew with the community.
+          </p>
+        ) : (
+          <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
+            {ownRecipes.slice(0, 3).map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} featured={false} href={`/recipes/${recipe.slug}`} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-16">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-xl font-semibold tracking-tight text-stone-50">Favorite Recipes</h2>
+          {favoriteRecipes.length > 0 && (
+            <Link href="/recipes" className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline">
+              Browse more
+            </Link>
+          )}
+        </div>
+
+        {favoriteRecipes.length === 0 ? (
+          <p className="mt-6 rounded-2xl border border-white/[0.09] bg-white/[0.03] px-6 py-8 text-sm text-stone-500">
+            You haven&apos;t favorited any recipes yet. Browse the{" "}
+            <Link href="/recipes" className="text-amber-400/90 underline-offset-4 hover:underline">
+              recipe library
+            </Link>{" "}
+            and tap the heart on any recipe to save it here.
+          </p>
+        ) : (
+          <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
+            {favoriteRecipes.slice(0, 3).map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} featured={false} href={`/recipes/${recipe.slug}`} />
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="mt-16">

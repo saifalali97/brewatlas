@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "veqpzeatgpfwuygfbnxc.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 31,
@@ -30,6 +35,11 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ["lucide-react"],
+    serverActions: {
+      // Raised from the 1MB default so profile avatar uploads (routed
+      // through a Server Action to Supabase Storage) have room to breathe.
+      bodySizeLimit: "5mb",
+    },
   },
   async headers() {
     return [
