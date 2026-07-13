@@ -137,9 +137,7 @@ function HeroCoffeeVisual({ fallbackImage }: { fallbackImage: string }) {
             src={imageSrc}
             alt={imageAlt.hero}
             fill
-            priority
-            width={2000}
-            height={2400}
+            preload
             sizes="(min-width: 1024px) 44vw, 0px"
             unoptimized={isFallback}
             onError={() => {

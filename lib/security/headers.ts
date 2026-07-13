@@ -1,12 +1,17 @@
 const UNSPLASH_ORIGIN = "https://images.unsplash.com";
+const isDev = process.env.NODE_ENV !== "production";
 
+// React/Next.js dev mode uses eval() in the browser to reconstruct stack
+// traces for the error overlay and Fast Refresh — it is never used in a
+// production build. We only relax `script-src` with `unsafe-eval` for local
+// development so the production CSP stays fully locked down.
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob: ${UNSPLASH_ORIGIN}`,
   "font-src 'self'",
@@ -14,7 +19,7 @@ const contentSecurityPolicy = [
   "media-src 'self'",
   "manifest-src 'self'",
   "worker-src 'self' blob:",
-  "upgrade-insecure-requests",
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 export const securityHeaders = [

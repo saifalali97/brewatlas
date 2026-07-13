@@ -10,10 +10,8 @@ type PremiumImageProps = {
   alt: string;
   className?: string;
   overlay?: "hero" | "card" | "portrait" | "banner";
-  priority?: boolean;
+  preload?: boolean;
   sizes?: string;
-  width?: number;
-  height?: number;
 };
 
 const overlayStyles = {
@@ -28,10 +26,8 @@ export function PremiumImage({
   alt,
   className = "",
   overlay = "card",
-  priority = false,
+  preload = false,
   sizes = "100vw",
-  width = 800,
-  height = 600,
 }: PremiumImageProps) {
   const [imageSrc, setImageSrc] = useState(src);
 
@@ -41,9 +37,7 @@ export function PremiumImage({
         src={imageSrc}
         alt={alt}
         fill
-        width={width}
-        height={height}
-        priority={priority}
+        preload={preload}
         sizes={sizes}
         unoptimized={imageSrc === FALLBACK_SRC}
         onError={() => {

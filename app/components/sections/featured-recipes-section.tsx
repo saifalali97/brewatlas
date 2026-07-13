@@ -43,8 +43,6 @@ function RecipeCard({
           src={recipe.image}
           alt={imageAlt.recipe(recipe.name, recipe.country, recipe.brewMethod, recipe.roastLevel)}
           fill
-          width={800}
-          height={600}
           sizes={featured ? "(min-width: 1024px) 66vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"}
           className="object-cover brightness-[0.88] contrast-[1.04] saturate-[0.92] transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] motion-reduce:transform-none"
         />

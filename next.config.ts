@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 import {
   documentCacheHeaders,
@@ -9,6 +10,11 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
+  turbopack: {
+    // Pin the workspace root so Turbopack doesn't fall back to a parent
+    // directory when it finds another lockfile above this project.
+    root: path.resolve(__dirname),
+  },
   images: {
     remotePatterns: [
       {

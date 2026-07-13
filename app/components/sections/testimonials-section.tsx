@@ -18,8 +18,6 @@ function TestimonialCard({ item }: { item: Testimonial }) {
           src={item.image}
           alt={imageAlt.testimonial(item.name, item.role, item.location)}
           overlay="portrait"
-          width={600}
-          height={800}
           sizes="(min-width: 1024px) 33vw, 100vw"
           className="h-52 w-full"
         />

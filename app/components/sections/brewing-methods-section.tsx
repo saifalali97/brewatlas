@@ -54,8 +54,6 @@ function MethodCard({ method }: { method: BrewingMethod }) {
           src={method.image}
           alt={imageAlt.brewingMethod(method.name, method.suitableRoast)}
           fill
-          width={1600}
-          height={1000}
           sizes="(min-width: 1024px) 46vw, 100vw"
           unoptimized={method.image.endsWith(".svg")}
           className="object-cover brightness-[0.9] contrast-[1.04] saturate-[0.94] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"

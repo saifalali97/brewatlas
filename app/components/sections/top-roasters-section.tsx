@@ -23,8 +23,6 @@ function RoasterCard({ roaster }: { roaster: TopRoaster }) {
           src={roaster.image}
           alt={imageAlt.roaster(roaster.name, roaster.country, roaster.specialty)}
           fill
-          width={1200}
-          height={800}
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           unoptimized={roaster.image.endsWith(".svg")}
           className="object-cover brightness-[0.92] contrast-[1.04] saturate-[0.94] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
