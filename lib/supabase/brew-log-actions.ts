@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { updateTasteProfile } from "@/lib/data/ai";
 import { evaluateAndAwardBadges, recordActivity, refreshCommunityStats } from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
 
@@ -93,6 +94,10 @@ export async function logBrewAction(
     metadata: payload.rating ? { rating: payload.rating } : {},
   });
 
+  // BrewAtlas AI: every logged brew is a taste signal -- the AI User
+  // Profile becomes smarter over time as it recomputes from this.
+  await updateTasteProfile(supabase, authData.user.id);
+
   revalidatePath("/dashboard");
   return { success: "Brew logged.", brewLogId };
 }
@@ -138,6 +143,8 @@ export async function updateBrewLogAction(
   if (error) {
     return { error: error.message || "Failed to update this brew log." };
   }
+
+  await updateTasteProfile(supabase, authData.user.id);
 
   revalidatePath("/dashboard");
   return { success: "Brew log updated.", brewLogId };

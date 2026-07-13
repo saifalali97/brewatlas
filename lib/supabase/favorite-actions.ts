@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { updateTasteProfile } from "@/lib/data/ai";
 import { refreshCommunityStats } from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
 
@@ -36,6 +37,8 @@ export async function addFavoriteAction(formData: FormData): Promise<void> {
   // Community system: "saving" a recipe (favorites) feeds recipesSaved in
   // user_community_stats and the Brew Score.
   await refreshCommunityStats(supabase, data.user.id);
+  // BrewAtlas AI: a saved recipe is a strong taste signal.
+  await updateTasteProfile(supabase, data.user.id);
 
   revalidatePath(path);
   revalidatePath("/dashboard");
@@ -56,6 +59,7 @@ export async function removeFavoriteAction(formData: FormData): Promise<void> {
   await supabase.from("favorites").delete().eq("user_id", data.user.id).eq("recipe_id", recipeId);
 
   await refreshCommunityStats(supabase, data.user.id);
+  await updateTasteProfile(supabase, data.user.id);
 
   revalidatePath(path);
   revalidatePath("/dashboard");

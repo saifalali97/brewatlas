@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { updateTasteProfile } from "@/lib/data/ai";
 import { createNotification, evaluateAndAwardBadges, recordActivity, refreshCommunityStats } from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
 
@@ -51,6 +52,7 @@ export async function likeRecipeAction(formData: FormData): Promise<void> {
 
   if (!error) {
     await refreshCommunityStats(supabase, authData.user.id);
+    await updateTasteProfile(supabase, authData.user.id);
     const authorId = await getRecipeAuthor(supabase, recipeId);
     if (authorId) {
       await createNotification(supabase, {
@@ -83,6 +85,7 @@ export async function unlikeRecipeAction(formData: FormData): Promise<void> {
 
   await supabase.from("recipe_likes").delete().eq("user_id", authData.user.id).eq("recipe_id", recipeId);
   await refreshCommunityStats(supabase, authData.user.id);
+  await updateTasteProfile(supabase, authData.user.id);
 
   revalidatePath(path);
 }
@@ -133,6 +136,8 @@ export async function submitRecipeReviewAction(
     recipeId,
     metadata: { rating },
   });
+  // BrewAtlas AI: a rating + review is the strongest available taste signal.
+  await updateTasteProfile(supabase, authData.user.id);
 
   const authorId = await getRecipeAuthor(supabase, recipeId);
   if (authorId) {
