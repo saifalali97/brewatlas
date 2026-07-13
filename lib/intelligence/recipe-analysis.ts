@@ -348,10 +348,10 @@ export function calcExpectedSensoryProfile(input: RecipeAnalysisInput, profile: 
   };
 }
 
-const HIGH_AGITATION_PATTERN = /vigorous|aggressive|rapid|hard\s*(swirl|stir|shake)|multiple\s*(swirl|stir)|heavy\s*(swirl|stir)/i;
+export const HIGH_AGITATION_PATTERN = /vigorous|aggressive|rapid|hard\s*(swirl|stir|shake)|multiple\s*(swirl|stir)|heavy\s*(swirl|stir)/i;
 
-/** True if any of the (recipe / Smart Brewing Engine / xBloom) agitation signals describe high-intensity agitation. */
-function isHighAgitation(input: RecipeAnalysisInput): boolean {
+/** True if any of the (recipe / Smart Brewing Engine / xBloom) agitation signals describe high-intensity agitation. Exported for reuse by `lib/ai/coach-engine.ts`. */
+export function isHighAgitation(input: RecipeAnalysisInput): boolean {
   const signals = [input.agitation, input.brewProfileAgitation, input.xbloomAgitation, input.xbloomPulsePattern];
   return signals.some((signal) => signal !== null && signal !== undefined && HIGH_AGITATION_PATTERN.test(signal));
 }
