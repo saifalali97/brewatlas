@@ -36,9 +36,10 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
     serverActions: {
-      // Raised from the 1MB default so profile avatar uploads (routed
-      // through a Server Action to Supabase Storage) have room to breathe.
-      bodySizeLimit: "5mb",
+      // Raised from the 1MB default so profile avatar uploads and recipe
+      // cover/gallery photo uploads (routed through Server Actions to
+      // Supabase Storage) have room to breathe.
+      bodySizeLimit: "20mb",
     },
   },
   async headers() {

@@ -1,36 +1,61 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { slugify } from "@/lib/utils/slugify";
-import { RECIPE_IMAGE_PLACEHOLDER, type DbRecipeRow, type LookupOption, type RecipeListItem } from "@/types/recipe";
+import {
+  RECIPE_IMAGE_PLACEHOLDER,
+  type DbRecipeRow,
+  type LookupOption,
+  type RecipeFullDetail,
+  type RecipeListItem,
+} from "@/types/recipe";
 
 const RECIPE_SELECT = `
-  id, title, slug, author_id, coffee_dose, water, ice, grind_size, temperature,
-  bloom, brew_time, tasting_notes, instructions, image_url, featured,
-  premium_only, published, created_at, updated_at,
+  id, title, slug, description, video_url, difficulty, estimated_brew_time,
+  author_id, coffee_dose, water_amount, ice_amount, grind_size, water_temperature,
+  ratio, bloom_amount, bloom_time, total_brew_time, beverage_weight, tds,
+  extraction_percentage, tasting_notes, instructions, cover_image_url,
+  sweetness, acidity, body, bitterness,
+  featured, premium_only, published, created_at, updated_at,
   brewing_methods ( id, name ),
   devices ( id, name ),
-  origins ( id, country, region ),
-  roasters ( id, name )
+  grinders ( id, name ),
+  filter_types ( id, name ),
+  water_profiles ( id, name ),
+  coffees (
+    id, name, farm, producer, variety, process, altitude, roast_level, roast_date,
+    roasters ( id, name ),
+    origins ( id, country, region )
+  ),
+  recipe_pours ( id, pour_number, water_amount, time_label, notes ),
+  recipe_images ( id, url, position ),
+  recipe_tags ( tags ( id, name, slug ) )
 `;
+
+function computeRatio(row: DbRecipeRow): string {
+  if (row.ratio) return row.ratio;
+  if (row.coffee_dose && row.water_amount) {
+    return `1:${Math.round((row.water_amount / row.coffee_dose) * 10) / 10}`;
+  }
+  return "—";
+}
 
 /** Maps a raw DB `recipes` row (with lookup joins) into the shape shared with static catalog recipes. */
 export function mapDbRecipeToListItem(row: DbRecipeRow): RecipeListItem {
-  const ratio =
-    row.coffee_dose && row.water
-      ? `1:${Math.round((row.water / row.coffee_dose) * 10) / 10}`
-      : "—";
+  const tags = row.recipe_tags.map((rt) => rt.tags?.name).filter((name): name is string => Boolean(name));
 
   return {
     name: row.title,
-    country: row.origins?.country ?? "—",
-    origin: row.origins ? `${row.origins.region}, ${row.origins.country}` : "Origin not specified",
+    country: row.coffees?.origins?.country ?? "—",
+    origin: row.coffees?.origins
+      ? `${row.coffees.origins.region}, ${row.coffees.origins.country}`
+      : "Origin not specified",
     brewMethod: row.brewing_methods?.name ?? "Custom",
-    roastLevel: "Community Roast",
-    difficulty: "Intermediate",
-    ratio,
-    time: row.brew_time ?? "—",
-    notes: row.tasting_notes ?? "No tasting notes yet.",
-    image: row.image_url ?? RECIPE_IMAGE_PLACEHOLDER,
+    roastLevel: row.coffees?.roast_level ?? "Community Roast",
+    difficulty: row.difficulty ?? "Intermediate",
+    ratio: computeRatio(row),
+    time: row.total_brew_time ?? row.estimated_brew_time ?? "—",
+    notes: row.tasting_notes ?? row.description ?? "No tasting notes yet.",
+    image: row.cover_image_url ?? RECIPE_IMAGE_PLACEHOLDER,
     premium: row.premium_only,
     featured: row.featured,
     slug: row.slug,
@@ -38,9 +63,90 @@ export function mapDbRecipeToListItem(row: DbRecipeRow): RecipeListItem {
     id: row.id,
     authorId: row.author_id,
     published: row.published,
-    roasterName: row.roasters?.name,
+    roasterName: row.coffees?.roasters?.name,
     deviceName: row.devices?.name,
     instructions: row.instructions,
+    tags,
+    searchableExtras: [
+      row.coffees?.name,
+      row.coffees?.farm,
+      row.coffees?.producer,
+      row.coffees?.variety,
+      row.coffees?.process,
+      row.grinders?.name,
+      row.filter_types?.name,
+      row.water_profiles?.name,
+      row.description,
+      ...tags,
+    ].filter((value): value is string => Boolean(value)),
+  };
+}
+
+/** Maps a raw DB `recipes` row into the fully expanded shape used by the detail page and edit form. */
+export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    description: row.description,
+    videoUrl: row.video_url,
+    difficulty: row.difficulty,
+    estimatedBrewTime: row.estimated_brew_time,
+    authorId: row.author_id,
+    published: row.published,
+    featured: row.featured,
+    premiumOnly: row.premium_only,
+    coverImageUrl: row.cover_image_url,
+    images: [...row.recipe_images].sort((a, b) => a.position - b.position),
+
+    brewingMethodId: row.brewing_methods?.id ?? null,
+    brewingMethodName: row.brewing_methods?.name ?? null,
+    deviceId: row.devices?.id ?? null,
+    deviceName: row.devices?.name ?? null,
+    grinderId: row.grinders?.id ?? null,
+    grinderName: row.grinders?.name ?? null,
+    filterTypeId: row.filter_types?.id ?? null,
+    filterTypeName: row.filter_types?.name ?? null,
+    waterProfileId: row.water_profiles?.id ?? null,
+    waterProfileName: row.water_profiles?.name ?? null,
+    grindSize: row.grind_size,
+    waterTemperature: row.water_temperature,
+    coffeeDose: row.coffee_dose,
+    waterAmount: row.water_amount,
+    ratio: computeRatio(row),
+    iceAmount: row.ice_amount,
+    bloomAmount: row.bloom_amount,
+    bloomTime: row.bloom_time,
+
+    coffeeId: row.coffees?.id ?? null,
+    coffeeName: row.coffees?.name ?? null,
+    roasterId: row.coffees?.roasters?.id ?? null,
+    roasterName: row.coffees?.roasters?.name ?? null,
+    originId: row.coffees?.origins?.id ?? null,
+    originLabel: row.coffees?.origins ? `${row.coffees.origins.region}, ${row.coffees.origins.country}` : null,
+    farm: row.coffees?.farm ?? null,
+    producer: row.coffees?.producer ?? null,
+    variety: row.coffees?.variety ?? null,
+    process: row.coffees?.process ?? null,
+    altitude: row.coffees?.altitude ?? null,
+    roastLevel: row.coffees?.roast_level ?? null,
+    roastDate: row.coffees?.roast_date ?? null,
+
+    pours: [...row.recipe_pours].sort((a, b) => a.pour_number - b.pour_number),
+    tags: row.recipe_tags.map((rt) => rt.tags).filter((tag): tag is NonNullable<typeof tag> => tag !== null),
+
+    totalBrewTime: row.total_brew_time,
+    beverageWeight: row.beverage_weight,
+    tds: row.tds,
+    extractionPercentage: row.extraction_percentage,
+    tastingNotes: row.tasting_notes,
+    instructions: row.instructions,
+    sweetness: row.sweetness,
+    acidity: row.acidity,
+    body: row.body,
+    bitterness: row.bitterness,
+
+    tagIds: row.recipe_tags.map((rt) => rt.tags?.id).filter((id): id is string => Boolean(id)),
   };
 }
 
@@ -79,7 +185,22 @@ export async function getUserRecipes(
   return (data as unknown as DbRecipeRow[]).map(mapDbRecipeToListItem);
 }
 
-/** Looks up a single DB recipe by slug. RLS decides visibility (published, own draft, or admin). */
+/** Looks up a single DB recipe by slug, fully expanded. RLS decides visibility. */
+export async function getDbRecipeDetailBySlug(
+  supabase: SupabaseClient,
+  slug: string,
+): Promise<RecipeFullDetail | null> {
+  const { data, error } = await supabase
+    .from("recipes")
+    .select(RECIPE_SELECT)
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return mapDbRecipeToFullDetail(data as unknown as DbRecipeRow);
+}
+
+/** A lightweight (card-shaped) lookup by slug, used where the full detail isn't needed. */
 export async function getDbRecipeBySlug(
   supabase: SupabaseClient,
   slug: string,
@@ -94,30 +215,15 @@ export async function getDbRecipeBySlug(
   return mapDbRecipeToListItem(data as unknown as DbRecipeRow);
 }
 
-/** A single DB recipe by id, used by the edit form (ownership is checked by the caller). */
-export async function getDbRecipeById(
+/** Raw, fully expanded recipe by id, used by the edit form. */
+export async function getRecipeFullDetailById(
   supabase: SupabaseClient,
   id: string,
-): Promise<RecipeListItem | null> {
+): Promise<RecipeFullDetail | null> {
   const { data, error } = await supabase.from("recipes").select(RECIPE_SELECT).eq("id", id).maybeSingle();
 
   if (error || !data) return null;
-  return mapDbRecipeToListItem(data as unknown as DbRecipeRow);
-}
-
-/**
- * Raw (unmapped) recipe row by id, used by the edit form which needs the
- * lookup *ids* to pre-select `<select>` options rather than their display
- * names.
- */
-export async function getRawDbRecipeById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<DbRecipeRow | null> {
-  const { data, error } = await supabase.from("recipes").select(RECIPE_SELECT).eq("id", id).maybeSingle();
-
-  if (error || !data) return null;
-  return data as unknown as DbRecipeRow;
+  return mapDbRecipeToFullDetail(data as unknown as DbRecipeRow);
 }
 
 type FavoriteJoinRow = { recipe_id: string; recipes: DbRecipeRow | null };
@@ -154,13 +260,7 @@ export async function getUserFavoriteRecipeIds(
   return new Set((data ?? []).map((row) => row.recipe_id as string));
 }
 
-/**
- * Total number of users who have favorited a given recipe. Goes through
- * the `recipe_favorites_count` RPC (a SECURITY DEFINER function) because
- * the `favorites` table's RLS only lets a user see their own rows, which
- * would otherwise make a direct count come back as 0 for anyone but the
- * recipe's own favoriters.
- */
+/** Total number of users who have favorited a given recipe. */
 export async function getFavoritesCount(supabase: SupabaseClient, recipeId: string): Promise<number> {
   const { data, error } = await supabase.rpc("recipe_favorites_count", { recipe: recipeId });
   if (error) return 0;
@@ -185,6 +285,82 @@ export async function getOriginOptions(supabase: SupabaseClient): Promise<Lookup
 export async function getRoasterOptions(supabase: SupabaseClient): Promise<LookupOption[]> {
   const { data } = await supabase.from("roasters").select("id, name").order("name");
   return data ?? [];
+}
+
+export async function getGrinderOptions(supabase: SupabaseClient): Promise<LookupOption[]> {
+  const { data } = await supabase.from("grinders").select("id, name").order("name");
+  return data ?? [];
+}
+
+export async function getFilterTypeOptions(supabase: SupabaseClient): Promise<LookupOption[]> {
+  const { data } = await supabase.from("filter_types").select("id, name").order("name");
+  return data ?? [];
+}
+
+export async function getWaterProfileOptions(supabase: SupabaseClient): Promise<LookupOption[]> {
+  const { data } = await supabase.from("water_profiles").select("id, name").order("name");
+  return data ?? [];
+}
+
+export async function getTagOptions(supabase: SupabaseClient): Promise<LookupOption[]> {
+  const { data } = await supabase.from("tags").select("id, name").order("name");
+  return data ?? [];
+}
+
+type CoffeeOptionRow = { id: string; name: string; roasters: { name: string } | null };
+
+/** Existing coffees a user can reuse on a new recipe, labeled "Roaster — Coffee name". */
+export async function getCoffeeOptions(supabase: SupabaseClient): Promise<LookupOption[]> {
+  const { data } = await supabase.from("coffees").select("id, name, roasters ( name )").order("name");
+  return ((data as unknown as CoffeeOptionRow[]) ?? []).map((row) => ({
+    id: row.id,
+    name: row.roasters?.name ? `${row.roasters.name} — ${row.name}` : row.name,
+  }));
+}
+
+export type NewCoffeeInput = {
+  name: string;
+  roasterId: string | null;
+  originId: string | null;
+  farm: string | null;
+  producer: string | null;
+  variety: string | null;
+  process: string | null;
+  altitude: string | null;
+  roastLevel: string | null;
+  roastDate: string | null;
+};
+
+/** Creates a new coffee lot entry (used when a recipe author doesn't pick an existing one). */
+export async function createCoffee(
+  supabase: SupabaseClient,
+  userId: string,
+  input: NewCoffeeInput,
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("coffees")
+    .insert({
+      name: input.name,
+      roaster_id: input.roasterId,
+      origin_id: input.originId,
+      farm: input.farm,
+      producer: input.producer,
+      variety: input.variety,
+      process: input.process,
+      altitude: input.altitude,
+      roast_level: input.roastLevel,
+      roast_date: input.roastDate,
+      created_by: userId,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    console.error("createCoffee failed", error);
+    return null;
+  }
+
+  return data.id as string;
 }
 
 /**

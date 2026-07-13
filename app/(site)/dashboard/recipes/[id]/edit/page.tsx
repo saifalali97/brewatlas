@@ -2,13 +2,18 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
-import { RecipeForm, type RecipeFormInitialValues } from "@/app/components/recipes/recipe-form";
+import { RecipeForm } from "@/app/components/recipes/recipe-form";
 import {
   getBrewingMethodOptions,
+  getCoffeeOptions,
   getDeviceOptions,
+  getFilterTypeOptions,
+  getGrinderOptions,
   getOriginOptions,
-  getRawDbRecipeById,
+  getRecipeFullDetailById,
   getRoasterOptions,
+  getTagOptions,
+  getWaterProfileOptions,
 } from "@/lib/data/db-recipes";
 import { createClient } from "@/lib/supabase/server";
 
@@ -34,7 +39,7 @@ export default async function EditRecipePage({ params }: EditRecipePageProps) {
     redirect(`/login?redirectTo=/dashboard/recipes/${id}/edit`);
   }
 
-  const recipe = await getRawDbRecipeById(supabase, id);
+  const recipe = await getRecipeFullDetailById(supabase, id);
 
   if (!recipe) {
     notFound();
@@ -42,37 +47,22 @@ export default async function EditRecipePage({ params }: EditRecipePageProps) {
 
   // RLS already scopes this select to the caller's own recipes (or admins),
   // but this is the friendlier, explicit authorization boundary.
-  if (recipe.author_id !== authData.user.id) {
+  if (recipe.authorId !== authData.user.id) {
     notFound();
   }
 
-  const [brewingMethods, devices, origins, roasters] = await Promise.all([
-    getBrewingMethodOptions(supabase),
-    getDeviceOptions(supabase),
-    getOriginOptions(supabase),
-    getRoasterOptions(supabase),
-  ]);
-
-  const initialValues: RecipeFormInitialValues = {
-    title: recipe.title,
-    brewingMethodId: recipe.brewing_methods?.id ?? "",
-    deviceId: recipe.devices?.id ?? null,
-    originId: recipe.origins?.id ?? null,
-    roasterId: recipe.roasters?.id ?? null,
-    coffeeDose: recipe.coffee_dose,
-    water: recipe.water,
-    ice: recipe.ice,
-    grindSize: recipe.grind_size,
-    temperature: recipe.temperature,
-    bloom: recipe.bloom,
-    brewTime: recipe.brew_time,
-    tastingNotes: recipe.tasting_notes,
-    instructions: recipe.instructions,
-    imageUrl: recipe.image_url,
-    featured: recipe.featured,
-    premiumOnly: recipe.premium_only,
-    published: recipe.published,
-  };
+  const [brewingMethods, devices, grinders, filterTypes, waterProfiles, origins, roasters, coffees, tags] =
+    await Promise.all([
+      getBrewingMethodOptions(supabase),
+      getDeviceOptions(supabase),
+      getGrinderOptions(supabase),
+      getFilterTypeOptions(supabase),
+      getWaterProfileOptions(supabase),
+      getOriginOptions(supabase),
+      getRoasterOptions(supabase),
+      getCoffeeOptions(supabase),
+      getTagOptions(supabase),
+    ]);
 
   return (
     <SectionFrame id="edit-recipe-page" ariaLabelledBy="edit-recipe-page-heading" padding="compact">
@@ -87,11 +77,16 @@ export default async function EditRecipePage({ params }: EditRecipePageProps) {
         <RecipeForm
           mode="edit"
           recipeId={recipe.id}
-          initialValues={initialValues}
+          initialValues={recipe}
           brewingMethods={brewingMethods}
           devices={devices}
+          grinders={grinders}
+          filterTypes={filterTypes}
+          waterProfiles={waterProfiles}
           origins={origins}
           roasters={roasters}
+          coffees={coffees}
+          tags={tags}
         />
       </div>
     </SectionFrame>

@@ -5,9 +5,14 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { RecipeForm } from "@/app/components/recipes/recipe-form";
 import {
   getBrewingMethodOptions,
+  getCoffeeOptions,
   getDeviceOptions,
+  getFilterTypeOptions,
+  getGrinderOptions,
   getOriginOptions,
   getRoasterOptions,
+  getTagOptions,
+  getWaterProfileOptions,
 } from "@/lib/data/db-recipes";
 import { createClient } from "@/lib/supabase/server";
 
@@ -31,12 +36,18 @@ export default async function NewRecipePage() {
     redirect("/login?redirectTo=/dashboard/recipes/new");
   }
 
-  const [brewingMethods, devices, origins, roasters] = await Promise.all([
-    getBrewingMethodOptions(supabase),
-    getDeviceOptions(supabase),
-    getOriginOptions(supabase),
-    getRoasterOptions(supabase),
-  ]);
+  const [brewingMethods, devices, grinders, filterTypes, waterProfiles, origins, roasters, coffees, tags] =
+    await Promise.all([
+      getBrewingMethodOptions(supabase),
+      getDeviceOptions(supabase),
+      getGrinderOptions(supabase),
+      getFilterTypeOptions(supabase),
+      getWaterProfileOptions(supabase),
+      getOriginOptions(supabase),
+      getRoasterOptions(supabase),
+      getCoffeeOptions(supabase),
+      getTagOptions(supabase),
+    ]);
 
   return (
     <SectionFrame id="new-recipe-page" ariaLabelledBy="new-recipe-page-heading" padding="compact">
@@ -52,8 +63,13 @@ export default async function NewRecipePage() {
           mode="create"
           brewingMethods={brewingMethods}
           devices={devices}
+          grinders={grinders}
+          filterTypes={filterTypes}
+          waterProfiles={waterProfiles}
           origins={origins}
           roasters={roasters}
+          coffees={coffees}
+          tags={tags}
         />
       </div>
     </SectionFrame>

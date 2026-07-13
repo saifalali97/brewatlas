@@ -35,7 +35,18 @@ export function RecipesExplorer({
 
     if (!normalizedSearch) return true;
 
-    const haystack = [recipe.name, recipe.roasterName, recipe.origin, recipe.country, recipe.brewMethod, recipe.deviceName]
+    const haystack = [
+      recipe.name,
+      recipe.roasterName,
+      recipe.origin,
+      recipe.country,
+      recipe.brewMethod,
+      recipe.deviceName,
+      recipe.roastLevel,
+      recipe.difficulty,
+      ...(recipe.tags ?? []),
+      ...(recipe.searchableExtras ?? []),
+    ]
       .filter(Boolean)
       .join(" ")
       .toLowerCase();
@@ -59,7 +70,7 @@ export function RecipesExplorer({
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by coffee name, roaster, origin, method, or device…"
+            placeholder="Search by coffee, roaster, origin, farm, process, method, device, tag…"
             className="w-full rounded-full border border-white/[0.1] bg-white/[0.04] py-3 pl-11 pr-5 text-sm text-stone-100 outline-none backdrop-blur-xl transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
           />
         </div>
