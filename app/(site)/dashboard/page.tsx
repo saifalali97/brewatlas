@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { BookOpen, Coffee, Heart } from "lucide-react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { featuredRecipes } from "@/data/homepage";
 import { getRecipeSlug } from "@/lib/data/recipes";
+import { createClient } from "@/lib/supabase/server";
+import { ensureProfile } from "@/lib/supabase/profile";
+import { signOutAction } from "@/lib/supabase/actions";
+import { buttons } from "@/lib/constants/styles";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -24,17 +29,43 @@ const stats = [
   { icon: BookOpen, label: "Favorite Origin", value: "Ethiopia" },
 ];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+
+  // Proxy already redirects unauthenticated visitors away from /dashboard;
+  // this is the authoritative, non-bypassable check at the data source.
+  if (!data.user) {
+    redirect("/login?redirectTo=/dashboard");
+  }
+
+  await ensureProfile(supabase, data.user);
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("id", data.user.id)
+    .maybeSingle();
+
+  const displayName = profile?.full_name || data.user.email || "there";
   const recentRecipes = featuredRecipes.slice(0, 3);
 
   return (
     <SectionFrame id="dashboard-page" ariaLabelledBy="dashboard-page-heading" padding="compact">
-      <PageHeader
-        eyebrow="Your Account"
-        title="Welcome Back"
-        description="Here's a snapshot of your BrewAtlas activity."
-        centered={false}
-      />
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <PageHeader
+          eyebrow="Your Account"
+          title={`Welcome Back, ${displayName}`}
+          description="Here's a snapshot of your BrewAtlas activity."
+          centered={false}
+        />
+
+        <form action={signOutAction}>
+          <button type="submit" className={`${buttons.secondary} h-10 min-w-0 px-6 text-xs`}>
+            Sign Out
+          </button>
+        </form>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         {stats.map(({ icon: Icon, label, value }) => (

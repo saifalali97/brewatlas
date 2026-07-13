@@ -3,33 +3,27 @@ import Link from "next/link";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { OAuthButtons } from "@/app/components/auth/oauth-buttons";
-import { LoginForm } from "./login-form";
+import { SignupForm } from "./signup-form";
 
 export const metadata: Metadata = {
-  title: "Log In",
-  description: "Log in to your BrewAtlas account to access saved recipes, brew tracking, and Premium features.",
+  title: "Sign Up",
+  description: "Create a free BrewAtlas account to save recipes, track brews, and unlock Premium features.",
   robots: {
     index: false,
     follow: true,
   },
   alternates: {
-    canonical: "/login",
+    canonical: "/signup",
   },
 };
 
-type LoginPageProps = {
-  searchParams: Promise<{ redirectTo?: string; error?: string }>;
-};
-
-export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const { redirectTo, error } = await searchParams;
-
+export default function SignupPage() {
   return (
-    <SectionFrame id="login-page" ariaLabelledBy="login-page-heading" padding="compact">
-      <PageHeader eyebrow="Welcome Back" title="Log In" />
+    <SectionFrame id="signup-page" ariaLabelledBy="signup-page-heading" padding="compact">
+      <PageHeader eyebrow="Join BrewAtlas" title="Create Your Account" />
 
       <div className="mx-auto max-w-md rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
-        <LoginForm redirectTo={redirectTo} initialError={error} />
+        <SignupForm />
 
         <div className="my-6 flex items-center gap-3">
           <div className="h-px flex-1 bg-white/[0.08]" />
@@ -40,9 +34,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <OAuthButtons />
 
         <p className="mt-6 text-center text-sm text-stone-500">
-          New to BrewAtlas?{" "}
-          <Link href="/signup" className="text-amber-400/90 underline-offset-4 hover:underline">
-            Create an account
+          Already have an account?{" "}
+          <Link href="/login" className="text-amber-400/90 underline-offset-4 hover:underline">
+            Log in
           </Link>
         </p>
       </div>
