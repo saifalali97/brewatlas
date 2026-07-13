@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 import {
   documentCacheHeaders,
   securityHeaders,
+  serviceWorkerCacheHeaders,
   staticAssetCacheHeaders,
 } from "./lib/security/headers";
 
@@ -62,6 +63,14 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/favicon.ico",
+        headers: staticAssetCacheHeaders,
+      },
+      {
+        source: "/sw.js",
+        headers: serviceWorkerCacheHeaders,
+      },
+      {
+        source: "/icons/:path*",
         headers: staticAssetCacheHeaders,
       },
     ];

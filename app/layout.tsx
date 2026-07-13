@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { ClientPageLoader } from "@/app/components/layout/client-chrome";
+import { ServiceWorkerRegistration } from "@/app/components/pwa/service-worker-registration";
 import { JsonLd } from "@/app/components/seo/json-ld";
 import { directionFor } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -22,6 +23,8 @@ export const metadata: Metadata = createSiteMetadata();
 export const viewport: Viewport = {
   themeColor: siteConfig.themeColor,
   colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default async function RootLayout({
@@ -48,6 +51,7 @@ export default async function RootLayout({
         </a>
         <JsonLd />
         <ClientPageLoader />
+        <ServiceWorkerRegistration />
         <TranslationProvider locale={locale} dictionary={dictionary}>
           {children}
         </TranslationProvider>
