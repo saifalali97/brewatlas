@@ -6,6 +6,8 @@ import { CultureTopicCard } from "@/app/components/cards/culture-topic-card";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { getCultureSectionBySlug } from "@/lib/data/culture";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 
 type CultureSectionPageProps = {
@@ -14,29 +16,28 @@ type CultureSectionPageProps = {
 
 export async function generateMetadata({ params }: CultureSectionPageProps): Promise<Metadata> {
   const { section: sectionSlug } = await params;
+  const locale = await getLocale();
   const supabase = await createClient();
-  const section = await getCultureSectionBySlug(supabase, sectionSlug);
+  const section = await getCultureSectionBySlug(supabase, sectionSlug, locale);
 
   if (!section) {
     return { title: "Section Not Found" };
   }
 
-  return {
+  return buildLocalizedMetadata({
+    pathname: `/culture/${section.slug}`,
+    locale,
     title: section.seoTitle ?? section.name,
     description: section.seoDescription ?? section.description,
-    alternates: { canonical: `/culture/${section.slug}` },
-    openGraph: {
-      title: section.seoTitle ?? section.name,
-      description: section.seoDescription ?? section.description,
-      images: section.heroImageUrl ? [section.heroImageUrl] : undefined,
-    },
-  };
+    ogImage: section.heroImageUrl ? { url: section.heroImageUrl } : undefined,
+  });
 }
 
 export default async function CultureSectionPage({ params }: CultureSectionPageProps) {
   const { section: sectionSlug } = await params;
+  const locale = await getLocale();
   const supabase = await createClient();
-  const section = await getCultureSectionBySlug(supabase, sectionSlug);
+  const section = await getCultureSectionBySlug(supabase, sectionSlug, locale);
 
   if (!section) {
     notFound();

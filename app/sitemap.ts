@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
+import { buildHreflangAlternates } from "@/lib/seo/localized-metadata";
 import { getSiteUrl } from "@/lib/seo/site";
 
 /** Public App Router pages included in the sitemap. */
@@ -34,6 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified,
     changeFrequency,
     priority,
+    alternates: { languages: buildHreflangAlternates(path) },
   }));
 
   const recipeEntries = getAllRecipeSlugs().map((slug) => ({
@@ -41,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified,
     changeFrequency: "monthly" as const,
     priority: 0.6,
+    alternates: { languages: buildHreflangAlternates(`/recipes/${slug}`) },
   }));
 
   return [...staticEntries, ...recipeEntries];

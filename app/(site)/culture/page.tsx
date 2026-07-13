@@ -3,20 +3,25 @@ import { CultureSectionCard } from "@/app/components/cards/culture-section-card"
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { getCultureSections } from "@/lib/data/culture";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = {
-  title: "Coffee & Tea Culture",
-  description:
-    "Explore UAE coffee culture, traditional Arabic coffee, and tea traditions — the history, hospitality, and rituals behind every cup in the Emirates.",
-  alternates: {
-    canonical: "/culture",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return buildLocalizedMetadata({
+    pathname: "/culture",
+    locale,
+    title: "Coffee & Tea Culture",
+    description:
+      "Explore UAE coffee culture, traditional Arabic coffee, and tea traditions — the history, hospitality, and rituals behind every cup in the Emirates.",
+  });
+}
 
 export default async function CulturePage() {
+  const locale = await getLocale();
   const supabase = await createClient();
-  const sections = await getCultureSections(supabase);
+  const sections = await getCultureSections(supabase, locale);
 
   return (
     <SectionFrame id="culture-hub" ariaLabelledBy="culture-hub-heading" padding="compact">

@@ -1,17 +1,26 @@
 import { SiteNav } from "@/app/components/layout/site-nav";
 import { FloatingActions } from "@/app/components/layout/client-chrome";
 import { SiteFooter } from "@/lib/dynamic-sections";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 
 /**
  * Shared chrome (background, nav, footer) for every public marketing/app
  * page. Markup is unchanged from the original homepage wrapper so "/"
  * keeps rendering pixel-identical output after the move.
+ *
+ * Resolves the request's locale once and hands translated nav labels
+ * down to `<SiteNav>` -- the dictionary itself stays `server-only` and
+ * never reaches the client bundle (see `lib/i18n/get-dictionary.ts`).
  */
-export default function SiteLayout({
+export default async function SiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0705] font-sans text-stone-100">
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
@@ -26,7 +35,7 @@ export default function SiteLayout({
         <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f0a]/40 via-transparent to-[#0a0705]" />
       </div>
 
-      <SiteNav />
+      <SiteNav nav={dictionary.nav} locale={locale} />
 
       <main id="main-content">{children}</main>
 

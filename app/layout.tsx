@@ -2,6 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import { ClientPageLoader } from "@/app/components/layout/client-chrome";
 import { JsonLd } from "@/app/components/seo/json-ld";
+import { directionFor } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import { TranslationProvider } from "@/lib/i18n/translation-context";
 import { createSiteMetadata } from "@/lib/seo/metadata";
 import { siteConfig } from "@/lib/seo/site";
 import "./globals.css";
@@ -20,14 +24,19 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const direction = directionFor(locale);
+
   return (
     <html
-      lang="en"
+      lang={locale}
+      dir={direction}
       className={`${geistSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
@@ -35,11 +44,13 @@ export default function RootLayout({
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-stone-50 focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-stone-900"
         >
-          Skip to main content
+          {dictionary.nav.skipToMainContent}
         </a>
         <JsonLd />
         <ClientPageLoader />
-        {children}
+        <TranslationProvider locale={locale} dictionary={dictionary}>
+          {children}
+        </TranslationProvider>
       </body>
     </html>
   );

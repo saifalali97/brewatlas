@@ -2,18 +2,44 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { LanguageSwitcher } from "@/app/components/layout/language-switcher";
 import { RippleLink } from "@/app/components/ui/ripple-link";
+import { DEFAULT_LOCALE } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/types";
+import type { Locale } from "@/types/i18n";
 
-const navLinks = [
-  { href: "/recipes", label: "Recipes", id: "recipes" },
-  { href: "/methods", label: "Methods", id: "methods" },
-  { href: "/origins", label: "Origins", id: "origins" },
-  { href: "/roasters", label: "Roasters", id: "roasters" },
-  { href: "/premium", label: "Pricing", id: "pricing" },
-  { href: "/#faq", label: "FAQ", id: "faq" },
-];
+/** Falls back to English labels when no dictionary is supplied, so this component still renders standalone. */
+const defaultNavLabels: Dictionary["nav"] = {
+  home: "Home",
+  recipes: "Recipes",
+  methods: "Methods",
+  origins: "Origins",
+  roasters: "Roasters",
+  devices: "Devices",
+  culture: "Culture",
+  pricing: "Pricing",
+  faq: "FAQ",
+  dashboard: "Dashboard",
+  community: "Community",
+  profile: "Profile",
+  settings: "Settings",
+  joinPremium: "Join Premium",
+  login: "Log in",
+  signup: "Sign up",
+  logout: "Log out",
+  skipToMainContent: "Skip to main content",
+};
 
-export function SiteNav() {
+export function SiteNav({ nav = defaultNavLabels, locale = DEFAULT_LOCALE }: { nav?: Dictionary["nav"]; locale?: Locale }) {
+  const navLinks = [
+    { href: "/recipes", label: nav.recipes, id: "recipes" },
+    { href: "/methods", label: nav.methods, id: "methods" },
+    { href: "/origins", label: nav.origins, id: "origins" },
+    { href: "/roasters", label: nav.roasters, id: "roasters" },
+    { href: "/premium", label: nav.pricing, id: "pricing" },
+    { href: "/#faq", label: nav.faq, id: "faq" },
+  ];
+
   const [activeId, setActiveId] = useState<string>("");
   const [scrolled, setScrolled] = useState(false);
 
@@ -86,13 +112,16 @@ export function SiteNav() {
             );
           })}
         </div>
-        <RippleLink
-          href="/premium"
-          aria-label="Join BrewAtlas Premium"
-          className="rounded-full bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_36px_rgba(217,119,6,0.42)] active:scale-[0.97] sm:px-5"
-        >
-          Join Premium
-        </RippleLink>
+        <div className="flex items-center gap-3 sm:gap-4">
+          <LanguageSwitcher currentLocale={locale} />
+          <RippleLink
+            href="/premium"
+            aria-label="Join BrewAtlas Premium"
+            className="rounded-full bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_36px_rgba(217,119,6,0.42)] active:scale-[0.97] sm:px-5"
+          >
+            {nav.joinPremium}
+          </RippleLink>
+        </div>
       </nav>
     </header>
   );

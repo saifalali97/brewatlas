@@ -7,6 +7,8 @@ import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons, cards } from "@/lib/constants/styles";
 import { getCultureTopicBySlug } from "@/lib/data/culture";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 import { CULTURE_IMAGE_PLACEHOLDER } from "@/types/culture";
 
@@ -16,29 +18,28 @@ type CultureTopicPageProps = {
 
 export async function generateMetadata({ params }: CultureTopicPageProps): Promise<Metadata> {
   const { section: sectionSlug, topic: topicSlug } = await params;
+  const locale = await getLocale();
   const supabase = await createClient();
-  const topic = await getCultureTopicBySlug(supabase, sectionSlug, topicSlug);
+  const topic = await getCultureTopicBySlug(supabase, sectionSlug, topicSlug, locale);
 
   if (!topic) {
     return { title: "Article Not Found" };
   }
 
-  return {
+  return buildLocalizedMetadata({
+    pathname: `/culture/${sectionSlug}/${topic.slug}`,
+    locale,
     title: topic.seoTitle ?? topic.title,
     description: topic.seoDescription ?? topic.excerpt,
-    alternates: { canonical: `/culture/${sectionSlug}/${topic.slug}` },
-    openGraph: {
-      title: topic.seoTitle ?? topic.title,
-      description: topic.seoDescription ?? topic.excerpt,
-      images: topic.heroImageUrl ? [topic.heroImageUrl] : undefined,
-    },
-  };
+    ogImage: topic.heroImageUrl ? { url: topic.heroImageUrl } : undefined,
+  });
 }
 
 export default async function CultureTopicPage({ params }: CultureTopicPageProps) {
   const { section: sectionSlug, topic: topicSlug } = await params;
+  const locale = await getLocale();
   const supabase = await createClient();
-  const topic = await getCultureTopicBySlug(supabase, sectionSlug, topicSlug);
+  const topic = await getCultureTopicBySlug(supabase, sectionSlug, topicSlug, locale);
 
   if (!topic) {
     notFound();
