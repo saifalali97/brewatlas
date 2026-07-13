@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { evaluateAndAwardBadges, recordActivity, refreshCommunityStats } from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -78,8 +79,22 @@ export async function logBrewAction(
     return { error: error?.message ?? "Failed to log this brew." };
   }
 
+  const brewLogId = inserted.id as string;
+
+  // Community system: every logged brew feeds Brew Score, the "Top
+  // Brewers"/"Most Active Users" leaderboards, and badges like First
+  // Brew / V60 Master / Espresso Expert / UAE Coffee Explorer.
+  await refreshCommunityStats(supabase, authData.user.id);
+  await evaluateAndAwardBadges(supabase, authData.user.id);
+  await recordActivity(supabase, {
+    userId: authData.user.id,
+    activityType: "brewed_recipe",
+    recipeId: payload.recipe_id,
+    metadata: payload.rating ? { rating: payload.rating } : {},
+  });
+
   revalidatePath("/dashboard");
-  return { success: "Brew logged.", brewLogId: inserted.id as string };
+  return { success: "Brew logged.", brewLogId };
 }
 
 /** Updates a brew log entry the caller owns. */

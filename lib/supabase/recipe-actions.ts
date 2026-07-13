@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createCoffee, generateUniqueRecipeSlug } from "@/lib/data/db-recipes";
+import { evaluateAndAwardBadges, recordActivity, refreshCommunityStats } from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
 
 export type RecipeActionState = { error?: string; success?: string } | undefined;
@@ -350,6 +351,19 @@ export async function createRecipeAction(
   const galleryError = await appendGalleryImages(supabase, authData.user.id, recipeId, formData, 0);
   if (galleryError) return { error: galleryError };
 
+  // Community system: publishing a recipe can qualify the author for the
+  // "Recipe Creator" / "Coffee Scientist" / "Coffee Legend" badges and
+  // always feeds the "Top Recipe Creators" leaderboard.
+  if (parsed.values.published) {
+    await refreshCommunityStats(supabase, authData.user.id);
+    await evaluateAndAwardBadges(supabase, authData.user.id);
+    await recordActivity(supabase, {
+      userId: authData.user.id,
+      activityType: "created_recipe",
+      recipeId,
+    });
+  }
+
   revalidatePath("/recipes");
   revalidatePath("/dashboard/recipes");
   revalidatePath("/dashboard");
@@ -438,6 +452,11 @@ export async function updateRecipeAction(
     existingImageCount ?? 0,
   );
   if (galleryError) return { error: galleryError };
+
+  if (parsed.values.published) {
+    await refreshCommunityStats(supabase, authData.user.id);
+    await evaluateAndAwardBadges(supabase, authData.user.id);
+  }
 
   revalidatePath("/recipes");
   revalidatePath("/dashboard/recipes");

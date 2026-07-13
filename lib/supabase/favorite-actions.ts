@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { refreshCommunityStats } from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
 
 function readCurrentPath(formData: FormData): string {
@@ -32,6 +33,10 @@ export async function addFavoriteAction(formData: FormData): Promise<void> {
     .from("favorites")
     .upsert({ user_id: data.user.id, recipe_id: recipeId }, { onConflict: "user_id,recipe_id", ignoreDuplicates: true });
 
+  // Community system: "saving" a recipe (favorites) feeds recipesSaved in
+  // user_community_stats and the Brew Score.
+  await refreshCommunityStats(supabase, data.user.id);
+
   revalidatePath(path);
   revalidatePath("/dashboard");
 }
@@ -49,6 +54,8 @@ export async function removeFavoriteAction(formData: FormData): Promise<void> {
   if (!recipeId) return;
 
   await supabase.from("favorites").delete().eq("user_id", data.user.id).eq("recipe_id", recipeId);
+
+  await refreshCommunityStats(supabase, data.user.id);
 
   revalidatePath(path);
   revalidatePath("/dashboard");
