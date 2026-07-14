@@ -885,6 +885,96 @@ const en: Dictionary = {
     messageSentTitle: "Message sent",
     messageSentBody: "Thanks for reaching out — our barista support team will reply within one business day.",
   },
+  legalPage: {
+    lastUpdatedLabel: "Last updated",
+    contactPrefix: "If you have any questions, please",
+    contactLinkLabel: "contact our team",
+    contactSuffix: "and we'll be happy to help.",
+  },
+  privacyPage: {
+    eyebrow: "Legal",
+    title: "Privacy Policy",
+    description: "How BrewAtlas collects, uses, and protects your personal information.",
+    section1Heading: "Information We Collect",
+    section1Body:
+      "We collect information you provide directly to us, such as your name, email address, and brewing preferences when you create an account, save recipes, or contact our support team.\n\nWe also automatically collect certain technical information when you use BrewAtlas, including your device type, browser, IP address, and general usage patterns, to help us understand how our service is used and to improve it over time.",
+    section2Heading: "How We Use Your Information",
+    section2Body:
+      "We use the information we collect to provide, maintain, and improve BrewAtlas, including personalizing your recipe recommendations, syncing your saved brews across devices, and powering features such as the AI Coach.\n\nWe may also use your information to communicate with you about updates, security alerts, and support requests, and to detect, prevent, and address fraud or technical issues.",
+    section3Heading: "Cookies & Tracking Technologies",
+    section3Body:
+      "BrewAtlas uses cookies and similar technologies to keep you signed in, remember your language and display preferences, and understand how visitors interact with our pages.\n\nFor more detail on the specific categories of cookies we use and how you can manage them, please see our Cookie Policy.",
+    section4Heading: "How We Share Your Information",
+    section4Body:
+      "We do not sell your personal information. We may share limited information with trusted service providers who help us operate BrewAtlas, such as hosting, analytics, and payment processing partners, and only to the extent necessary for them to perform their services.\n\nWe may also disclose information if required by law, or to protect the rights, property, or safety of BrewAtlas, our users, or the public.",
+    section5Heading: "Data Retention & Security",
+    section5Body:
+      "We retain your personal information for as long as your account remains active or as needed to provide you with our services, comply with legal obligations, resolve disputes, and enforce our agreements.\n\nWe apply reasonable technical and organizational safeguards designed to protect your information against unauthorized access, alteration, or loss. No method of transmission or storage is completely secure, so we cannot guarantee absolute security.",
+    section6Heading: "Your Rights & Choices",
+    section6Body:
+      "Depending on where you live, you may have the right to access, correct, export, or delete the personal information we hold about you, and to object to or restrict certain processing.\n\nYou can review and update most of your account information directly from your dashboard, or reach out to us using the contact details below to exercise any additional rights available to you.",
+    section7Heading: "Children's Privacy",
+    section7Body:
+      "BrewAtlas is not directed at children under the age of 16, and we do not knowingly collect personal information from children. If you believe a child has provided us with personal information, please contact us so we can take appropriate action.",
+    section8Heading: "Changes to This Policy",
+    section8Body:
+      "We may update this Privacy Policy from time to time to reflect changes in our practices, technology, or legal requirements. When we make material changes, we will update the \"Last Updated\" date below and, where appropriate, provide additional notice.",
+  },
+  termsPage: {
+    eyebrow: "Legal",
+    title: "Terms of Service",
+    description: "The terms and conditions that govern your use of BrewAtlas.",
+    section1Heading: "Acceptance of Terms",
+    section1Body:
+      "By creating an account, accessing, or using BrewAtlas, you agree to be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, please do not use our service.\n\nWe may update these terms from time to time, and continuing to use BrewAtlas after changes take effect constitutes your acceptance of the revised terms.",
+    section2Heading: "Eligibility & Accounts",
+    section2Body:
+      "You must be at least 16 years old to create a BrewAtlas account. You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account.\n\nPlease notify us immediately if you suspect any unauthorized use of your account or any other breach of security.",
+    section3Heading: "Using BrewAtlas",
+    section3Body:
+      "BrewAtlas grants you a limited, non-exclusive, non-transferable license to access and use our recipes, brewing guides, AI Coach, and related features for your personal, non-commercial use, subject to these Terms.\n\nYou agree not to misuse the service, including by attempting to disrupt its operation, scraping content without permission, or using it in any way that violates applicable law.",
+    section4Heading: "User-Generated Content",
+    section4Body:
+      "When you submit recipes, reviews, notes, or other content to BrewAtlas, you retain ownership of that content but grant us a worldwide, royalty-free license to host, display, and distribute it as part of the service.\n\nYou are solely responsible for the content you submit, and you agree it will not infringe on the rights of others or violate any applicable law.",
+    section5Heading: "Premium Membership & Billing",
+    section5Body:
+      "Certain features of BrewAtlas are available only to Premium members. Premium subscriptions renew automatically at the end of each billing period unless cancelled before the renewal date.\n\nPricing, billing cycles, and cancellation details are presented at the time of purchase and may be updated from time to time; material changes will be communicated in advance.",
+    section6Heading: "Intellectual Property",
+    section6Body:
+      "All content, features, and functionality of BrewAtlas, including our logo, design, and original recipe curation, are owned by BrewAtlas or our licensors and are protected by intellectual property laws.\n\nExcept as expressly permitted under these Terms, you may not copy, modify, distribute, or create derivative works from our platform without prior written consent.",
+    section7Heading: "Disclaimers & Limitation of Liability",
+    section7Body:
+      "BrewAtlas is provided on an \"as is\" and \"as available\" basis. Brewing recommendations, including those generated by the AI Coach, are offered for informational purposes and results may vary based on your equipment, ingredients, and technique.\n\nTo the fullest extent permitted by law, BrewAtlas will not be liable for any indirect, incidental, or consequential damages arising from your use of the service.",
+    section8Heading: "Termination",
+    section8Body:
+      "We may suspend or terminate your access to BrewAtlas if you violate these Terms or engage in conduct that we determine, in our sole discretion, to be harmful to other users or to the service.\n\nYou may stop using BrewAtlas and delete your account at any time from your dashboard settings.",
+    section9Heading: "Governing Law & Changes to These Terms",
+    section9Body:
+      "These Terms are governed by the laws of the jurisdiction in which BrewAtlas operates, without regard to conflict-of-law principles.\n\nWe may revise these Terms from time to time. When we do, we will update the \"Last Updated\" date below, and material changes will be communicated to registered users.",
+  },
+  cookiesPage: {
+    eyebrow: "Legal",
+    title: "Cookie Policy",
+    description: "How BrewAtlas uses cookies and similar technologies.",
+    section1Heading: "What Are Cookies",
+    section1Body:
+      "Cookies are small text files placed on your device when you visit a website. They allow a site to recognize your device and remember information about your visit, such as your language preference and login state.",
+    section2Heading: "Types of Cookies We Use",
+    section2Body:
+      "BrewAtlas uses a small number of cookie categories to keep the service fast, secure, and personalized to you. We describe each category below, along with how you can control it.",
+    section3Heading: "Essential Cookies",
+    section3Body:
+      "These cookies are necessary for BrewAtlas to function, such as keeping you signed in, remembering your locale (English or Arabic) and reading direction, and securing your session. Essential cookies cannot be disabled, as the service will not work correctly without them.",
+    section4Heading: "Preference Cookies",
+    section4Body:
+      "Preference cookies remember choices you make, such as your preferred brewing units, saved filters, and display settings, so you don't have to reconfigure them on every visit.",
+    section5Heading: "Third-Party & Analytics Cookies",
+    section5Body:
+      "We may use analytics cookies from trusted third-party providers to understand how visitors use BrewAtlas, such as which recipes and guides are most popular, so we can improve our content and features.\n\nWhere required by applicable law, we will request your consent before setting non-essential third-party cookies.",
+    section6Heading: "Managing Your Cookie Preferences",
+    section6Body:
+      "Most browsers allow you to control cookies through their settings, including blocking or deleting them. Please note that disabling essential cookies may prevent parts of BrewAtlas, such as sign-in and language selection, from working properly.",
+  },
   offlinePage: {
     metaTitle: "You're Offline",
     metaDescription: "BrewAtlas can't reach the network right now.",
@@ -1080,6 +1170,12 @@ const en: Dictionary = {
     aboutDescription: "BrewAtlas is the world's largest specialty coffee recipe platform. Learn about our mission to help baristas and home brewers dial in every cup.",
     contactTitle: "Contact",
     contactDescription: "Get in touch with the BrewAtlas barista support team for questions about memberships, recipes, or brewing tools.",
+    privacyTitle: "Privacy Policy",
+    privacyDescription: "Learn how BrewAtlas collects, uses, and protects your personal information.",
+    termsTitle: "Terms of Service",
+    termsDescription: "Read the terms and conditions that govern your use of BrewAtlas.",
+    cookiesTitle: "Cookie Policy",
+    cookiesDescription: "Learn how BrewAtlas uses cookies and similar technologies.",
   },
 };
 

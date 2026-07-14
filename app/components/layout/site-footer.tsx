@@ -47,9 +47,9 @@ function buildSupportLinks(footer: Dictionary["homeFooter"]): FooterLinkItem[] {
   return [
     { href: "#", label: footer.linkHelpCenter },
     { href: "/#faq", label: footer.linkFaq },
-    { href: "#", label: footer.linkPrivacyPolicy },
-    { href: "#", label: footer.linkTerms },
-    { href: "#", label: footer.linkCookies },
+    { href: "/privacy", label: footer.linkPrivacyPolicy },
+    { href: "/terms", label: footer.linkTerms },
+    { href: "/cookies", label: footer.linkCookies },
   ];
 }
 
