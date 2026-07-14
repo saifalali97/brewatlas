@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Gauge, MessageSquareText, Sparkles } from "lucide-react";
-import { AiCoachDemo } from "@/app/components/coach/ai-coach-demo";
+import { AiCoachTools } from "@/app/components/coach/ai-coach-tools";
 import { MetaTile } from "@/app/components/ui/meta-tile";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
@@ -35,7 +35,7 @@ export default async function CoachPage() {
       </div>
 
       <p className="mb-8 text-sm font-medium uppercase tracking-[0.14em] text-stone-500">{p.tryItLabel}</p>
-      <AiCoachDemo />
+      <AiCoachTools />
     </SectionFrame>
   );
 }

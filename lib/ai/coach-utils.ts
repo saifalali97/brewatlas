@@ -69,6 +69,11 @@ export function grindRangeLabel(range: [number, number]): string {
   return from === to ? from : `${from} to ${to}`;
 }
 
+/** Inverse of `grindSizeToScale` (see `lib/intelligence/recipe-analysis.ts`) -- turns a 1 (finest) - 7 (coarsest) value back into its label. Used by `lib/ai/coach-tools-engine.ts` to turn a corrected grind target back into displayable text. */
+export function scaleToGrindLabel(scale: number): string {
+  return GRIND_SCALE_LABELS[clamp(Math.round(scale), 1, 7) - 1];
+}
+
 export function formatSeconds(seconds: number): string {
   if (seconds >= 3600) return `${round1(seconds / 3600)} hr`;
   if (seconds >= 60) return `${Math.floor(seconds / 60)}:${String(Math.round(seconds % 60)).padStart(2, "0")}`;
