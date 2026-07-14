@@ -29,11 +29,13 @@ export class LLMNotConfiguredError extends Error {
 export class NullLLMAdapter implements LLMAdapter {
   readonly provider: LLMProvider = "none";
 
-  async complete(_request: LLMCompletionRequest): Promise<LLMCompletionResponse> {
+  async complete(request: LLMCompletionRequest): Promise<LLMCompletionResponse> {
+    void request;
     throw new LLMNotConfiguredError("none");
   }
 
-  async embed(_request: LLMEmbeddingRequest): Promise<LLMEmbeddingResponse> {
+  async embed(request: LLMEmbeddingRequest): Promise<LLMEmbeddingResponse> {
+    void request;
     throw new LLMNotConfiguredError("none");
   }
 }
@@ -49,12 +51,14 @@ export class OpenAIAdapter implements LLMAdapter {
   readonly provider: LLMProvider = "openai";
   constructor(private readonly apiKey: string | null, readonly model = "gpt-4o-mini") {}
 
-  async complete(_request: LLMCompletionRequest): Promise<LLMCompletionResponse> {
+  async complete(request: LLMCompletionRequest): Promise<LLMCompletionResponse> {
+    void request;
     if (!this.apiKey) throw new LLMNotConfiguredError("openai");
     throw new LLMNotConfiguredError("openai");
   }
 
-  async embed(_request: LLMEmbeddingRequest): Promise<LLMEmbeddingResponse> {
+  async embed(request: LLMEmbeddingRequest): Promise<LLMEmbeddingResponse> {
+    void request;
     if (!this.apiKey) throw new LLMNotConfiguredError("openai");
     throw new LLMNotConfiguredError("openai");
   }
@@ -71,12 +75,14 @@ export class AnthropicAdapter implements LLMAdapter {
   readonly provider: LLMProvider = "anthropic";
   constructor(private readonly apiKey: string | null, readonly model = "claude-3-5-haiku-latest") {}
 
-  async complete(_request: LLMCompletionRequest): Promise<LLMCompletionResponse> {
+  async complete(request: LLMCompletionRequest): Promise<LLMCompletionResponse> {
+    void request;
     if (!this.apiKey) throw new LLMNotConfiguredError("anthropic");
     throw new LLMNotConfiguredError("anthropic");
   }
 
-  async embed(_request: LLMEmbeddingRequest): Promise<LLMEmbeddingResponse> {
+  async embed(request: LLMEmbeddingRequest): Promise<LLMEmbeddingResponse> {
+    void request;
     // TODO: Anthropic has no embeddings endpoint; route to OpenAI/Gemini or a dedicated embeddings provider once this is wired up.
     throw new LLMNotConfiguredError("anthropic");
   }
@@ -92,12 +98,14 @@ export class GeminiAdapter implements LLMAdapter {
   readonly provider: LLMProvider = "gemini";
   constructor(private readonly apiKey: string | null, readonly model = "gemini-1.5-flash") {}
 
-  async complete(_request: LLMCompletionRequest): Promise<LLMCompletionResponse> {
+  async complete(request: LLMCompletionRequest): Promise<LLMCompletionResponse> {
+    void request;
     if (!this.apiKey) throw new LLMNotConfiguredError("gemini");
     throw new LLMNotConfiguredError("gemini");
   }
 
-  async embed(_request: LLMEmbeddingRequest): Promise<LLMEmbeddingResponse> {
+  async embed(request: LLMEmbeddingRequest): Promise<LLMEmbeddingResponse> {
+    void request;
     if (!this.apiKey) throw new LLMNotConfiguredError("gemini");
     throw new LLMNotConfiguredError("gemini");
   }

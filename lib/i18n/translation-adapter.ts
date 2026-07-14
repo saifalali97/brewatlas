@@ -31,7 +31,8 @@ export class TranslationNotConfiguredError extends Error {
 export class NullTranslationAdapter implements TranslationAdapter {
   readonly provider = "none";
 
-  async translate(_request: TranslationRequest): Promise<TranslationResult> {
+  async translate(request: TranslationRequest): Promise<TranslationResult> {
+    void request;
     throw new TranslationNotConfiguredError("none");
   }
 
@@ -51,12 +52,14 @@ export class OpenAITranslationAdapter implements TranslationAdapter {
   readonly provider = "openai";
   constructor(readonly apiKey: string | null, readonly model = "gpt-4o-mini") {}
 
-  async translate(_request: TranslationRequest): Promise<TranslationResult> {
+  async translate(request: TranslationRequest): Promise<TranslationResult> {
+    void request;
     if (!this.apiKey) throw new TranslationNotConfiguredError("openai");
     throw new TranslationNotConfiguredError("openai");
   }
 
-  async translateBatch(_requests: TranslationRequest[]): Promise<TranslationResult[]> {
+  async translateBatch(requests: TranslationRequest[]): Promise<TranslationResult[]> {
+    void requests;
     if (!this.apiKey) throw new TranslationNotConfiguredError("openai");
     throw new TranslationNotConfiguredError("openai");
   }
@@ -67,12 +70,14 @@ export class AnthropicTranslationAdapter implements TranslationAdapter {
   readonly provider = "anthropic";
   constructor(readonly apiKey: string | null, readonly model = "claude-3-5-haiku-latest") {}
 
-  async translate(_request: TranslationRequest): Promise<TranslationResult> {
+  async translate(request: TranslationRequest): Promise<TranslationResult> {
+    void request;
     if (!this.apiKey) throw new TranslationNotConfiguredError("anthropic");
     throw new TranslationNotConfiguredError("anthropic");
   }
 
-  async translateBatch(_requests: TranslationRequest[]): Promise<TranslationResult[]> {
+  async translateBatch(requests: TranslationRequest[]): Promise<TranslationResult[]> {
+    void requests;
     if (!this.apiKey) throw new TranslationNotConfiguredError("anthropic");
     throw new TranslationNotConfiguredError("anthropic");
   }
@@ -83,12 +88,14 @@ export class GeminiTranslationAdapter implements TranslationAdapter {
   readonly provider = "gemini";
   constructor(readonly apiKey: string | null, readonly model = "gemini-1.5-flash") {}
 
-  async translate(_request: TranslationRequest): Promise<TranslationResult> {
+  async translate(request: TranslationRequest): Promise<TranslationResult> {
+    void request;
     if (!this.apiKey) throw new TranslationNotConfiguredError("gemini");
     throw new TranslationNotConfiguredError("gemini");
   }
 
-  async translateBatch(_requests: TranslationRequest[]): Promise<TranslationResult[]> {
+  async translateBatch(requests: TranslationRequest[]): Promise<TranslationResult[]> {
+    void requests;
     if (!this.apiKey) throw new TranslationNotConfiguredError("gemini");
     throw new TranslationNotConfiguredError("gemini");
   }

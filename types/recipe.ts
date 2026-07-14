@@ -12,7 +12,7 @@ export type ProfileRow = {
   full_name: string | null;
   avatar_url: string | null;
   country: string | null;
-  role: "user" | "admin";
+  role: "user" | "owner" | "admin" | "editor" | "reviewer" | "writer";
   bio: string | null;
   favorite_brewing_method_id: string | null;
   favorite_device_id: string | null;

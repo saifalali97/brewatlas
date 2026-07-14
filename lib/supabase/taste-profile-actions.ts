@@ -127,6 +127,6 @@ export async function saveTasteProfileAction(
     );
   }
 
-  revalidatePath("/dashboard");
+  revalidatePath("/account");
   return { success: "Taste profile saved." };
 }

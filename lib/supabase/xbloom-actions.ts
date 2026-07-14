@@ -218,7 +218,7 @@ export async function saveXBloomProfileAction(
   const profileId = upserted.id as string;
   await replaceXBloomProfileSteps(supabase, profileId, parseXBloomProfileSteps(formData));
 
-  revalidatePath("/dashboard/recipes");
+  revalidatePath("/account/recipes");
   if (owned.slug) revalidatePath(`/recipes/${owned.slug}`);
 
   return { success: "xBloom profile saved.", profileId };
@@ -238,6 +238,6 @@ export async function deleteXBloomProfileAction(formData: FormData): Promise<voi
 
   await supabase.from("xbloom_profiles").delete().eq("recipe_id", recipeId);
 
-  revalidatePath("/dashboard/recipes");
+  revalidatePath("/account/recipes");
   if (owned.slug) revalidatePath(`/recipes/${owned.slug}`);
 }

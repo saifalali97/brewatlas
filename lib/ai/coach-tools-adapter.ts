@@ -55,7 +55,8 @@ export class OpenAICoachToolsAdapter implements CoachToolsAdapter {
   readonly provider: LLMProvider = "openai";
   constructor(private readonly apiKey: string | null, readonly model = "gpt-4o-mini") {}
 
-  async run(_request: CoachToolRequest): Promise<CoachToolResult> {
+  async run(request: CoachToolRequest): Promise<CoachToolResult> {
+    void request;
     if (!this.apiKey) throw new CoachToolsAdapterNotConfiguredError("openai");
     throw new CoachToolsAdapterNotConfiguredError("openai");
   }
@@ -66,7 +67,8 @@ export class AnthropicCoachToolsAdapter implements CoachToolsAdapter {
   readonly provider: LLMProvider = "anthropic";
   constructor(private readonly apiKey: string | null, readonly model = "claude-3-5-haiku-latest") {}
 
-  async run(_request: CoachToolRequest): Promise<CoachToolResult> {
+  async run(request: CoachToolRequest): Promise<CoachToolResult> {
+    void request;
     if (!this.apiKey) throw new CoachToolsAdapterNotConfiguredError("anthropic");
     throw new CoachToolsAdapterNotConfiguredError("anthropic");
   }
@@ -77,7 +79,8 @@ export class GeminiCoachToolsAdapter implements CoachToolsAdapter {
   readonly provider: LLMProvider = "gemini";
   constructor(private readonly apiKey: string | null, readonly model = "gemini-1.5-flash") {}
 
-  async run(_request: CoachToolRequest): Promise<CoachToolResult> {
+  async run(request: CoachToolRequest): Promise<CoachToolResult> {
+    void request;
     if (!this.apiKey) throw new CoachToolsAdapterNotConfiguredError("gemini");
     throw new CoachToolsAdapterNotConfiguredError("gemini");
   }

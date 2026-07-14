@@ -29,7 +29,7 @@ export async function updateCommunityFavoritesAction(
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
-    redirect("/login?redirectTo=/dashboard/profile");
+    redirect("/login?redirectTo=/account/profile");
   }
 
   const ownsXbloom = formData.get("ownsXbloom") === "on" || formData.get("ownsXbloom") === "true";
@@ -52,7 +52,7 @@ export async function updateCommunityFavoritesAction(
   // Setting owns_xbloom = true can immediately qualify the "xBloom Owner" badge.
   await evaluateAndAwardBadges(supabase, authData.user.id);
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/profile");
+  revalidatePath("/account");
+  revalidatePath("/account/profile");
   return { success: "Community profile updated." };
 }

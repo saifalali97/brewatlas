@@ -262,7 +262,7 @@ export function BrewLogForm({
                 : t("brewLogPage.updateCta")}
           </button>
 
-          <Link href="/dashboard/brew-history" className={`${buttons.secondary} sm:w-auto`}>
+          <Link href="/account/brew-history" className={`${buttons.secondary} sm:w-auto`}>
             {t("brewLogPage.backToHistory")}
           </Link>
         </div>

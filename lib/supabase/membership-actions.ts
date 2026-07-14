@@ -38,14 +38,16 @@ function readString(formData: FormData, key: string): string | null {
 }
 
 /** Starts the caller's 7-day Premium trial. No-op success shape on failure -- `error` explains why (already premium, trial already used, etc.). */
-export async function startTrial(_prevState: MembershipActionState, _formData: FormData): Promise<MembershipActionState> {
+export async function startTrial(prevState: MembershipActionState, formData: FormData): Promise<MembershipActionState> {
+  void prevState;
+  void formData;
   const { supabase, userId } = await requireUser();
   if (!userId) return { error: "You must be signed in to start a trial." };
 
   const result = await startUserTrial(supabase, userId);
   if ("error" in result) return { error: result.error };
 
-  revalidatePath("/dashboard");
+  revalidatePath("/account");
   const membership = await getMembershipSummary(supabase, userId);
   return { success: "Your 7-day Premium trial has started.", membership };
 }
@@ -66,21 +68,23 @@ export async function upgradePlan(_prevState: MembershipActionState, formData: F
   const result = await changeUserPlan(supabase, userId, planRaw, billingProvider);
   if ("error" in result) return { error: result.error };
 
-  revalidatePath("/dashboard");
+  revalidatePath("/account");
   revalidatePath("/premium");
   const membership = await getMembershipSummary(supabase, userId);
   return { success: `Your plan is now ${planRaw}.`, membership };
 }
 
 /** Cancels the caller's subscription (ends a trial immediately, or schedules a paid plan to revert to Free at the end of the current period). */
-export async function cancelSubscription(_prevState: MembershipActionState, _formData: FormData): Promise<MembershipActionState> {
+export async function cancelSubscription(prevState: MembershipActionState, formData: FormData): Promise<MembershipActionState> {
+  void prevState;
+  void formData;
   const { supabase, userId } = await requireUser();
   if (!userId) return { error: "You must be signed in to cancel your subscription." };
 
   const result = await cancelUserSubscription(supabase, userId);
   if ("error" in result) return { error: result.error };
 
-  revalidatePath("/dashboard");
+  revalidatePath("/account");
   const membership = await getMembershipSummary(supabase, userId);
   return { success: "Your subscription has been canceled.", membership };
 }
@@ -97,6 +101,6 @@ export async function refreshMembership(): Promise<MembershipSummary | null> {
   const { supabase, userId } = await requireUser();
   if (!userId) return null;
   await refreshUserMembership(supabase, userId);
-  revalidatePath("/dashboard");
+  revalidatePath("/account");
   return getMembershipSummary(supabase, userId);
 }

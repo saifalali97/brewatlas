@@ -75,7 +75,7 @@ export async function ProfileEngagementPanel({ supabase, userId, dictionary }: P
             {p.favoriteRecipesTitle}
           </h2>
           {favoriteRecipes.length > 0 && (
-            <RippleLink href="/dashboard/favorites" className="text-sm font-medium text-amber-500/90 hover:text-amber-400">
+            <RippleLink href="/account/favorites" className="text-sm font-medium text-amber-500/90 hover:text-amber-400">
               {p.viewAllFavorites}
             </RippleLink>
           )}

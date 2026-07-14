@@ -21,7 +21,7 @@ import type {
  * and the aggregated Personal Dashboard derived from them.
  *
  * `getCoffeeSetup` backs the "My Coffee Setup" page
- * (`/dashboard/coffee-setup`). Taste profile and brew log queries remain
+ * (`/account/coffee-setup`). Taste profile and brew log queries remain
  * production-ready groundwork (mirroring `lib/data/xbloom.ts` and
  * `lib/data/brew-engine.ts`) for a future UI, and are the data source for
  * future AI recipe recommendations (see `getTasteProfileFeatureVector`).

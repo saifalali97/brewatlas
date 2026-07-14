@@ -52,7 +52,7 @@ export function NotificationsPanel({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3 text-sm">
           <Link
-            href="/dashboard/notifications"
+            href={pathname}
             aria-current={!unreadOnly ? "page" : undefined}
             className={`rounded-full px-3 py-1.5 transition-colors ${
               !unreadOnly ? "bg-amber-950/40 text-amber-200" : "text-stone-500 hover:text-stone-300"
@@ -61,7 +61,7 @@ export function NotificationsPanel({
             {labels.allNotifications}
           </Link>
           <Link
-            href="/dashboard/notifications?filter=unread"
+            href={`${pathname}?filter=unread`}
             aria-current={unreadOnly ? "page" : undefined}
             className={`rounded-full px-3 py-1.5 transition-colors ${
               unreadOnly ? "bg-amber-950/40 text-amber-200" : "text-stone-500 hover:text-stone-300"

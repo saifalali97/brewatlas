@@ -24,7 +24,7 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
 
   return (
     <form action={formAction} className="space-y-5">
-      <input type="hidden" name="redirectTo" value={redirectTo ?? "/dashboard"} />
+      <input type="hidden" name="redirectTo" value={redirectTo ?? "/account"} />
 
       <div>
         <label htmlFor="email" className="text-sm font-medium text-stone-300">

@@ -13,7 +13,7 @@ import type { DbRecipeRow } from "@/types/recipe";
 
 /**
  * Data-access layer for user recipe collections (`recipe_collections` +
- * `recipe_collection_items`), backing `/dashboard/collections`.
+ * `recipe_collection_items`), backing `/account/collections`.
  */
 
 const COLLECTION_LIST_SELECT = `

@@ -22,7 +22,7 @@ function readRedirectTarget(formData: FormData): string {
   if (typeof value === "string" && value.startsWith("/") && !value.startsWith("//")) {
     return value;
   }
-  return "/dashboard";
+  return "/account";
 }
 
 export async function signInWithPasswordAction(
@@ -79,7 +79,7 @@ export async function signUpAction(
     password,
     options: {
       data: fullName ? { full_name: fullName } : undefined,
-      emailRedirectTo: `${origin}/auth/callback?next=/dashboard`,
+      emailRedirectTo: `${origin}/auth/callback?next=/account`,
     },
   });
 
@@ -94,7 +94,7 @@ export async function signUpAction(
   // If email confirmation is disabled for this project, signUp() already
   // returns an active session and the user is signed in immediately.
   if (data.session) {
-    redirect("/dashboard");
+    redirect("/account");
   }
 
   return {
@@ -156,7 +156,7 @@ export async function updatePasswordAction(
     return { error: error.message };
   }
 
-  redirect("/dashboard");
+  redirect("/account");
 }
 
 export async function signInWithGoogleAction(): Promise<void> {
@@ -166,7 +166,7 @@ export async function signInWithGoogleAction(): Promise<void> {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${origin}/auth/callback?next=/dashboard`,
+      redirectTo: `${origin}/auth/callback?next=/account`,
     },
   });
 
@@ -194,7 +194,7 @@ export async function signInWithAppleAction(): Promise<void> {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "apple",
     options: {
-      redirectTo: `${origin}/auth/callback?next=/dashboard`,
+      redirectTo: `${origin}/auth/callback?next=/account`,
     },
   });
 

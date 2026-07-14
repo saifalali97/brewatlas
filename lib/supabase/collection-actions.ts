@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 
 /**
  * Server Actions for recipe collections (`recipe_collections` /
- * `recipe_collection_items`), backing `/dashboard/collections`.
+ * `recipe_collection_items`), backing `/account/collections`.
  */
 
 function optionalString(formData: FormData, key: string): string | null {
@@ -21,10 +21,10 @@ function optionalString(formData: FormData, key: string): string | null {
 }
 
 function revalidateCollections(collectionId?: string) {
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/collections");
+  revalidatePath("/account");
+  revalidatePath("/account/collections");
   if (collectionId) {
-    revalidatePath(`/dashboard/collections/${collectionId}`);
+    revalidatePath(`/account/collections/${collectionId}`);
   }
 }
 

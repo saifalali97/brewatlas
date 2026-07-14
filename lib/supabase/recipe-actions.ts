@@ -327,7 +327,7 @@ export async function createRecipeAction(
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
-    redirect("/login?redirectTo=/dashboard/recipes/new");
+    redirect("/login?redirectTo=/account/recipes/new");
   }
 
   const parsed = parseRecipeForm(formData, dictionary);
@@ -382,9 +382,9 @@ export async function createRecipeAction(
   }
 
   revalidatePath("/recipes");
-  revalidatePath("/dashboard/recipes");
-  revalidatePath("/dashboard");
-  redirect("/dashboard/recipes");
+  revalidatePath("/account/recipes");
+  revalidatePath("/account");
+  redirect("/account/recipes");
 }
 
 export async function updateRecipeAction(
@@ -478,9 +478,9 @@ export async function updateRecipeAction(
   }
 
   revalidatePath("/recipes");
-  revalidatePath("/dashboard/recipes");
-  revalidatePath("/dashboard");
-  redirect("/dashboard/recipes");
+  revalidatePath("/account/recipes");
+  revalidatePath("/account");
+  redirect("/account/recipes");
 }
 
 export async function deleteRecipeAction(formData: FormData): Promise<void> {
@@ -493,7 +493,7 @@ export async function deleteRecipeAction(formData: FormData): Promise<void> {
 
   const recipeId = optionalString(formData, "recipeId");
   if (!recipeId) {
-    redirect("/dashboard/recipes");
+    redirect("/account/recipes");
   }
 
   // `.eq("author_id", ...)` is defense-in-depth; RLS's "Authors can manage
@@ -502,7 +502,7 @@ export async function deleteRecipeAction(formData: FormData): Promise<void> {
   await supabase.from("recipes").delete().eq("id", recipeId).eq("author_id", authData.user.id);
 
   revalidatePath("/recipes");
-  revalidatePath("/dashboard/recipes");
-  revalidatePath("/dashboard");
-  redirect("/dashboard/recipes");
+  revalidatePath("/account/recipes");
+  revalidatePath("/account");
+  redirect("/account/recipes");
 }

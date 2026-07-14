@@ -269,7 +269,7 @@ export async function linkRecipeToBrewProfileAction(
     return { error: error.message };
   }
 
-  revalidatePath("/dashboard/recipes");
+  revalidatePath("/account/recipes");
   if (existing.slug) revalidatePath(`/recipes/${existing.slug}`);
 
   return { success: "Brew profile linked to recipe." };

@@ -429,7 +429,7 @@ function DbRecipeView({
           <div className="mt-10 flex flex-wrap gap-3">
             {isOwner ? (
               <>
-                <RippleLink href={`/dashboard/recipes/${recipe.id}/edit`} className={`${buttons.primary} w-full sm:w-auto`}>
+                <RippleLink href={`/account/recipes/${recipe.id}/edit`} className={`${buttons.primary} w-full sm:w-auto`}>
                   {dictionary.recipes.editRecipe}
                 </RippleLink>
                 <DeleteRecipeButton recipeId={recipe.id} recipeTitle={recipe.title} />
