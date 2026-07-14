@@ -17,7 +17,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RecipesPage() {
+type RecipesPageProps = {
+  searchParams: Promise<{ q?: string }>;
+};
+
+export default async function RecipesPage({ searchParams }: RecipesPageProps) {
+  const { q } = await searchParams;
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 
@@ -46,6 +51,7 @@ export default async function RecipesPage() {
         favoritedRecipeIds={Array.from(favoritedRecipeIds)}
         isAuthenticated={Boolean(authData.user)}
         currentPath="/recipes"
+        initialQuery={q ?? ""}
       />
     </SectionFrame>
   );

@@ -4,14 +4,39 @@ import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { MetaTile } from "@/app/components/ui/meta-tile";
 import { cards } from "@/lib/constants/styles";
 import type { CoffeeOrigin } from "@/types/homepage";
+import { interpolate } from "@/lib/i18n/format";
 import { imageAlt } from "@/lib/seo/image-alt";
+
+export type OriginCardLabels = {
+  premium: string;
+  altitude: string;
+  process: string;
+  roast: string;
+  brewMethod: string;
+  exploreOrigin: string;
+  /** Translated `{country} {region} {process}` image alt template. */
+  imageAltTemplate: string;
+};
+
+const defaultOriginCardLabels: OriginCardLabels = {
+  premium: "Premium",
+  altitude: "Altitude",
+  process: "Process",
+  roast: "Roast",
+  brewMethod: "Brew Method",
+  exploreOrigin: "Explore Origin",
+  imageAltTemplate: imageAlt.originTemplate,
+};
 
 type OriginCardProps = {
   origin: CoffeeOrigin;
   ctaHref?: string;
+  /** Translated copy for this card's chrome. Defaults to English so existing callers (e.g. `/origins`) are unaffected. */
+  labels?: Partial<OriginCardLabels>;
 };
 
-export function OriginCard({ origin, ctaHref = "#origins" }: OriginCardProps) {
+export function OriginCard({ origin, ctaHref = "#origins", labels }: OriginCardProps) {
+  const l: OriginCardLabels = { ...defaultOriginCardLabels, ...labels };
   return (
     <article className={cards.premiumShell}>
       <div aria-hidden className={cards.premiumSheen} />
@@ -20,7 +45,11 @@ export function OriginCard({ origin, ctaHref = "#origins" }: OriginCardProps) {
       <div className="relative h-44 shrink-0 overflow-hidden sm:h-48 lg:h-52">
         <Image
           src={origin.image}
-          alt={imageAlt.origin(origin.country, origin.region, origin.process)}
+          alt={interpolate(l.imageAltTemplate, {
+            country: origin.country,
+            region: origin.region,
+            process: origin.process,
+          })}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           unoptimized={origin.image.endsWith(".svg")}
@@ -32,7 +61,7 @@ export function OriginCard({ origin, ctaHref = "#origins" }: OriginCardProps) {
 
         {origin.premium && (
           <div className="absolute right-4 top-4 rounded-full border border-amber-700/35 bg-amber-950/65 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
-            Premium
+            {l.premium}
           </div>
         )}
 
@@ -55,14 +84,14 @@ export function OriginCard({ origin, ctaHref = "#origins" }: OriginCardProps) {
         </div>
 
         <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
-          <MetaTile icon={Mountain} label="Altitude" value={origin.altitude} />
-          <MetaTile icon={Layers} label="Process" value={origin.process} />
-          <MetaTile icon={Flame} label="Roast" value={origin.roastRecommendation} />
-          <MetaTile icon={Coffee} label="Brew Method" value={origin.brewingMethod} />
+          <MetaTile icon={Mountain} label={l.altitude} value={origin.altitude} />
+          <MetaTile icon={Layers} label={l.process} value={origin.process} />
+          <MetaTile icon={Flame} label={l.roast} value={origin.roastRecommendation} />
+          <MetaTile icon={Coffee} label={l.brewMethod} value={origin.brewingMethod} />
         </div>
 
         <div className="mt-auto border-t border-white/[0.06] pt-4">
-          <GhostCtaLink href={ctaHref}>Explore Origin</GhostCtaLink>
+          <GhostCtaLink href={ctaHref}>{l.exploreOrigin}</GhostCtaLink>
         </div>
       </div>
     </article>

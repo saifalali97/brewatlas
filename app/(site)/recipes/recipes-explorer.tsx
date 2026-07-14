@@ -15,6 +15,7 @@ type RecipesExplorerProps = {
   favoritedRecipeIds?: string[];
   isAuthenticated?: boolean;
   currentPath?: string;
+  initialQuery?: string;
 };
 
 export function RecipesExplorer({
@@ -22,9 +23,10 @@ export function RecipesExplorer({
   favoritedRecipeIds = [],
   isAuthenticated = false,
   currentPath = "/recipes",
+  initialQuery = "",
 }: RecipesExplorerProps) {
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialQuery);
   const favoritedSet = useMemo(() => new Set(favoritedRecipeIds), [favoritedRecipeIds]);
   const normalizedSearch = search.trim().toLowerCase();
 

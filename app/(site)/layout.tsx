@@ -40,7 +40,7 @@ export default async function SiteLayout({
       <main id="main-content">{children}</main>
 
       <FloatingActions />
-      <SiteFooter />
+      <SiteFooter footer={dictionary.homeFooter} locale={locale} />
     </div>
   );
 }

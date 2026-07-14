@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CultureSectionCard } from "@/app/components/cards/culture-section-card";
+import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { getCultureSections } from "@/lib/data/culture";
@@ -35,6 +36,12 @@ export default async function CulturePage() {
         {sections.map((section) => (
           <CultureSectionCard key={section.id} section={section} />
         ))}
+      </div>
+
+      <div className="mt-14 border-t border-white/[0.06] pt-10">
+        <GhostCtaLink href="/culture/guide" autoWidth>
+          Explore the Emirati Coffee Guide
+        </GhostCtaLink>
       </div>
     </SectionFrame>
   );

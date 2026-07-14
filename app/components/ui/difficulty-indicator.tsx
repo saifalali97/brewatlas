@@ -8,12 +8,15 @@ const difficultyLevel: Record<Difficulty, number> = {
 
 type DifficultyIndicatorProps = {
   level: Difficulty;
+  /** Translated label to display instead of the raw (always-English) `level`. Defaults to `level` so callers that don't localize keep today's behavior. */
+  label?: string;
   labelClassName?: string;
   className?: string;
 };
 
 export function DifficultyIndicator({
   level,
+  label,
   labelClassName = "text-[10px] text-stone-500",
   className = "flex items-center gap-1.5",
 }: DifficultyIndicatorProps) {
@@ -31,7 +34,7 @@ export function DifficultyIndicator({
           />
         ))}
       </div>
-      <span className={labelClassName}>{level}</span>
+      <span className={labelClassName}>{label ?? level}</span>
     </div>
   );
 }

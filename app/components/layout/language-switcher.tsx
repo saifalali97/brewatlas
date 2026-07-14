@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { setLocaleAction } from "@/lib/i18n/actions";
-import { SUPPORTED_LOCALES } from "@/lib/i18n/config";
+import { LOCALE_METADATA, SUPPORTED_LOCALES } from "@/lib/i18n/config";
 import type { Locale } from "@/types/i18n";
 
 /**
@@ -15,11 +15,20 @@ import type { Locale } from "@/types/i18n";
  * Renders one button per `SUPPORTED_LOCALES` entry automatically, so
  * adding a third language later needs no changes here.
  */
-export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
+export function LanguageSwitcher({
+  currentLocale,
+  switchLanguageAria = "Switch to {language}",
+  languageAriaLabel = "Language",
+}: {
+  currentLocale: Locale;
+  /** Translated `"Switch to {language}"` template -- `{language}` is interpolated with each locale's native name. */
+  switchLanguageAria?: string;
+  languageAriaLabel?: string;
+}) {
   const pathname = usePathname();
 
   return (
-    <div className="flex items-center gap-1 text-xs font-medium text-stone-400" aria-label="Language">
+    <div className="flex items-center gap-1 text-xs font-medium text-stone-400" aria-label={languageAriaLabel}>
       {SUPPORTED_LOCALES.map((locale) => (
         <form key={locale} action={setLocaleAction}>
           <input type="hidden" name="locale" value={locale} />
@@ -27,7 +36,7 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
           <button
             type="submit"
             aria-current={currentLocale === locale ? "true" : undefined}
-            aria-label={`Switch to ${locale}`}
+            aria-label={switchLanguageAria.replace("{language}", LOCALE_METADATA[locale].nativeName)}
             className={`rounded-full px-1.5 py-1 uppercase tracking-wide transition-colors duration-300 ${
               currentLocale === locale ? "text-stone-100" : "hover:text-stone-100"
             }`}

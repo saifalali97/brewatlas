@@ -20,6 +20,7 @@ export type Dictionary = {
     roasters: string;
     devices: string;
     culture: string;
+    coach: string;
     pricing: string;
     faq: string;
     dashboard: string;
@@ -31,6 +32,11 @@ export type Dictionary = {
     signup: string;
     logout: string;
     skipToMainContent: string;
+    mainNavigationAriaLabel: string;
+    homeAriaLabel: string;
+    joinPremiumAriaLabel: string;
+    switchLanguageAria: string;
+    languageAriaLabel: string;
   };
   common: {
     save: string;
@@ -60,6 +66,188 @@ export type Dictionary = {
     yes: string;
     no: string;
     language: string;
+    premiumBadge: string;
+    scrollToTop: string;
+  };
+  homeHero: {
+    sectionAriaLabel: string;
+    eyebrow: string;
+    subtitle: string;
+    searchFormAriaLabel: string;
+    searchPlaceholder: string;
+    searchInputAriaLabel: string;
+    exploreRecipes: string;
+    viewPremium: string;
+    featuredRecipeBadge: string;
+    statRecipesLabel: string;
+    statRoastersLabel: string;
+    statCountriesLabel: string;
+    heroImageAlt: string;
+  };
+  homeFilters: {
+    all: string;
+    v60: string;
+    espresso: string;
+    chemex: string;
+    aeropress: string;
+    coldBrew: string;
+    mokaPot: string;
+    filterByAria: string;
+  };
+  homeDifficulty: {
+    beginner: string;
+    intermediate: string;
+    advanced: string;
+  };
+  homeFeaturedRecipes: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    noResults: string;
+    viewAll: string;
+    editorsChoice: string;
+    ratioLabel: string;
+    timeLabel: string;
+    imageAltTemplate: string;
+  };
+  homeBrewingMethods: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    brewTimeLabel: string;
+    difficultyLabel: string;
+    cupProfileLabel: string;
+    bodyLabel: string;
+    acidityLabel: string;
+    sweetnessLabel: string;
+    bestWithPrefix: string;
+    learnMethod: string;
+    imageAltTemplate: string;
+  };
+  homeCoffeeOrigins: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    altitudeLabel: string;
+    processLabel: string;
+    roastLabel: string;
+    brewMethodLabel: string;
+    exploreOrigin: string;
+    imageAltTemplate: string;
+  };
+  homeTopRoasters: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    countryLabel: string;
+    foundedLabel: string;
+    recipesCountLabel: string;
+    ratingLabel: string;
+    viewRoaster: string;
+    imageAltTemplate: string;
+  };
+  homeTestimonials: {
+    eyebrow: string;
+    title: string;
+    imageAltTemplate: string;
+  };
+  homePricing: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    mostPopular: string;
+    recipesLabel: string;
+    accessLabel: string;
+    offlineAccessLabel: string;
+    favoritesLabel: string;
+    aiRecommendationsLabel: string;
+    brewTrackingLabel: string;
+    prioritySupportLabel: string;
+  };
+  homeFaq: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    supportCardTitle: string;
+    supportCardBody: string;
+    contactSupport: string;
+  };
+  homeAiCoach: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    highlight1: string;
+    highlight2: string;
+    highlight3: string;
+    cta: string;
+  };
+  homeXbloom: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    highlight1: string;
+    highlight2: string;
+    highlight3: string;
+    cta: string;
+  };
+  homeArabicCoffee: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    highlight1: string;
+    highlight2: string;
+    highlight3: string;
+    cta: string;
+  };
+  homeUaeCoffeeCulture: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    highlight1: string;
+    highlight2: string;
+    highlight3: string;
+    cta: string;
+  };
+  homeFooter: {
+    ctaEyebrow: string;
+    ctaTitle: string;
+    ctaDescription: string;
+    startPremium: string;
+    browseRecipes: string;
+    exploreColumn: string;
+    companyColumn: string;
+    supportColumn: string;
+    linkRecipes: string;
+    linkMethods: string;
+    linkOrigins: string;
+    linkRoasters: string;
+    linkPremium: string;
+    linkCulture: string;
+    linkArabicCoffee: string;
+    linkTeaKarak: string;
+    linkCoach: string;
+    linkCommunity: string;
+    linkAbout: string;
+    linkBlog: string;
+    linkCareers: string;
+    linkContact: string;
+    linkPress: string;
+    linkHelpCenter: string;
+    linkFaq: string;
+    linkPrivacyPolicy: string;
+    linkTerms: string;
+    linkCookies: string;
+    footerNavAriaLabel: string;
+    homeAriaLabel: string;
+    socialLinksAriaLabel: string;
+    blogRssLabel: string;
+    tagline: string;
+    allRightsReserved: string;
+    madeWithPrefix: string;
+    forSpecialtyCoffee: string;
+    themeAriaLabelPrefix: string;
+    darkLabel: string;
+    languageLabel: string;
   };
   forms: {
     required: string;

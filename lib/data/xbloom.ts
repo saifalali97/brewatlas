@@ -2,6 +2,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { LookupOption } from "@/types/recipe";
 import type { DbXBloomProfileRow, XBloomProfileFullDetail } from "@/types/xbloom";
 
+/** An xBloom profile plus the title/slug of the recipe it belongs to, for a user's own aggregate profile list. */
+export type UserXBloomProfileSummary = XBloomProfileFullDetail & {
+  recipeTitle: string;
+  recipeSlug: string;
+};
+
 /**
  * Data-access layer for the xBloom Integration Foundation
  * (`xbloom_devices`, `xbloom_profiles`, `xbloom_profile_steps`).
@@ -90,6 +96,39 @@ export async function getXBloomProfileById(
 
   if (error || !data) return null;
   return mapDbXBloomProfileToFullDetail(data as unknown as DbXBloomProfileRow);
+}
+
+/** Every xBloom profile attached to a recipe `userId` authored, most recently updated first. */
+export async function getUserXBloomProfiles(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<UserXBloomProfileSummary[]> {
+  const { data, error } = await supabase
+    .from("xbloom_profiles")
+    .select(
+      `
+      id, recipe_id, device_model, grind_setting, water_temperature, brew_water, dose,
+      bloom_time, flow_rate, pulse_pattern, pour_sequence, agitation, dripper, filter,
+      total_time, brew_notes, created_at, updated_at,
+      xbloom_profile_steps ( id, step_number, water_amount, flow_rate, delay, description ),
+      recipes!inner ( id, title, slug, author_id )
+    `,
+    )
+    .eq("recipes.author_id", userId)
+    .order("updated_at", { ascending: false });
+
+  if (error || !data) {
+    if (error) console.error("getUserXBloomProfiles failed", error);
+    return [];
+  }
+
+  return (
+    data as unknown as (DbXBloomProfileRow & { recipes: { id: string; title: string; slug: string; author_id: string } })[]
+  ).map((row) => ({
+    ...mapDbXBloomProfileToFullDetail(row),
+    recipeTitle: row.recipes.title,
+    recipeSlug: row.recipes.slug,
+  }));
 }
 
 /** Whether a recipe already has an xBloom profile attached (cheaper than fetching the full detail). */

@@ -80,3 +80,21 @@ export type Faq = {
   question: string;
   answer: string;
 };
+
+/**
+ * The full set of localizable homepage content -- structurally identical
+ * across locales (same order, same images, same numeric/enum fields used
+ * for filtering or scoring), only the human-language fields differ. See
+ * `lib/i18n/home-content/*` and `lib/i18n/get-home-content.ts`, which load
+ * this the same way `getDictionary` loads a `Dictionary` per locale.
+ */
+export type HomeContent = {
+  heroImage: string;
+  featuredRecipes: FeaturedRecipe[];
+  brewMethods: BrewingMethod[];
+  coffeeOrigins: CoffeeOrigin[];
+  topRoasters: TopRoaster[];
+  testimonials: Testimonial[];
+  pricingPlans: PricingPlan[];
+  faqs: Faq[];
+};

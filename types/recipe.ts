@@ -97,6 +97,7 @@ export type DbRecipeRow = {
   recipe_pours: PourRow[];
   recipe_images: RecipeImageRow[];
   recipe_tags: { tags: TagRow | null }[];
+  xbloom_profiles: { id: string }[];
 };
 
 /**

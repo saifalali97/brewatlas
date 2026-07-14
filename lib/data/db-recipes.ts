@@ -28,7 +28,8 @@ const RECIPE_SELECT = `
   ),
   recipe_pours ( id, pour_number, water_amount, time_label, notes ),
   recipe_images ( id, url, position ),
-  recipe_tags ( tags ( id, name, slug ) )
+  recipe_tags ( tags ( id, name, slug ) ),
+  xbloom_profiles ( id )
 `;
 
 function computeRatio(row: DbRecipeRow): string {
@@ -42,6 +43,7 @@ function computeRatio(row: DbRecipeRow): string {
 /** Maps a raw DB `recipes` row (with lookup joins) into the shape shared with static catalog recipes. */
 export function mapDbRecipeToListItem(row: DbRecipeRow): RecipeListItem {
   const tags = row.recipe_tags.map((rt) => rt.tags?.name).filter((name): name is string => Boolean(name));
+  const hasXBloomProfile = row.xbloom_profiles.length > 0;
 
   return {
     name: row.title,
@@ -77,6 +79,7 @@ export function mapDbRecipeToListItem(row: DbRecipeRow): RecipeListItem {
       row.filter_types?.name,
       row.water_profiles?.name,
       row.description,
+      hasXBloomProfile ? "xBloom" : null,
       ...tags,
     ].filter((value): value is string => Boolean(value)),
   };

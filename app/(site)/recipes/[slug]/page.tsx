@@ -7,9 +7,11 @@ import {
   Calendar,
   Clock,
   Coffee,
+  Cpu,
   Droplets,
   Filter,
   FlaskConical,
+  Hand,
   Heart,
   Leaf,
   MapPin,
@@ -31,9 +33,30 @@ import { FavoriteButton } from "@/app/components/recipes/favorite-button";
 import { cards, buttons } from "@/lib/constants/styles";
 import { getAllRecipeSlugs, getRecipeBySlug } from "@/lib/data/recipes";
 import { getDbRecipeDetailBySlug, getFavoritesCount, getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
+import { recipeHasXBloomProfile } from "@/lib/data/xbloom";
 import { imageAlt } from "@/lib/seo/image-alt";
 import { createClient } from "@/lib/supabase/server";
 import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
+
+function CompatibleDevices({ hasXBloom }: { hasXBloom: boolean }) {
+  return (
+    <div className="mt-6">
+      <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">Compatible Devices</p>
+      <div className="mt-2.5 flex flex-wrap gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-300">
+          <Hand className="h-3 w-3 text-stone-400" aria-hidden />
+          Manual
+        </span>
+        {hasXBloom && (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-600/30 bg-amber-950/40 px-3 py-1 text-xs font-medium text-amber-200/90">
+            <Cpu className="h-3 w-3 text-amber-400/90" aria-hidden />
+            xBloom
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
 
 type RecipePageProps = {
   params: Promise<{ slug: string }>;
@@ -100,9 +123,10 @@ export default async function RecipePage({ params }: RecipePageProps) {
     notFound();
   }
 
-  const [favoritesCount, favoriteIds] = await Promise.all([
+  const [favoritesCount, favoriteIds, hasXBloomProfile] = await Promise.all([
     getFavoritesCount(supabase, recipe.id),
     authData.user ? getUserFavoriteRecipeIds(supabase, authData.user.id) : Promise.resolve(new Set<string>()),
+    recipeHasXBloomProfile(supabase, recipe.id),
   ]);
 
   const isOwner = Boolean(authData.user && recipe.authorId === authData.user.id);
@@ -115,6 +139,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
       isFavorited={favoriteIds.has(recipe.id)}
       isOwner={isOwner}
       isAuthenticated={Boolean(authData.user)}
+      hasXBloomProfile={hasXBloomProfile}
     />
   );
 }
@@ -182,6 +207,8 @@ function StaticRecipeView({ recipe }: { recipe: StaticRecipe }) {
             <MetaTile icon={MapPin} label="Roast Level" value={recipe.roastLevel} />
           </div>
 
+          <CompatibleDevices hasXBloom={false} />
+
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
             <RippleLink href="/premium" className={`${buttons.primary} w-full sm:w-auto`}>
               Unlock Full Guide
@@ -203,9 +230,18 @@ type DbRecipeViewProps = {
   isFavorited: boolean;
   isOwner: boolean;
   isAuthenticated: boolean;
+  hasXBloomProfile: boolean;
 };
 
-function DbRecipeView({ recipe, slug, favoritesCount, isFavorited, isOwner, isAuthenticated }: DbRecipeViewProps) {
+function DbRecipeView({
+  recipe,
+  slug,
+  favoritesCount,
+  isFavorited,
+  isOwner,
+  isAuthenticated,
+  hasXBloomProfile,
+}: DbRecipeViewProps) {
   const coverImage = recipe.coverImageUrl ?? RECIPE_IMAGE_PLACEHOLDER;
   const notes = recipe.tastingNotes ?? recipe.description ?? "No tasting notes yet.";
   const ratings = [
@@ -306,6 +342,8 @@ function DbRecipeView({ recipe, slug, favoritesCount, isFavorited, isOwner, isAu
             <MetaTile icon={Clock} label="Brew Time" value={recipe.totalBrewTime ?? recipe.estimatedBrewTime ?? "—"} />
             {recipe.roastLevel && <MetaTile icon={MapPin} label="Roast Level" value={recipe.roastLevel} />}
           </div>
+
+          <CompatibleDevices hasXBloom={hasXBloomProfile} />
 
           <div className="mt-10 flex flex-wrap gap-3">
             {isOwner ? (

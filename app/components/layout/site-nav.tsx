@@ -17,6 +17,7 @@ const defaultNavLabels: Dictionary["nav"] = {
   roasters: "Roasters",
   devices: "Devices",
   culture: "Culture",
+  coach: "AI Coach",
   pricing: "Pricing",
   faq: "FAQ",
   dashboard: "Dashboard",
@@ -28,6 +29,11 @@ const defaultNavLabels: Dictionary["nav"] = {
   signup: "Sign up",
   logout: "Log out",
   skipToMainContent: "Skip to main content",
+  mainNavigationAriaLabel: "Main navigation",
+  homeAriaLabel: "BrewAtlas home",
+  joinPremiumAriaLabel: "Join BrewAtlas Premium",
+  switchLanguageAria: "Switch to {language}",
+  languageAriaLabel: "Language",
 };
 
 export function SiteNav({ nav = defaultNavLabels, locale = DEFAULT_LOCALE }: { nav?: Dictionary["nav"]; locale?: Locale }) {
@@ -36,6 +42,8 @@ export function SiteNav({ nav = defaultNavLabels, locale = DEFAULT_LOCALE }: { n
     { href: "/methods", label: nav.methods, id: "methods" },
     { href: "/origins", label: nav.origins, id: "origins" },
     { href: "/roasters", label: nav.roasters, id: "roasters" },
+    { href: "/devices", label: nav.devices, id: "devices" },
+    { href: "/culture", label: nav.culture, id: "culture" },
     { href: "/premium", label: nav.pricing, id: "pricing" },
     { href: "/#faq", label: nav.faq, id: "faq" },
   ];
@@ -80,10 +88,10 @@ export function SiteNav({ nav = defaultNavLabels, locale = DEFAULT_LOCALE }: { n
           : "border-white/[0.04] bg-[#0a0705]/70"
       }`}
     >
-      <nav aria-label="Main navigation" className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6 md:py-4 lg:px-8 lg:py-5">
+      <nav aria-label={nav.mainNavigationAriaLabel} className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6 md:py-4 lg:px-8 lg:py-5">
         <Link
           href="/"
-          aria-label="BrewAtlas home"
+          aria-label={nav.homeAriaLabel}
           className="text-lg font-semibold tracking-tight text-stone-50 transition-opacity duration-300 hover:opacity-80"
         >
           BrewAtlas
@@ -113,10 +121,14 @@ export function SiteNav({ nav = defaultNavLabels, locale = DEFAULT_LOCALE }: { n
           })}
         </div>
         <div className="flex items-center gap-3 sm:gap-4">
-          <LanguageSwitcher currentLocale={locale} />
+          <LanguageSwitcher
+            currentLocale={locale}
+            switchLanguageAria={nav.switchLanguageAria}
+            languageAriaLabel={nav.languageAriaLabel}
+          />
           <RippleLink
             href="/premium"
-            aria-label="Join BrewAtlas Premium"
+            aria-label={nav.joinPremiumAriaLabel}
             className="rounded-full bg-amber-600/90 px-4 py-2 text-sm font-medium text-white transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-amber-500 hover:shadow-[0_0_36px_rgba(217,119,6,0.42)] active:scale-[0.97] sm:px-5"
           >
             {nav.joinPremium}

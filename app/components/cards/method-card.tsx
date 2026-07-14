@@ -5,7 +5,36 @@ import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { MetaTile } from "@/app/components/ui/meta-tile";
 import { cards } from "@/lib/constants/styles";
 import type { BrewingMethod } from "@/types/homepage";
+import { interpolate } from "@/lib/i18n/format";
 import { imageAlt } from "@/lib/seo/image-alt";
+
+export type MethodCardLabels = {
+  brewTime: string;
+  difficulty: string;
+  cupProfile: string;
+  body: string;
+  acidity: string;
+  sweetness: string;
+  bestWith: string;
+  learnMethod: string;
+  /** Translated label for `method.difficulty`. Defaults to the raw English enum value. */
+  difficultyLabel: string;
+  /** Translated `{name} {suitableRoast}` image alt template. */
+  imageAltTemplate: string;
+};
+
+const defaultMethodCardLabels: MethodCardLabels = {
+  brewTime: "Brew Time",
+  difficulty: "Difficulty",
+  cupProfile: "Cup Profile",
+  body: "Body",
+  acidity: "Acidity",
+  sweetness: "Sweetness",
+  bestWith: "Best with",
+  learnMethod: "Learn Method",
+  difficultyLabel: "",
+  imageAltTemplate: imageAlt.brewingMethodTemplate,
+};
 
 function TasteBar({ value, label }: { value: number; label: string }) {
   return (
@@ -35,9 +64,12 @@ function TasteBar({ value, label }: { value: number; label: string }) {
 type MethodCardProps = {
   method: BrewingMethod;
   ctaHref?: string;
+  /** Translated copy for this card's chrome. Defaults to English so existing callers (e.g. `/methods`) are unaffected. */
+  labels?: Partial<MethodCardLabels>;
 };
 
-export function MethodCard({ method, ctaHref = "#methods" }: MethodCardProps) {
+export function MethodCard({ method, ctaHref = "#methods", labels }: MethodCardProps) {
+  const l: MethodCardLabels = { ...defaultMethodCardLabels, ...labels };
   return (
     <article
       className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/[0.11] bg-gradient-to-br from-white/[0.08] via-white/[0.035] to-white/[0.01] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-amber-500/32 hover:shadow-[0_24px_56px_-18px_rgba(180,120,60,0.24),0_0_0_1px_rgba(217,119,6,0.08)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 lg:flex-row lg:items-stretch"
@@ -51,7 +83,7 @@ export function MethodCard({ method, ctaHref = "#methods" }: MethodCardProps) {
       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden sm:aspect-[5/3] lg:aspect-auto lg:h-auto lg:min-h-0 lg:w-[46%] lg:self-stretch xl:w-[48%]">
         <Image
           src={method.image}
-          alt={imageAlt.brewingMethod(method.name, method.suitableRoast)}
+          alt={interpolate(l.imageAltTemplate, { name: method.name, suitableRoast: method.suitableRoast })}
           fill
           sizes="(min-width: 1024px) 46vw, 100vw"
           unoptimized={method.image.endsWith(".svg")}
@@ -75,15 +107,15 @@ export function MethodCard({ method, ctaHref = "#methods" }: MethodCardProps) {
         </p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <MetaTile icon={Clock} label="Brew Time" value={method.brewTime} centered />
+          <MetaTile icon={Clock} label={l.brewTime} value={method.brewTime} centered />
           <div className="flex items-center gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.03] px-3 py-2.5">
             <Gauge className="h-3.5 w-3.5 shrink-0 text-amber-500/80" aria-hidden />
             <div>
               <p className="text-[9px] font-medium uppercase tracking-[0.14em] text-stone-500">
-                Difficulty
+                {l.difficulty}
               </p>
               <div className="mt-0.5">
-                <DifficultyIndicator level={method.difficulty} />
+                <DifficultyIndicator level={method.difficulty} label={l.difficultyLabel || undefined} />
               </div>
             </div>
           </div>
@@ -92,24 +124,24 @@ export function MethodCard({ method, ctaHref = "#methods" }: MethodCardProps) {
         <div className="mt-4 space-y-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
           <div className="flex items-center gap-1.5 text-[9px] font-medium uppercase tracking-[0.14em] text-stone-500">
             <Droplets className="h-3 w-3 text-amber-500/70" aria-hidden />
-            Cup Profile
+            {l.cupProfile}
           </div>
-          <TasteBar value={method.body} label="Body" />
-          <TasteBar value={method.acidity} label="Acidity" />
-          <TasteBar value={method.sweetness} label="Sweetness" />
+          <TasteBar value={method.body} label={l.body} />
+          <TasteBar value={method.acidity} label={l.acidity} />
+          <TasteBar value={method.sweetness} label={l.sweetness} />
         </div>
 
         <div className="mt-3 flex items-center gap-1.5 text-[10px] text-stone-500">
           <Flame className="h-3 w-3 text-amber-500/70" aria-hidden />
           <span>
-            Best with{" "}
+            {l.bestWith}{" "}
             <strong className="font-medium text-stone-300">{method.suitableRoast}</strong>
           </span>
         </div>
 
         <div className="mt-4 border-t border-white/[0.06] pt-4">
           <GhostCtaLink href={ctaHref} autoWidth>
-            Learn Method
+            {l.learnMethod}
           </GhostCtaLink>
         </div>
       </div>

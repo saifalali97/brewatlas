@@ -2,7 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { BookOpen, Coffee, Heart, Plus } from "lucide-react";
+import {
+  BookOpen,
+  Clock,
+  Coffee,
+  Cpu,
+  Heart,
+  Plus,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
@@ -57,6 +66,15 @@ export default async function DashboardPage() {
     { icon: Heart, label: "Saved Recipes", value: String(favoriteRecipes.length) },
     { icon: Coffee, label: "Recipes Created", value: String(ownRecipes.length) },
     { icon: BookOpen, label: "Favorite Method", value: favoriteMethodName },
+  ];
+
+  const quickLinks = [
+    { icon: Sparkles, label: "AI Coach", description: "Get an instant Brew Score", href: "/coach" },
+    { icon: Clock, label: "Brew History", description: "Every brew you've logged", href: "/dashboard/brew-history" },
+    { icon: Users, label: "Community", description: "Leaderboards & top recipes", href: "/community" },
+    { icon: Coffee, label: "Premium", description: "Unlock the full library", href: "/premium" },
+    { icon: Cpu, label: "xBloom Profiles", description: "Your smart brewer settings", href: "/dashboard/xbloom" },
+    { icon: Heart, label: "Saved Recipes", description: "Everything you've favorited", href: "/dashboard/favorites" },
   ];
 
   return (
@@ -115,6 +133,27 @@ export default async function DashboardPage() {
         <Link href="/dashboard/profile" className={`${buttons.secondary} shrink-0`}>
           Edit Profile
         </Link>
+      </div>
+
+      <div className="mt-16">
+        <h2 className="text-xl font-semibold tracking-tight text-stone-50">Quick Links</h2>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {quickLinks.map(({ icon: Icon, label, description, href }) => (
+            <Link
+              key={label}
+              href={href}
+              className="flex items-center gap-4 rounded-2xl border border-white/[0.09] bg-white/[0.035] px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-500/30 hover:bg-white/[0.05]"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-700/20 bg-amber-950/25 text-amber-500/80">
+                <Icon className="h-[18px] w-[18px]" aria-hidden />
+              </div>
+              <div>
+                <p className="font-medium text-stone-100">{label}</p>
+                <p className="mt-0.5 text-sm text-stone-500">{description}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
 
       <div className="mt-16">

@@ -12,37 +12,55 @@ import {
 import { RevealOnScroll } from "@/app/components/ui/reveal-on-scroll";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { buttons } from "@/lib/constants/styles";
+import { LOCALE_METADATA, SUPPORTED_LOCALES } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/types";
+import type { Locale } from "@/types/i18n";
 
-const exploreLinks = [
-  { href: "/recipes", label: "Recipes" },
-  { href: "/methods", label: "Methods" },
-  { href: "/origins", label: "Origins" },
-  { href: "/roasters", label: "Roasters" },
-  { href: "/premium", label: "Premium" },
-];
+type FooterLinkItem = { href: string; label: string };
 
-const companyLinks = [
-  { href: "/about", label: "About" },
-  { href: "#", label: "Blog" },
-  { href: "#", label: "Careers" },
-  { href: "/contact", label: "Contact" },
-  { href: "#", label: "Press" },
-];
+function buildExploreLinks(footer: Dictionary["homeFooter"]): FooterLinkItem[] {
+  return [
+    { href: "/recipes", label: footer.linkRecipes },
+    { href: "/methods", label: footer.linkMethods },
+    { href: "/origins", label: footer.linkOrigins },
+    { href: "/roasters", label: footer.linkRoasters },
+    { href: "/culture", label: footer.linkCulture },
+    { href: "/culture/arabic-coffee", label: footer.linkArabicCoffee },
+    { href: "/culture/tea", label: footer.linkTeaKarak },
+    { href: "/coach", label: footer.linkCoach },
+    { href: "/community", label: footer.linkCommunity },
+    { href: "/premium", label: footer.linkPremium },
+  ];
+}
 
-const supportLinks = [
-  { href: "#", label: "Help Center" },
-  { href: "/#faq", label: "FAQ" },
-  { href: "#", label: "Privacy Policy" },
-  { href: "#", label: "Terms" },
-  { href: "#", label: "Cookies" },
-];
+function buildCompanyLinks(footer: Dictionary["homeFooter"]): FooterLinkItem[] {
+  return [
+    { href: "/about", label: footer.linkAbout },
+    { href: "#", label: footer.linkBlog },
+    { href: "#", label: footer.linkCareers },
+    { href: "/contact", label: footer.linkContact },
+    { href: "#", label: footer.linkPress },
+  ];
+}
 
-const socialLinks = [
-  { href: "#", label: "Instagram", icon: Share2 },
-  { href: "#", label: "Twitter", icon: AtSign },
-  { href: "#", label: "YouTube", icon: ExternalLink },
-  { href: "#", label: "Blog RSS", icon: Rss },
-];
+function buildSupportLinks(footer: Dictionary["homeFooter"]): FooterLinkItem[] {
+  return [
+    { href: "#", label: footer.linkHelpCenter },
+    { href: "/#faq", label: footer.linkFaq },
+    { href: "#", label: footer.linkPrivacyPolicy },
+    { href: "#", label: footer.linkTerms },
+    { href: "#", label: footer.linkCookies },
+  ];
+}
+
+function buildSocialLinks(footer: Dictionary["homeFooter"]) {
+  return [
+    { href: "#", label: "Instagram", icon: Share2 },
+    { href: "#", label: "Twitter", icon: AtSign },
+    { href: "#", label: "YouTube", icon: ExternalLink },
+    { href: "#", label: footer.blogRssLabel, icon: Rss },
+  ];
+}
 
 function FooterLink({ href, label }: { href: string; label: string }) {
   return (
@@ -68,8 +86,18 @@ function FooterColumn({ title, children }: { title: string; children: ReactNode 
   );
 }
 
-export function SiteFooter() {
+type SiteFooterProps = {
+  footer: Dictionary["homeFooter"];
+  locale: Locale;
+};
+
+export function SiteFooter({ footer, locale }: SiteFooterProps) {
   const year = new Date().getFullYear();
+  const exploreLinks = buildExploreLinks(footer);
+  const companyLinks = buildCompanyLinks(footer);
+  const supportLinks = buildSupportLinks(footer);
+  const socialLinks = buildSocialLinks(footer);
+  const copyright = `© ${year} BrewAtlas. ${footer.allRightsReserved}`;
 
   return (
     <>
@@ -95,17 +123,16 @@ export function SiteFooter() {
 
             <div className="relative max-w-2xl">
               <p className="text-[0.8125rem] font-medium uppercase tracking-[0.24em] text-amber-500/90">
-                Start Brewing Better
+                {footer.ctaEyebrow}
               </p>
               <h2
                 id="footer-cta-heading"
                 className="mt-5 text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-stone-50 sm:text-4xl lg:text-[2.75rem]"
               >
-                Ready to unlock the full BrewAtlas experience?
+                {footer.ctaTitle}
               </h2>
               <p className="mt-6 text-lg leading-[1.78] text-stone-400 md:text-xl md:leading-[1.72]">
-                Join thousands of baristas exploring premium recipes, brew tracking,
-                and AI-powered recommendations.
+                {footer.ctaDescription}
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -113,13 +140,13 @@ export function SiteFooter() {
                   href="/premium"
                   className={`${buttons.primary} motion-reduce:hover:scale-100`}
                 >
-                  Start Premium
+                  {footer.startPremium}
                 </RippleLink>
                 <RippleLink
                   href="/recipes"
                   className={`${buttons.secondary} motion-reduce:hover:scale-100`}
                 >
-                  Browse Recipes
+                  {footer.browseRecipes}
                 </RippleLink>
               </div>
             </div>
@@ -130,11 +157,11 @@ export function SiteFooter() {
       <footer className="border-t border-white/[0.04] bg-[#080504] px-5 pb-8 pt-16 sm:px-6 md:px-7 lg:px-8 lg:pt-20">
         <div className="mx-auto max-w-6xl">
           <RevealOnScroll>
-            <nav aria-label="Footer navigation" className="grid gap-12 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4 lg:gap-16">
+            <nav aria-label={footer.footerNavAriaLabel} className="grid gap-12 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4 lg:gap-16">
               <div className="sm:col-span-2 lg:col-span-1">
                 <Link
                   href="/"
-                  aria-label="BrewAtlas home"
+                  aria-label={footer.homeAriaLabel}
                   className="inline-flex items-center gap-2 text-xl font-semibold tracking-tight text-stone-50 transition-colors duration-300 hover:text-amber-100"
                 >
                   <span
@@ -146,11 +173,10 @@ export function SiteFooter() {
                   BrewAtlas
                 </Link>
                 <p className="mt-5 max-w-xs text-sm leading-[1.8] text-stone-500">
-                  The definitive platform for specialty coffee recipes, origins, and
-                  brew science. Craft coffee, mapped.
+                  {footer.tagline}
                 </p>
 
-                <div className="mt-6 flex items-center gap-2.5" aria-label="Social media links">
+                <div className="mt-6 flex items-center gap-2.5" aria-label={footer.socialLinksAriaLabel}>
                   {socialLinks.map(({ href, label, icon: Icon }) => (
                     <a
                       key={label}
@@ -164,23 +190,23 @@ export function SiteFooter() {
                 </div>
 
                 <p className="mt-8 text-xs text-stone-600 lg:hidden">
-                  © {year} BrewAtlas. All rights reserved.
+                  {copyright}
                 </p>
               </div>
 
-              <FooterColumn title="Explore">
+              <FooterColumn title={footer.exploreColumn}>
                 {exploreLinks.map((link) => (
                   <FooterLink key={link.label} {...link} />
                 ))}
               </FooterColumn>
 
-              <FooterColumn title="Company">
+              <FooterColumn title={footer.companyColumn}>
                 {companyLinks.map((link) => (
                   <FooterLink key={link.label} {...link} />
                 ))}
               </FooterColumn>
 
-              <FooterColumn title="Support">
+              <FooterColumn title={footer.supportColumn}>
                 {supportLinks.map((link) => (
                   <FooterLink key={link.label} {...link} />
                 ))}
@@ -191,36 +217,38 @@ export function SiteFooter() {
           <div className="mt-14 flex flex-col gap-5 border-t border-white/[0.06] pt-8 lg:mt-16 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
               <p className="hidden text-sm text-stone-600 lg:block">
-                © {year} BrewAtlas. All rights reserved.
+                {copyright}
               </p>
               <p className="flex items-center gap-1.5 text-sm text-stone-600">
-                Made with
+                {footer.madeWithPrefix}
                 <Heart className="h-3.5 w-3.5 fill-amber-600/70 text-amber-600/70" aria-hidden />
-                for specialty coffee
+                {footer.forSpecialtyCoffee}
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-sm text-stone-500 transition-colors duration-300 hover:border-amber-600/25 hover:text-stone-300">
                 <Globe className="h-3.5 w-3.5 text-amber-500/75" aria-hidden />
-                <span className="sr-only">Language</span>
+                <span className="sr-only">{footer.languageLabel}</span>
                 <select
-                  defaultValue="en"
+                  defaultValue={locale}
                   className="cursor-pointer bg-transparent text-sm text-stone-400 outline-none"
-                  aria-label="Select language"
+                  aria-label={footer.languageLabel}
                 >
-                  <option value="en">English</option>
-                  <option value="es">Español</option>
-                  <option value="fr">Français</option>
+                  {SUPPORTED_LOCALES.map((supportedLocale) => (
+                    <option key={supportedLocale} value={supportedLocale}>
+                      {LOCALE_METADATA[supportedLocale].nativeName}
+                    </option>
+                  ))}
                 </select>
               </label>
 
               <div
                 className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-sm text-stone-500"
-                aria-label="Current theme: Dark"
+                aria-label={footer.themeAriaLabelPrefix}
               >
                 <Moon className="h-3.5 w-3.5 text-amber-500/75" aria-hidden />
-                <span>Dark</span>
+                <span>{footer.darkLabel}</span>
               </div>
             </div>
           </div>

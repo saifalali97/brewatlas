@@ -3,20 +3,23 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { SectionIntro } from "@/app/components/ui/section-intro";
 import { TiltCard } from "@/app/components/ui/tilt-card";
 import { cards } from "@/lib/constants/styles";
+import { interpolate } from "@/lib/i18n/format";
 import type { Testimonial } from "@/types/homepage";
-import { imageAlt } from "@/lib/seo/image-alt";
 
 type TestimonialsSectionProps = {
   testimonials: Testimonial[];
+  eyebrow: string;
+  title: string;
+  imageAltTemplate: string;
 };
 
-function TestimonialCard({ item }: { item: Testimonial }) {
+function TestimonialCard({ item, imageAltTemplate }: { item: Testimonial; imageAltTemplate: string }) {
   return (
     <TiltCard>
       <blockquote className={`group flex flex-col overflow-hidden ${cards.testimonial} p-0`}>
         <PremiumImage
           src={item.image}
-          alt={imageAlt.testimonial(item.name, item.role, item.location)}
+          alt={interpolate(imageAltTemplate, { name: item.name, role: item.role, location: item.location })}
           overlay="portrait"
           sizes="(min-width: 1024px) 33vw, 100vw"
           className="h-52 w-full"
@@ -36,19 +39,19 @@ function TestimonialCard({ item }: { item: Testimonial }) {
   );
 }
 
-export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) {
+export function TestimonialsSection({ testimonials, eyebrow, title, imageAltTemplate }: TestimonialsSectionProps) {
   return (
     <SectionFrame id="testimonials" padding="compact" showDividers={false} ariaLabelledBy="testimonials-heading">
       <SectionIntro
         headingId="testimonials-heading"
-        eyebrow="Trusted by Professionals"
-        title="What Baristas Say"
+        eyebrow={eyebrow}
+        title={title}
         centered
         titleVariant="legacy"
       />
       <div className="grid gap-8 lg:grid-cols-3">
         {testimonials.map((item) => (
-          <TestimonialCard key={item.name} item={item} />
+          <TestimonialCard key={item.name} item={item} imageAltTemplate={imageAltTemplate} />
         ))}
       </div>
     </SectionFrame>

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Clock, Flame, Gauge } from "lucide-react";
+import { Clock, Cpu, Flame, Gauge } from "lucide-react";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { MetaTile } from "@/app/components/ui/meta-tile";
 import { PageHeader } from "@/app/components/ui/page-header";
+import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
-import { cards } from "@/lib/constants/styles";
+import { buttons, cards } from "@/lib/constants/styles";
 import { brewMethods } from "@/data/homepage";
 import { imageAlt } from "@/lib/seo/image-alt";
 
@@ -35,6 +36,29 @@ export default function DevicesPage() {
         title="Brewing Devices"
         description="The equipment behind every BrewAtlas method, matched to the roast level and skill it brews best."
       />
+
+      <div className={`relative mb-10 flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between lg:p-7 ${cards.premiumShell}`}>
+        <div aria-hidden className={cards.premiumSheen} />
+        <div aria-hidden className={cards.premiumGlow} />
+        <div className="relative flex items-center gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-amber-600/25 bg-amber-950/40">
+            <Cpu className="h-5 w-5 text-amber-500/85" aria-hidden />
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-amber-500/80">Smart Brewing</p>
+            <h2 className="mt-1 text-lg font-semibold tracking-tight text-stone-50">
+              xBloom — First-Class Smart Brewer Support
+            </h2>
+            <p className="mt-1 max-w-lg text-sm text-stone-400">
+              Every BrewAtlas recipe can carry a full xBloom profile — dose, water temperature, pulse pattern, and
+              pour sequence — for xBloom Studio, Original, Lite, and Omni.
+            </p>
+          </div>
+        </div>
+        <RippleLink href="/devices/xbloom" className={`${buttons.secondary} relative w-full shrink-0 sm:w-auto`}>
+          Explore xBloom
+        </RippleLink>
+      </div>
 
       <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
         {brewMethods.map((method) => {

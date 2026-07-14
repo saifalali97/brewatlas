@@ -1,6 +1,19 @@
 import type { Dictionary, DictionaryKey } from "@/lib/i18n/types";
 
 /**
+ * Interpolates any `{placeholder}` tokens in `template` with `vars`.
+ * Standalone from dictionary lookups so it can be reused for templates
+ * that are threaded through props (e.g. image alt text built from
+ * per-item data in a Server Component).
+ */
+export function interpolate(template: string, vars: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (match, token: string) => {
+    const value = vars[token];
+    return value === undefined ? match : String(value);
+  });
+}
+
+/**
  * Resolves a dot-notation key (e.g. `"dashboard.welcomeBack"`) against a
  * `Dictionary` and interpolates any `{placeholder}` tokens with `vars`.
  * Framework-agnostic and side-effect free, so it works identically from
@@ -18,8 +31,5 @@ export function translate(dictionary: Dictionary, key: DictionaryKey, vars?: Rec
   }
   if (!vars) return raw;
 
-  return raw.replace(/\{(\w+)\}/g, (match, token: string) => {
-    const value = vars[token];
-    return value === undefined ? match : String(value);
-  });
+  return interpolate(raw, vars);
 }
