@@ -19,6 +19,12 @@ export function clampToRange(value: number, range: NumericRange): number {
   return clamp(value, range.min, range.max);
 }
 
+/** Formats a coffee:water ratio as `"16"` or `"9.5"` -- whole numbers drop the decimal, everything else keeps one. */
+export function formatRatio(ratio: number): string {
+  const rounded = Math.round(ratio * 10) / 10;
+  return Number.isInteger(rounded) ? `${rounded}` : rounded.toFixed(1);
+}
+
 const ABSOLUTE_RATIO_RANGE: NumericRange = { min: 1, max: 20, default: 16 };
 
 /**
