@@ -2,9 +2,20 @@ import { Clock, Droplet, Droplets, ListOrdered, Scale, Settings2, Thermometer } 
 import { MetaTile } from "@/app/components/ui/meta-tile";
 import { forms } from "@/lib/constants/styles";
 
+/** Calculated display values from the conversion engine (Phase 17.2), keyed per preview card. Omitted fields fall back to `comingSoonValue`. */
+export type ConverterPreviewValues = {
+  dose?: string;
+  water?: string;
+  grindSize?: string;
+  temperature?: string;
+  bloom?: string;
+  pours?: string;
+  brewTime?: string;
+};
+
 type ConverterPreviewProps = {
   label: string;
-  /** Shown as every field's value until conversion math ships (Phase 17.2+). */
+  /** Shown for any field not yet present in `values` (e.g. before a target device is chosen). */
   comingSoonValue: string;
   doseLabel: string;
   waterLabel: string;
@@ -13,9 +24,10 @@ type ConverterPreviewProps = {
   bloomLabel: string;
   poursLabel: string;
   brewTimeLabel: string;
+  values?: ConverterPreviewValues;
 };
 
-/** Output preview grid for the Universal Recipe Converter -- placeholder cards only, no calculations yet (Phase 17.1). */
+/** Output preview grid for the Universal Recipe Converter -- renders real engine output once a target device is selected, otherwise the "coming soon" placeholder (Phase 17.2). */
 export function ConverterPreview({
   label,
   comingSoonValue,
@@ -26,15 +38,16 @@ export function ConverterPreview({
   bloomLabel,
   poursLabel,
   brewTimeLabel,
+  values,
 }: ConverterPreviewProps) {
   const fields = [
-    { icon: Scale, label: doseLabel },
-    { icon: Droplets, label: waterLabel },
-    { icon: Settings2, label: grindSizeLabel },
-    { icon: Thermometer, label: temperatureLabel },
-    { icon: Droplet, label: bloomLabel },
-    { icon: ListOrdered, label: poursLabel },
-    { icon: Clock, label: brewTimeLabel },
+    { icon: Scale, label: doseLabel, value: values?.dose },
+    { icon: Droplets, label: waterLabel, value: values?.water },
+    { icon: Settings2, label: grindSizeLabel, value: values?.grindSize },
+    { icon: Thermometer, label: temperatureLabel, value: values?.temperature },
+    { icon: Droplet, label: bloomLabel, value: values?.bloom },
+    { icon: ListOrdered, label: poursLabel, value: values?.pours },
+    { icon: Clock, label: brewTimeLabel, value: values?.brewTime },
   ];
 
   return (
@@ -42,7 +55,7 @@ export function ConverterPreview({
       <p className={forms.label}>{label}</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {fields.map((field) => (
-          <MetaTile key={field.label} icon={field.icon} label={field.label} value={comingSoonValue} />
+          <MetaTile key={field.label} icon={field.icon} label={field.label} value={field.value ?? comingSoonValue} />
         ))}
       </div>
     </div>

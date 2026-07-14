@@ -21,6 +21,8 @@ export const CONVERTER_DEVICES = [
   "xBloom Studio",
   "xBloom Omni",
   "xBloom Original",
+  "Espresso",
+  "Cold Brew",
 ] as const;
 
 export type ConverterDevice = (typeof CONVERTER_DEVICES)[number];

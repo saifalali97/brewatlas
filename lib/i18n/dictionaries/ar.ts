@@ -922,6 +922,10 @@ const ar: Dictionary = {
     brewTimeLabel: "زمن التحضير",
     comingSoonValue: "قريبًا",
     convertButtonComingSoon: "قريبًا",
+    poursCountValue: "{count} صبّات",
+    singlePourValue: "صبّة واحدة",
+    singleSteepValue: "نقع واحد",
+    notApplicableValue: "—",
   },
   metadata: {
     methodsTitle: "طرق التحضير",

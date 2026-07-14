@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import {
   ConversionPreferences,
   DEFAULT_CONVERSION_PREFERENCES,
   type ConversionPreferencesState,
 } from "@/app/components/converter/conversion-preferences";
-import { ConverterPreview } from "@/app/components/converter/converter-preview";
+import { ConverterPreview, type ConverterPreviewValues } from "@/app/components/converter/converter-preview";
 import { DeviceSelector } from "@/app/components/converter/device-selector";
+import type { ConverterSourceRecipe } from "@/app/components/converter/recipe-converter-button";
 import { buttons, forms, modal } from "@/lib/constants/styles";
+import { convertRecipe } from "@/lib/converter";
 import { useTranslations } from "@/lib/i18n/translation-context";
 
 type RecipeConverterModalProps = {
@@ -17,21 +19,65 @@ type RecipeConverterModalProps = {
   onClose: () => void;
   /** The recipe's current brewing device/method, shown read-only (e.g. "V60"). */
   currentDevice: string;
+  /** The recipe's own brewing parameters, used as the conversion engine's source values. */
+  sourceRecipe?: ConverterSourceRecipe;
 };
 
 /**
- * Universal Recipe Converter modal (Phase 17.1) -- interface only. No
- * conversion math runs yet: the target device, preferences, and preview
- * cards are all wired up and ready for the engine that ships in a later
- * phase, but the "Convert Recipe" action is intentionally disabled here.
+ * Universal Recipe Converter modal (Phase 17.1 UI, Phase 17.2 engine). The
+ * output preview recalculates live via `lib/converter` as soon as a target
+ * device is picked; the "Convert Recipe" action itself stays disabled --
+ * applying/saving a converted recipe is a later phase.
  */
-export function RecipeConverterModal({ isOpen, onClose, currentDevice }: RecipeConverterModalProps) {
+export function RecipeConverterModal({ isOpen, onClose, currentDevice, sourceRecipe }: RecipeConverterModalProps) {
   const { t } = useTranslations();
   const titleId = useId();
   const subtitleId = useId();
 
   const [targetDevice, setTargetDevice] = useState("");
   const [preferences, setPreferences] = useState<ConversionPreferencesState>(DEFAULT_CONVERSION_PREFERENCES);
+
+  const previewValues = useMemo<ConverterPreviewValues | undefined>(() => {
+    if (!targetDevice) return undefined;
+
+    const result = convertRecipe({
+      sourceMethod: currentDevice,
+      targetMethod: targetDevice,
+      doseG: sourceRecipe?.doseG,
+      waterG: sourceRecipe?.waterG,
+      grindSize: sourceRecipe?.grindSize,
+      temperatureC: sourceRecipe?.temperatureC,
+      bloomAmountG: sourceRecipe?.bloomAmountG,
+      bloomTime: sourceRecipe?.bloomTime,
+      brewTime: sourceRecipe?.brewTime,
+      poursCount: sourceRecipe?.poursCount,
+      preferences,
+    });
+
+    if (!result.supported) return undefined;
+
+    const bloomDisplay =
+      result.bloom.grams === null || result.bloom.timeSeconds === null
+        ? t("recipeConverter.notApplicableValue")
+        : `${result.bloom.grams}g / ${result.bloom.timeSeconds}s`;
+
+    const poursDisplay =
+      result.pours.count > 0
+        ? t("recipeConverter.poursCountValue", { count: result.pours.count })
+        : result.targetCategory === "coldBrew"
+          ? t("recipeConverter.singleSteepValue")
+          : t("recipeConverter.singlePourValue");
+
+    return {
+      dose: result.dose.display,
+      water: result.water.display,
+      grindSize: result.grindSize.display,
+      temperature: result.temperature.display,
+      bloom: bloomDisplay,
+      pours: poursDisplay,
+      brewTime: result.brewTime.display,
+    };
+  }, [currentDevice, targetDevice, sourceRecipe, preferences, t]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -114,6 +160,7 @@ export function RecipeConverterModal({ isOpen, onClose, currentDevice }: RecipeC
               bloomLabel={t("recipeConverter.bloomLabel")}
               poursLabel={t("recipeConverter.poursLabel")}
               brewTimeLabel={t("recipeConverter.brewTimeLabel")}
+              values={previewValues}
             />
           </div>
         </div>

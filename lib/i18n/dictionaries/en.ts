@@ -926,6 +926,10 @@ const en: Dictionary = {
     brewTimeLabel: "Brew Time",
     comingSoonValue: "Coming soon",
     convertButtonComingSoon: "Coming Soon",
+    poursCountValue: "{count} pours",
+    singlePourValue: "Single pour",
+    singleSteepValue: "Single steep",
+    notApplicableValue: "—",
   },
   metadata: {
     methodsTitle: "Brewing Methods",

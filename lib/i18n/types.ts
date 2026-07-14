@@ -906,6 +906,11 @@ export type Dictionary = {
     brewTimeLabel: string;
     comingSoonValue: string;
     convertButtonComingSoon: string;
+    /** Engine output value copy (Phase 17.2) -- everything else in this namespace is chrome/labels, these render inside the output preview cards themselves. */
+    poursCountValue: string;
+    singlePourValue: string;
+    singleSteepValue: string;
+    notApplicableValue: string;
   };
   metadata: {
     methodsTitle: string;
