@@ -274,8 +274,44 @@ export type ActivityFeedItem = {
   createdAt: string;
 };
 
-export const NOTIFICATION_TYPES = ["new_follower", "recipe_liked", "recipe_reviewed", "badge_earned"] as const;
+/** All supported `user_notifications.notification_type` values (current + future). */
+export const NOTIFICATION_TYPES = [
+  "new_follower",
+  "recipe_liked",
+  "recipe_reviewed",
+  "badge_earned",
+  "recipe_published",
+  "favorite_recipe_updated",
+  "collection_updated",
+  "review_received",
+  "review_liked",
+  "ai_recommendation",
+  "subscription_reminder",
+  "achievement_unlocked",
+  "brew_log_reminder",
+  "account",
+  "system_announcement",
+  "recipe_approval_pending",
+  "recipe_approved",
+  "recipe_rejected",
+  "staff_action",
+  "moderation_event",
+  "team_notification",
+  "admin_broadcast",
+] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
+
+export const NOTIFICATION_PAGE_SIZE = 20;
+
+/** Extensible JSON payload stored on `user_notifications.metadata`. */
+export type NotificationMetadata = {
+  collectionId?: string;
+  collectionName?: string;
+  approvalId?: string;
+  teamId?: string;
+  href?: string;
+  [key: string]: unknown;
+};
 
 /** `public.user_notifications` row, camelCased. */
 export type NotificationItem = {
@@ -284,7 +320,17 @@ export type NotificationItem = {
   actor: ProfileSummary | null;
   recipe: { id: string; title: string; slug: string } | null;
   badge: { id: string; key: string; name: string; icon: string } | null;
+  title: string | null;
   message: string;
+  metadata: NotificationMetadata;
   isRead: boolean;
   createdAt: string;
+};
+
+export type NotificationsPageResult = {
+  notifications: NotificationItem[];
+  totalCount: number;
+  unreadCount: number;
+  page: number;
+  pageSize: number;
 };

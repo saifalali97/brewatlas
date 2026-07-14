@@ -1,8 +1,12 @@
+import type { ReactNode } from "react";
 import { SiteNav } from "@/app/components/layout/site-nav";
+import { NotificationsBell } from "@/app/components/notifications/notifications-bell";
 import { FloatingActions } from "@/app/components/layout/client-chrome";
 import { SiteFooter } from "@/lib/dynamic-sections";
+import { getNotifications, getUnreadNotificationCount } from "@/lib/data/community";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
+import { createClient } from "@/lib/supabase/server";
 
 /**
  * Shared chrome (background, nav, footer) for every public marketing/app
@@ -20,6 +24,28 @@ export default async function SiteLayout({
 }>) {
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+
+  let notificationsSlot: ReactNode = null;
+  if (authData.user) {
+    const [unreadCount, notifications] = await Promise.all([
+      getUnreadNotificationCount(supabase, authData.user.id),
+      getNotifications(supabase, authData.user.id, { limit: 8 }),
+    ]);
+
+    notificationsSlot = (
+      <NotificationsBell
+        key={`${unreadCount}-${notifications.map((item) => item.id).join(",")}`}
+        userId={authData.user.id}
+        initialUnreadCount={unreadCount}
+        initialNotifications={notifications}
+        labels={dictionary.notificationsPage}
+        dictionary={dictionary}
+        locale={locale}
+      />
+    );
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0a0705] font-sans text-stone-100">
@@ -35,7 +61,7 @@ export default async function SiteLayout({
         <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f0a]/40 via-transparent to-[#0a0705]" />
       </div>
 
-      <SiteNav nav={dictionary.nav} locale={locale} />
+      <SiteNav nav={dictionary.nav} locale={locale} notificationsSlot={notificationsSlot} />
 
       <main id="main-content">{children}</main>
 

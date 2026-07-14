@@ -28,6 +28,7 @@ export async function markNotificationReadAction(formData: FormData): Promise<vo
   const notificationId = formData.get("notificationId");
   if (typeof notificationId !== "string" || notificationId.length === 0) {
     revalidatePath(path);
+    revalidatePath("/", "layout");
     return;
   }
 
@@ -38,6 +39,7 @@ export async function markNotificationReadAction(formData: FormData): Promise<vo
     .eq("user_id", authData.user.id);
 
   revalidatePath(path);
+  revalidatePath("/", "layout");
 }
 
 /** Marks every notification the caller owns as read. */
@@ -56,6 +58,7 @@ export async function markAllNotificationsReadAction(formData: FormData): Promis
     .eq("is_read", false);
 
   revalidatePath(path);
+  revalidatePath("/", "layout");
 }
 
 /** Deletes a single notification the caller owns. */
@@ -70,10 +73,12 @@ export async function deleteNotificationAction(formData: FormData): Promise<void
   const notificationId = formData.get("notificationId");
   if (typeof notificationId !== "string" || notificationId.length === 0) {
     revalidatePath(path);
+    revalidatePath("/", "layout");
     return;
   }
 
   await supabase.from("user_notifications").delete().eq("id", notificationId).eq("user_id", authData.user.id);
 
   revalidatePath(path);
+  revalidatePath("/", "layout");
 }
