@@ -68,6 +68,32 @@ export const buttons = {
     "h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5 motion-reduce:transform-none",
 } as const;
 
+export const forms = {
+  label: "text-sm font-medium text-stone-300",
+  input:
+    "mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45",
+  select:
+    "mt-2 w-full appearance-none rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 focus:border-amber-500/45",
+  readOnlyField:
+    "mt-2 w-full rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3 text-sm text-stone-300",
+  checkboxRow: "flex items-center gap-2.5 text-sm text-stone-300",
+  checkbox: "h-4 w-4 rounded border-white/[0.2] bg-white/[0.03] text-amber-500 focus:ring-amber-500/40",
+} as const;
+
+/** Centered overlay dialog shell shared by any modal (see `app/components/converter/`). */
+export const modal = {
+  overlay:
+    "fixed inset-0 z-[90] flex items-center justify-center bg-[#0a0705]/80 p-4 backdrop-blur-sm sm:p-6",
+  panel:
+    "relative flex max-h-[calc(100vh-2rem)] w-full max-w-2xl flex-col overflow-hidden rounded-[1.5rem] border border-white/[0.11] bg-gradient-to-br from-white/[0.08] via-white/[0.035] to-white/[0.01] shadow-[0_32px_80px_-24px_rgba(0,0,0,0.6)] backdrop-blur-2xl",
+  header: "flex items-start justify-between gap-4 border-b border-white/[0.08] px-6 py-5 sm:px-8 sm:py-6",
+  body: "flex-1 overflow-y-auto px-6 py-6 sm:px-8 sm:py-7",
+  footer:
+    "flex flex-col gap-3 border-t border-white/[0.08] px-6 py-5 sm:flex-row sm:justify-end sm:px-8 sm:py-6",
+  closeButton:
+    "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/[0.1] bg-white/[0.03] text-stone-400 transition-colors duration-300 hover:border-white/[0.16] hover:bg-white/[0.06] hover:text-stone-100",
+} as const;
+
 export const meta = {
   tile:
     "flex items-start gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.03] px-3 py-2.5",
