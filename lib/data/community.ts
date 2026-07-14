@@ -8,6 +8,7 @@ import type {
   DbRecipeReviewRow,
   LeaderboardKind,
   NotificationItem,
+  NotificationsPageResult,
   ProfileSummary,
   PublicProfile,
   RatingDistributionBucket,
@@ -25,7 +26,7 @@ import type {
   UserLeaderboardEntry,
   UserReviewListItem,
 } from "@/types/community";
-import { EMPTY_COMMUNITY_STATS, REVIEW_PAGE_SIZE, REVIEW_SORTS } from "@/types/community";
+import { EMPTY_COMMUNITY_STATS, NOTIFICATION_PAGE_SIZE, REVIEW_PAGE_SIZE, REVIEW_SORTS } from "@/types/community";
 
 /**
  * Data-access layer for the Coffee Community system: public profiles,
@@ -795,13 +796,33 @@ export async function getUserActivityFeed(supabase: SupabaseClient, userId: stri
 type DbNotificationRow = {
   id: string;
   notification_type: string;
+  title: string | null;
   message: string;
+  metadata: Record<string, unknown> | null;
   is_read: boolean;
   created_at: string;
   profiles: { id: string; full_name: string | null; avatar_url: string | null; country: string | null } | null;
   recipes: { id: string; title: string; slug: string } | null;
   badges: { id: string; key: string; name: string; icon: string } | null;
 };
+
+function mapDbNotificationRow(row: DbNotificationRow): NotificationItem {
+  return {
+    id: row.id,
+    notificationType: row.notification_type,
+    actor: row.profiles ? mapProfileSummary(row.profiles) : null,
+    recipe: row.recipes,
+    badge: row.badges,
+    title: row.title,
+    message: row.message,
+    metadata: row.metadata ?? {},
+    isRead: row.is_read,
+    createdAt: row.created_at,
+  };
+}
+
+const NOTIFICATION_SELECT =
+  "id, notification_type, title, message, metadata, is_read, created_at, profiles:profiles!user_notifications_actor_id_fkey ( id, full_name, avatar_url, country ), recipes ( id, title, slug ), badges ( id, key, name, icon )";
 
 /** The signed-in user's own notification inbox, most recent first. */
 export async function getNotifications(
@@ -811,9 +832,7 @@ export async function getNotifications(
 ): Promise<NotificationItem[]> {
   let query = supabase
     .from("user_notifications")
-    .select(
-      "id, notification_type, message, is_read, created_at, profiles:profiles!user_notifications_actor_id_fkey ( id, full_name, avatar_url, country ), recipes ( id, title, slug ), badges ( id, key, name, icon )",
-    )
+    .select(NOTIFICATION_SELECT)
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
@@ -826,16 +845,42 @@ export async function getNotifications(
     return [];
   }
 
-  return (data as unknown as DbNotificationRow[]).map((row) => ({
-    id: row.id,
-    notificationType: row.notification_type,
-    actor: row.profiles ? mapProfileSummary(row.profiles) : null,
-    recipe: row.recipes,
-    badge: row.badges,
-    message: row.message,
-    isRead: row.is_read,
-    createdAt: row.created_at,
-  }));
+  return (data as unknown as DbNotificationRow[]).map(mapDbNotificationRow);
+}
+
+/** Paginated notification inbox with total and unread counts. */
+export async function getNotificationsPage(
+  supabase: SupabaseClient,
+  userId: string,
+  options: { page?: number; pageSize?: number; unreadOnly?: boolean } = {},
+): Promise<NotificationsPageResult> {
+  const page = Math.max(1, options.page ?? 1);
+  const pageSize = options.pageSize ?? NOTIFICATION_PAGE_SIZE;
+  const offset = (page - 1) * pageSize;
+
+  let query = supabase
+    .from("user_notifications")
+    .select(NOTIFICATION_SELECT, { count: "exact" })
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (options.unreadOnly) query = query.eq("is_read", false);
+
+  const { data, error, count } = await query.range(offset, offset + pageSize - 1);
+  if (error || !data) {
+    if (error) console.error("getNotificationsPage failed", error);
+    return { notifications: [], totalCount: 0, unreadCount: 0, page, pageSize };
+  }
+
+  const unreadCount = await getUnreadNotificationCount(supabase, userId);
+
+  return {
+    notifications: (data as unknown as DbNotificationRow[]).map(mapDbNotificationRow),
+    totalCount: count ?? 0,
+    unreadCount,
+    page,
+    pageSize,
+  };
 }
 
 /** Count of unread notifications, for a badge/indicator in the UI. */
@@ -854,11 +899,13 @@ export async function createNotification(
   supabase: SupabaseClient,
   params: {
     recipientId: string;
-    notificationType: "new_follower" | "recipe_liked" | "recipe_reviewed" | "badge_earned";
+    notificationType: string;
     actorId?: string | null;
     recipeId?: string | null;
     badgeId?: string | null;
     message: string;
+    title?: string | null;
+    metadata?: Record<string, unknown>;
   },
 ): Promise<void> {
   const { error } = await supabase.rpc("create_notification", {
@@ -868,6 +915,8 @@ export async function createNotification(
     related_recipe: params.recipeId ?? null,
     related_badge: params.badgeId ?? null,
     notif_message: params.message,
+    notif_title: params.title ?? null,
+    notif_metadata: params.metadata ?? {},
   });
   if (error) console.error("createNotification failed", error);
 }

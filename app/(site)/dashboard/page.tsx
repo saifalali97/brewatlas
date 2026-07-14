@@ -4,6 +4,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import {
   BookOpen,
+  Bell,
   Clock,
   Coffee,
   Cpu,
@@ -108,6 +109,7 @@ export default async function DashboardPage() {
     { icon: Coffee, label: d.premiumLabel, description: d.premiumDescription, href: "/premium" },
     { icon: Cpu, label: d.xbloomProfilesLabel, description: d.xbloomProfilesDescription, href: "/dashboard/xbloom" },
     { icon: Wrench, label: d.coffeeSetupLabel, description: d.coffeeSetupDescription, href: "/dashboard/coffee-setup" },
+    { icon: Bell, label: d.notificationsLabel, description: d.notificationsDescription, href: "/dashboard/notifications" },
     { icon: Heart, label: d.savedRecipesLabel, description: d.savedRecipesDescription, href: "/dashboard/favorites" },
     { icon: FolderOpen, label: d.collectionsLabel, description: d.collectionsDescription, href: "/dashboard/collections" },
   ];

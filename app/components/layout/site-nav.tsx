@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LanguageSwitcher } from "@/app/components/layout/language-switcher";
@@ -37,7 +38,15 @@ const defaultNavLabels: Dictionary["nav"] = {
   languageAriaLabel: "Language",
 };
 
-export function SiteNav({ nav = defaultNavLabels, locale = DEFAULT_LOCALE }: { nav?: Dictionary["nav"]; locale?: Locale }) {
+export function SiteNav({
+  nav = defaultNavLabels,
+  locale = DEFAULT_LOCALE,
+  notificationsSlot = null,
+}: {
+  nav?: Dictionary["nav"];
+  locale?: Locale;
+  notificationsSlot?: ReactNode;
+}) {
   const navLinks = [
     { href: "/recipes", label: nav.recipes, id: "recipes" },
     { href: "/search", label: nav.search, id: "search" },
@@ -123,6 +132,7 @@ export function SiteNav({ nav = defaultNavLabels, locale = DEFAULT_LOCALE }: { n
           })}
         </div>
         <div className="flex items-center gap-3 sm:gap-4">
+          {notificationsSlot}
           <LanguageSwitcher
             currentLocale={locale}
             switchLanguageAria={nav.switchLanguageAria}
