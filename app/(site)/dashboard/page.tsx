@@ -7,6 +7,7 @@ import {
   Clock,
   Coffee,
   Cpu,
+  FolderOpen,
   Heart,
   Plus,
   Sparkles,
@@ -108,6 +109,7 @@ export default async function DashboardPage() {
     { icon: Cpu, label: d.xbloomProfilesLabel, description: d.xbloomProfilesDescription, href: "/dashboard/xbloom" },
     { icon: Wrench, label: d.coffeeSetupLabel, description: d.coffeeSetupDescription, href: "/dashboard/coffee-setup" },
     { icon: Heart, label: d.savedRecipesLabel, description: d.savedRecipesDescription, href: "/dashboard/favorites" },
+    { icon: FolderOpen, label: d.collectionsLabel, description: d.collectionsDescription, href: "/dashboard/collections" },
   ];
 
   return (

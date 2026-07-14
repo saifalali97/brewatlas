@@ -42,6 +42,7 @@ export async function addFavoriteAction(formData: FormData): Promise<void> {
 
   revalidatePath(path);
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/favorites");
 }
 
 export async function removeFavoriteAction(formData: FormData): Promise<void> {
@@ -63,4 +64,5 @@ export async function removeFavoriteAction(formData: FormData): Promise<void> {
 
   revalidatePath(path);
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/favorites");
 }
