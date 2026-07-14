@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 
 /**
  * Server Actions for "Brewing History" (`user_brew_logs`), backing the
- * `/dashboard/brew-history` pages. Follows the same auth/validation/i18n
+ * `/account/brew-history` pages. Follows the same auth/validation/i18n
  * patterns as `lib/supabase/coffee-setup-actions.ts`.
  */
 
@@ -93,8 +93,8 @@ async function afterBrewLogMutation(supabase: Awaited<ReturnType<typeof createCl
 }
 
 function revalidateBrewHistory() {
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/brew-history");
+  revalidatePath("/account");
+  revalidatePath("/account/brew-history");
 }
 
 export type BrewLogActionState = { error?: string; success?: string; brewLogId?: string } | undefined;
@@ -174,7 +174,7 @@ export async function updateBrewLogAction(
   await afterBrewLogMutation(supabase, authData.user.id, parsed.payload.recipe_id, parsed.payload.rating, false);
 
   revalidateBrewHistory();
-  revalidatePath(`/dashboard/brew-history/${brewLogId}/edit`);
+  revalidatePath(`/account/brew-history/${brewLogId}/edit`);
   return { success: b.brewUpdated, brewLogId };
 }
 

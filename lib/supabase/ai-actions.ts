@@ -31,9 +31,11 @@ export type RecommendationsActionState =
 
 /** Recomputes the caller's AI User Profile and returns their top recipe recommendations. */
 export async function getRecommendationsAction(
-  _prevState: RecommendationsActionState,
-  _formData: FormData,
+  prevState: RecommendationsActionState,
+  formData: FormData,
 ): Promise<RecommendationsActionState> {
+  void prevState;
+  void formData;
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) {
@@ -82,9 +84,11 @@ export type TasteProfileActionState = { error?: string; success?: string } | und
 
 /** Forces an immediate recompute of the caller's AI User Profile (it also recomputes automatically after brews/favorites/reviews). */
 export async function refreshTasteProfileAction(
-  _prevState: TasteProfileActionState,
-  _formData: FormData,
+  prevState: TasteProfileActionState,
+  formData: FormData,
 ): Promise<TasteProfileActionState> {
+  void prevState;
+  void formData;
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) {
@@ -92,7 +96,7 @@ export async function refreshTasteProfileAction(
   }
 
   await updateTasteProfile(supabase, authData.user.id);
-  revalidatePath("/dashboard");
+  revalidatePath("/account");
   return { success: "Taste profile refreshed." };
 }
 
@@ -110,6 +114,6 @@ export async function recalculateRecipeFeatureVectorAction(formData: FormData): 
 
   await refreshRecipeFeatureVector(supabase, recipeId);
 
-  revalidatePath("/dashboard/recipes");
+  revalidatePath("/account/recipes");
   if (recipe.slug) revalidatePath(`/recipes/${recipe.slug}`);
 }

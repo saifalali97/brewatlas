@@ -74,7 +74,7 @@ export default function manifest(): MetadataRoute.Manifest {
       },
       {
         name: "Dashboard",
-        url: "/dashboard",
+        url: "/account",
         icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml" }],
       },
     ],

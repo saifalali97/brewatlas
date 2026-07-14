@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LanguageSwitcher } from "@/app/components/layout/language-switcher";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { DEFAULT_LOCALE } from "@/lib/i18n/config";
@@ -47,17 +47,20 @@ export function SiteNav({
   locale?: Locale;
   notificationsSlot?: ReactNode;
 }) {
-  const navLinks = [
-    { href: "/recipes", label: nav.recipes, id: "recipes" },
-    { href: "/search", label: nav.search, id: "search" },
-    { href: "/methods", label: nav.methods, id: "methods" },
-    { href: "/origins", label: nav.origins, id: "origins" },
-    { href: "/roasters", label: nav.roasters, id: "roasters" },
-    { href: "/devices", label: nav.devices, id: "devices" },
-    { href: "/culture", label: nav.culture, id: "culture" },
-    { href: "/premium", label: nav.pricing, id: "pricing" },
-    { href: "/#faq", label: nav.faq, id: "faq" },
-  ];
+  const navLinks = useMemo(
+    () => [
+      { href: "/recipes", label: nav.recipes, id: "recipes" },
+      { href: "/search", label: nav.search, id: "search" },
+      { href: "/methods", label: nav.methods, id: "methods" },
+      { href: "/origins", label: nav.origins, id: "origins" },
+      { href: "/roasters", label: nav.roasters, id: "roasters" },
+      { href: "/devices", label: nav.devices, id: "devices" },
+      { href: "/culture", label: nav.culture, id: "culture" },
+      { href: "/premium", label: nav.pricing, id: "pricing" },
+      { href: "/#faq", label: nav.faq, id: "faq" },
+    ],
+    [nav],
+  );
 
   const [activeId, setActiveId] = useState<string>("");
   const [scrolled, setScrolled] = useState(false);
@@ -89,7 +92,7 @@ export function SiteNav({
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [navLinks]);
 
   return (
     <header

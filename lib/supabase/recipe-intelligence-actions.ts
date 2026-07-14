@@ -103,7 +103,7 @@ export async function recalculateRecipeInsightsAction(
     return { error: saved.error };
   }
 
-  revalidatePath("/dashboard/recipes");
+  revalidatePath("/account/recipes");
   if (owned.slug) revalidatePath(`/recipes/${owned.slug}`);
 
   return {
@@ -127,6 +127,6 @@ export async function deleteRecipeInsightsAction(formData: FormData): Promise<vo
 
   await deleteRecipeInsights(supabase, recipeId);
 
-  revalidatePath("/dashboard/recipes");
+  revalidatePath("/account/recipes");
   if (owned.slug) revalidatePath(`/recipes/${owned.slug}`);
 }

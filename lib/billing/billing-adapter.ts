@@ -34,11 +34,13 @@ export class BillingNotConfiguredError extends Error {
 export class NullBillingAdapter implements BillingAdapter {
   readonly provider: BillingProvider = "manual";
 
-  async createCheckout(_request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+  async createCheckout(request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+    void request;
     throw new BillingNotConfiguredError("manual");
   }
 
-  async cancel(_request: BillingCancelRequest): Promise<BillingCancelResult> {
+  async cancel(request: BillingCancelRequest): Promise<BillingCancelResult> {
+    void request;
     throw new BillingNotConfiguredError("manual");
   }
 }
@@ -54,12 +56,14 @@ export class StripeBillingAdapter implements BillingAdapter {
   readonly provider: BillingProvider = "stripe";
   constructor(private readonly apiKey: string | null) {}
 
-  async createCheckout(_request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+  async createCheckout(request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+    void request;
     if (!this.apiKey) throw new BillingNotConfiguredError("stripe");
     throw new BillingNotConfiguredError("stripe");
   }
 
-  async cancel(_request: BillingCancelRequest): Promise<BillingCancelResult> {
+  async cancel(request: BillingCancelRequest): Promise<BillingCancelResult> {
+    void request;
     if (!this.apiKey) throw new BillingNotConfiguredError("stripe");
     throw new BillingNotConfiguredError("stripe");
   }
@@ -75,12 +79,14 @@ export class ApplePayBillingAdapter implements BillingAdapter {
   readonly provider: BillingProvider = "apple_pay";
   constructor(private readonly merchantId: string | null) {}
 
-  async createCheckout(_request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+  async createCheckout(request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+    void request;
     if (!this.merchantId) throw new BillingNotConfiguredError("apple_pay");
     throw new BillingNotConfiguredError("apple_pay");
   }
 
-  async cancel(_request: BillingCancelRequest): Promise<BillingCancelResult> {
+  async cancel(request: BillingCancelRequest): Promise<BillingCancelResult> {
+    void request;
     if (!this.merchantId) throw new BillingNotConfiguredError("apple_pay");
     throw new BillingNotConfiguredError("apple_pay");
   }
@@ -96,12 +102,14 @@ export class GooglePayBillingAdapter implements BillingAdapter {
   readonly provider: BillingProvider = "google_pay";
   constructor(private readonly merchantId: string | null) {}
 
-  async createCheckout(_request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+  async createCheckout(request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+    void request;
     if (!this.merchantId) throw new BillingNotConfiguredError("google_pay");
     throw new BillingNotConfiguredError("google_pay");
   }
 
-  async cancel(_request: BillingCancelRequest): Promise<BillingCancelResult> {
+  async cancel(request: BillingCancelRequest): Promise<BillingCancelResult> {
+    void request;
     if (!this.merchantId) throw new BillingNotConfiguredError("google_pay");
     throw new BillingNotConfiguredError("google_pay");
   }
@@ -116,11 +124,13 @@ export class GooglePayBillingAdapter implements BillingAdapter {
 export class ManualBillingAdapter implements BillingAdapter {
   readonly provider: BillingProvider = "manual";
 
-  async createCheckout(_request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+  async createCheckout(request: BillingCheckoutRequest): Promise<BillingCheckoutResult> {
+    void request;
     throw new BillingNotConfiguredError("manual");
   }
 
-  async cancel(_request: BillingCancelRequest): Promise<BillingCancelResult> {
+  async cancel(request: BillingCancelRequest): Promise<BillingCancelResult> {
+    void request;
     throw new BillingNotConfiguredError("manual");
   }
 }

@@ -16,6 +16,7 @@ type NotificationsBellProps = {
   labels: Dictionary["notificationsPage"];
   dictionary: Dictionary;
   locale: string;
+  notificationsPath?: string;
 };
 
 export function NotificationsBell({
@@ -25,6 +26,7 @@ export function NotificationsBell({
   labels,
   dictionary,
   locale,
+  notificationsPath = "/account/notifications",
 }: NotificationsBellProps) {
   const menuId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -110,7 +112,7 @@ export function NotificationsBell({
                   setNotifications((prev) => prev.map((item) => ({ ...item, isRead: true })));
                 }}
               >
-                <input type="hidden" name="currentPath" value="/dashboard/notifications" />
+                <input type="hidden" name="currentPath" value={notificationsPath} />
                 <button
                   type="submit"
                   className="text-xs font-medium text-amber-400/90 underline-offset-4 hover:underline"
@@ -132,7 +134,7 @@ export function NotificationsBell({
                   labels={labels}
                   dictionary={dictionary}
                   locale={locale}
-                  currentPath="/dashboard/notifications"
+                  currentPath={notificationsPath}
                   compact
                 />
               ))}
@@ -141,7 +143,7 @@ export function NotificationsBell({
 
           <div className="border-t border-white/[0.08] px-4 py-3">
             <Link
-              href="/dashboard/notifications"
+              href={notificationsPath}
               className="block text-center text-xs font-medium text-amber-400/90 underline-offset-4 hover:underline"
               onClick={() => setOpen(false)}
             >

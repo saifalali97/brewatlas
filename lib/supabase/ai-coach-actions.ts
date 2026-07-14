@@ -57,7 +57,7 @@ export async function analyzeRecipeAction(
     return { error: outcome.error };
   }
 
-  revalidatePath("/dashboard");
+  revalidatePath("/account");
   return { success: "Analysis complete.", analysis: outcome.result };
 }
 

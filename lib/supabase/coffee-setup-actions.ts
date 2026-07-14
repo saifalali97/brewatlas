@@ -8,7 +8,7 @@ import { PREFERRED_UNITS_OPTIONS, type PreferredUnits } from "@/types/personal";
 
 /**
  * Server Actions for "My Coffee Setup" (`user_coffee_setups`), backing the
- * `/dashboard/coffee-setup` page. Follows the same auth/validation/i18n
+ * `/account/coffee-setup` page. Follows the same auth/validation/i18n
  * patterns as `lib/supabase/profile-actions.ts` and
  * `lib/supabase/xbloom-actions.ts`.
  */
@@ -61,16 +61,18 @@ export async function saveCoffeeSetupAction(
     return { error: error.message || dictionary.coffeeSetupPage.saveFailed };
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/coffee-setup");
+  revalidatePath("/account");
+  revalidatePath("/account/coffee-setup");
   return { success: dictionary.coffeeSetupPage.setupSaved };
 }
 
 /** Clears the caller's saved coffee setup. */
 export async function deleteCoffeeSetupAction(
-  _prevState: CoffeeSetupActionState,
-  _formData: FormData,
+  prevState: CoffeeSetupActionState,
+  formData: FormData,
 ): Promise<CoffeeSetupActionState> {
+  void prevState;
+  void formData;
   const supabase = await createClient();
   const dictionary = await getDictionary(await getLocale());
   const { data: authData } = await supabase.auth.getUser();
@@ -83,7 +85,7 @@ export async function deleteCoffeeSetupAction(
     return { error: error.message || dictionary.coffeeSetupPage.clearFailed };
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/coffee-setup");
+  revalidatePath("/account");
+  revalidatePath("/account/coffee-setup");
   return { success: dictionary.coffeeSetupPage.setupCleared };
 }

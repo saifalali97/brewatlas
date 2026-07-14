@@ -41,8 +41,8 @@ export async function addFavoriteAction(formData: FormData): Promise<void> {
   await updateTasteProfile(supabase, data.user.id);
 
   revalidatePath(path);
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/favorites");
+  revalidatePath("/account");
+  revalidatePath("/account/favorites");
 }
 
 export async function removeFavoriteAction(formData: FormData): Promise<void> {
@@ -63,6 +63,6 @@ export async function removeFavoriteAction(formData: FormData): Promise<void> {
   await updateTasteProfile(supabase, data.user.id);
 
   revalidatePath(path);
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/favorites");
+  revalidatePath("/account");
+  revalidatePath("/account/favorites");
 }

@@ -6,7 +6,7 @@ import type { LookupOption, RecipeListItem } from "@/types/recipe";
  * aggregated data shown on a personal dashboard.
  *
  * `CoffeeSetupRow` powers the "My Coffee Setup" page
- * (`/dashboard/coffee-setup`). Taste profile and brew log types remain data-layer
+ * (`/account/coffee-setup`). Taste profile and brew log types remain data-layer
  * groundwork for a future "My Taste Profile" / "Brewing History" UI, and
  * eventually an AI recommendation engine. See `getTasteProfileFeatureVector`
  * for the AI-recommendation-ready export.

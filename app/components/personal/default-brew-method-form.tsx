@@ -19,7 +19,7 @@ type DefaultBrewMethodFormProps = {
 /**
  * "Default Brew Method" preference on the Coffee Setup page. Reuses the
  * existing `updateProfileAction` / `profiles.favorite_brewing_method_id`
- * (also editable on `/dashboard/profile`) rather than duplicating it on
+ * (also editable on `/account/profile`) rather than duplicating it on
  * `user_coffee_setups` -- the other profile fields are carried as hidden
  * inputs so this focused form doesn't blank them out on submit.
  */

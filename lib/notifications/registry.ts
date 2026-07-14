@@ -17,7 +17,7 @@ const profileHref = () => "/community";
 
 const collectionHref = (item: NotificationItem) => {
   const collectionId = item.metadata.collectionId;
-  return typeof collectionId === "string" ? `/dashboard/collections/${collectionId}` : "/dashboard/collections";
+  return typeof collectionId === "string" ? `/account/collections/${collectionId}` : "/account/collections";
 };
 
 const metadataHref = (item: NotificationItem) => {
@@ -107,13 +107,13 @@ export const NOTIFICATION_TYPE_REGISTRY: Record<NotificationType, NotificationTy
     category: "content",
     titleKey: "notificationsPage.typeBrewLogReminderTitle",
     messageKey: "notificationsPage.typeBrewLogReminderMessage",
-    resolveHref: () => "/dashboard/brew-history/new",
+    resolveHref: () => "/account/brew-history/new",
   },
   account: {
     category: "system",
     titleKey: "notificationsPage.typeAccountTitle",
     messageKey: "notificationsPage.typeAccountMessage",
-    resolveHref: () => "/dashboard/profile",
+    resolveHref: () => "/account/profile",
   },
   system_announcement: {
     category: "system",

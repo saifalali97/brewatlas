@@ -13,7 +13,7 @@ import { createClient } from "@/lib/supabase/server";
 
 function readCurrentPath(formData: FormData): string {
   const value = formData.get("currentPath");
-  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//") ? value : "/dashboard/notifications";
+  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//") ? value : "/account/notifications";
 }
 
 /** Marks a single notification the caller owns as read. */

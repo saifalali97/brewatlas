@@ -28,7 +28,7 @@ export async function updateProfileAction(
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
-    redirect("/login?redirectTo=/dashboard/profile");
+    redirect("/login?redirectTo=/account/profile");
   }
 
   const fullName = optionalString(formData, "fullName");
@@ -78,8 +78,8 @@ export async function updateProfileAction(
     return { error: error.message };
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/profile");
-  revalidatePath("/dashboard/coffee-setup");
+  revalidatePath("/account");
+  revalidatePath("/account/profile");
+  revalidatePath("/account/coffee-setup");
   return { success: dictionary.profilePage.profileUpdated };
 }

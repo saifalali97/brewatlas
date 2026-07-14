@@ -5,15 +5,15 @@ import { ensureProfile } from "@/lib/supabase/profile";
 /**
  * Exchanges the PKCE `code` param Supabase appends to email confirmation,
  * password reset, and OAuth redirect links for a real session, then
- * forwards the user to `next` (defaults to /dashboard). Required by the
+ * forwards the user to `next` (defaults to /account). Required by the
  * official Supabase SSR pattern - Server Components can't set cookies, so
  * the session cookie exchange has to happen in a Route Handler like this.
  */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
-  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+  const next = searchParams.get("next") ?? "/account";
+  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/account";
 
   if (code) {
     const supabase = await createClient();

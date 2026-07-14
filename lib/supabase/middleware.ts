@@ -1,11 +1,11 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-
-/**
- * Routes that require a signed-in user. Matched by prefix against the
- * request pathname.
- */
-const PROTECTED_PATH_PREFIXES = ["/dashboard"];
+import {
+  ACCOUNT_PATH_PREFIX,
+  canAccessOwnerDashboard,
+  isAccountPath,
+  isOwnerDashboardPath,
+} from "@/lib/auth/permission-middleware";
 
 /**
  * Refreshes the Supabase auth session on every request and redirects
@@ -46,11 +46,21 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
-  const isProtectedRoute = PROTECTED_PATH_PREFIXES.some((prefix) =>
-    pathname.startsWith(prefix),
-  );
 
-  if (isProtectedRoute && !user) {
+  if (isOwnerDashboardPath(pathname)) {
+    if (!user) {
+      const redirectUrl = new URL("/login", request.url);
+      redirectUrl.searchParams.set("redirectTo", pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    const allowed = await canAccessOwnerDashboard(supabase, user);
+    if (!allowed) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
+  if (isAccountPath(pathname) && !user) {
     const redirectUrl = new URL("/login", request.url);
     redirectUrl.searchParams.set("redirectTo", pathname);
     return NextResponse.redirect(redirectUrl);
@@ -62,3 +72,5 @@ export async function updateSession(request: NextRequest) {
   // built from `supabaseResponse` instead of building one from scratch.
   return supabaseResponse;
 }
+
+export { ACCOUNT_PATH_PREFIX };
