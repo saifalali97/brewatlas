@@ -192,6 +192,64 @@ export type ConversionSuccess = {
   bloom: { grams: number | null; timeSeconds: number | null; display: string };
   brewTime: { seconds: number; display: string };
   pours: { count: number; style: PourStyle; stages: PourStage[]; display: string };
+  /** How much to trust this conversion overall (Phase 18) -- see `lib/converter/insights.ts`. */
+  confidence: ConfidenceLevel;
+  /** Realistic-limit warnings raised while computing this conversion, if any. */
+  warnings: ConversionWarningCode[];
+  /** Per-field "did this change, and why" breakdown against the source recipe. */
+  insights: ConversionInsights;
+};
+
+/** How much to trust a given conversion -- see `lib/converter/insights.ts` for the scoring rules. */
+export type ConfidenceLevel = "high" | "medium" | "low";
+
+/**
+ * Closed set of reasons a field's recommendation can differ from the
+ * source recipe. Kept as codes (not free text) so the UI can translate
+ * them through the existing i18n dictionaries instead of the engine
+ * emitting hardcoded English prose.
+ */
+export type ChangeReasonCode =
+  /** The two devices are different enough brewing styles (e.g. pour-over -> immersion) that most numbers were always going to move. */
+  | "categoryChange"
+  | "preserveBody"
+  | "preserveAcidity"
+  | "preserveSweetness"
+  /** Body and acidity were both requested at once -- the engine averaged two pulls in opposite directions. */
+  | "conflictingPreferences"
+  /** Neither preference meaningfully drives this field -- it changed only because the target device's own ideal profile differs from the source's. */
+  | "targetDeviceProfile"
+  | "unchanged";
+
+export type FieldInsight = {
+  changed: boolean;
+  reason: ChangeReasonCode;
+  /** Pre-formatted display of the source-equivalent value (e.g. `"96°C"`), for a "changed from ..." caption. `null` when `changed` is false or there's nothing meaningful to compare against. */
+  previousDisplay: string | null;
+};
+
+/**
+ * Flags a specific recommendation that hit a realistic extraction limit
+ * (Phase 18 requirement #6) -- always additive information, never a
+ * reason to block the conversion itself.
+ */
+export type ConversionWarningCode =
+  | "grindClamped"
+  | "temperatureClamped"
+  | "brewTimeClamped"
+  | "ratioClamped"
+  | "bloomCapped"
+  | "crossCategoryConversion"
+  | "conflictingPreferences";
+
+export type ConversionInsights = {
+  dose: FieldInsight;
+  water: FieldInsight;
+  grindSize: FieldInsight;
+  temperature: FieldInsight;
+  bloom: FieldInsight;
+  pours: FieldInsight;
+  brewTime: FieldInsight;
 };
 
 export type ConversionFailure = {

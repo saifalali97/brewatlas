@@ -2,17 +2,47 @@
 
 import { useEffect, useId, useMemo, useState } from "react";
 import { X } from "lucide-react";
+import { ConfidenceIndicator } from "@/app/components/converter/confidence-indicator";
 import {
   ConversionPreferences,
   DEFAULT_CONVERSION_PREFERENCES,
   type ConversionPreferencesState,
 } from "@/app/components/converter/conversion-preferences";
-import { ConverterPreview, type ConverterPreviewValues } from "@/app/components/converter/converter-preview";
+import { ConversionWarnings } from "@/app/components/converter/conversion-warnings";
+import { ConverterPreview, type ConverterFieldPreview, type ConverterPreviewValues } from "@/app/components/converter/converter-preview";
 import { DeviceSelector } from "@/app/components/converter/device-selector";
 import type { ConverterSourceRecipe } from "@/app/components/converter/recipe-converter-button";
 import { buttons, forms, modal } from "@/lib/constants/styles";
-import { convertRecipe } from "@/lib/converter";
+import { convertRecipe, formatRatio, type ChangeReasonCode, type ConfidenceLevel, type ConversionWarningCode, type FieldInsight } from "@/lib/converter";
+import type { DictionaryKey } from "@/lib/i18n/types";
 import { useTranslations } from "@/lib/i18n/translation-context";
+
+/** Maps every engine reason code to its `recipeConverter.*` dictionary key -- keeps the i18n key names close to the code that consumes them. */
+const REASON_TRANSLATION_KEYS: Record<ChangeReasonCode, DictionaryKey> = {
+  categoryChange: "recipeConverter.reasonCategoryChange",
+  preserveBody: "recipeConverter.reasonPreserveBody",
+  preserveAcidity: "recipeConverter.reasonPreserveAcidity",
+  preserveSweetness: "recipeConverter.reasonPreserveSweetness",
+  conflictingPreferences: "recipeConverter.reasonConflictingPreferences",
+  targetDeviceProfile: "recipeConverter.reasonTargetDeviceProfile",
+  unchanged: "recipeConverter.reasonTargetDeviceProfile",
+};
+
+const WARNING_TRANSLATION_KEYS: Record<ConversionWarningCode, DictionaryKey> = {
+  grindClamped: "recipeConverter.warningGrindClamped",
+  temperatureClamped: "recipeConverter.warningTemperatureClamped",
+  brewTimeClamped: "recipeConverter.warningBrewTimeClamped",
+  ratioClamped: "recipeConverter.warningRatioClamped",
+  bloomCapped: "recipeConverter.warningBloomCapped",
+  crossCategoryConversion: "recipeConverter.warningCrossCategoryConversion",
+  conflictingPreferences: "recipeConverter.warningConflictingPreferences",
+};
+
+const CONFIDENCE_TRANSLATION_KEYS: Record<ConfidenceLevel, DictionaryKey> = {
+  high: "recipeConverter.confidenceHigh",
+  medium: "recipeConverter.confidenceMedium",
+  low: "recipeConverter.confidenceLow",
+};
 
 type RecipeConverterModalProps = {
   isOpen: boolean;
@@ -37,7 +67,7 @@ export function RecipeConverterModal({ isOpen, onClose, currentDevice, sourceRec
   const [targetDevice, setTargetDevice] = useState("");
   const [preferences, setPreferences] = useState<ConversionPreferencesState>(DEFAULT_CONVERSION_PREFERENCES);
 
-  const previewValues = useMemo<ConverterPreviewValues | undefined>(() => {
+  const conversion = useMemo(() => {
     if (!targetDevice) return undefined;
 
     const result = convertRecipe({
@@ -54,34 +84,53 @@ export function RecipeConverterModal({ isOpen, onClose, currentDevice, sourceRec
       preferences,
     });
 
-    if (!result.supported) return undefined;
+    return result.supported ? result : undefined;
+  }, [currentDevice, targetDevice, sourceRecipe, preferences]);
+
+  const previewValues = useMemo<ConverterPreviewValues | undefined>(() => {
+    if (!conversion) return undefined;
+
+    /** Turns one field's raw display string + engine insight into a preview card's value and (if it changed) its "changed from ... — why" caption. */
+    const buildFieldPreview = (display: string, insight: FieldInsight): ConverterFieldPreview => {
+      if (!insight.changed || !insight.previousDisplay) return { display };
+      return {
+        display,
+        changeCaption: t("recipeConverter.changedCaption", {
+          previous: insight.previousDisplay,
+          reason: t(REASON_TRANSLATION_KEYS[insight.reason]),
+        }),
+      };
+    };
 
     const bloomDisplay =
-      result.bloom.grams === null || result.bloom.timeSeconds === null
+      conversion.bloom.grams === null || conversion.bloom.timeSeconds === null
         ? t("recipeConverter.notApplicableValue")
-        : `${result.bloom.grams}g / ${result.bloom.timeSeconds}s`;
+        : `${conversion.bloom.grams}g / ${conversion.bloom.timeSeconds}s`;
 
     const poursDisplay =
-      result.pours.count > 0
-        ? t("recipeConverter.poursCountValue", { count: result.pours.count })
-        : result.targetCategory === "coldBrew"
+      conversion.pours.count > 0
+        ? t("recipeConverter.poursCountValue", { count: conversion.pours.count })
+        : conversion.targetCategory === "coldBrew"
           ? t("recipeConverter.singleSteepValue")
-          : result.targetCategory === "pressurized"
+          : conversion.targetCategory === "pressurized"
             ? t("recipeConverter.continuousFlowValue")
             : t("recipeConverter.singlePourValue");
 
-    const ratioDisplay = Number.isInteger(result.water.ratio) ? `${result.water.ratio}` : result.water.ratio.toFixed(1);
-
     return {
-      dose: result.dose.display,
-      water: `${result.water.display} (1:${ratioDisplay})`,
-      grindSize: result.grindSize.display,
-      temperature: result.temperature.display,
-      bloom: bloomDisplay,
-      pours: poursDisplay,
-      brewTime: result.brewTime.display,
+      dose: buildFieldPreview(conversion.dose.display, conversion.insights.dose),
+      water: buildFieldPreview(`${conversion.water.display} (1:${formatRatio(conversion.water.ratio)})`, conversion.insights.water),
+      grindSize: buildFieldPreview(conversion.grindSize.display, conversion.insights.grindSize),
+      temperature: buildFieldPreview(conversion.temperature.display, conversion.insights.temperature),
+      bloom: buildFieldPreview(bloomDisplay, conversion.insights.bloom),
+      pours: buildFieldPreview(poursDisplay, conversion.insights.pours),
+      brewTime: buildFieldPreview(conversion.brewTime.display, conversion.insights.brewTime),
     };
-  }, [currentDevice, targetDevice, sourceRecipe, preferences, t]);
+  }, [conversion, t]);
+
+  const warningMessages = useMemo(
+    () => (conversion ? conversion.warnings.map((code) => t(WARNING_TRANSLATION_KEYS[code])) : []),
+    [conversion, t],
+  );
 
   useEffect(() => {
     if (!isOpen) return;
@@ -165,7 +214,18 @@ export function RecipeConverterModal({ isOpen, onClose, currentDevice, sourceRec
               poursLabel={t("recipeConverter.poursLabel")}
               brewTimeLabel={t("recipeConverter.brewTimeLabel")}
               values={previewValues}
+              headerExtra={
+                conversion && (
+                  <ConfidenceIndicator
+                    level={conversion.confidence}
+                    label={t("recipeConverter.confidenceLabel")}
+                    levelLabel={t(CONFIDENCE_TRANSLATION_KEYS[conversion.confidence])}
+                  />
+                )
+              }
             />
+
+            <ConversionWarnings heading={t("recipeConverter.warningsHeading")} messages={warningMessages} />
           </div>
         </div>
 

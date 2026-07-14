@@ -912,6 +912,26 @@ export type Dictionary = {
     singleSteepValue: string;
     continuousFlowValue: string;
     notApplicableValue: string;
+    /** Phase 18 -- explainability: confidence badge, per-field "changed" captions, and the realistic-limits warning banner. */
+    confidenceLabel: string;
+    confidenceHigh: string;
+    confidenceMedium: string;
+    confidenceLow: string;
+    changedCaption: string;
+    reasonCategoryChange: string;
+    reasonPreserveBody: string;
+    reasonPreserveAcidity: string;
+    reasonPreserveSweetness: string;
+    reasonConflictingPreferences: string;
+    reasonTargetDeviceProfile: string;
+    warningsHeading: string;
+    warningGrindClamped: string;
+    warningTemperatureClamped: string;
+    warningBrewTimeClamped: string;
+    warningRatioClamped: string;
+    warningBloomCapped: string;
+    warningCrossCategoryConversion: string;
+    warningConflictingPreferences: string;
   };
   metadata: {
     methodsTitle: string;
