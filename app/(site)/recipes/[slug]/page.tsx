@@ -42,9 +42,24 @@ import { translate } from "@/lib/i18n/format";
 import { getLocale } from "@/lib/i18n/locale";
 import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
+import { buildRecipeReviewJsonLd } from "@/lib/seo/recipe-review-json-ld";
+import { RecipeReviewsPanel } from "@/app/components/reviews/recipe-reviews-panel";
+import {
+  getRecipeRatingDistribution,
+  getRecipeRatingSummary,
+  getRecipeReviewsPage,
+  getUserRecipeReview,
+  parseReviewSort,
+} from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
 import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
 import type { FeaturedRecipe } from "@/types/homepage";
+import type {
+  RatingDistributionBucket,
+  RecipeRatingSummary,
+  RecipeReview,
+  RecipeReviewsResult,
+} from "@/types/community";
 
 function CompatibleDevices({ hasXBloom, dictionary }: { hasXBloom: boolean; dictionary: Dictionary }) {
   return (
@@ -70,6 +85,7 @@ function CompatibleDevices({ hasXBloom, dictionary }: { hasXBloom: boolean; dict
 
 type RecipePageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ reviewSort?: string; reviewPage?: string }>;
 };
 
 export function generateStaticParams() {
@@ -118,8 +134,11 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<Met
   };
 }
 
-export default async function RecipePage({ params }: RecipePageProps) {
+export default async function RecipePage({ params, searchParams }: RecipePageProps) {
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const reviewSort = parseReviewSort(resolvedSearchParams.reviewSort);
+  const reviewPage = Math.max(1, Number.parseInt(resolvedSearchParams.reviewPage ?? "1", 10) || 1);
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
   const staticIndex = getStaticRecipeIndexBySlug(slug);
@@ -137,13 +156,26 @@ export default async function RecipePage({ params }: RecipePageProps) {
     notFound();
   }
 
-  const [favoritesCount, favoriteIds, hasXBloomProfile] = await Promise.all([
-    getFavoritesCount(supabase, recipe.id),
-    authData.user ? getUserFavoriteRecipeIds(supabase, authData.user.id) : Promise.resolve(new Set<string>()),
-    recipeHasXBloomProfile(supabase, recipe.id),
-  ]);
+  const viewerId = authData.user?.id ?? null;
 
-  const isOwner = Boolean(authData.user && recipe.authorId === authData.user.id);
+  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview] =
+    await Promise.all([
+      getFavoritesCount(supabase, recipe.id),
+      viewerId ? getUserFavoriteRecipeIds(supabase, viewerId) : Promise.resolve(new Set<string>()),
+      recipeHasXBloomProfile(supabase, recipe.id),
+      getRecipeRatingSummary(supabase, recipe.id),
+      getRecipeRatingDistribution(supabase, recipe.id),
+      getRecipeReviewsPage(supabase, recipe.id, { sort: reviewSort, page: reviewPage, viewerId }),
+      viewerId ? getUserRecipeReview(supabase, recipe.id, viewerId) : Promise.resolve(null),
+    ]);
+
+  const isOwner = Boolean(viewerId && recipe.authorId === viewerId);
+  const reviewJsonLd = buildRecipeReviewJsonLd({
+    recipe,
+    slug,
+    summary: ratingSummary,
+    reviews: reviewsResult.reviews,
+  });
 
   return (
     <DbRecipeView
@@ -152,9 +184,15 @@ export default async function RecipePage({ params }: RecipePageProps) {
       favoritesCount={favoritesCount}
       isFavorited={favoriteIds.has(recipe.id)}
       isOwner={isOwner}
-      isAuthenticated={Boolean(authData.user)}
+      isAuthenticated={Boolean(viewerId)}
       hasXBloomProfile={hasXBloomProfile}
       dictionary={dictionary}
+      ratingSummary={ratingSummary}
+      ratingDistribution={ratingDistribution}
+      reviewsResult={reviewsResult}
+      userReview={userReview}
+      viewerId={viewerId}
+      reviewJsonLd={reviewJsonLd}
     />
   );
 }
@@ -251,6 +289,12 @@ type DbRecipeViewProps = {
   isAuthenticated: boolean;
   hasXBloomProfile: boolean;
   dictionary: Dictionary;
+  ratingSummary: RecipeRatingSummary;
+  ratingDistribution: RatingDistributionBucket[];
+  reviewsResult: RecipeReviewsResult;
+  userReview: RecipeReview | null;
+  viewerId: string | null;
+  reviewJsonLd: Record<string, unknown>;
 };
 
 function DbRecipeView({
@@ -262,6 +306,12 @@ function DbRecipeView({
   isAuthenticated,
   hasXBloomProfile,
   dictionary,
+  ratingSummary,
+  ratingDistribution,
+  reviewsResult,
+  userReview,
+  viewerId,
+  reviewJsonLd,
 }: DbRecipeViewProps) {
   const d = dictionary.recipeDetail;
   const coverImage = recipe.coverImageUrl ?? RECIPE_IMAGE_PLACEHOLDER;
@@ -282,6 +332,10 @@ function DbRecipeView({
 
   return (
     <SectionFrame id="recipe-detail" ariaLabelledBy="recipe-detail-heading" padding="compact">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewJsonLd) }}
+      />
       <Link
         href="/recipes"
         className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
@@ -547,6 +601,18 @@ function DbRecipeView({
           </div>
         </div>
       )}
+
+      <RecipeReviewsPanel
+        recipeId={recipe.id}
+        recipeSlug={slug}
+        summary={ratingSummary}
+        distribution={ratingDistribution}
+        reviewsResult={reviewsResult}
+        userReview={userReview}
+        viewerId={viewerId}
+        isAuthenticated={isAuthenticated}
+        reviewLabels={dictionary.recipeReviews}
+      />
     </SectionFrame>
   );
 }

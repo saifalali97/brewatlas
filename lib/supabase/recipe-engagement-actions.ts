@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { updateTasteProfile } from "@/lib/data/ai";
 import { createNotification, evaluateAndAwardBadges, recordActivity, refreshCommunityStats } from "@/lib/data/community";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -96,6 +98,9 @@ export async function submitRecipeReviewAction(
   formData: FormData,
 ): Promise<RecipeReviewActionState> {
   const path = readCurrentPath(formData);
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const r = dictionary.recipeReviews;
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 
@@ -105,13 +110,13 @@ export async function submitRecipeReviewAction(
 
   const recipeId = readId(formData, "recipeId");
   if (!recipeId) {
-    return { error: "Missing recipe id." };
+    return { error: r.missingRecipeId };
   }
 
   const ratingRaw = formData.get("rating");
   const rating = Number(ratingRaw);
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-    return { error: "Rating must be a whole number between 1 and 5." };
+    return { error: r.invalidRating };
   }
 
   const reviewTextRaw = formData.get("reviewText");
@@ -125,7 +130,7 @@ export async function submitRecipeReviewAction(
     );
 
   if (error) {
-    return { error: error.message || "Failed to submit review." };
+    return { error: r.submitFailed };
   }
 
   await refreshCommunityStats(supabase, authData.user.id);
@@ -151,7 +156,7 @@ export async function submitRecipeReviewAction(
   }
 
   revalidatePath(path);
-  return { success: "Review submitted." };
+  return { success: r.reviewSubmitted };
 }
 
 /** Deletes the caller's own review of a recipe. */

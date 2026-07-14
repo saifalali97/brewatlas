@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { ProfileForm } from "@/app/components/profile/profile-form";
+import { ProfileEngagementPanel } from "@/app/components/profile/profile-engagement-panel";
 import { getBrewingMethodOptions, getDeviceOptions } from "@/lib/data/db-recipes";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -64,6 +65,8 @@ export default async function ProfilePage() {
           devices={devices}
         />
       </div>
+
+      <ProfileEngagementPanel supabase={supabase} userId={authData.user.id} dictionary={dictionary} />
     </SectionFrame>
   );
 }
