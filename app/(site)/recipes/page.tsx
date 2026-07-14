@@ -1,21 +1,27 @@
 import type { Metadata } from "next";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { PageHeader } from "@/app/components/ui/page-header";
-import { featuredRecipes } from "@/data/homepage";
+import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getPublishedDbRecipes, getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
 import { getRecipeSlug } from "@/lib/data/recipes";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getHomeContent } from "@/lib/i18n/get-home-content";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 import type { RecipeListItem } from "@/types/recipe";
 import { RecipesExplorer } from "./recipes-explorer";
 
-export const metadata: Metadata = {
-  title: "Recipes",
-  description:
-    "Browse the complete BrewAtlas recipe library. Filter by brew method and explore grind size, ratio, and step-by-step guidance for every specialty coffee recipe.",
-  alternates: {
-    canonical: "/recipes",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/recipes",
+    locale,
+    title: dictionary.metadata.recipesTitle,
+    description: dictionary.metadata.recipesDescription,
+  });
+}
 
 type RecipesPageProps = {
   searchParams: Promise<{ q?: string }>;
@@ -23,12 +29,17 @@ type RecipesPageProps = {
 
 export default async function RecipesPage({ searchParams }: RecipesPageProps) {
   const { q } = await searchParams;
+  const locale = await getLocale();
+  const [dictionary, content] = await Promise.all([getDictionary(locale), getHomeContent(locale)]);
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 
-  const staticRecipes: RecipeListItem[] = featuredRecipes.map((recipe) => ({
+  // Display uses the locale's translated copy, but the slug is always
+  // derived from the English name at the same array index (see
+  // `getStaticRecipeIndexBySlug`) so URLs never change across locales.
+  const staticRecipes: RecipeListItem[] = content.featuredRecipes.map((recipe, index) => ({
     ...recipe,
-    slug: getRecipeSlug(recipe),
+    slug: getRecipeSlug(staticRecipesEn[index]),
     source: "static",
   }));
 
@@ -42,9 +53,9 @@ export default async function RecipesPage({ searchParams }: RecipesPageProps) {
   return (
     <SectionFrame id="recipes-listing" ariaLabelledBy="recipes-listing-heading" padding="compact">
       <PageHeader
-        eyebrow="Curated Collection"
-        title="All Recipes"
-        description="Every recipe in the BrewAtlas library, handpicked by our barista community with grind size, water temperature, and step-by-step guidance."
+        eyebrow={dictionary.recipesPage.eyebrow}
+        title={dictionary.recipesPage.title}
+        description={dictionary.recipesPage.description}
       />
       <RecipesExplorer
         recipes={allRecipes}

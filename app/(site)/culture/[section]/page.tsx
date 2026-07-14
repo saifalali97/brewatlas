@@ -6,6 +6,7 @@ import { CultureTopicCard } from "@/app/components/cards/culture-topic-card";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { getCultureSectionBySlug } from "@/lib/data/culture";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
@@ -17,11 +18,12 @@ type CultureSectionPageProps = {
 export async function generateMetadata({ params }: CultureSectionPageProps): Promise<Metadata> {
   const { section: sectionSlug } = await params;
   const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
   const supabase = await createClient();
   const section = await getCultureSectionBySlug(supabase, sectionSlug, locale);
 
   if (!section) {
-    return { title: "Section Not Found" };
+    return { title: dictionary.culturePage.sectionNotFoundTitle };
   }
 
   return buildLocalizedMetadata({
@@ -36,6 +38,8 @@ export async function generateMetadata({ params }: CultureSectionPageProps): Pro
 export default async function CultureSectionPage({ params }: CultureSectionPageProps) {
   const { section: sectionSlug } = await params;
   const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const c = dictionary.culturePage;
   const supabase = await createClient();
   const section = await getCultureSectionBySlug(supabase, sectionSlug, locale);
 
@@ -47,13 +51,13 @@ export default async function CultureSectionPage({ params }: CultureSectionPageP
     <SectionFrame id="culture-section" ariaLabelledBy="culture-section-heading" padding="compact">
       <Link
         href="/culture"
-        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
+        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90 rtl:flex-row-reverse"
       >
-        <ArrowLeft className="h-4 w-4" aria-hidden />
-        Back to Coffee & Tea Culture
+        <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
+        {c.backToHub}
       </Link>
 
-      <PageHeader eyebrow={section.eyebrow ?? "Culture"} title={section.name} description={section.description} />
+      <PageHeader eyebrow={section.eyebrow ?? c.defaultSectionEyebrow} title={section.name} description={section.description} />
 
       <div className="grid gap-6 sm:gap-7 lg:grid-cols-3 lg:gap-8">
         {section.topics.map((topic) => (

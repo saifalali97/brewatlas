@@ -4,18 +4,19 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { UaePatternDivider } from "@/app/components/ui/uae-pattern-divider";
 import { getUaeCoffeeGuide } from "@/lib/data/uae-brand";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
   return buildLocalizedMetadata({
     pathname: "/culture/guide",
     locale,
-    title: "Emirati Coffee Guide",
-    description:
-      "A guide to Arabic coffee, karak, saffron tea, black tea, Adani tea, serving traditions, and coffee ceremonies across the UAE.",
+    title: dictionary.emiratiGuidePage.metaTitle,
+    description: dictionary.emiratiGuidePage.metaDescription,
   });
 }
 
@@ -29,16 +30,14 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function EmiratiCoffeeGuidePage() {
   const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const g = dictionary.emiratiGuidePage;
   const supabase = await createClient();
   const entries = await getUaeCoffeeGuide(supabase, locale);
 
   return (
     <SectionFrame id="emirati-coffee-guide" ariaLabelledBy="emirati-coffee-guide-heading" padding="compact">
-      <PageHeader
-        eyebrow="A Practical Guide"
-        title="Emirati Coffee Guide"
-        description="Arabic coffee, karak, saffron tea, black tea, and Adani tea — plus the serving traditions and ceremonies that bring them to the table."
-      />
+      <PageHeader eyebrow={g.eyebrow} title={g.title} description={g.description} />
 
       <UaePatternDivider className="mx-auto mb-10 max-w-xs opacity-60" />
 

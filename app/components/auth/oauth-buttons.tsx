@@ -1,4 +1,6 @@
 import { Apple } from "lucide-react";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 import { signInWithGoogleAction, signInWithAppleAction } from "@/lib/supabase/actions";
 
 const oauthButtonClass =
@@ -20,20 +22,23 @@ function GoogleIcon() {
  * /signup. Server-rendered forms bound directly to Server Actions - no
  * client JavaScript required to kick off the OAuth redirect.
  */
-export function OAuthButtons() {
+export async function OAuthButtons() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+
   return (
     <div className="space-y-3">
       <form action={signInWithGoogleAction}>
         <button type="submit" className={oauthButtonClass}>
           <GoogleIcon />
-          Continue with Google
+          {dictionary.auth.signInWithGoogle}
         </button>
       </form>
 
       <form action={signInWithAppleAction}>
         <button type="submit" className={oauthButtonClass}>
           <Apple className="h-4 w-4" aria-hidden />
-          Continue with Apple
+          {dictionary.auth.continueWithApple}
         </button>
       </form>
     </div>

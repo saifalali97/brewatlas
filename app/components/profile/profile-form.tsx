@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useActionState, useState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { buttons } from "@/lib/constants/styles";
+import { useTranslations } from "@/lib/i18n/translation-context";
 import { updateProfileAction, type ProfileActionState } from "@/lib/supabase/profile-actions";
 import type { LookupOption } from "@/types/recipe";
 
@@ -35,6 +36,7 @@ export function ProfileForm({
   brewingMethods,
   devices,
 }: ProfileFormProps) {
+  const { t } = useTranslations();
   const [state, formAction, pending] = useActionState<ProfileActionState, FormData>(
     updateProfileAction,
     undefined,
@@ -49,7 +51,7 @@ export function ProfileForm({
           {displayAvatar ? (
             <Image
               src={displayAvatar}
-              alt="Profile avatar"
+              alt={t("profilePage.avatarAlt")}
               fill
               sizes="80px"
               className="object-cover"
@@ -63,7 +65,7 @@ export function ProfileForm({
         </div>
         <div>
           <label htmlFor="avatar" className={labelClass}>
-            Avatar
+            {t("profilePage.avatarLabel")}
           </label>
           <input
             id="avatar"
@@ -76,13 +78,13 @@ export function ProfileForm({
             }}
             className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
           />
-          <p className="mt-1.5 text-xs text-stone-500">PNG, JPEG, WebP, or GIF. Max 4MB.</p>
+          <p className="mt-1.5 text-xs text-stone-500">{t("profilePage.avatarHint")}</p>
         </div>
       </div>
 
       <div>
         <label htmlFor="fullName" className={labelClass}>
-          Display name
+          {t("profile.displayName")}
         </label>
         <input
           id="fullName"
@@ -91,13 +93,13 @@ export function ProfileForm({
           required
           defaultValue={initialFullName}
           className={inputClass}
-          placeholder="Jane Doe"
+          placeholder={t("auth.namePlaceholder")}
         />
       </div>
 
       <div>
         <label htmlFor="country" className={labelClass}>
-          Country
+          {t("profile.country")}
         </label>
         <input
           id="country"
@@ -105,14 +107,14 @@ export function ProfileForm({
           type="text"
           defaultValue={initialCountry}
           className={inputClass}
-          placeholder="United Arab Emirates"
+          placeholder={t("profilePage.countryPlaceholder")}
         />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="favoriteBrewingMethodId" className={labelClass}>
-            Favorite brew method
+            {t("profile.favoriteBrewMethod")}
           </label>
           <select
             id="favoriteBrewingMethodId"
@@ -120,7 +122,7 @@ export function ProfileForm({
             defaultValue={initialFavoriteBrewingMethodId}
             className={selectClass}
           >
-            <option value="">Not set</option>
+            <option value="">{t("profilePage.notSetOption")}</option>
             {brewingMethods.map((method) => (
               <option key={method.id} value={method.id}>
                 {method.name}
@@ -131,7 +133,7 @@ export function ProfileForm({
 
         <div>
           <label htmlFor="favoriteDeviceId" className={labelClass}>
-            Favorite device
+            {t("profilePage.favoriteDeviceLabel")}
           </label>
           <select
             id="favoriteDeviceId"
@@ -139,7 +141,7 @@ export function ProfileForm({
             defaultValue={initialFavoriteDeviceId}
             className={selectClass}
           >
-            <option value="">Not set</option>
+            <option value="">{t("profilePage.notSetOption")}</option>
             {devices.map((device) => (
               <option key={device.id} value={device.id}>
                 {device.name}
@@ -151,7 +153,7 @@ export function ProfileForm({
 
       <div>
         <label htmlFor="bio" className={labelClass}>
-          Bio
+          {t("profile.bio")}
         </label>
         <textarea
           id="bio"
@@ -159,14 +161,14 @@ export function ProfileForm({
           rows={4}
           defaultValue={initialBio}
           className={inputClass}
-          placeholder="Tell the community about your coffee journey…"
+          placeholder={t("profilePage.bioPlaceholder")}
         />
       </div>
 
       <FormMessage error={state?.error} success={state?.success} />
 
       <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70 sm:w-auto`}>
-        {pending ? "Saving…" : "Save Profile"}
+        {pending ? t("profilePage.savingCta") : t("profilePage.saveProfileCta")}
       </button>
     </form>
   );

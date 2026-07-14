@@ -60,12 +60,12 @@ export function OriginCard({ origin, ctaHref = "#origins", labels }: OriginCardP
         <div className={cards.imageRadial} />
 
         {origin.premium && (
-          <div className="absolute right-4 top-4 rounded-full border border-amber-700/35 bg-amber-950/65 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
+          <div className="absolute end-4 top-4 rounded-full border border-amber-700/35 bg-amber-950/65 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
             {l.premium}
           </div>
         )}
 
-        <div className="absolute bottom-4 left-4 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
+        <div className="absolute bottom-4 start-4 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
           <MapPin className="h-3 w-3 text-amber-500/80" aria-hidden />
           {origin.region}
         </div>

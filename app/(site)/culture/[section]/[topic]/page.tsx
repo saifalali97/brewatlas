@@ -7,6 +7,8 @@ import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons, cards } from "@/lib/constants/styles";
 import { getCultureTopicBySlug } from "@/lib/data/culture";
+import { translate } from "@/lib/i18n/format";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
@@ -19,11 +21,12 @@ type CultureTopicPageProps = {
 export async function generateMetadata({ params }: CultureTopicPageProps): Promise<Metadata> {
   const { section: sectionSlug, topic: topicSlug } = await params;
   const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
   const supabase = await createClient();
   const topic = await getCultureTopicBySlug(supabase, sectionSlug, topicSlug, locale);
 
   if (!topic) {
-    return { title: "Article Not Found" };
+    return { title: dictionary.culturePage.articleNotFoundTitle };
   }
 
   return buildLocalizedMetadata({
@@ -38,6 +41,7 @@ export async function generateMetadata({ params }: CultureTopicPageProps): Promi
 export default async function CultureTopicPage({ params }: CultureTopicPageProps) {
   const { section: sectionSlug, topic: topicSlug } = await params;
   const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
   const supabase = await createClient();
   const topic = await getCultureTopicBySlug(supabase, sectionSlug, topicSlug, locale);
 
@@ -51,10 +55,10 @@ export default async function CultureTopicPage({ params }: CultureTopicPageProps
     <SectionFrame id="culture-topic" ariaLabelledBy="culture-topic-heading" padding="compact">
       <Link
         href={`/culture/${sectionSlug}`}
-        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
+        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90 rtl:flex-row-reverse"
       >
-        <ArrowLeft className="h-4 w-4" aria-hidden />
-        Back to {topic.section.name}
+        <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
+        {translate(dictionary, "culturePage.backToSectionTemplate", { name: topic.section.name })}
       </Link>
 
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
@@ -71,7 +75,7 @@ export default async function CultureTopicPage({ params }: CultureTopicPageProps
           <div className={cards.imageOverlay} />
           <div className={cards.imageAmberWash} />
 
-          <div className="absolute bottom-5 left-5 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
+          <div className="absolute bottom-5 start-5 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
             <BookOpen className="h-3 w-3 text-amber-500/80" aria-hidden />
             {topic.section.name}
           </div>
@@ -89,10 +93,10 @@ export default async function CultureTopicPage({ params }: CultureTopicPageProps
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
             <RippleLink href={`/culture/${sectionSlug}`} className={`${buttons.secondary} w-full sm:w-auto`}>
-              More in {topic.section.name}
+              {translate(dictionary, "culturePage.moreInSectionTemplate", { name: topic.section.name })}
             </RippleLink>
             <RippleLink href="/culture" className={`${buttons.secondary} w-full sm:w-auto`}>
-              All Culture Guides
+              {dictionary.culturePage.allCultureGuides}
             </RippleLink>
           </div>
         </div>

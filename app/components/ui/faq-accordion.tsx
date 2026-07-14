@@ -42,7 +42,7 @@ export function FaqAccordion({ faqs, headingId }: FaqAccordionProps) {
               aria-expanded={isOpen}
               aria-controls={panelId}
               onClick={() => setOpenIndex(isOpen ? null : index)}
-              className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-5 text-left transition-colors duration-300 hover:text-amber-50 focus-visible:text-amber-50 sm:px-6 sm:py-5"
+              className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-5 text-start transition-colors duration-300 hover:text-amber-50 focus-visible:text-amber-50 sm:px-6 sm:py-5"
             >
               <span className="text-[0.9375rem] font-medium leading-snug tracking-tight text-stone-50 sm:text-base">
                 {faq.question}

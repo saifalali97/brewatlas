@@ -114,7 +114,10 @@ export type DbUaeCoffeeMapLocationRow = {
 /** One curated entry in the "Emirati Coffee Guide" (requirement 3). Points at an existing `culture_topics` article by slug rather than duplicating its content -- `topic` is resolved live by `getUaeCoffeeGuide()`, `null` if the article isn't published in the requested locale. */
 export type UaeCoffeeGuideEntry = {
   slug: string;
+  /** English fallback title; prefer looking up `titleKey` in `dictionary.culturePage` for the localized name. */
   title: string;
+  /** Key into `dictionary.culturePage` for the localized guide entry title. */
+  titleKey: "guideEntryArabicCoffee" | "guideEntryKarak" | "guideEntrySaffronTea" | "guideEntryBlackTea" | "guideEntryAdaniTea" | "guideEntryServingTraditions" | "guideEntryCoffeeCeremonies";
   iconKey: string;
   sectionSlug: string;
   topicSlug: string;

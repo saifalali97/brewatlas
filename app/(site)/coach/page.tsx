@@ -4,34 +4,37 @@ import { AiCoachDemo } from "@/app/components/coach/ai-coach-demo";
 import { MetaTile } from "@/app/components/ui/meta-tile";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 
-export const metadata: Metadata = {
-  title: "AI Coach",
-  description:
-    "Get an instant Brew Score for any recipe. BrewAtlas AI Coach analyzes ratio, grind, temperature, and technique across 15 metrics and tells you exactly what to adjust.",
-  alternates: {
-    canonical: "/coach",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/coach",
+    locale,
+    title: dictionary.metadata.coachTitle,
+    description: dictionary.metadata.coachDescription,
+  });
+}
 
-export default function CoachPage() {
+export default async function CoachPage() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const p = dictionary.coachPage;
+
   return (
     <SectionFrame id="ai-coach" ariaLabelledBy="ai-coach-heading" padding="compact">
-      <PageHeader
-        eyebrow="AI-Powered Coaching"
-        title="AI Coach"
-        description="Every recipe on BrewAtlas can be analyzed across 15 brewing and sensory metrics — ratio, extraction, grind, temperature, and more — for an instant Brew Score and specific, actionable coaching."
-      />
+      <PageHeader eyebrow={p.eyebrow} title={p.title} description={p.description} />
 
       <div className="mb-10 grid gap-4 sm:grid-cols-3">
-        <MetaTile icon={Gauge} label="Brew Score" value="0-100 composite rating" />
-        <MetaTile icon={Sparkles} label="15 Metrics" value="Process + sensory analysis" />
-        <MetaTile icon={MessageSquareText} label="Coaching Tips" value="Specific, actionable feedback" />
+        <MetaTile icon={Gauge} label={p.brewScoreLabel} value={p.brewScoreValue} />
+        <MetaTile icon={Sparkles} label={p.metricsLabel} value={p.metricsValue} />
+        <MetaTile icon={MessageSquareText} label={p.coachingTipsLabel} value={p.coachingTipsValue} />
       </div>
 
-      <p className="mb-8 text-sm font-medium uppercase tracking-[0.14em] text-stone-500">
-        Try it on a sample recipe
-      </p>
+      <p className="mb-8 text-sm font-medium uppercase tracking-[0.14em] text-stone-500">{p.tryItLabel}</p>
       <AiCoachDemo />
     </SectionFrame>
   );

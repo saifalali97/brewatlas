@@ -177,7 +177,7 @@ function HeroCoffeeVisual({
             className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_50%,transparent_30%,#0a0705_100%)] opacity-40"
           />
 
-          <div className="absolute left-4 top-4 rounded-full border border-amber-700/30 bg-[#0a0705]/55 px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-amber-300/90 backdrop-blur-md">
+          <div className="absolute start-4 top-4 rounded-full border border-amber-700/30 bg-[#0a0705]/55 px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-amber-300/90 backdrop-blur-md">
             {featuredRecipeLabel}
           </div>
         </div>

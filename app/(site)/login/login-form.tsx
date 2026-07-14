@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { buttons } from "@/lib/constants/styles";
+import { useTranslations } from "@/lib/i18n/translation-context";
 import { signInWithPasswordAction, type AuthActionState } from "@/lib/supabase/actions";
 
 const inputClass =
@@ -15,6 +16,7 @@ type LoginFormProps = {
 };
 
 export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
+  const { t } = useTranslations();
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(
     signInWithPasswordAction,
     initialError ? { error: initialError } : undefined,
@@ -26,7 +28,7 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
 
       <div>
         <label htmlFor="email" className="text-sm font-medium text-stone-300">
-          Email
+          {t("auth.email")}
         </label>
         <input
           id="email"
@@ -35,20 +37,20 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
           required
           autoComplete="email"
           className={inputClass}
-          placeholder="you@example.com"
+          placeholder={t("auth.emailPlaceholder")}
         />
       </div>
 
       <div>
         <div className="flex items-center justify-between">
           <label htmlFor="password" className="text-sm font-medium text-stone-300">
-            Password
+            {t("auth.password")}
           </label>
           <Link
             href="/forgot-password"
             className="text-xs text-amber-400/90 underline-offset-4 hover:underline"
           >
-            Forgot password?
+            {t("auth.forgotPassword")}
           </Link>
         </div>
         <input
@@ -58,14 +60,14 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
           required
           autoComplete="current-password"
           className={inputClass}
-          placeholder="••••••••"
+          placeholder={t("auth.passwordPlaceholderDots")}
         />
       </div>
 
       <FormMessage error={state?.error} success={state?.success} />
 
       <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70`}>
-        {pending ? "Signing in…" : "Continue"}
+        {pending ? t("auth.signingIn") : t("common.continue")}
       </button>
     </form>
   );

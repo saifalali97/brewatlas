@@ -93,7 +93,7 @@ export function MethodCard({ method, ctaHref = "#methods", labels }: MethodCardP
         <div className={cards.imageAmberWash} />
         <div className={cards.imageRadial} />
 
-        <div className="absolute left-4 top-4 rounded-full border border-amber-600/30 bg-[#0a0705]/60 px-2.5 py-0.5 text-[9px] font-medium uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
+        <div className="absolute start-4 top-4 rounded-full border border-amber-600/30 bg-[#0a0705]/60 px-2.5 py-0.5 text-[9px] font-medium uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
           {method.suitableRoast}
         </div>
       </div>

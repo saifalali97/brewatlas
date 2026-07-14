@@ -71,7 +71,7 @@ function RecipeCardBody({
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0705] via-[#0a0705]/15 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-br from-amber-950/8 via-transparent to-[#0a0705]/25" />
 
-        <div className="absolute left-5 top-5 flex flex-wrap gap-2">
+        <div className="absolute start-5 top-5 flex flex-wrap gap-2">
           <span className="rounded-full border border-white/[0.14] bg-[#0a0705]/50 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-stone-200 backdrop-blur-xl">
             {brewMethodLabel}
           </span>
@@ -81,13 +81,13 @@ function RecipeCardBody({
         </div>
 
         {recipe.premium && (
-          <div className="absolute right-5 top-5 rounded-full border border-amber-700/35 bg-amber-950/65 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-200/90 backdrop-blur-xl">
+          <div className="absolute end-5 top-5 rounded-full border border-amber-700/35 bg-amber-950/65 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-200/90 backdrop-blur-xl">
             {labels.premium}
           </div>
         )}
 
         {recipe.featured && (
-          <div className="absolute bottom-5 left-5 flex items-center gap-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-950/70 to-[#0a0705]/60 px-4 py-1.5 text-[11px] font-medium text-amber-100/95 shadow-[0_0_28px_rgba(217,119,6,0.15)] backdrop-blur-xl">
+          <div className="absolute bottom-5 start-5 flex items-center gap-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-950/70 to-[#0a0705]/60 px-4 py-1.5 text-[11px] font-medium text-amber-100/95 shadow-[0_0_28px_rgba(217,119,6,0.15)] backdrop-blur-xl">
             <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-amber-400" aria-hidden>
               <path d="M8 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4L2.2 6.2l4-.6L8 2z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
             </svg>

@@ -20,7 +20,7 @@ export function FloatingActions() {
 
   return (
     <div
-      className={`fixed bottom-6 right-5 z-40 flex flex-col gap-3 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:right-6 md:bottom-8 md:right-8 ${
+      className={`fixed bottom-6 end-5 z-40 flex flex-col gap-3 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:end-6 md:bottom-8 md:end-8 ${
         visible
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-4 opacity-0"

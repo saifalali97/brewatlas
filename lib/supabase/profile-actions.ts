@@ -2,6 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { translate } from "@/lib/i18n/format";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 import { createClient } from "@/lib/supabase/server";
 
 export type ProfileActionState = { error?: string; success?: string } | undefined;
@@ -21,6 +24,7 @@ export async function updateProfileAction(
   formData: FormData,
 ): Promise<ProfileActionState> {
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
@@ -29,7 +33,7 @@ export async function updateProfileAction(
 
   const fullName = optionalString(formData, "fullName");
   if (!fullName) {
-    return { error: "Display name is required." };
+    return { error: dictionary.profilePage.displayNameRequired };
   }
 
   const updates: Record<string, unknown> = {
@@ -43,10 +47,10 @@ export async function updateProfileAction(
   const avatarFile = formData.get("avatar");
   if (avatarFile instanceof File && avatarFile.size > 0) {
     if (avatarFile.size > MAX_AVATAR_BYTES) {
-      return { error: "Avatar image must be smaller than 4MB." };
+      return { error: dictionary.profilePage.avatarTooLarge };
     }
     if (!ALLOWED_AVATAR_TYPES.has(avatarFile.type)) {
-      return { error: "Avatar must be a PNG, JPEG, WebP, or GIF image." };
+      return { error: dictionary.profilePage.avatarInvalidType };
     }
 
     const extension = avatarFile.type.split("/")[1] ?? "png";
@@ -57,7 +61,9 @@ export async function updateProfileAction(
       .upload(path, avatarFile, { upsert: true, contentType: avatarFile.type });
 
     if (uploadError) {
-      return { error: `Failed to upload avatar: ${uploadError.message}` };
+      return {
+        error: translate(dictionary, "profilePage.uploadAvatarFailedTemplate", { message: uploadError.message }),
+      };
     }
 
     const { data: publicUrlData } = supabase.storage.from("avatars").getPublicUrl(path);
@@ -74,5 +80,5 @@ export async function updateProfileAction(
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/profile");
-  return { success: "Profile updated." };
+  return { success: dictionary.profilePage.profileUpdated };
 }
