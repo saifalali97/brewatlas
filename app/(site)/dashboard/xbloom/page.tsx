@@ -6,21 +6,28 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { getUserXBloomProfiles } from "@/lib/data/xbloom";
+import { translate } from "@/lib/i18n/format";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = {
-  title: "xBloom Profiles",
-  description: "The xBloom brewing profiles attached to the recipes you've created on BrewAtlas.",
-  robots: {
-    index: false,
-    follow: true,
-  },
-  alternates: {
-    canonical: "/dashboard/xbloom",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/dashboard/xbloom",
+    locale,
+    title: dictionary.metadata.xbloomDashboardTitle,
+    description: dictionary.metadata.xbloomDashboardDescription,
+    noIndex: true,
+  });
+}
 
 export default async function DashboardXBloomPage() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const x = dictionary.xbloomDashboardPage;
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
@@ -32,22 +39,15 @@ export default async function DashboardXBloomPage() {
 
   return (
     <SectionFrame id="dashboard-xbloom-page" ariaLabelledBy="dashboard-xbloom-page-heading" padding="compact">
-      <PageHeader
-        eyebrow="Smart Brewing"
-        title="xBloom Profiles"
-        description="The xBloom brewing profiles saved to the recipes you've authored — dose, temperature, pulse pattern, and pour sequence."
-        centered={false}
-      />
+      <PageHeader eyebrow={x.eyebrow} title={x.title} description={x.description} centered={false} />
 
       {profiles.length === 0 ? (
         <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
-          <p className="text-lg font-medium text-stone-100">No xBloom profiles yet</p>
-          <p className="mt-2 text-sm text-stone-500">
-            xBloom profiles attached to recipes you create will appear here.
-          </p>
+          <p className="text-lg font-medium text-stone-100">{x.noProfilesTitle}</p>
+          <p className="mt-2 text-sm text-stone-500">{x.noProfilesDescription}</p>
           <div className="mt-6 flex justify-center">
             <GhostCtaLink href="/devices/xbloom" autoWidth>
-              Learn about xBloom
+              {x.learnAboutXbloom}
             </GhostCtaLink>
           </div>
         </div>
@@ -68,7 +68,9 @@ export default async function DashboardXBloomPage() {
                   </div>
                   <p className="mt-1 text-sm text-stone-500">
                     {profile.deviceModel ?? "xBloom"}
-                    {profile.dose !== null ? ` · ${profile.dose}g dose` : ""}
+                    {profile.dose !== null
+                      ? ` · ${translate(dictionary, "xbloomDashboardPage.doseSuffixTemplate", { dose: profile.dose })}`
+                      : ""}
                   </p>
                 </div>
                 {profile.waterTemperature !== null && (

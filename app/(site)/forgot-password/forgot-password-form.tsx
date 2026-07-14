@@ -3,12 +3,14 @@
 import { useActionState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { buttons } from "@/lib/constants/styles";
+import { useTranslations } from "@/lib/i18n/translation-context";
 import { requestPasswordResetAction, type AuthActionState } from "@/lib/supabase/actions";
 
 const inputClass =
   "mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45";
 
 export function ForgotPasswordForm() {
+  const { t } = useTranslations();
   const [state, formAction, pending] = useActionState<AuthActionState, FormData>(
     requestPasswordResetAction,
     undefined,
@@ -17,7 +19,7 @@ export function ForgotPasswordForm() {
   if (state?.success) {
     return (
       <div className="rounded-[1.5rem] border border-amber-500/25 bg-amber-950/20 p-8 text-center">
-        <p className="text-lg font-medium text-stone-50">Check your inbox</p>
+        <p className="text-lg font-medium text-stone-50">{t("auth.checkInboxTitle")}</p>
         <p className="mt-2 text-sm leading-relaxed text-stone-400">{state.success}</p>
       </div>
     );
@@ -27,7 +29,7 @@ export function ForgotPasswordForm() {
     <form action={formAction} className="space-y-5">
       <div>
         <label htmlFor="email" className="text-sm font-medium text-stone-300">
-          Email
+          {t("auth.email")}
         </label>
         <input
           id="email"
@@ -36,14 +38,14 @@ export function ForgotPasswordForm() {
           required
           autoComplete="email"
           className={inputClass}
-          placeholder="you@example.com"
+          placeholder={t("auth.emailPlaceholder")}
         />
       </div>
 
       <FormMessage error={state?.error} />
 
       <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70`}>
-        {pending ? "Sending link…" : "Send reset link"}
+        {pending ? t("auth.sendingLink") : t("auth.sendResetLink")}
       </button>
     </form>
   );

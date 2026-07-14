@@ -15,16 +15,23 @@ import {
   getTagOptions,
   getWaterProfileOptions,
 } from "@/lib/data/db-recipes";
+import { translate } from "@/lib/i18n/format";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = {
-  title: "Edit Recipe",
-  description: "Edit one of your BrewAtlas recipes.",
-  robots: {
-    index: false,
-    follow: true,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/dashboard/recipes",
+    locale,
+    title: dictionary.metadata.editRecipeTitle,
+    description: dictionary.metadata.editRecipeDescription,
+    noIndex: true,
+  });
+}
 
 type EditRecipePageProps = {
   params: Promise<{ id: string }>;
@@ -32,6 +39,9 @@ type EditRecipePageProps = {
 
 export default async function EditRecipePage({ params }: EditRecipePageProps) {
   const { id } = await params;
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const e = dictionary.editRecipePage;
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 
@@ -67,9 +77,9 @@ export default async function EditRecipePage({ params }: EditRecipePageProps) {
   return (
     <SectionFrame id="edit-recipe-page" ariaLabelledBy="edit-recipe-page-heading" padding="compact">
       <PageHeader
-        eyebrow="Contribute"
-        title="Edit Recipe"
-        description={`Update the details for "${recipe.title}."`}
+        eyebrow={e.eyebrow}
+        title={e.title}
+        description={translate(dictionary, "editRecipePage.descriptionTemplate", { title: recipe.title })}
         centered={false}
       />
 

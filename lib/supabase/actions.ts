@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/profile";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 import { getSiteUrl } from "@/lib/seo/site";
 
 export type AuthActionState = { error?: string; success?: string } | undefined;
@@ -30,9 +32,10 @@ export async function signInWithPasswordAction(
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const redirectTo = readRedirectTarget(formData);
+  const dictionary = await getDictionary(await getLocale());
 
   if (!email || !password) {
-    return { error: "Enter your email and password." };
+    return { error: dictionary.auth.enterEmailAndPassword };
   }
 
   const supabase = await createClient();
@@ -57,15 +60,16 @@ export async function signUpAction(
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const confirmPassword = String(formData.get("confirmPassword") ?? "");
+  const dictionary = await getDictionary(await getLocale());
 
   if (!email || !password) {
-    return { error: "Enter your email and password." };
+    return { error: dictionary.auth.enterEmailAndPassword };
   }
   if (password.length < 8) {
-    return { error: "Password must be at least 8 characters." };
+    return { error: dictionary.forms.passwordTooShort };
   }
   if (password !== confirmPassword) {
-    return { error: "Passwords do not match." };
+    return { error: dictionary.forms.passwordsDoNotMatch };
   }
 
   const origin = await resolveOrigin();
@@ -94,7 +98,7 @@ export async function signUpAction(
   }
 
   return {
-    success: "Check your inbox to confirm your email address, then log in to continue.",
+    success: dictionary.auth.checkInboxToConfirm,
   };
 }
 
@@ -109,9 +113,10 @@ export async function requestPasswordResetAction(
   formData: FormData,
 ): Promise<AuthActionState> {
   const email = String(formData.get("email") ?? "").trim();
+  const dictionary = await getDictionary(await getLocale());
 
   if (!email) {
-    return { error: "Enter your email address." };
+    return { error: dictionary.auth.enterEmailAddress };
   }
 
   const origin = await resolveOrigin();
@@ -125,7 +130,7 @@ export async function requestPasswordResetAction(
   }
 
   return {
-    success: "If an account exists for that email, a password reset link is on its way.",
+    success: dictionary.auth.passwordResetLinkSent,
   };
 }
 
@@ -135,12 +140,13 @@ export async function updatePasswordAction(
 ): Promise<AuthActionState> {
   const password = String(formData.get("password") ?? "");
   const confirmPassword = String(formData.get("confirmPassword") ?? "");
+  const dictionary = await getDictionary(await getLocale());
 
   if (password.length < 8) {
-    return { error: "Password must be at least 8 characters." };
+    return { error: dictionary.forms.passwordTooShort };
   }
   if (password !== confirmPassword) {
-    return { error: "Passwords do not match." };
+    return { error: dictionary.forms.passwordsDoNotMatch };
   }
 
   const supabase = await createClient();
@@ -156,6 +162,7 @@ export async function updatePasswordAction(
 export async function signInWithGoogleAction(): Promise<void> {
   const origin = await resolveOrigin();
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
@@ -165,7 +172,7 @@ export async function signInWithGoogleAction(): Promise<void> {
 
   if (error || !data.url) {
     redirect(
-      `/login?error=${encodeURIComponent(error?.message ?? "Google sign-in is unavailable.")}`,
+      `/login?error=${encodeURIComponent(error?.message ?? dictionary.auth.googleSignInUnavailable)}`,
     );
   }
 
@@ -183,6 +190,7 @@ export async function signInWithGoogleAction(): Promise<void> {
 export async function signInWithAppleAction(): Promise<void> {
   const origin = await resolveOrigin();
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "apple",
     options: {
@@ -192,7 +200,7 @@ export async function signInWithAppleAction(): Promise<void> {
 
   if (error || !data.url) {
     redirect(
-      `/login?error=${encodeURIComponent(error?.message ?? "Apple sign-in is not configured yet.")}`,
+      `/login?error=${encodeURIComponent(error?.message ?? dictionary.auth.appleSignInNotConfigured)}`,
     );
   }
 

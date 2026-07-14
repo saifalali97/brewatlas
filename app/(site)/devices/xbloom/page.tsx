@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  Activity,
   ArrowLeft,
+  Activity,
   Clock,
   Cpu,
   Droplets,
@@ -18,57 +18,65 @@ import { MetaTile } from "@/app/components/ui/meta-tile";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { cards, typography } from "@/lib/constants/styles";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import type { Dictionary } from "@/lib/i18n/types";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { XBLOOM_DEVICE_MODELS } from "@/types/xbloom";
 
-export const metadata: Metadata = {
-  title: "xBloom Recipes",
-  description:
-    "BrewAtlas recipes support full xBloom brewing profiles — dose, water temperature, pulse pattern, and pour sequence — for xBloom Studio, Original, Lite, and Omni.",
-  alternates: {
-    canonical: "/devices/xbloom",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/devices/xbloom",
+    locale,
+    title: dictionary.metadata.xbloomTitle,
+    description: dictionary.metadata.xbloomDescription,
+  });
+}
 
-const deviceBlurbs: Record<(typeof XBLOOM_DEVICE_MODELS)[number], string> = {
-  "xBloom Studio":
-    "The flagship model with full profile control — dial in dose, pulse pattern, and pour sequence for competition-level precision.",
-  "xBloom Original":
-    "The original smart dripper. Save a brewing profile once and reproduce the exact same cup every time.",
-  "xBloom Lite":
-    "A compact, approachable entry point into precision brewing, built for effortless everyday cups.",
-  "xBloom Omni":
-    "Built for versatility — store multiple brewing profiles and switch between recipes in seconds.",
-};
+function deviceBlurbKey(model: (typeof XBLOOM_DEVICE_MODELS)[number]): keyof Dictionary["xbloomPage"] {
+  switch (model) {
+    case "xBloom Studio":
+      return "deviceBlurbStudio";
+    case "xBloom Original":
+      return "deviceBlurbOriginal";
+    case "xBloom Lite":
+      return "deviceBlurbLite";
+    case "xBloom Omni":
+      return "deviceBlurbOmni";
+  }
+}
 
-const profileFields = [
-  { icon: Scale, label: "Dose", value: "Coffee weight, in grams" },
-  { icon: Droplets, label: "Brew Water", value: "Total water, in grams" },
-  { icon: Thermometer, label: "Water Temperature", value: "Precise °C target" },
-  { icon: Gauge, label: "Grind Setting", value: "Device-specific grind step" },
-  { icon: Clock, label: "Bloom Time", value: "Pre-infusion duration" },
-  { icon: Activity, label: "Flow Rate", value: "Pour speed, ml/s" },
-  { icon: Waves, label: "Pulse Pattern", value: "Pour/pause rhythm" },
-  { icon: ListOrdered, label: "Pour Sequence", value: "Ordered pour steps" },
-  { icon: Zap, label: "Agitation", value: "Stirring/swirl setting" },
-  { icon: Clock, label: "Total Time", value: "Full brew duration" },
-];
+export default async function XBloomPage() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const p = dictionary.xbloomPage;
 
-export default function XBloomPage() {
+  const profileFields = [
+    { icon: Scale, label: p.fieldDoseLabel, value: p.fieldDoseValue },
+    { icon: Droplets, label: p.fieldBrewWaterLabel, value: p.fieldBrewWaterValue },
+    { icon: Thermometer, label: p.fieldWaterTempLabel, value: p.fieldWaterTempValue },
+    { icon: Gauge, label: p.fieldGrindLabel, value: p.fieldGrindValue },
+    { icon: Clock, label: p.fieldBloomLabel, value: p.fieldBloomValue },
+    { icon: Activity, label: p.fieldFlowLabel, value: p.fieldFlowValue },
+    { icon: Waves, label: p.fieldPulseLabel, value: p.fieldPulseValue },
+    { icon: ListOrdered, label: p.fieldPourLabel, value: p.fieldPourValue },
+    { icon: Zap, label: p.fieldAgitationLabel, value: p.fieldAgitationValue },
+    { icon: Clock, label: p.fieldTotalTimeLabel, value: p.fieldTotalTimeValue },
+  ];
+
   return (
     <SectionFrame id="xbloom-listing" ariaLabelledBy="xbloom-listing-heading" padding="compact">
       <Link
         href="/devices"
         className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
       >
-        <ArrowLeft className="h-4 w-4" aria-hidden />
-        Back to Brewing Devices
+        <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
+        {p.backToDevices}
       </Link>
 
-      <PageHeader
-        eyebrow="Precision Brewing Integration"
-        title="xBloom Recipes"
-        description="Any BrewAtlas recipe can carry a full xBloom brewing profile, so your dial-in translates perfectly to the machine — every dose, temperature, and pulse pattern, saved with the recipe."
-      />
+      <PageHeader eyebrow={p.eyebrow} title={p.title} description={p.description} />
 
       <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-4 lg:gap-6">
         {XBLOOM_DEVICE_MODELS.map((model) => (
@@ -82,15 +90,15 @@ export default function XBloomPage() {
               {model}
             </h3>
             <p className="relative mt-2 text-[0.8125rem] leading-[1.65] text-stone-300/90">
-              {deviceBlurbs[model]}
+              {p[deviceBlurbKey(model)]}
             </p>
           </article>
         ))}
       </div>
 
       <div className="mt-16">
-        <p className={typography.eyebrow}>Every xBloom Profile Includes</p>
-        <h2 className={typography.sectionTitleModern}>What Ships With Every Recipe</h2>
+        <p className={typography.eyebrow}>{p.everyProfileEyebrow}</p>
+        <h2 className={typography.sectionTitleModern}>{p.whatShipsTitle}</h2>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {profileFields.map((field) => (
             <MetaTile key={field.label} icon={field.icon} label={field.label} value={field.value} />
@@ -100,7 +108,7 @@ export default function XBloomPage() {
 
       <div className="mt-14 border-t border-white/[0.06] pt-10">
         <GhostCtaLink href="/recipes" autoWidth>
-          Browse Recipes
+          {dictionary.homeFooter.browseRecipes}
         </GhostCtaLink>
       </div>
     </SectionFrame>

@@ -55,9 +55,9 @@ function buildSupportLinks(footer: Dictionary["homeFooter"]): FooterLinkItem[] {
 
 function buildSocialLinks(footer: Dictionary["homeFooter"]) {
   return [
-    { href: "#", label: "Instagram", icon: Share2 },
-    { href: "#", label: "Twitter", icon: AtSign },
-    { href: "#", label: "YouTube", icon: ExternalLink },
+    { href: "#", label: footer.socialInstagramLabel, icon: Share2 },
+    { href: "#", label: footer.socialTwitterLabel, icon: AtSign },
+    { href: "#", label: footer.socialYoutubeLabel, icon: ExternalLink },
     { href: "#", label: footer.blogRssLabel, icon: Rss },
   ];
 }

@@ -2,6 +2,7 @@
 
 import { Heart } from "lucide-react";
 import { addFavoriteAction, removeFavoriteAction } from "@/lib/supabase/favorite-actions";
+import { useTranslations } from "@/lib/i18n/translation-context";
 
 type FavoriteButtonProps = {
   recipeId: string;
@@ -23,6 +24,7 @@ export function FavoriteButton({
   size = "sm",
   className = "",
 }: FavoriteButtonProps) {
+  const { t } = useTranslations();
   const action = isFavorited ? removeFavoriteAction : addFavoriteAction;
   const dimension = size === "lg" ? "h-11 w-11" : "h-9 w-9";
   const iconSize = size === "lg" ? "h-[18px] w-[18px]" : "h-4 w-4";
@@ -33,7 +35,7 @@ export function FavoriteButton({
       <input type="hidden" name="currentPath" value={currentPath} />
       <button
         type="submit"
-        aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
+        aria-label={isFavorited ? t("recipes.removeFromFavoritesAria") : t("recipes.addToFavoritesAria")}
         aria-pressed={isFavorited}
         className={`flex ${dimension} items-center justify-center rounded-full border backdrop-blur-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95 ${
           isFavorited

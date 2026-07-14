@@ -5,25 +5,31 @@ import { Heart, Star } from "lucide-react";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { getBrewLogs } from "@/lib/data/personal";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = {
-  title: "Brew History",
-  description: "Your logged brews on BrewAtlas — recipe, device, method, rating, and notes.",
-  robots: {
-    index: false,
-    follow: true,
-  },
-  alternates: {
-    canonical: "/dashboard/brew-history",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/dashboard/brew-history",
+    locale,
+    title: dictionary.metadata.brewHistoryTitle,
+    description: dictionary.metadata.brewHistoryDescription,
+    noIndex: true,
+  });
+}
 
-function formatBrewedAt(value: string): string {
-  return new Date(value).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+function formatBrewedAt(value: string, locale: string): string {
+  return new Date(value).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
 }
 
 export default async function DashboardBrewHistoryPage() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const b = dictionary.brewHistoryPage;
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
@@ -35,19 +41,12 @@ export default async function DashboardBrewHistoryPage() {
 
   return (
     <SectionFrame id="dashboard-brew-history-page" ariaLabelledBy="dashboard-brew-history-page-heading" padding="compact">
-      <PageHeader
-        eyebrow="Brewing History"
-        title="Brew History"
-        description="Every brew you've logged on BrewAtlas, most recent first."
-        centered={false}
-      />
+      <PageHeader eyebrow={b.eyebrow} title={b.title} description={b.description} centered={false} />
 
       {brewLogs.length === 0 ? (
         <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
-          <p className="text-lg font-medium text-stone-100">No brews logged yet</p>
-          <p className="mt-2 text-sm text-stone-500">
-            Log a brew from any recipe to start building your brewing history here.
-          </p>
+          <p className="text-lg font-medium text-stone-100">{b.noBrewsTitle}</p>
+          <p className="mt-2 text-sm text-stone-500">{b.noBrewsDescription}</p>
         </div>
       ) : (
         <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
@@ -61,15 +60,15 @@ export default async function DashboardBrewHistoryPage() {
                         href={`/recipes/${log.recipeSlug}`}
                         className="font-medium text-stone-100 underline-offset-4 hover:text-amber-400/90 hover:underline"
                       >
-                        {log.recipeTitle ?? "Untitled Recipe"}
+                        {log.recipeTitle ?? b.untitledRecipe}
                       </Link>
                     ) : (
-                      <p className="font-medium text-stone-100">{log.recipeTitle ?? "Freeform Brew"}</p>
+                      <p className="font-medium text-stone-100">{log.recipeTitle ?? b.freeformBrew}</p>
                     )}
                     {log.isFavorite && <Heart className="h-3.5 w-3.5 fill-amber-500/80 text-amber-500/80" aria-hidden />}
                   </div>
                   <p className="mt-1 text-sm text-stone-500">
-                    {formatBrewedAt(log.brewedAt)}
+                    {formatBrewedAt(log.brewedAt, locale)}
                     {log.brewingMethodName ? ` · ${log.brewingMethodName}` : ""}
                     {log.brewingDeviceName ? ` · ${log.brewingDeviceName}` : ""}
                   </p>

@@ -7,35 +7,46 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons, cards } from "@/lib/constants/styles";
-import { brewMethods } from "@/data/homepage";
-import { imageAlt } from "@/lib/seo/image-alt";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getHomeContent } from "@/lib/i18n/get-home-content";
+import { interpolate, translate } from "@/lib/i18n/format";
+import { difficultyLabelKey } from "@/lib/i18n/home-labels";
+import { getLocale } from "@/lib/i18n/locale";
+import type { Dictionary } from "@/lib/i18n/types";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 
-export const metadata: Metadata = {
-  title: "Brewing Devices",
-  description:
-    "A guide to the brewing devices behind every BrewAtlas method — from the V60 dripper to the siphon set — with the roast level and difficulty each pairs best with.",
-  alternates: {
-    canonical: "/devices",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/devices",
+    locale,
+    title: dictionary.metadata.devicesTitle,
+    description: dictionary.metadata.devicesDescription,
+  });
+}
 
-const deviceNameByMethod: Record<string, string> = {
-  "Pour Over": "V60 Dripper",
-  Espresso: "Espresso Machine",
-  "French Press": "French Press",
-  Aeropress: "AeroPress",
-  "Cold Brew": "Cold Brew Tower",
-  Siphon: "Siphon Brewer",
-};
+// Brewing methods are index-identical across every locale's `HomeContent`
+// (see `lib/i18n/home-content/*`), so the device name for method N always
+// lives at `deviceNameKeys[N]`, regardless of which language `method.name`
+// is displayed in.
+const deviceNameKeys: (keyof Dictionary["devicesPage"])[] = [
+  "deviceNamePourOver",
+  "deviceNameEspresso",
+  "deviceNameFrenchPress",
+  "deviceNameAeropress",
+  "deviceNameColdBrew",
+  "deviceNameSiphon",
+];
 
-export default function DevicesPage() {
+export default async function DevicesPage() {
+  const locale = await getLocale();
+  const [dictionary, content] = await Promise.all([getDictionary(locale), getHomeContent(locale)]);
+  const p = dictionary.devicesPage;
+
   return (
     <SectionFrame id="devices-listing" ariaLabelledBy="devices-listing-heading" padding="compact">
-      <PageHeader
-        eyebrow="Brew Gear Guide"
-        title="Brewing Devices"
-        description="The equipment behind every BrewAtlas method, matched to the roast level and skill it brews best."
-      />
+      <PageHeader eyebrow={p.eyebrow} title={p.title} description={p.description} />
 
       <div className={`relative mb-10 flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between lg:p-7 ${cards.premiumShell}`}>
         <div aria-hidden className={cards.premiumSheen} />
@@ -45,24 +56,20 @@ export default function DevicesPage() {
             <Cpu className="h-5 w-5 text-amber-500/85" aria-hidden />
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-amber-500/80">Smart Brewing</p>
-            <h2 className="mt-1 text-lg font-semibold tracking-tight text-stone-50">
-              xBloom — First-Class Smart Brewer Support
-            </h2>
-            <p className="mt-1 max-w-lg text-sm text-stone-400">
-              Every BrewAtlas recipe can carry a full xBloom profile — dose, water temperature, pulse pattern, and
-              pour sequence — for xBloom Studio, Original, Lite, and Omni.
-            </p>
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-amber-500/80">{p.smartBrewingLabel}</p>
+            <h2 className="mt-1 text-lg font-semibold tracking-tight text-stone-50">{p.xbloomCalloutTitle}</h2>
+            <p className="mt-1 max-w-lg text-sm text-stone-400">{p.xbloomCalloutDescription}</p>
           </div>
         </div>
         <RippleLink href="/devices/xbloom" className={`${buttons.secondary} relative w-full shrink-0 sm:w-auto`}>
-          Explore xBloom
+          {p.exploreXbloom}
         </RippleLink>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
-        {brewMethods.map((method) => {
-          const deviceName = deviceNameByMethod[method.name] ?? method.name;
+        {content.brewMethods.map((method, index) => {
+          const deviceNameKey = deviceNameKeys[index];
+          const deviceName = deviceNameKey ? p[deviceNameKey] : method.name;
 
           return (
             <article key={method.name} className={cards.premiumShell}>
@@ -72,7 +79,10 @@ export default function DevicesPage() {
               <div className="relative h-40 shrink-0 overflow-hidden sm:h-44 lg:h-48">
                 <Image
                   src={method.image}
-                  alt={imageAlt.brewingMethod(deviceName, method.suitableRoast)}
+                  alt={interpolate(dictionary.homeBrewingMethods.imageAltTemplate, {
+                    name: deviceName,
+                    suitableRoast: method.suitableRoast,
+                  })}
                   fill
                   sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                   unoptimized={method.image.endsWith(".svg")}
@@ -82,7 +92,7 @@ export default function DevicesPage() {
                 <div className={cards.imageAmberWash} />
                 <div className={cards.imageRadial} />
 
-                <div className="absolute left-4 top-4 rounded-full border border-amber-600/30 bg-[#0a0705]/60 px-2.5 py-0.5 text-[9px] font-medium uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
+                <div className="absolute start-4 top-4 rounded-full border border-amber-600/30 bg-[#0a0705]/60 px-2.5 py-0.5 text-[9px] font-medium uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
                   {method.suitableRoast}
                 </div>
               </div>
@@ -92,22 +102,28 @@ export default function DevicesPage() {
                   {deviceName}
                 </h3>
                 <p className="mt-2 text-[0.8125rem] leading-[1.65] text-stone-300/90">
-                  Used for {method.name.toLowerCase()} brewing. {method.description}
+                  {translate(dictionary, "devicesPage.usedForTemplate", {
+                    method: method.name.toLowerCase(),
+                    description: method.description,
+                  })}
                 </p>
 
                 <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
-                  <MetaTile icon={Clock} label="Brew Time" value={method.brewTime} />
-                  <MetaTile icon={Flame} label="Best Roast" value={method.suitableRoast} />
+                  <MetaTile icon={Clock} label={p.brewTimeLabel} value={method.brewTime} />
+                  <MetaTile icon={Flame} label={p.bestRoastLabel} value={method.suitableRoast} />
                 </div>
 
                 <div className="mt-4 flex items-center gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.03] px-3 py-2.5">
                   <Gauge className="h-3.5 w-3.5 shrink-0 text-amber-500/80" aria-hidden />
                   <div>
                     <p className="text-[9px] font-medium uppercase tracking-[0.14em] text-stone-500">
-                      Difficulty
+                      {p.difficultyLabel}
                     </p>
                     <div className="mt-0.5">
-                      <DifficultyIndicator level={method.difficulty} />
+                      <DifficultyIndicator
+                        level={method.difficulty}
+                        label={translate(dictionary, difficultyLabelKey(method.difficulty))}
+                      />
                     </div>
                   </div>
                 </div>

@@ -263,6 +263,7 @@ const UAE_COFFEE_GUIDE_INDEX: Array<Omit<UaeCoffeeGuideEntry, "topic">> = [
   {
     slug: "arabic-coffee",
     title: "Arabic Coffee",
+    titleKey: "guideEntryArabicCoffee",
     iconKey: "Coffee",
     sectionSlug: "arabic-coffee",
     topicSlug: "traditional-arabic-coffee",
@@ -270,6 +271,7 @@ const UAE_COFFEE_GUIDE_INDEX: Array<Omit<UaeCoffeeGuideEntry, "topic">> = [
   {
     slug: "karak",
     title: "Karak",
+    titleKey: "guideEntryKarak",
     iconKey: "CupSoda",
     sectionSlug: "tea",
     topicSlug: "karak",
@@ -277,6 +279,7 @@ const UAE_COFFEE_GUIDE_INDEX: Array<Omit<UaeCoffeeGuideEntry, "topic">> = [
   {
     slug: "saffron-tea",
     title: "Saffron Tea",
+    titleKey: "guideEntrySaffronTea",
     iconKey: "Flower2",
     sectionSlug: "tea",
     topicSlug: "saffron-tea",
@@ -284,6 +287,7 @@ const UAE_COFFEE_GUIDE_INDEX: Array<Omit<UaeCoffeeGuideEntry, "topic">> = [
   {
     slug: "black-tea",
     title: "Black Tea",
+    titleKey: "guideEntryBlackTea",
     iconKey: "Leaf",
     sectionSlug: "tea",
     topicSlug: "black-tea",
@@ -291,6 +295,7 @@ const UAE_COFFEE_GUIDE_INDEX: Array<Omit<UaeCoffeeGuideEntry, "topic">> = [
   {
     slug: "adani-tea",
     title: "Adani Tea",
+    titleKey: "guideEntryAdaniTea",
     iconKey: "Leaf",
     sectionSlug: "tea",
     topicSlug: "adani-tea",
@@ -298,6 +303,7 @@ const UAE_COFFEE_GUIDE_INDEX: Array<Omit<UaeCoffeeGuideEntry, "topic">> = [
   {
     slug: "serving-traditions",
     title: "Serving Traditions",
+    titleKey: "guideEntryServingTraditions",
     iconKey: "Sparkles",
     sectionSlug: "arabic-coffee",
     topicSlug: "serving-traditions",
@@ -305,6 +311,7 @@ const UAE_COFFEE_GUIDE_INDEX: Array<Omit<UaeCoffeeGuideEntry, "topic">> = [
   {
     slug: "coffee-ceremonies",
     title: "Coffee Ceremonies",
+    titleKey: "guideEntryCoffeeCeremonies",
     iconKey: "Flame",
     sectionSlug: "arabic-coffee",
     topicSlug: "traditional-brewing-methods",

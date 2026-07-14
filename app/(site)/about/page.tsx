@@ -4,40 +4,39 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons } from "@/lib/constants/styles";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { siteConfig } from "@/lib/seo/site";
 
-export const metadata: Metadata = {
-  title: "About",
-  description:
-    "BrewAtlas is the world's largest specialty coffee recipe platform. Learn about our mission to help baristas and home brewers dial in every cup.",
-  alternates: {
-    canonical: "/about",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/about",
+    locale,
+    title: dictionary.metadata.aboutTitle,
+    description: dictionary.metadata.aboutDescription,
+  });
+}
 
-const stats = [
-  { label: "Recipes", value: "12,400+" },
-  { label: "Roasters", value: "840+" },
-  { label: "Countries", value: "62" },
-];
+export default async function AboutPage() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const a = dictionary.aboutPage;
 
-export default function AboutPage() {
+  const stats = [
+    { label: a.statRecipesLabel, value: "12,400+" },
+    { label: a.statRoastersLabel, value: "840+" },
+    { label: a.statCountriesLabel, value: "62" },
+  ];
+
   return (
     <SectionFrame id="about-page" ariaLabelledBy="about-page-heading" padding="compact">
-      <PageHeader
-        eyebrow="Our Story"
-        title="About BrewAtlas"
-        description={siteConfig.description}
-      />
+      <PageHeader eyebrow={a.eyebrow} title={a.title} description={siteConfig.description} />
 
       <div className="mx-auto max-w-3xl text-center">
-        <p className="text-base leading-[1.8] text-stone-400">
-          BrewAtlas started with a simple idea: every great cup of coffee follows a
-          recipe worth documenting. We bring together specialty roasters, competition
-          baristas, and home brewers to map the exact grind size, water temperature,
-          and ratio behind the world&apos;s best coffee — so anyone can reproduce it,
-          cup after cup.
-        </p>
+        <p className="text-base leading-[1.8] text-stone-400">{a.body}</p>
 
         <div className="mt-14 grid gap-4 sm:grid-cols-3">
           {stats.map((stat) => (
@@ -52,10 +51,10 @@ export default function AboutPage() {
 
         <div className="mt-14 flex flex-col justify-center gap-3 sm:flex-row">
           <RippleLink href="/recipes" className={`${buttons.primary} w-full sm:w-auto`}>
-            Explore Recipes
+            {a.exploreRecipesCta}
           </RippleLink>
           <RippleLink href="/contact" className={`${buttons.secondary} w-full sm:w-auto`}>
-            Get in Touch
+            {a.getInTouchCta}
           </RippleLink>
         </div>
       </div>

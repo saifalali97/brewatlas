@@ -39,10 +39,12 @@ export type LocalizedMetadataInput = {
   title: string;
   description: string;
   ogImage?: { url: string; width?: number; height?: number; alt?: string };
+  /** Set for account-only utility pages (login, signup, password reset) that shouldn't be indexed. */
+  noIndex?: boolean;
 };
 
 /** Builds a `generateMetadata()` result with a locale-correct canonical URL, full hreflang alternates, and localized OpenGraph/Twitter tags. */
-export function buildLocalizedMetadata({ pathname, locale, title, description, ogImage }: LocalizedMetadataInput): Metadata {
+export function buildLocalizedMetadata({ pathname, locale, title, description, ogImage, noIndex }: LocalizedMetadataInput): Metadata {
   const canonical = localizedPathUrl(pathname, locale);
   const localeMeta = LOCALE_METADATA[locale];
   const images = ogImage ? [ogImage] : undefined;
@@ -50,6 +52,7 @@ export function buildLocalizedMetadata({ pathname, locale, title, description, o
   return {
     title,
     description,
+    ...(noIndex ? { robots: { index: false, follow: true } } : {}),
     alternates: {
       canonical,
       languages: buildHreflangAlternates(pathname),

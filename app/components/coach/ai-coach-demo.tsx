@@ -5,7 +5,9 @@ import { AlertTriangle, CheckCircle2, Gauge, Lightbulb, Sparkles } from "lucide-
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { analyzeRecipeForCoaching } from "@/lib/ai/coach-engine";
 import { cards, buttons } from "@/lib/constants/styles";
+import { useTranslations } from "@/lib/i18n/translation-context";
 import type { CoachAnalysisInput } from "@/types/coach";
+import type { DictionaryKey } from "@/lib/i18n/types";
 
 /**
  * Three representative recipes covering a well-dialed pour over, an
@@ -14,11 +16,16 @@ import type { CoachAnalysisInput } from "@/types/coach";
  * engine on a public page without requiring a signed-in user's own
  * recipes. Fields mirror `CoachAnalysisInput` exactly; see
  * `lib/ai/coach-engine.ts` for how each is scored.
+ *
+ * `labelKey` looks up the translated tab label; the underlying analysis
+ * feedback (strengths/weaknesses/suggestions/metric labels) is generated
+ * by `coach-engine.ts` in English regardless of locale -- see the
+ * localization completion report for details.
  */
-const sampleRecipes: { id: string; label: string; input: CoachAnalysisInput }[] = [
+const sampleRecipes: { id: string; labelKey: DictionaryKey; input: CoachAnalysisInput }[] = [
   {
     id: "v60",
-    label: "V60 — Ethiopian Yirgacheffe",
+    labelKey: "coachPage.sampleV60Label",
     input: {
       brewingMethodName: "Pour Over",
       coffeeDose: 20,
@@ -38,7 +45,7 @@ const sampleRecipes: { id: string; label: string; input: CoachAnalysisInput }[] 
   },
   {
     id: "espresso",
-    label: "Espresso — Needs Work",
+    labelKey: "coachPage.sampleEspressoLabel",
     input: {
       brewingMethodName: "Espresso",
       coffeeDose: 18,
@@ -57,7 +64,7 @@ const sampleRecipes: { id: string; label: string; input: CoachAnalysisInput }[] 
   },
   {
     id: "cold-brew",
-    label: "Cold Brew — Big Batch",
+    labelKey: "coachPage.sampleColdBrewLabel",
     input: {
       brewingMethodName: "Cold Brew",
       coffeeDose: 100,
@@ -85,9 +92,17 @@ const statusColor: Record<string, string> = {
 };
 
 export function AiCoachDemo() {
+  const { t } = useTranslations();
   const [activeId, setActiveId] = useState(sampleRecipes[0].id);
   const active = sampleRecipes.find((recipe) => recipe.id === activeId) ?? sampleRecipes[0];
   const analysis = useMemo(() => analyzeRecipeForCoaching(active.input), [active]);
+
+  const confidenceLabel =
+    analysis.confidence.level === "high"
+      ? t("coachPage.highConfidence")
+      : analysis.confidence.level === "medium"
+        ? t("coachPage.mediumConfidence")
+        : t("coachPage.lowConfidence");
 
   return (
     <div>
@@ -106,7 +121,7 @@ export function AiCoachDemo() {
                   : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-amber-600/25 hover:bg-white/[0.06] hover:text-stone-200"
               }`}
             >
-              {recipe.label}
+              {t(recipe.labelKey)}
             </button>
           );
         })}
@@ -121,16 +136,14 @@ export function AiCoachDemo() {
             <div className="flex h-24 w-24 items-center justify-center rounded-full border border-amber-600/30 bg-amber-950/40">
               <div className="text-center">
                 <p className="text-3xl font-semibold tabular-nums text-stone-50">{analysis.brewScore}</p>
-                <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-amber-400/80">Brew Score</p>
+                <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-amber-400/80">
+                  {t("coachPage.brewScoreLabel")}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-stone-500">
               <Gauge className="h-3.5 w-3.5 text-amber-500/70" aria-hidden />
-              {analysis.confidence.level === "high"
-                ? "High confidence"
-                : analysis.confidence.level === "medium"
-                  ? "Medium confidence"
-                  : "Low confidence"}
+              {confidenceLabel}
             </div>
           </div>
 
@@ -139,7 +152,7 @@ export function AiCoachDemo() {
               <div>
                 <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.14em] text-emerald-400/90">
                   <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
-                  Strengths
+                  {t("coachPage.strengthsLabel")}
                 </p>
                 <ul className="mt-2.5 space-y-1.5">
                   {analysis.strengths.map((strength) => (
@@ -155,7 +168,7 @@ export function AiCoachDemo() {
               <div>
                 <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.14em] text-orange-400/90">
                   <AlertTriangle className="h-3.5 w-3.5" aria-hidden />
-                  Needs Attention
+                  {t("coachPage.needsAttentionLabel")}
                 </p>
                 <ul className="mt-2.5 space-y-1.5">
                   {analysis.weaknesses.map((weakness) => (
@@ -171,7 +184,7 @@ export function AiCoachDemo() {
               <div>
                 <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.14em] text-amber-400/90">
                   <Lightbulb className="h-3.5 w-3.5" aria-hidden />
-                  Suggestions
+                  {t("coachPage.suggestionsLabel")}
                 </p>
                 <ul className="mt-2.5 space-y-1.5">
                   {analysis.suggestions.map((suggestion) => (
@@ -202,7 +215,7 @@ export function AiCoachDemo() {
         className={`${buttons.secondary} mt-8 gap-2 motion-reduce:hover:scale-100`}
       >
         <Sparkles className="h-4 w-4 text-amber-500/80" aria-hidden />
-        Analyze your own recipes
+        {t("coachPage.analyzeOwnRecipes")}
       </RippleLink>
     </div>
   );

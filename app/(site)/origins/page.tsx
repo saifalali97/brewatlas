@@ -2,29 +2,50 @@ import type { Metadata } from "next";
 import { OriginCard } from "@/app/components/cards/origin-card";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
-import { coffeeOrigins } from "@/data/homepage";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getHomeContent } from "@/lib/i18n/get-home-content";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 
-export const metadata: Metadata = {
-  title: "Coffee Origins",
-  description:
-    "Trace every BrewAtlas recipe to its source. Explore flavor profiles, altitude data, and processing methods from the world's greatest coffee growing regions.",
-  alternates: {
-    canonical: "/origins",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/origins",
+    locale,
+    title: dictionary.metadata.originsTitle,
+    description: dictionary.metadata.originsDescription,
+  });
+}
 
-export default function OriginsPage() {
+export default async function OriginsPage() {
+  const locale = await getLocale();
+  const [dictionary, content] = await Promise.all([getDictionary(locale), getHomeContent(locale)]);
+
   return (
     <SectionFrame id="origins-listing" ariaLabelledBy="origins-listing-heading" padding="compact">
       <PageHeader
-        eyebrow="From Farm to Cup"
-        title="Coffee Origins"
-        description="Trace every recipe to its source. Explore flavor profiles, altitude data, and processing methods from the world's greatest growing regions."
+        eyebrow={dictionary.homeCoffeeOrigins.eyebrow}
+        title={dictionary.homeCoffeeOrigins.title}
+        description={dictionary.homeCoffeeOrigins.description}
       />
 
       <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
-        {coffeeOrigins.map((origin) => (
-          <OriginCard key={origin.country} origin={origin} ctaHref="/recipes" />
+        {content.coffeeOrigins.map((origin) => (
+          <OriginCard
+            key={origin.country}
+            origin={origin}
+            ctaHref="/recipes"
+            labels={{
+              premium: dictionary.common.premiumBadge,
+              altitude: dictionary.homeCoffeeOrigins.altitudeLabel,
+              process: dictionary.homeCoffeeOrigins.processLabel,
+              roast: dictionary.homeCoffeeOrigins.roastLabel,
+              brewMethod: dictionary.homeCoffeeOrigins.brewMethodLabel,
+              exploreOrigin: dictionary.homeCoffeeOrigins.exploreOrigin,
+              imageAltTemplate: dictionary.homeCoffeeOrigins.imageAltTemplate,
+            }}
+          />
         ))}
       </div>
     </SectionFrame>

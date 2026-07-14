@@ -15,27 +15,52 @@ import {
 import { RecipeCard } from "@/app/components/cards/recipe-card";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
-import { featuredRecipes } from "@/data/homepage";
+import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getRecipeSlug } from "@/lib/data/recipes";
 import { getUserFavoriteRecipes, getUserRecipes } from "@/lib/data/db-recipes";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getHomeContent } from "@/lib/i18n/get-home-content";
+import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
+import { getLocale } from "@/lib/i18n/locale";
+import { translate } from "@/lib/i18n/format";
+import type { Dictionary } from "@/lib/i18n/types";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/profile";
 import { signOutAction } from "@/lib/supabase/actions";
 import { buttons } from "@/lib/constants/styles";
+import type { FeaturedRecipe } from "@/types/homepage";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Your BrewAtlas dashboard — saved recipes, brew tracking, and personalized recommendations.",
-  robots: {
-    index: false,
-    follow: true,
-  },
-  alternates: {
-    canonical: "/dashboard",
-  },
-};
+/** Builds `RecipeCard`'s translated chrome labels for a given recipe, matching the pattern used on `/recipes`. */
+function recipeCardLabels(dictionary: Dictionary, recipe: FeaturedRecipe) {
+  const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
+  return {
+    premium: dictionary.common.premiumBadge,
+    editorsChoice: dictionary.homeFeaturedRecipes.editorsChoice,
+    ratio: dictionary.homeFeaturedRecipes.ratioLabel,
+    time: dictionary.homeFeaturedRecipes.timeLabel,
+    difficultyLabel: translate(dictionary, difficultyLabelKey(recipe.difficulty)),
+    brewMethodLabel: brewMethodKey ? translate(dictionary, brewMethodKey) : recipe.brewMethod,
+    imageAltTemplate: dictionary.homeFeaturedRecipes.imageAltTemplate,
+  };
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/dashboard",
+    locale,
+    title: dictionary.metadata.dashboardTitle,
+    description: dictionary.metadata.dashboardDescription,
+    noIndex: true,
+  });
+}
 
 export default async function DashboardPage() {
+  const locale = await getLocale();
+  const [dictionary, content] = await Promise.all([getDictionary(locale), getHomeContent(locale)]);
+  const d = dictionary.dashboardPage;
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
@@ -57,39 +82,45 @@ export default async function DashboardPage() {
     getUserRecipes(supabase, data.user.id),
   ]);
 
-  const displayName = profile?.full_name || data.user.email || "there";
+  const displayName = profile?.full_name || data.user.email || dictionary.communityPage.anonymousBrewer;
   const favoriteMethodName =
-    (profile as { brewing_methods?: { name: string } | null } | null)?.brewing_methods?.name ?? "Not set";
-  const recentRecipes = featuredRecipes.slice(0, 3);
+    (profile as { brewing_methods?: { name: string } | null } | null)?.brewing_methods?.name ?? d.notSet;
+  // Display uses the locale's translated copy, but the slug is always
+  // derived from the English name at the same array index so URLs never
+  // change across locales.
+  const recentRecipes = content.featuredRecipes.slice(0, 3).map((recipe, index) => ({
+    recipe,
+    slug: getRecipeSlug(staticRecipesEn[index]),
+  }));
 
   const stats = [
-    { icon: Heart, label: "Saved Recipes", value: String(favoriteRecipes.length) },
-    { icon: Coffee, label: "Recipes Created", value: String(ownRecipes.length) },
-    { icon: BookOpen, label: "Favorite Method", value: favoriteMethodName },
+    { icon: Heart, label: d.savedRecipesLabel, value: String(favoriteRecipes.length) },
+    { icon: Coffee, label: d.recipesCreatedLabel, value: String(ownRecipes.length) },
+    { icon: BookOpen, label: d.favoriteMethodLabel, value: favoriteMethodName },
   ];
 
   const quickLinks = [
-    { icon: Sparkles, label: "AI Coach", description: "Get an instant Brew Score", href: "/coach" },
-    { icon: Clock, label: "Brew History", description: "Every brew you've logged", href: "/dashboard/brew-history" },
-    { icon: Users, label: "Community", description: "Leaderboards & top recipes", href: "/community" },
-    { icon: Coffee, label: "Premium", description: "Unlock the full library", href: "/premium" },
-    { icon: Cpu, label: "xBloom Profiles", description: "Your smart brewer settings", href: "/dashboard/xbloom" },
-    { icon: Heart, label: "Saved Recipes", description: "Everything you've favorited", href: "/dashboard/favorites" },
+    { icon: Sparkles, label: d.aiCoachLabel, description: d.aiCoachDescription, href: "/coach" },
+    { icon: Clock, label: d.brewHistoryLabel, description: d.brewHistoryDescription, href: "/dashboard/brew-history" },
+    { icon: Users, label: d.communityLabel, description: d.communityDescription, href: "/community" },
+    { icon: Coffee, label: d.premiumLabel, description: d.premiumDescription, href: "/premium" },
+    { icon: Cpu, label: d.xbloomProfilesLabel, description: d.xbloomProfilesDescription, href: "/dashboard/xbloom" },
+    { icon: Heart, label: d.savedRecipesLabel, description: d.savedRecipesDescription, href: "/dashboard/favorites" },
   ];
 
   return (
     <SectionFrame id="dashboard-page" ariaLabelledBy="dashboard-page-heading" padding="compact">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <PageHeader
-          eyebrow="Your Account"
-          title={`Welcome Back, ${displayName}`}
-          description="Here's a snapshot of your BrewAtlas activity."
+          eyebrow={dictionary.profilePage.eyebrow}
+          title={translate(dictionary, "dashboard.welcomeBack", { name: displayName })}
+          description={d.snapshotDescription}
           centered={false}
         />
 
         <form action={signOutAction}>
           <button type="submit" className={`${buttons.secondary} h-10 min-w-0 px-6 text-xs`}>
-            Sign Out
+            {d.signOut}
           </button>
         </form>
       </div>
@@ -125,18 +156,18 @@ export default async function DashboardPage() {
           <div>
             <p className="font-medium text-stone-100">{displayName}</p>
             <p className="mt-0.5 text-sm text-stone-500">
-              {profile?.country || "Country not set"}
+              {profile?.country || d.countryNotSet}
               {profile?.bio ? ` · ${profile.bio}` : ""}
             </p>
           </div>
         </div>
         <Link href="/dashboard/profile" className={`${buttons.secondary} shrink-0`}>
-          Edit Profile
+          {d.editProfile}
         </Link>
       </div>
 
       <div className="mt-16">
-        <h2 className="text-xl font-semibold tracking-tight text-stone-50">Quick Links</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-stone-50">{d.quickLinksTitle}</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {quickLinks.map(({ icon: Icon, label, description, href }) => (
             <Link
@@ -158,28 +189,34 @@ export default async function DashboardPage() {
 
       <div className="mt-16">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold tracking-tight text-stone-50">My Recipes</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-stone-50">{dictionary.dashboard.myRecipes}</h2>
           <div className="flex items-center gap-5">
             {ownRecipes.length > 0 && (
               <Link href="/dashboard/recipes" className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline">
-                Manage all
+                {d.manageAll}
               </Link>
             )}
             <Link href="/dashboard/recipes/new" className={`${buttons.secondary} h-10 min-w-0 gap-2 px-5 text-xs`}>
               <Plus className="h-3.5 w-3.5" aria-hidden />
-              New Recipe
+              {d.newRecipeCta}
             </Link>
           </div>
         </div>
 
         {ownRecipes.length === 0 ? (
           <p className="mt-6 rounded-2xl border border-white/[0.09] bg-white/[0.03] px-6 py-8 text-sm text-stone-500">
-            You haven&apos;t created any recipes yet. Share your first brew with the community.
+            {d.noOwnRecipesYet}
           </p>
         ) : (
           <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
             {ownRecipes.slice(0, 3).map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} featured={false} href={`/recipes/${recipe.slug}`} />
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                featured={false}
+                href={`/recipes/${recipe.slug}`}
+                labels={recipeCardLabels(dictionary, recipe)}
+              />
             ))}
           </div>
         )}
@@ -187,26 +224,32 @@ export default async function DashboardPage() {
 
       <div className="mt-16">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold tracking-tight text-stone-50">Favorite Recipes</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-stone-50">{d.favoriteRecipesTitle}</h2>
           {favoriteRecipes.length > 0 && (
             <Link href="/recipes" className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline">
-              Browse more
+              {d.browseMore}
             </Link>
           )}
         </div>
 
         {favoriteRecipes.length === 0 ? (
           <p className="mt-6 rounded-2xl border border-white/[0.09] bg-white/[0.03] px-6 py-8 text-sm text-stone-500">
-            You haven&apos;t favorited any recipes yet. Browse the{" "}
+            {d.noFavoritesYetPrefix}{" "}
             <Link href="/recipes" className="text-amber-400/90 underline-offset-4 hover:underline">
-              recipe library
+              {d.recipeLibraryLink}
             </Link>{" "}
-            and tap the heart on any recipe to save it here.
+            {d.noFavoritesYetSuffix}
           </p>
         ) : (
           <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
             {favoriteRecipes.slice(0, 3).map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} featured={false} href={`/recipes/${recipe.slug}`} />
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                featured={false}
+                href={`/recipes/${recipe.slug}`}
+                labels={recipeCardLabels(dictionary, recipe)}
+              />
             ))}
           </div>
         )}
@@ -214,15 +257,16 @@ export default async function DashboardPage() {
 
       <div className="mt-16">
         <h2 className="text-xl font-semibold tracking-tight text-stone-50">
-          Continue Brewing
+          {d.continueBrewing}
         </h2>
         <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
-          {recentRecipes.map((recipe) => (
+          {recentRecipes.map(({ recipe, slug }) => (
             <RecipeCard
-              key={recipe.name}
+              key={slug}
               recipe={recipe}
               featured={false}
-              href={`/recipes/${getRecipeSlug(recipe)}`}
+              href={`/recipes/${slug}`}
+              labels={recipeCardLabels(dictionary, recipe)}
             />
           ))}
         </div>

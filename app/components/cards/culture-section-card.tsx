@@ -2,6 +2,8 @@ import Image from "next/image";
 import { BookOpen, Sparkles } from "lucide-react";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { cards } from "@/lib/constants/styles";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 import type { CultureSectionWithTopicCount } from "@/types/culture";
 import { CULTURE_IMAGE_PLACEHOLDER } from "@/types/culture";
 
@@ -10,7 +12,9 @@ type CultureSectionCardProps = {
 };
 
 /** Hub-page card for a culture section (e.g. "UAE Coffee Culture"), mirroring `OriginCard`'s layout. */
-export function CultureSectionCard({ section }: CultureSectionCardProps) {
+export async function CultureSectionCard({ section }: CultureSectionCardProps) {
+  const dictionary = await getDictionary(await getLocale());
+  const c = dictionary.culturePage;
   const image = section.heroImageUrl ?? CULTURE_IMAGE_PLACEHOLDER;
 
   return (
@@ -32,14 +36,14 @@ export function CultureSectionCard({ section }: CultureSectionCardProps) {
         <div className={cards.imageRadial} />
 
         {section.eyebrow && (
-          <div className="absolute left-4 top-4 rounded-full border border-amber-600/30 bg-[#0a0705]/60 px-2.5 py-0.5 text-[9px] font-medium uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
+          <div className="absolute start-4 top-4 rounded-full border border-amber-600/30 bg-[#0a0705]/60 px-2.5 py-0.5 text-[9px] font-medium uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
             {section.eyebrow}
           </div>
         )}
 
-        <div className="absolute bottom-4 left-4 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
+        <div className="absolute bottom-4 start-4 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
           <BookOpen className="h-3 w-3 text-amber-500/80" aria-hidden />
-          {section.topicCount} {section.topicCount === 1 ? "Article" : "Articles"}
+          {section.topicCount} {section.topicCount === 1 ? c.articleSingular : c.articlePlural}
         </div>
       </div>
 
@@ -54,7 +58,7 @@ export function CultureSectionCard({ section }: CultureSectionCardProps) {
         </div>
 
         <div className="mt-auto border-t border-white/[0.06] pt-4">
-          <GhostCtaLink href={`/culture/${section.slug}`}>Explore Section</GhostCtaLink>
+          <GhostCtaLink href={`/culture/${section.slug}`}>{c.exploreSection}</GhostCtaLink>
         </div>
       </div>
     </article>

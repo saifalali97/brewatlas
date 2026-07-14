@@ -6,22 +6,28 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { DeleteRecipeButton } from "@/app/components/recipes/delete-recipe-button";
 import { getUserRecipes } from "@/lib/data/db-recipes";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 import { buttons } from "@/lib/constants/styles";
 
-export const metadata: Metadata = {
-  title: "My Recipes",
-  description: "Manage the recipes you've created on BrewAtlas.",
-  robots: {
-    index: false,
-    follow: true,
-  },
-  alternates: {
-    canonical: "/dashboard/recipes",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/dashboard/recipes",
+    locale,
+    title: dictionary.metadata.dashboardRecipesTitle,
+    description: dictionary.metadata.dashboardRecipesDescription,
+    noIndex: true,
+  });
+}
 
 export default async function DashboardRecipesPage() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const r = dictionary.dashboardRecipesPage;
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
 
@@ -34,25 +40,18 @@ export default async function DashboardRecipesPage() {
   return (
     <SectionFrame id="dashboard-recipes-page" ariaLabelledBy="dashboard-recipes-page-heading" padding="compact">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-        <PageHeader
-          eyebrow="Manage"
-          title="My Recipes"
-          description="Create, edit, and publish the recipes you've contributed to BrewAtlas."
-          centered={false}
-        />
+        <PageHeader eyebrow={r.eyebrow} title={r.title} description={r.description} centered={false} />
 
         <Link href="/dashboard/recipes/new" className={`${buttons.primary} shrink-0 gap-2`}>
           <Plus className="h-4 w-4" aria-hidden />
-          New Recipe
+          {r.newRecipeCta}
         </Link>
       </div>
 
       {recipes.length === 0 ? (
         <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
-          <p className="text-lg font-medium text-stone-100">No recipes yet</p>
-          <p className="mt-2 text-sm text-stone-500">
-            Create your first recipe to share it with the BrewAtlas community.
-          </p>
+          <p className="text-lg font-medium text-stone-100">{r.noRecipesYetTitle}</p>
+          <p className="mt-2 text-sm text-stone-500">{r.noRecipesYetDescription}</p>
         </div>
       ) : (
         <div className="overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
@@ -69,7 +68,7 @@ export default async function DashboardRecipesPage() {
                           : "border-stone-600/35 bg-stone-800/40 text-stone-400"
                       }`}
                     >
-                      {recipe.published ? "Published" : "Draft"}
+                      {recipe.published ? r.publishedBadge : r.draftBadge}
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-stone-500">
@@ -82,14 +81,14 @@ export default async function DashboardRecipesPage() {
                       href={`/recipes/${recipe.slug}`}
                       className="text-xs font-medium text-stone-400 underline-offset-4 hover:text-amber-400/90 hover:underline"
                     >
-                      View
+                      {r.viewLink}
                     </Link>
                   )}
                   <Link
                     href={`/dashboard/recipes/${recipe.id}/edit`}
                     className="text-xs font-medium text-amber-400/90 underline-offset-4 hover:underline"
                   >
-                    Edit
+                    {r.editLink}
                   </Link>
                   <DeleteRecipeButton recipeId={recipe.id!} recipeTitle={recipe.name} />
                 </div>

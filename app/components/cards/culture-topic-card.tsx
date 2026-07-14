@@ -2,6 +2,8 @@ import Image from "next/image";
 import { BookOpen } from "lucide-react";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { cards } from "@/lib/constants/styles";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 import type { CultureTopicRow } from "@/types/culture";
 import { CULTURE_IMAGE_PLACEHOLDER } from "@/types/culture";
 
@@ -11,7 +13,8 @@ type CultureTopicCardProps = {
 };
 
 /** Section-page card for a single culture article (e.g. "The Dallah"), mirroring `OriginCard`'s layout. */
-export function CultureTopicCard({ topic, sectionSlug }: CultureTopicCardProps) {
+export async function CultureTopicCard({ topic, sectionSlug }: CultureTopicCardProps) {
+  const dictionary = await getDictionary(await getLocale());
   const image = topic.heroImageUrl ?? CULTURE_IMAGE_PLACEHOLDER;
 
   return (
@@ -44,7 +47,7 @@ export function CultureTopicCard({ topic, sectionSlug }: CultureTopicCardProps) 
         </div>
 
         <div className="mt-auto border-t border-white/[0.06] pt-4">
-          <GhostCtaLink href={`/culture/${sectionSlug}/${topic.slug}`}>Read Article</GhostCtaLink>
+          <GhostCtaLink href={`/culture/${sectionSlug}/${topic.slug}`}>{dictionary.culturePage.readArticle}</GhostCtaLink>
         </div>
       </div>
     </article>

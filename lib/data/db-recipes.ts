@@ -1,5 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import type { Dictionary } from "@/lib/i18n/types";
 import { slugify } from "@/lib/utils/slugify";
 import { toSafeArray } from "@/lib/utils/arrays";
 import {
@@ -41,8 +44,8 @@ function computeRatio(row: DbRecipeRow): string {
   return "—";
 }
 
-/** Maps a raw DB `recipes` row (with lookup joins) into the shape shared with static catalog recipes. */
-export function mapDbRecipeToListItem(row: DbRecipeRow): RecipeListItem {
+/** Maps a raw DB `recipes` row (with lookup joins) into the shape shared with static catalog recipes. `dictionary` supplies locale-aware fallback copy for fields the row doesn't have (e.g. no linked origin/brewing method). */
+export function mapDbRecipeToListItem(row: DbRecipeRow, dictionary: Dictionary): RecipeListItem {
   const tags = toSafeArray(row.recipe_tags)
     .map((rt) => rt.tags?.name)
     .filter((name): name is string => Boolean(name));
@@ -50,16 +53,16 @@ export function mapDbRecipeToListItem(row: DbRecipeRow): RecipeListItem {
 
   return {
     name: row.title,
-    country: row.coffees?.origins?.country ?? "—",
+    country: row.coffees?.origins?.country ?? dictionary.recipeDetail.dashValue,
     origin: row.coffees?.origins
       ? `${row.coffees.origins.region}, ${row.coffees.origins.country}`
-      : "Origin not specified",
-    brewMethod: row.brewing_methods?.name ?? "Custom",
-    roastLevel: row.coffees?.roast_level ?? "Community Roast",
+      : dictionary.recipesPage.originNotSpecified,
+    brewMethod: row.brewing_methods?.name ?? dictionary.recipeDetail.customValue,
+    roastLevel: row.coffees?.roast_level ?? dictionary.recipesPage.communityRoast,
     difficulty: row.difficulty ?? "Intermediate",
     ratio: computeRatio(row),
-    time: row.total_brew_time ?? row.estimated_brew_time ?? "—",
-    notes: row.tasting_notes ?? row.description ?? "No tasting notes yet.",
+    time: row.total_brew_time ?? row.estimated_brew_time ?? dictionary.recipeDetail.dashValue,
+    notes: row.tasting_notes ?? row.description ?? dictionary.recipeDetail.noTastingNotes,
     image: row.cover_image_url ?? RECIPE_IMAGE_PLACEHOLDER,
     premium: row.premium_only,
     featured: row.featured,
@@ -173,7 +176,8 @@ export async function getPublishedDbRecipes(supabase: SupabaseClient): Promise<R
     return [];
   }
 
-  return (data as unknown as DbRecipeRow[]).map(mapDbRecipeToListItem);
+  const dictionary = await getDictionary(await getLocale());
+  return (data as unknown as DbRecipeRow[]).map((row) => mapDbRecipeToListItem(row, dictionary));
 }
 
 /** All recipes (draft + published) authored by a given user, for their "My Recipes" dashboard. */
@@ -192,7 +196,8 @@ export async function getUserRecipes(
     return [];
   }
 
-  return (data as unknown as DbRecipeRow[]).map(mapDbRecipeToListItem);
+  const dictionary = await getDictionary(await getLocale());
+  return (data as unknown as DbRecipeRow[]).map((row) => mapDbRecipeToListItem(row, dictionary));
 }
 
 /** Looks up a single DB recipe by slug, fully expanded. RLS decides visibility. */
@@ -222,7 +227,8 @@ export async function getDbRecipeBySlug(
     .maybeSingle();
 
   if (error || !data) return null;
-  return mapDbRecipeToListItem(data as unknown as DbRecipeRow);
+  const dictionary = await getDictionary(await getLocale());
+  return mapDbRecipeToListItem(data as unknown as DbRecipeRow, dictionary);
 }
 
 /** Raw, fully expanded recipe by id, used by the edit form. */
@@ -254,10 +260,11 @@ export async function getUserFavoriteRecipes(
     return [];
   }
 
+  const dictionary = await getDictionary(await getLocale());
   return (data as unknown as FavoriteJoinRow[])
     .map((row) => row.recipes)
     .filter((row): row is DbRecipeRow => row !== null)
-    .map(mapDbRecipeToListItem);
+    .map((row) => mapDbRecipeToListItem(row, dictionary));
 }
 
 /** Set of recipe ids a user has favorited, for marking hearts as filled in listings. */

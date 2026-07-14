@@ -4,23 +4,29 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { ProfileForm } from "@/app/components/profile/profile-form";
 import { getBrewingMethodOptions, getDeviceOptions } from "@/lib/data/db-recipes";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/profile";
 import type { ProfileRow } from "@/types/recipe";
 
-export const metadata: Metadata = {
-  title: "Edit Profile",
-  description: "Update your BrewAtlas profile: display name, avatar, country, and brewing preferences.",
-  robots: {
-    index: false,
-    follow: true,
-  },
-  alternates: {
-    canonical: "/dashboard/profile",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/dashboard/profile",
+    locale,
+    title: dictionary.metadata.profileTitle,
+    description: dictionary.metadata.profileDescription,
+    noIndex: true,
+  });
+}
 
 export default async function ProfilePage() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const p = dictionary.profilePage;
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 
@@ -44,12 +50,7 @@ export default async function ProfilePage() {
 
   return (
     <SectionFrame id="profile-page" ariaLabelledBy="profile-page-heading" padding="compact">
-      <PageHeader
-        eyebrow="Your Account"
-        title="Edit Profile"
-        description="Personalize your BrewAtlas presence: your name, avatar, and brewing preferences."
-        centered={false}
-      />
+      <PageHeader eyebrow={p.eyebrow} title={p.title} description={p.description} centered={false} />
 
       <div className="max-w-2xl rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
         <ProfileForm

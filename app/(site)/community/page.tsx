@@ -6,18 +6,27 @@ import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons } from "@/lib/constants/styles";
 import { getHighestRatedRecipesLeaderboard, getTopBrewersLeaderboard } from "@/lib/data/community";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { translate } from "@/lib/i18n/format";
+import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = {
-  title: "Community",
-  description:
-    "See the top brewers, highest-rated recipes, and most active members of the BrewAtlas coffee community.",
-  alternates: {
-    canonical: "/community",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/community",
+    locale,
+    title: dictionary.metadata.communityTitle,
+    description: dictionary.metadata.communityDescription,
+  });
+}
 
 export default async function CommunityPage() {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const p = dictionary.communityPage;
   const supabase = await createClient();
   const [topBrewers, topRecipes] = await Promise.all([
     getTopBrewersLeaderboard(supabase, 8),
@@ -26,23 +35,19 @@ export default async function CommunityPage() {
 
   return (
     <SectionFrame id="community" ariaLabelledBy="community-heading" padding="compact">
-      <PageHeader
-        eyebrow="Coffee Community"
-        title="Community"
-        description="Brew Scores, badges, and leaderboards built from real activity across BrewAtlas — see who's brewing the most, rating the highest, and helping the community grow."
-      />
+      <PageHeader eyebrow={p.eyebrow} title={dictionary.community.title} description={p.description} />
 
       <div className="grid gap-10 lg:grid-cols-2">
         <div>
           <div className="flex items-center gap-2.5">
             <Trophy className="h-4 w-4 text-amber-500/85" aria-hidden />
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Top Brewers</h2>
+            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">
+              {dictionary.community.topBrewers}
+            </h2>
           </div>
           <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
             {topBrewers.length === 0 ? (
-              <div className="px-6 py-12 text-center text-sm text-stone-500">
-                No brewers ranked yet. Log your first brew to appear on this leaderboard.
-              </div>
+              <div className="px-6 py-12 text-center text-sm text-stone-500">{p.noBrewersRanked}</div>
             ) : (
               <ul className="divide-y divide-white/[0.07]">
                 {topBrewers.map((entry) => (
@@ -52,7 +57,7 @@ export default async function CommunityPage() {
                         {entry.rank}
                       </span>
                       <div>
-                        <p className="font-medium text-stone-100">{entry.profile.displayName ?? "Anonymous Brewer"}</p>
+                        <p className="font-medium text-stone-100">{entry.profile.displayName ?? p.anonymousBrewer}</p>
                         {entry.profile.country && <p className="text-xs text-stone-500">{entry.profile.country}</p>}
                       </div>
                     </div>
@@ -70,27 +75,29 @@ export default async function CommunityPage() {
         <div>
           <div className="flex items-center gap-2.5">
             <TrendingUp className="h-4 w-4 text-amber-500/85" aria-hidden />
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Highest Rated Recipes</h2>
+            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">
+              {p.highestRatedRecipesHeading}
+            </h2>
           </div>
           <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
             {topRecipes.length === 0 ? (
-              <div className="px-6 py-12 text-center text-sm text-stone-500">
-                No recipe ratings yet. Be the first to review a recipe.
-              </div>
+              <div className="px-6 py-12 text-center text-sm text-stone-500">{p.noRecipeRatings}</div>
             ) : (
               <ul className="divide-y divide-white/[0.07]">
                 {topRecipes.map((entry) => (
                   <li key={entry.recipeId} className="flex items-center justify-between gap-4 px-6 py-4">
                     <div>
-                      <span className="mr-3 text-xs font-semibold text-stone-500">#{entry.rank}</span>
+                      <span className="me-3 text-xs font-semibold text-stone-500">#{entry.rank}</span>
                       <Link
                         href={`/recipes/${entry.slug}`}
                         className="font-medium text-stone-100 underline-offset-4 hover:text-amber-400/90 hover:underline"
                       >
                         {entry.title}
                       </Link>
-                      <p className="mt-1 ml-7 text-xs text-stone-500">
-                        {entry.reviewCount} review{entry.reviewCount === 1 ? "" : "s"}
+                      <p className="mt-1 ms-7 text-xs text-stone-500">
+                        {entry.reviewCount === 1
+                          ? translate(dictionary, "communityPage.reviewsSingular", { count: entry.reviewCount })
+                          : translate(dictionary, "communityPage.reviewsPlural", { count: entry.reviewCount })}
                       </p>
                     </div>
                     <div className="flex items-center gap-1.5 text-sm font-semibold text-amber-400/90">
@@ -107,10 +114,10 @@ export default async function CommunityPage() {
 
       <div className="mt-14 flex flex-col gap-3 border-t border-white/[0.06] pt-10 sm:flex-row sm:items-center">
         <RippleLink href="/signup" className={`${buttons.primary} w-full sm:w-auto`}>
-          Join the Community
+          {p.joinCommunity}
         </RippleLink>
         <RippleLink href="/recipes" className={`${buttons.secondary} w-full sm:w-auto`}>
-          Browse Recipes
+          {dictionary.homeFooter.browseRecipes}
         </RippleLink>
       </div>
     </SectionFrame>

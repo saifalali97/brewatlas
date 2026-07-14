@@ -4,22 +4,32 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons } from "@/lib/constants/styles";
+import en from "@/lib/i18n/dictionaries/en";
 
 /**
  * Precached by `public/sw.js` and served whenever a navigation request
  * fails with no cached page available (PWA requirement 5: offline
  * fallback). Kept out of the sitemap and disallowed in `robots.ts`
  * since it's a utility page, not indexable content.
+ *
+ * This route stays `force-static` (precached at build time by the
+ * service worker, with no per-request cookie access), so it can't call
+ * `getLocale()`/`getDictionary()` like other pages -- it always renders
+ * the English copy, matching the app's default locale. Once the user
+ * is back online, every other page still renders in their selected
+ * language via the cookie-based locale system.
  */
 export const dynamic = "force-static";
 
 export const metadata: Metadata = {
-  title: "You're Offline",
-  description: "BrewAtlas can't reach the network right now.",
+  title: en.offlinePage.metaTitle,
+  description: en.offlinePage.metaDescription,
   robots: { index: false, follow: false },
 };
 
 export default function OfflinePage() {
+  const o = en.offlinePage;
+
   return (
     <SectionFrame id="offline-page" ariaLabelledBy="offline-page-heading" padding="compact">
       <div className="mx-auto flex max-w-lg flex-col items-center text-center">
@@ -28,15 +38,11 @@ export default function OfflinePage() {
         </div>
 
         <div className="mt-6">
-          <PageHeader
-            eyebrow="No Connection"
-            title="You're Offline"
-            description="We couldn't reach BrewAtlas. Check your connection and try again — pages you've already visited are still available offline."
-          />
+          <PageHeader eyebrow={o.eyebrow} title={o.title} description={o.description} />
         </div>
 
         <RippleLink href="/" className={`${buttons.primary} w-full sm:w-auto`}>
-          Try Again
+          {o.tryAgainCta}
         </RippleLink>
       </div>
     </SectionFrame>

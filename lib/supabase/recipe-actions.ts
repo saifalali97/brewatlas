@@ -5,6 +5,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createCoffee, generateUniqueRecipeSlug } from "@/lib/data/db-recipes";
 import { evaluateAndAwardBadges, recordActivity, refreshCommunityStats } from "@/lib/data/community";
+import { translate } from "@/lib/i18n/format";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
+import type { Dictionary } from "@/lib/i18n/types";
 import { createClient } from "@/lib/supabase/server";
 
 export type RecipeActionState = { error?: string; success?: string } | undefined;
@@ -69,12 +73,13 @@ async function uploadRecipeImage(
   supabase: SupabaseClient,
   userId: string,
   file: File,
+  dictionary: Dictionary,
 ): Promise<{ url: string } | { error: string }> {
   if (file.size > MAX_IMAGE_BYTES) {
-    return { error: "Each image must be smaller than 6MB." };
+    return { error: translate(dictionary, "recipeActionMessages.imageTooLargeTemplate", { size: "6MB" }) };
   }
   if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-    return { error: "Images must be PNG, JPEG, WebP, or GIF." };
+    return { error: dictionary.recipeActionMessages.imagesMustBeFormat };
   }
 
   const extension = file.type.split("/")[1] ?? "jpg";
@@ -86,7 +91,7 @@ async function uploadRecipeImage(
     .upload(path, file, { contentType: file.type });
 
   if (error) {
-    return { error: `Failed to upload image: ${error.message}` };
+    return { error: translate(dictionary, "recipeActionMessages.uploadImageFailedTemplate", { message: error.message }) };
   }
 
   const { data } = supabase.storage.from("recipe-images").getPublicUrl(path);
@@ -132,23 +137,33 @@ type RecipeFormValues = {
 };
 
 /** Shared required-field + range validation for both create and edit recipe forms. */
-function parseRecipeForm(formData: FormData): { values: RecipeFormValues } | { error: string } {
+function parseRecipeForm(formData: FormData, dictionary: Dictionary): { values: RecipeFormValues } | { error: string } {
   const title = optionalString(formData, "title");
   if (!title) {
-    return { error: "Recipe title is required." };
+    return { error: dictionary.recipeActionMessages.titleRequired };
   }
 
   const brewingMethodId = optionalString(formData, "brewingMethodId");
   if (!brewingMethodId) {
-    return { error: "Choose a brewing method." };
+    return { error: dictionary.recipeActionMessages.chooseBrewingMethod };
   }
 
+  const ratingFieldLabels: Record<string, string> = {
+    sweetness: dictionary.recipeForm.sweetnessLabel,
+    acidity: dictionary.recipeForm.acidityLabel,
+    body: dictionary.recipeForm.bodyLabel,
+    bitterness: dictionary.recipeForm.bitternessLabel,
+  };
   const ratingFields = { sweetness: "sweetness", acidity: "acidity", body: "body", bitterness: "bitterness" } as const;
   const ratings: Record<string, number | null> = {};
   for (const [key, formKey] of Object.entries(ratingFields)) {
     const parsed = optionalRating(formData, formKey);
     if (parsed === "invalid") {
-      return { error: `${key.charAt(0).toUpperCase()}${key.slice(1)} must be a whole number from 1 to 10.` };
+      return {
+        error: translate(dictionary, "recipeActionMessages.ratingRangeTemplate", {
+          field: ratingFieldLabels[key].replace(/\s*\(1-10\)$/, ""),
+        }),
+      };
     }
     ratings[key] = parsed;
   }
@@ -244,6 +259,7 @@ async function appendGalleryImages(
   recipeId: string,
   formData: FormData,
   startPosition: number,
+  dictionary: Dictionary,
 ): Promise<string | null> {
   const files = formData.getAll("galleryImages").filter((value): value is File => value instanceof File && value.size > 0);
   if (files.length === 0) return null;
@@ -252,7 +268,7 @@ async function appendGalleryImages(
   let position = startPosition;
 
   for (const file of files) {
-    const uploaded = await uploadRecipeImage(supabase, userId, file);
+    const uploaded = await uploadRecipeImage(supabase, userId, file, dictionary);
     if ("error" in uploaded) return uploaded.error;
     rows.push({ recipe_id: recipeId, url: uploaded.url, position });
     position += 1;
@@ -307,13 +323,14 @@ export async function createRecipeAction(
   formData: FormData,
 ): Promise<RecipeActionState> {
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
     redirect("/login?redirectTo=/dashboard/recipes/new");
   }
 
-  const parsed = parseRecipeForm(formData);
+  const parsed = parseRecipeForm(formData, dictionary);
   if ("error" in parsed) {
     return { error: parsed.error };
   }
@@ -324,7 +341,7 @@ export async function createRecipeAction(
   const coverImageFile = formData.get("coverImage");
   let coverImageUrl: string | null = null;
   if (coverImageFile instanceof File && coverImageFile.size > 0) {
-    const uploaded = await uploadRecipeImage(supabase, authData.user.id, coverImageFile);
+    const uploaded = await uploadRecipeImage(supabase, authData.user.id, coverImageFile, dictionary);
     if ("error" in uploaded) return { error: uploaded.error };
     coverImageUrl = uploaded.url;
   }
@@ -341,14 +358,14 @@ export async function createRecipeAction(
     .single();
 
   if (error || !inserted) {
-    return { error: error?.message ?? "Failed to create recipe." };
+    return { error: error?.message ?? dictionary.recipeActionMessages.failedToCreateRecipe };
   }
 
   const recipeId = inserted.id as string;
 
   await replacePours(supabase, recipeId, parsePours(formData));
   await replaceTags(supabase, recipeId, parseTagIds(formData));
-  const galleryError = await appendGalleryImages(supabase, authData.user.id, recipeId, formData, 0);
+  const galleryError = await appendGalleryImages(supabase, authData.user.id, recipeId, formData, 0, dictionary);
   if (galleryError) return { error: galleryError };
 
   // Community system: publishing a recipe can qualify the author for the
@@ -375,6 +392,7 @@ export async function updateRecipeAction(
   formData: FormData,
 ): Promise<RecipeActionState> {
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
@@ -383,7 +401,7 @@ export async function updateRecipeAction(
 
   const recipeId = optionalString(formData, "recipeId");
   if (!recipeId) {
-    return { error: "Missing recipe id." };
+    return { error: dictionary.recipeActionMessages.missingRecipeId };
   }
 
   const { data: existing, error: fetchError } = await supabase
@@ -393,17 +411,17 @@ export async function updateRecipeAction(
     .maybeSingle();
 
   if (fetchError || !existing) {
-    return { error: "Recipe not found." };
+    return { error: dictionary.recipeActionMessages.recipeNotFound };
   }
 
   // RLS already prevents the update below from touching another author's
   // recipe, but checking here first gives a clear, friendly error message
   // instead of a silent no-op.
   if (existing.author_id !== authData.user.id) {
-    return { error: "You can only edit your own recipes." };
+    return { error: dictionary.recipeActionMessages.notYourRecipe };
   }
 
-  const parsed = parseRecipeForm(formData);
+  const parsed = parseRecipeForm(formData, dictionary);
   if ("error" in parsed) {
     return { error: parsed.error };
   }
@@ -418,7 +436,7 @@ export async function updateRecipeAction(
   let coverImageUrl = existing.cover_image_url as string | null;
   const coverImageFile = formData.get("coverImage");
   if (coverImageFile instanceof File && coverImageFile.size > 0) {
-    const uploaded = await uploadRecipeImage(supabase, authData.user.id, coverImageFile);
+    const uploaded = await uploadRecipeImage(supabase, authData.user.id, coverImageFile, dictionary);
     if ("error" in uploaded) return { error: uploaded.error };
     coverImageUrl = uploaded.url;
   }
@@ -439,7 +457,7 @@ export async function updateRecipeAction(
     .eq("author_id", authData.user.id);
 
   if (error) {
-    return { error: error.message };
+    return { error: error.message ?? dictionary.recipeActionMessages.failedToUpdateRecipe };
   }
 
   await replacePours(supabase, recipeId, parsePours(formData));
@@ -450,6 +468,7 @@ export async function updateRecipeAction(
     recipeId,
     formData,
     existingImageCount ?? 0,
+    dictionary,
   );
   if (galleryError) return { error: galleryError };
 

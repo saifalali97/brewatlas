@@ -3,6 +3,8 @@
 import { useActionState, useState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { buttons } from "@/lib/constants/styles";
+import { translate } from "@/lib/i18n/format";
+import { useTranslations } from "@/lib/i18n/translation-context";
 import { createRecipeAction, updateRecipeAction, type RecipeActionState } from "@/lib/supabase/recipe-actions";
 import type { LookupOption, PourRow, RecipeFullDetail, RecipeImageRow } from "@/types/recipe";
 
@@ -11,7 +13,6 @@ const inputClass =
 
 const selectClass = `${inputClass} appearance-none`;
 const labelClass = "text-sm font-medium text-stone-300";
-const optionalLabel = <span className="ml-1 text-xs text-stone-500">(optional)</span>;
 const checkboxRowClass = "flex items-center gap-2.5 text-sm text-stone-300";
 const checkboxClass = "h-4 w-4 rounded border-white/[0.2] bg-white/[0.03] text-amber-500 focus:ring-amber-500/40";
 
@@ -55,6 +56,8 @@ export function RecipeForm({
   coffees,
   tags,
 }: RecipeFormProps) {
+  const { t, dictionary } = useTranslations();
+  const optionalLabel = <span className="ml-1 text-xs text-stone-500">{t("recipeForm.optionalTag")}</span>;
   const action = mode === "create" ? createRecipeAction : updateRecipeAction;
   const [state, formAction, pending] = useActionState<RecipeActionState, FormData>(action, undefined);
 
@@ -74,11 +77,11 @@ export function RecipeForm({
       {recipeId && <input type="hidden" name="recipeId" value={recipeId} />}
 
       {/* GENERAL */}
-      <SectionHeading title="General" />
+      <SectionHeading title={t("recipeForm.sectionGeneral")} />
 
       <div>
         <label htmlFor="title" className={labelClass}>
-          Recipe title
+          {t("recipeForm.recipeTitleLabel")}
         </label>
         <input
           id="title"
@@ -87,13 +90,13 @@ export function RecipeForm({
           required
           defaultValue={initialValues?.title ?? ""}
           className={inputClass}
-          placeholder="Ethiopian Yirgacheffe Pour Over"
+          placeholder={t("recipeForm.recipeTitlePlaceholder")}
         />
       </div>
 
       <div>
         <label htmlFor="description" className={labelClass}>
-          Description
+          {t("recipeForm.descriptionLabel")}
           {optionalLabel}
         </label>
         <textarea
@@ -102,25 +105,25 @@ export function RecipeForm({
           rows={2}
           defaultValue={initialValues?.description ?? ""}
           className={inputClass}
-          placeholder="A bright, jasmine-forward pour over highlighting the coffee's natural terroir."
+          placeholder={t("recipeForm.descriptionPlaceholder")}
         />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-3">
         <div>
           <label htmlFor="difficulty" className={labelClass}>
-            Difficulty
+            {t("recipeForm.difficultyLabel")}
           </label>
           <select id="difficulty" name="difficulty" defaultValue={initialValues?.difficulty ?? ""} className={selectClass}>
-            <option value="">Not set</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
+            <option value="">{t("recipeForm.notSetOption")}</option>
+            <option value="Beginner">{t("recipeForm.beginnerOption")}</option>
+            <option value="Intermediate">{t("recipeForm.intermediateOption")}</option>
+            <option value="Advanced">{t("recipeForm.advancedOption")}</option>
           </select>
         </div>
         <div>
           <label htmlFor="estimatedBrewTime" className={labelClass}>
-            Estimated brew time
+            {t("recipeForm.estimatedBrewTimeLabel")}
           </label>
           <input
             id="estimatedBrewTime"
@@ -133,7 +136,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="videoUrl" className={labelClass}>
-            Video URL
+            {t("recipeForm.videoUrlLabel")}
             {optionalLabel}
           </label>
           <input
@@ -142,22 +145,22 @@ export function RecipeForm({
             type="url"
             defaultValue={initialValues?.videoUrl ?? ""}
             className={inputClass}
-            placeholder="https://youtube.com/..."
+            placeholder={t("recipeForm.videoUrlPlaceholder")}
           />
         </div>
       </div>
 
       {/* FILES */}
-      <SectionHeading title="Photos" description="Upload a cover photo and any additional shots of the brew." />
+      <SectionHeading title={t("recipeForm.sectionPhotos")} description={t("recipeForm.sectionPhotosDescription")} />
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="coverImage" className={labelClass}>
-            Cover photo
+            {t("recipeForm.coverPhotoLabel")}
             {optionalLabel}
           </label>
           {initialValues?.coverImageUrl && (
-            <p className="mt-2 text-xs text-stone-500">Current cover is set. Choose a new file to replace it.</p>
+            <p className="mt-2 text-xs text-stone-500">{t("recipeForm.coverPhotoCurrentHint")}</p>
           )}
           <input
             id="coverImage"
@@ -169,11 +172,13 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="galleryImages" className={labelClass}>
-            Additional photos
+            {t("recipeForm.additionalPhotosLabel")}
             {optionalLabel}
           </label>
           {existingImages.length > 0 && (
-            <p className="mt-2 text-xs text-stone-500">{existingImages.length} photo(s) already attached. New uploads will be added alongside them.</p>
+            <p className="mt-2 text-xs text-stone-500">
+              {translate(dictionary, "recipeForm.additionalPhotosAttachedTemplate", { count: existingImages.length })}
+            </p>
           )}
           <input
             id="galleryImages"
@@ -187,28 +192,26 @@ export function RecipeForm({
       </div>
 
       {/* COFFEE */}
-      <SectionHeading title="Coffee" description="Pick a coffee you've already logged, or describe a new one below." />
+      <SectionHeading title={t("recipeForm.sectionCoffee")} description={t("recipeForm.sectionCoffeeDescription")} />
 
       <div>
         <label htmlFor="coffeeId" className={labelClass}>
-          Use an existing coffee
+          {t("recipeForm.useExistingCoffeeLabel")}
         </label>
         <select id="coffeeId" name="coffeeId" defaultValue={initialValues?.coffeeId ?? ""} className={selectClass}>
-          <option value="">None selected</option>
+          <option value="">{t("recipeForm.noneSelectedOption")}</option>
           {coffees.map((coffee) => (
             <option key={coffee.id} value={coffee.id}>
               {coffee.name}
             </option>
           ))}
         </select>
-        <p className="mt-1.5 text-xs text-stone-500">
-          Leave the fields below blank to reuse this selection, or fill in &quot;New coffee name&quot; to log a new one.
-        </p>
+        <p className="mt-1.5 text-xs text-stone-500">{t("recipeForm.useExistingCoffeeHint")}</p>
       </div>
 
       <div>
         <label htmlFor="newCoffeeName" className={labelClass}>
-          New coffee name
+          {t("recipeForm.newCoffeeNameLabel")}
           {optionalLabel}
         </label>
         <input
@@ -216,18 +219,18 @@ export function RecipeForm({
           name="newCoffeeName"
           type="text"
           className={inputClass}
-          placeholder="Gedeo Zone Natural Lot 4"
+          placeholder={t("recipeForm.newCoffeeNamePlaceholder")}
         />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="roasterId" className={labelClass}>
-            Roaster
+            {t("recipeForm.roasterLabel")}
             {optionalLabel}
           </label>
           <select id="roasterId" name="roasterId" defaultValue={initialValues?.roasterId ?? ""} className={selectClass}>
-            <option value="">No roaster specified</option>
+            <option value="">{t("recipeForm.noRoasterOption")}</option>
             {roasters.map((roaster) => (
               <option key={roaster.id} value={roaster.id}>
                 {roaster.name}
@@ -237,11 +240,11 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="originId" className={labelClass}>
-            Origin
+            {t("recipeForm.originLabel")}
             {optionalLabel}
           </label>
           <select id="originId" name="originId" defaultValue={initialValues?.originId ?? ""} className={selectClass}>
-            <option value="">No origin specified</option>
+            <option value="">{t("recipeForm.noOriginOption")}</option>
             {origins.map((origin) => (
               <option key={origin.id} value={origin.id}>
                 {origin.name}
@@ -254,14 +257,14 @@ export function RecipeForm({
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="farm" className={labelClass}>
-            Farm
+            {t("recipeForm.farmLabel")}
             {optionalLabel}
           </label>
           <input id="farm" name="farm" type="text" defaultValue={initialValues?.farm ?? ""} className={inputClass} />
         </div>
         <div>
           <label htmlFor="producer" className={labelClass}>
-            Producer
+            {t("recipeForm.producerLabel")}
             {optionalLabel}
           </label>
           <input
@@ -274,7 +277,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="variety" className={labelClass}>
-            Variety
+            {t("recipeForm.varietyLabel")}
             {optionalLabel}
           </label>
           <input
@@ -283,12 +286,12 @@ export function RecipeForm({
             type="text"
             defaultValue={initialValues?.variety ?? ""}
             className={inputClass}
-            placeholder="Heirloom, Bourbon, Gesha…"
+            placeholder={t("recipeForm.varietyPlaceholder")}
           />
         </div>
         <div>
           <label htmlFor="process" className={labelClass}>
-            Process
+            {t("recipeForm.processLabel")}
             {optionalLabel}
           </label>
           <input
@@ -297,12 +300,12 @@ export function RecipeForm({
             type="text"
             defaultValue={initialValues?.process ?? ""}
             className={inputClass}
-            placeholder="Washed, Natural, Honey…"
+            placeholder={t("recipeForm.processPlaceholder")}
           />
         </div>
         <div>
           <label htmlFor="altitude" className={labelClass}>
-            Altitude
+            {t("recipeForm.altitudeLabel")}
             {optionalLabel}
           </label>
           <input
@@ -311,12 +314,12 @@ export function RecipeForm({
             type="text"
             defaultValue={initialValues?.altitude ?? ""}
             className={inputClass}
-            placeholder="1,900m"
+            placeholder={t("recipeForm.altitudePlaceholder")}
           />
         </div>
         <div>
           <label htmlFor="roastLevel" className={labelClass}>
-            Roast level
+            {t("recipeForm.roastLevelLabel")}
             {optionalLabel}
           </label>
           <input
@@ -325,14 +328,14 @@ export function RecipeForm({
             type="text"
             defaultValue={initialValues?.roastLevel ?? ""}
             className={inputClass}
-            placeholder="Light Roast"
+            placeholder={t("recipeForm.roastLevelPlaceholder")}
           />
         </div>
       </div>
 
       <div>
         <label htmlFor="roastDate" className={labelClass}>
-          Roast date
+          {t("recipeForm.roastDateLabel")}
           {optionalLabel}
         </label>
         <input
@@ -345,12 +348,12 @@ export function RecipeForm({
       </div>
 
       {/* BREWING */}
-      <SectionHeading title="Brewing" />
+      <SectionHeading title={t("recipeForm.sectionBrewing")} />
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="brewingMethodId" className={labelClass}>
-            Brewing method
+            {t("recipeForm.brewingMethodLabel")}
           </label>
           <select
             id="brewingMethodId"
@@ -360,7 +363,7 @@ export function RecipeForm({
             className={selectClass}
           >
             <option value="" disabled>
-              Select a method
+              {t("recipeForm.selectMethodOption")}
             </option>
             {brewingMethods.map((method) => (
               <option key={method.id} value={method.id}>
@@ -371,11 +374,11 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="deviceId" className={labelClass}>
-            Brewer device
+            {t("recipeForm.brewerDeviceLabel")}
             {optionalLabel}
           </label>
           <select id="deviceId" name="deviceId" defaultValue={initialValues?.deviceId ?? ""} className={selectClass}>
-            <option value="">No device specified</option>
+            <option value="">{t("recipeForm.noDeviceOption")}</option>
             {devices.map((device) => (
               <option key={device.id} value={device.id}>
                 {device.name}
@@ -385,11 +388,11 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="grinderId" className={labelClass}>
-            Grinder
+            {t("recipeForm.grinderLabel")}
             {optionalLabel}
           </label>
           <select id="grinderId" name="grinderId" defaultValue={initialValues?.grinderId ?? ""} className={selectClass}>
-            <option value="">No grinder specified</option>
+            <option value="">{t("recipeForm.noGrinderOption")}</option>
             {grinders.map((grinder) => (
               <option key={grinder.id} value={grinder.id}>
                 {grinder.name}
@@ -399,7 +402,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="filterTypeId" className={labelClass}>
-            Filter type
+            {t("recipeForm.filterTypeLabel")}
             {optionalLabel}
           </label>
           <select
@@ -408,7 +411,7 @@ export function RecipeForm({
             defaultValue={initialValues?.filterTypeId ?? ""}
             className={selectClass}
           >
-            <option value="">No filter specified</option>
+            <option value="">{t("recipeForm.noFilterOption")}</option>
             {filterTypes.map((filterType) => (
               <option key={filterType.id} value={filterType.id}>
                 {filterType.name}
@@ -418,7 +421,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="waterProfileId" className={labelClass}>
-            Water recipe
+            {t("recipeForm.waterRecipeLabel")}
             {optionalLabel}
           </label>
           <select
@@ -427,7 +430,7 @@ export function RecipeForm({
             defaultValue={initialValues?.waterProfileId ?? ""}
             className={selectClass}
           >
-            <option value="">No water profile specified</option>
+            <option value="">{t("recipeForm.noWaterProfileOption")}</option>
             {waterProfiles.map((profile) => (
               <option key={profile.id} value={profile.id}>
                 {profile.name}
@@ -437,7 +440,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="grindSize" className={labelClass}>
-            Grind size
+            {t("recipeForm.grindSizeLabel")}
           </label>
           <input
             id="grindSize"
@@ -445,7 +448,7 @@ export function RecipeForm({
             type="text"
             defaultValue={initialValues?.grindSize ?? ""}
             className={inputClass}
-            placeholder="Medium-fine"
+            placeholder={t("recipeForm.grindSizePlaceholder")}
           />
         </div>
       </div>
@@ -453,7 +456,7 @@ export function RecipeForm({
       <div className="grid gap-5 sm:grid-cols-3">
         <div>
           <label htmlFor="coffeeDose" className={labelClass}>
-            Coffee dose (g)
+            {t("recipeForm.coffeeDoseLabel")}
           </label>
           <input
             id="coffeeDose"
@@ -468,7 +471,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="waterAmount" className={labelClass}>
-            Water amount (g)
+            {t("recipeForm.waterAmountLabel")}
           </label>
           <input
             id="waterAmount"
@@ -483,7 +486,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="ratio" className={labelClass}>
-            Brew ratio
+            {t("recipeForm.brewRatioLabel")}
             {optionalLabel}
           </label>
           <input
@@ -497,7 +500,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="waterTemperature" className={labelClass}>
-            Water temp (°C)
+            {t("recipeForm.waterTempLabel")}
           </label>
           <input
             id="waterTemperature"
@@ -511,7 +514,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="iceAmount" className={labelClass}>
-            Ice amount (g)
+            {t("recipeForm.iceAmountLabel")}
             {optionalLabel}
           </label>
           <input
@@ -527,7 +530,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="bloomAmount" className={labelClass}>
-            Bloom amount (g)
+            {t("recipeForm.bloomAmountLabel")}
             {optionalLabel}
           </label>
           <input
@@ -545,7 +548,7 @@ export function RecipeForm({
 
       <div>
         <label htmlFor="bloomTime" className={labelClass}>
-          Bloom time
+          {t("recipeForm.bloomTimeLabel")}
           {optionalLabel}
         </label>
         <input
@@ -554,12 +557,15 @@ export function RecipeForm({
           type="text"
           defaultValue={initialValues?.bloomTime ?? ""}
           className={inputClass}
-          placeholder="0:30"
+          placeholder={t("recipeForm.bloomTimePlaceholder")}
         />
       </div>
 
       {/* POUR STRUCTURE */}
-      <SectionHeading title="Pour Structure" description="Add as many pours as your recipe needs." />
+      <SectionHeading
+        title={t("recipeForm.sectionPourStructure")}
+        description={t("recipeForm.sectionPourStructureDescription")}
+      />
 
       <input type="hidden" name="pourCount" value={pourRows.length} />
 
@@ -567,21 +573,23 @@ export function RecipeForm({
         {pourRows.map((row, index) => (
           <div key={row.key} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-[0.1em] text-stone-500">Pour {index + 1}</p>
+              <p className="text-xs font-medium uppercase tracking-[0.1em] text-stone-500">
+                {translate(dictionary, "recipeForm.pourLabelTemplate", { number: index + 1 })}
+              </p>
               {pourRows.length > 1 && (
                 <button
                   type="button"
                   onClick={() => setPourRows((rows) => rows.filter((r) => r.key !== row.key))}
                   className="text-xs font-medium text-red-400/80 underline-offset-4 hover:text-red-400 hover:underline"
                 >
-                  Remove
+                  {t("recipeForm.removePour")}
                 </button>
               )}
             </div>
             <div className="mt-3 grid gap-4 sm:grid-cols-3">
               <div>
                 <label htmlFor={`pourWater_${index}`} className="text-xs text-stone-400">
-                  Water (g)
+                  {t("recipeForm.pourWaterLabel")}
                 </label>
                 <input
                   id={`pourWater_${index}`}
@@ -595,7 +603,7 @@ export function RecipeForm({
               </div>
               <div>
                 <label htmlFor={`pourTime_${index}`} className="text-xs text-stone-400">
-                  Time
+                  {t("recipeForm.pourTimeLabel")}
                 </label>
                 <input
                   id={`pourTime_${index}`}
@@ -608,7 +616,7 @@ export function RecipeForm({
               </div>
               <div>
                 <label htmlFor={`pourNotes_${index}`} className="text-xs text-stone-400">
-                  Notes
+                  {t("recipeForm.pourNotesLabel")}
                 </label>
                 <input
                   id={`pourNotes_${index}`}
@@ -616,7 +624,7 @@ export function RecipeForm({
                   type="text"
                   defaultValue={row.pour?.notes ?? ""}
                   className={`${inputClass} mt-1.5 py-2.5`}
-                  placeholder="Slow circular pour"
+                  placeholder={t("recipeForm.pourNotesPlaceholder")}
                 />
               </div>
             </div>
@@ -632,16 +640,16 @@ export function RecipeForm({
         }}
         className={`${buttons.secondary} h-10 min-w-0 px-5 text-xs`}
       >
-        + Add Pour
+        {t("recipeForm.addPourCta")}
       </button>
 
       {/* RESULTS */}
-      <SectionHeading title="Results" description="Log how the brew actually turned out." />
+      <SectionHeading title={t("recipeForm.sectionResults")} description={t("recipeForm.sectionResultsDescription")} />
 
       <div className="grid gap-5 sm:grid-cols-3">
         <div>
           <label htmlFor="totalBrewTime" className={labelClass}>
-            Total brew time
+            {t("recipeForm.totalBrewTimeLabel")}
             {optionalLabel}
           </label>
           <input
@@ -655,7 +663,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="beverageWeight" className={labelClass}>
-            Beverage weight (g)
+            {t("recipeForm.beverageWeightLabel")}
             {optionalLabel}
           </label>
           <input
@@ -671,7 +679,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="tds" className={labelClass}>
-            TDS (%)
+            {t("recipeForm.tdsLabel")}
             {optionalLabel}
           </label>
           <input
@@ -687,7 +695,7 @@ export function RecipeForm({
         </div>
         <div>
           <label htmlFor="extractionPercentage" className={labelClass}>
-            Extraction %
+            {t("recipeForm.extractionLabel")}
             {optionalLabel}
           </label>
           <input
@@ -704,10 +712,17 @@ export function RecipeForm({
       </div>
 
       <div className="grid gap-5 sm:grid-cols-4">
-        {(["sweetness", "acidity", "body", "bitterness"] as const).map((field) => (
+        {(
+          [
+            { field: "sweetness", labelKey: "sweetnessLabel" },
+            { field: "acidity", labelKey: "acidityLabel" },
+            { field: "body", labelKey: "bodyLabel" },
+            { field: "bitterness", labelKey: "bitternessLabel" },
+          ] as const
+        ).map(({ field, labelKey }) => (
           <div key={field}>
             <label htmlFor={field} className={labelClass}>
-              {field.charAt(0).toUpperCase() + field.slice(1)} (1-10)
+              {t(`recipeForm.${labelKey}`)}
               {optionalLabel}
             </label>
             <input
@@ -726,7 +741,7 @@ export function RecipeForm({
 
       <div>
         <label htmlFor="tastingNotes" className={labelClass}>
-          Flavor notes
+          {t("recipeForm.flavorNotesLabel")}
         </label>
         <textarea
           id="tastingNotes"
@@ -734,13 +749,13 @@ export function RecipeForm({
           rows={3}
           defaultValue={initialValues?.tastingNotes ?? ""}
           className={inputClass}
-          placeholder="Jasmine, bergamot, and stone fruit with a silky finish."
+          placeholder={t("recipeForm.flavorNotesPlaceholder")}
         />
       </div>
 
       <div>
         <label htmlFor="instructions" className={labelClass}>
-          Additional instructions
+          {t("recipeForm.additionalInstructionsLabel")}
           {optionalLabel}
         </label>
         <textarea
@@ -749,12 +764,12 @@ export function RecipeForm({
           rows={4}
           defaultValue={initialValues?.instructions ?? ""}
           className={inputClass}
-          placeholder="Any extra tips beyond the pour structure above…"
+          placeholder={t("recipeForm.additionalInstructionsPlaceholder")}
         />
       </div>
 
       {/* TAGS */}
-      <SectionHeading title="Tags" />
+      <SectionHeading title={t("recipeForm.sectionTags")} />
 
       <div className="flex flex-wrap gap-x-6 gap-y-3 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-4">
         {tags.map((tag) => (
@@ -772,7 +787,7 @@ export function RecipeForm({
       </div>
 
       {/* STATUS */}
-      <SectionHeading title="Status" />
+      <SectionHeading title={t("recipeForm.sectionStatus")} />
 
       <div className="flex flex-wrap gap-6 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-4">
         <label className={checkboxRowClass}>
@@ -782,7 +797,7 @@ export function RecipeForm({
             defaultChecked={initialValues?.published ?? false}
             className={checkboxClass}
           />
-          Published (visible to everyone)
+          {t("recipeForm.publishedCheckboxLabel")}
         </label>
         <label className={checkboxRowClass}>
           <input
@@ -791,7 +806,7 @@ export function RecipeForm({
             defaultChecked={initialValues?.featured ?? false}
             className={checkboxClass}
           />
-          Featured
+          {t("recipeForm.featuredCheckboxLabel")}
         </label>
         <label className={checkboxRowClass}>
           <input
@@ -800,14 +815,14 @@ export function RecipeForm({
             defaultChecked={initialValues?.premiumOnly ?? false}
             className={checkboxClass}
           />
-          Premium only
+          {t("recipeForm.premiumOnlyCheckboxLabel")}
         </label>
       </div>
 
       <FormMessage error={state?.error} success={state?.success} />
 
       <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70 sm:w-auto`}>
-        {pending ? "Saving…" : mode === "create" ? "Create Recipe" : "Save Changes"}
+        {pending ? t("recipeForm.savingCta") : mode === "create" ? t("recipeForm.createRecipeCta") : t("recipeForm.saveChangesCta")}
       </button>
     </form>
   );

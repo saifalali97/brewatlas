@@ -2,18 +2,17 @@
 
 import { useState } from "react";
 import { buttons } from "@/lib/constants/styles";
+import { useTranslations } from "@/lib/i18n/translation-context";
 
 export function ContactForm() {
+  const { t } = useTranslations();
   const [submitted, setSubmitted] = useState(false);
 
   if (submitted) {
     return (
       <div className="rounded-[1.5rem] border border-amber-500/25 bg-amber-950/20 p-8 text-center">
-        <p className="text-lg font-medium text-stone-50">Message sent</p>
-        <p className="mt-2 text-sm leading-relaxed text-stone-400">
-          Thanks for reaching out — our barista support team will reply within one
-          business day.
-        </p>
+        <p className="text-lg font-medium text-stone-50">{t("contactPage.messageSentTitle")}</p>
+        <p className="mt-2 text-sm leading-relaxed text-stone-400">{t("contactPage.messageSentBody")}</p>
       </div>
     );
   }
@@ -28,7 +27,7 @@ export function ContactForm() {
     >
       <div>
         <label htmlFor="name" className="text-sm font-medium text-stone-300">
-          Name
+          {t("contactPage.nameLabel")}
         </label>
         <input
           id="name"
@@ -37,13 +36,13 @@ export function ContactForm() {
           required
           autoComplete="name"
           className="mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
-          placeholder="Your name"
+          placeholder={t("contactPage.namePlaceholder")}
         />
       </div>
 
       <div>
         <label htmlFor="email" className="text-sm font-medium text-stone-300">
-          Email
+          {t("auth.email")}
         </label>
         <input
           id="email"
@@ -52,13 +51,13 @@ export function ContactForm() {
           required
           autoComplete="email"
           className="mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
-          placeholder="you@example.com"
+          placeholder={t("auth.emailPlaceholder")}
         />
       </div>
 
       <div>
         <label htmlFor="message" className="text-sm font-medium text-stone-300">
-          Message
+          {t("contactPage.messageLabel")}
         </label>
         <textarea
           id="message"
@@ -66,12 +65,12 @@ export function ContactForm() {
           required
           rows={5}
           className="mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
-          placeholder="How can we help?"
+          placeholder={t("contactPage.messagePlaceholder")}
         />
       </div>
 
       <button type="submit" className={`${buttons.primary} w-full`}>
-        Send Message
+        {t("contactPage.sendMessageCta")}
       </button>
     </form>
   );

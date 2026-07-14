@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { buttons } from "@/lib/constants/styles";
+import { useTranslations } from "@/lib/i18n/translation-context";
 
 export default function Error({
   error,
@@ -11,6 +12,8 @@ export default function Error({
   error: Error & { digest?: string };
   unstable_retry: () => void;
 }) {
+  const { t } = useTranslations();
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -21,18 +24,17 @@ export default function Error({
       className="flex min-h-screen flex-col items-center justify-center bg-[#0a0705] px-6 text-center text-stone-100"
     >
       <h1 className="text-3xl font-semibold tracking-tight text-stone-50 sm:text-4xl">
-        Something went wrong
+        {t("errorPages.errorTitle")}
       </h1>
       <p className="mt-4 max-w-md text-base leading-relaxed text-stone-400">
-        An unexpected error occurred while loading this page. You can try again or
-        head back to the homepage.
+        {t("errorPages.errorDescription")}
       </p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
         <button type="button" onClick={() => unstable_retry()} className={buttons.primary}>
-          Try again
+          {t("errors.tryAgain")}
         </button>
         <Link href="/" className={buttons.secondary}>
-          Back to BrewAtlas
+          {t("errorPages.notFoundCta")}
         </Link>
       </div>
     </main>
