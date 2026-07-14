@@ -20,16 +20,17 @@ import type {
  * `user_taste_profile_processes`), "Brewing History" (`user_brew_logs`),
  * and the aggregated Personal Dashboard derived from them.
  *
- * Nothing in the UI calls this yet -- it mirrors `lib/data/xbloom.ts` and
- * `lib/data/brew-engine.ts` as production-ready groundwork, and is the
- * data source for future AI recipe recommendations (see
- * `getTasteProfileFeatureVector`).
+ * `getCoffeeSetup` backs the "My Coffee Setup" page
+ * (`/dashboard/coffee-setup`). Taste profile and brew log queries remain
+ * production-ready groundwork (mirroring `lib/data/xbloom.ts` and
+ * `lib/data/brew-engine.ts`) for a future UI, and are the data source for
+ * future AI recipe recommendations (see `getTasteProfileFeatureVector`).
  */
 
 const COFFEE_SETUP_SELECT = `
   id, user_id, grinder_id, brewer_device_id, xbloom_device_id, espresso_machine,
   kettle, scale, filter_type_id, favorite_mug, favorite_server, preferred_water_profile_id,
-  created_at, updated_at,
+  preferred_units, created_at, updated_at,
   grinders ( id, name ),
   devices ( id, name ),
   xbloom_devices ( id, name ),
@@ -71,6 +72,7 @@ function mapDbCoffeeSetupToRow(row: DbCoffeeSetupRow): CoffeeSetupRow {
     favoriteServer: row.favorite_server,
     preferredWaterProfileId: row.preferred_water_profile_id,
     preferredWaterProfileName: row.water_profiles?.name ?? null,
+    preferredUnits: row.preferred_units,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

@@ -5,11 +5,16 @@ import type { LookupOption, RecipeListItem } from "@/types/recipe";
  * equipment setup, taste preferences, and brewing history, plus the
  * aggregated data shown on a personal dashboard.
  *
- * Nothing here is wired into any page yet -- this is the data layer that a
- * future "My Coffee Setup" / "My Taste Profile" / "Brewing History" UI, and
- * eventually an AI recommendation engine, can build on. See
- * `getTasteProfileFeatureVector` for the AI-recommendation-ready export.
+ * `CoffeeSetupRow` powers the "My Coffee Setup" page
+ * (`/dashboard/coffee-setup`). Taste profile and brew log types remain data-layer
+ * groundwork for a future "My Taste Profile" / "Brewing History" UI, and
+ * eventually an AI recommendation engine. See `getTasteProfileFeatureVector`
+ * for the AI-recommendation-ready export.
  */
+
+/** Preferred measurement units for "My Coffee Setup" -- `null` means no preference set. */
+export const PREFERRED_UNITS_OPTIONS = ["metric", "imperial"] as const;
+export type PreferredUnits = (typeof PREFERRED_UNITS_OPTIONS)[number];
 
 /** `public.user_coffee_setups` row, camelCased -- "My Coffee Setup". */
 export type CoffeeSetupRow = {
@@ -30,6 +35,7 @@ export type CoffeeSetupRow = {
   favoriteServer: string | null;
   preferredWaterProfileId: string | null;
   preferredWaterProfileName: string | null;
+  preferredUnits: PreferredUnits | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -53,6 +59,7 @@ export type DbCoffeeSetupRow = {
   favorite_server: string | null;
   preferred_water_profile_id: string | null;
   water_profiles: LookupOption | null;
+  preferred_units: PreferredUnits | null;
   created_at: string;
   updated_at: string;
 };

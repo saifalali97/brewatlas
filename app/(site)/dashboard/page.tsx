@@ -11,6 +11,7 @@ import {
   Plus,
   Sparkles,
   Users,
+  Wrench,
 } from "lucide-react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
 import { PageHeader } from "@/app/components/ui/page-header";
@@ -105,6 +106,7 @@ export default async function DashboardPage() {
     { icon: Users, label: d.communityLabel, description: d.communityDescription, href: "/community" },
     { icon: Coffee, label: d.premiumLabel, description: d.premiumDescription, href: "/premium" },
     { icon: Cpu, label: d.xbloomProfilesLabel, description: d.xbloomProfilesDescription, href: "/dashboard/xbloom" },
+    { icon: Wrench, label: d.coffeeSetupLabel, description: d.coffeeSetupDescription, href: "/dashboard/coffee-setup" },
     { icon: Heart, label: d.savedRecipesLabel, description: d.savedRecipesDescription, href: "/dashboard/favorites" },
   ];
 
