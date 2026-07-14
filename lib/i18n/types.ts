@@ -883,6 +883,36 @@ export type Dictionary = {
     description: string;
     tryAgainCta: string;
   };
+  /** Universal Recipe Converter (Phase 17.1) -- UI only, no conversion logic yet. See `app/components/converter/`. */
+  recipeConverter: {
+    convertButtonLabel: string;
+    modalTitle: string;
+    modalSubtitle: string;
+    closeModalAriaLabel: string;
+    currentDeviceLabel: string;
+    targetDeviceLabel: string;
+    targetDevicePlaceholder: string;
+    preferencesLabel: string;
+    preserveBodyLabel: string;
+    preserveSweetnessLabel: string;
+    preserveAcidityLabel: string;
+    outputPreviewLabel: string;
+    doseLabel: string;
+    waterLabel: string;
+    grindSizeLabel: string;
+    temperatureLabel: string;
+    bloomLabel: string;
+    poursLabel: string;
+    brewTimeLabel: string;
+    comingSoonValue: string;
+    convertButtonComingSoon: string;
+    /** Engine output value copy (Phase 17.2) -- everything else in this namespace is chrome/labels, these render inside the output preview cards themselves. */
+    poursCountValue: string;
+    singlePourValue: string;
+    singleSteepValue: string;
+    continuousFlowValue: string;
+    notApplicableValue: string;
+  };
   metadata: {
     methodsTitle: string;
     methodsDescription: string;

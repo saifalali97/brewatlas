@@ -28,6 +28,7 @@ import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { MetaTile } from "@/app/components/ui/meta-tile";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { RippleLink } from "@/app/components/ui/ripple-link";
+import { RecipeConverterButton } from "@/app/components/converter/recipe-converter-button";
 import { DeleteRecipeButton } from "@/app/components/recipes/delete-recipe-button";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
 import { cards, buttons } from "@/lib/constants/styles";
@@ -233,6 +234,7 @@ function StaticRecipeView({ recipe, dictionary }: { recipe: FeaturedRecipe; dict
             <RippleLink href="/recipes" className={`${buttons.secondary} w-full sm:w-auto`}>
               {d.browseMoreRecipes}
             </RippleLink>
+            <RecipeConverterButton currentDevice={brewMethodLabel} sourceRecipe={{ brewTime: recipe.time }} />
           </div>
         </div>
       </div>
@@ -396,6 +398,19 @@ function DbRecipeView({
                 {d.watchVideo}
               </a>
             )}
+            <RecipeConverterButton
+              currentDevice={recipe.deviceName ?? recipe.brewingMethodName ?? d.dashValue}
+              sourceRecipe={{
+                doseG: recipe.coffeeDose,
+                waterG: recipe.waterAmount,
+                grindSize: recipe.grindSize,
+                temperatureC: recipe.waterTemperature,
+                bloomAmountG: recipe.bloomAmount,
+                bloomTime: recipe.bloomTime,
+                brewTime: recipe.totalBrewTime ?? recipe.estimatedBrewTime,
+                poursCount: recipe.pours.length > 0 ? recipe.pours.length : null,
+              }}
+            />
           </div>
         </div>
       </div>
