@@ -1,14 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 import { createClient } from "@/lib/supabase/server";
+import { PREFERRED_UNITS_OPTIONS, type PreferredUnits } from "@/types/personal";
 
 /**
- * Server Actions for "My Coffee Setup" (`user_coffee_setups`).
- *
- * Nothing in the UI calls these yet -- they're production-ready groundwork
- * for a future settings page, following the same auth/validation patterns
- * as `lib/supabase/xbloom-actions.ts` and `lib/supabase/recipe-actions.ts`.
+ * Server Actions for "My Coffee Setup" (`user_coffee_setups`), backing the
+ * `/dashboard/coffee-setup` page. Follows the same auth/validation/i18n
+ * patterns as `lib/supabase/profile-actions.ts` and
+ * `lib/supabase/xbloom-actions.ts`.
  */
 
 function optionalString(formData: FormData, key: string): string | null {
@@ -16,6 +18,11 @@ function optionalString(formData: FormData, key: string): string | null {
   if (typeof value !== "string") return null;
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
+}
+
+function optionalPreferredUnits(formData: FormData, key: string): PreferredUnits | null {
+  const value = optionalString(formData, key);
+  return (PREFERRED_UNITS_OPTIONS as readonly string[]).includes(value ?? "") ? (value as PreferredUnits) : null;
 }
 
 export type CoffeeSetupActionState = { error?: string; success?: string } | undefined;
@@ -26,10 +33,11 @@ export async function saveCoffeeSetupAction(
   formData: FormData,
 ): Promise<CoffeeSetupActionState> {
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
-    return { error: "You must be signed in to save your coffee setup." };
+    return { error: dictionary.coffeeSetupPage.signInRequired };
   }
 
   const payload = {
@@ -44,31 +52,38 @@ export async function saveCoffeeSetupAction(
     favorite_mug: optionalString(formData, "favoriteMug"),
     favorite_server: optionalString(formData, "favoriteServer"),
     preferred_water_profile_id: optionalString(formData, "preferredWaterProfileId"),
+    preferred_units: optionalPreferredUnits(formData, "preferredUnits"),
   };
 
   const { error } = await supabase.from("user_coffee_setups").upsert(payload, { onConflict: "user_id" });
 
   if (error) {
-    return { error: error.message || "Failed to save your coffee setup." };
+    return { error: error.message || dictionary.coffeeSetupPage.saveFailed };
   }
 
   revalidatePath("/dashboard");
-  return { success: "Coffee setup saved." };
+  revalidatePath("/dashboard/coffee-setup");
+  return { success: dictionary.coffeeSetupPage.setupSaved };
 }
 
 /** Clears the caller's saved coffee setup. */
-export async function deleteCoffeeSetupAction(): Promise<CoffeeSetupActionState> {
+export async function deleteCoffeeSetupAction(
+  _prevState: CoffeeSetupActionState,
+  _formData: FormData,
+): Promise<CoffeeSetupActionState> {
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) {
-    return { error: "You must be signed in to manage your coffee setup." };
+    return { error: dictionary.coffeeSetupPage.signInRequired };
   }
 
   const { error } = await supabase.from("user_coffee_setups").delete().eq("user_id", authData.user.id);
   if (error) {
-    return { error: error.message || "Failed to clear your coffee setup." };
+    return { error: error.message || dictionary.coffeeSetupPage.clearFailed };
   }
 
   revalidatePath("/dashboard");
-  return { success: "Coffee setup cleared." };
+  revalidatePath("/dashboard/coffee-setup");
+  return { success: dictionary.coffeeSetupPage.setupCleared };
 }

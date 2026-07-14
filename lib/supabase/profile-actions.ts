@@ -80,5 +80,6 @@ export async function updateProfileAction(
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/profile");
+  revalidatePath("/dashboard/coffee-setup");
   return { success: dictionary.profilePage.profileUpdated };
 }
