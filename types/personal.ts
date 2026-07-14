@@ -98,7 +98,7 @@ export type DbTasteProfileRow = {
   roast_preference: RoastPreference | null;
   created_at: string;
   updated_at: string;
-  user_taste_profile_processes: { id: string; process: string }[];
+  user_taste_profile_processes: { id: string; process: string }[] | null | undefined;
 };
 
 /** `public.user_brew_logs` row, camelCased -- one entry in "Brewing History". */

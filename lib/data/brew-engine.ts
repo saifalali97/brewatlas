@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { toSafeArray } from "@/lib/utils/arrays";
 import type { LookupOption } from "@/types/recipe";
 import type {
   BrewProfileFullDetail,
@@ -41,7 +42,7 @@ function mapDbBrewProfileToFullDetail(row: DbBrewProfileRow): BrewProfileFullDet
     createdBy: row.created_by,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    steps: [...row.brew_profile_steps]
+    steps: toSafeArray(row.brew_profile_steps)
       .sort((a, b) => a.step_number - b.step_number)
       .map((step) => ({
         id: step.id,

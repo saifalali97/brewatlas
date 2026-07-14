@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getUserFavoriteRecipes } from "@/lib/data/db-recipes";
+import { toSafeArray } from "@/lib/utils/arrays";
 import type {
   BrewLogRow,
   CoffeeSetupRow,
@@ -89,7 +90,7 @@ function mapDbTasteProfileToRow(row: DbTasteProfileRow): TasteProfileRow {
     fermented: row.fermented,
     teaLike: row.tea_like,
     roastPreference: row.roast_preference,
-    favoriteProcessingMethods: row.user_taste_profile_processes.map((p) => p.process),
+    favoriteProcessingMethods: toSafeArray(row.user_taste_profile_processes).map((p) => p.process),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

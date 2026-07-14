@@ -109,10 +109,13 @@ export type DbRecipeInsightsRow = {
   expected_finish: number | null;
   calculated_at: string;
   updated_at: string;
-  recipe_insight_warnings: {
-    id: string;
-    code: WarningCode;
-    severity: WarningSeverity;
-    message: string;
-  }[];
+  recipe_insight_warnings:
+    | {
+        id: string;
+        code: WarningCode;
+        severity: WarningSeverity;
+        message: string;
+      }[]
+    | null
+    | undefined;
 };

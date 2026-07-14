@@ -70,7 +70,7 @@ export type DbBrewProfileRow = {
   created_by: string | null;
   created_at: string;
   updated_at: string;
-  brew_profile_steps: DbBrewProfileStepRow[];
+  brew_profile_steps: DbBrewProfileStepRow[] | null | undefined;
 };
 
 /** The subset of a `recipes` row relevant to the Smart Brewing Engine link. */

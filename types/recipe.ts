@@ -94,10 +94,14 @@ export type DbRecipeRow = {
   filter_types: { id: string; name: string } | null;
   water_profiles: { id: string; name: string } | null;
   coffees: CoffeeRow | null;
-  recipe_pours: PourRow[];
-  recipe_images: RecipeImageRow[];
-  recipe_tags: { tags: TagRow | null }[];
-  xbloom_profiles: { id: string }[];
+  // These embeds are declared as arrays for the common to-many case, but at
+  // runtime Supabase/PostgREST can also return `null`/`undefined` (e.g. a
+  // to-one embed inferred from a unique foreign key, like `xbloom_profiles`)
+  // -- always read them through `toSafeArray` from `lib/utils/arrays`.
+  recipe_pours: PourRow[] | null | undefined;
+  recipe_images: RecipeImageRow[] | null | undefined;
+  recipe_tags: { tags: TagRow | null }[] | null | undefined;
+  xbloom_profiles: { id: string }[] | { id: string } | null | undefined;
 };
 
 /**

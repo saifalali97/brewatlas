@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { analyzeRecipeForCoaching } from "@/lib/ai/coach-engine";
+import { toSafeArray } from "@/lib/utils/arrays";
 import type {
   AiCoachAnalysisRow,
   CoachAnalysisInput,
@@ -35,9 +36,9 @@ type CoachAnalysisSourceRow = {
     process: string | null;
     origins: { country: string } | null;
   } | null;
-  recipe_pours: { id: string }[];
+  recipe_pours: { id: string }[] | null | undefined;
   brew_profiles: { agitation: string | null } | null;
-  xbloom_profiles: { agitation: string | null; pulse_pattern: string | null }[];
+  xbloom_profiles: { agitation: string | null; pulse_pattern: string | null }[] | { agitation: string | null; pulse_pattern: string | null } | null | undefined;
 };
 
 /**
@@ -66,7 +67,7 @@ export async function buildCoachAnalysisInputForRecipe(
 
   if (error || !data) return null;
   const row = data as unknown as CoachAnalysisSourceRow;
-  const xbloom = row.xbloom_profiles[0] ?? null;
+  const xbloom = toSafeArray(row.xbloom_profiles)[0] ?? null;
 
   return {
     brewingMethodName: row.brewing_methods?.name ?? null,
@@ -80,7 +81,7 @@ export async function buildCoachAnalysisInputForRecipe(
     agitation: null,
     roastLevel: row.coffees?.roast_level ?? null,
     process: row.coffees?.process ?? null,
-    pourCount: row.recipe_pours.length,
+    pourCount: toSafeArray(row.recipe_pours).length,
     brewProfileAgitation: row.brew_profiles?.agitation ?? null,
     xbloomPulsePattern: xbloom?.pulse_pattern ?? null,
     xbloomAgitation: xbloom?.agitation ?? null,

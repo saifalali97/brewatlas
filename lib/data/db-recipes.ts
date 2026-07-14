@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { slugify } from "@/lib/utils/slugify";
+import { toSafeArray } from "@/lib/utils/arrays";
 import {
   RECIPE_IMAGE_PLACEHOLDER,
   type DbRecipeRow,
@@ -42,8 +43,10 @@ function computeRatio(row: DbRecipeRow): string {
 
 /** Maps a raw DB `recipes` row (with lookup joins) into the shape shared with static catalog recipes. */
 export function mapDbRecipeToListItem(row: DbRecipeRow): RecipeListItem {
-  const tags = row.recipe_tags.map((rt) => rt.tags?.name).filter((name): name is string => Boolean(name));
-  const hasXBloomProfile = row.xbloom_profiles.length > 0;
+  const tags = toSafeArray(row.recipe_tags)
+    .map((rt) => rt.tags?.name)
+    .filter((name): name is string => Boolean(name));
+  const hasXBloomProfile = toSafeArray(row.xbloom_profiles).length > 0;
 
   return {
     name: row.title,
@@ -100,7 +103,7 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
     featured: row.featured,
     premiumOnly: row.premium_only,
     coverImageUrl: row.cover_image_url,
-    images: [...row.recipe_images].sort((a, b) => a.position - b.position),
+    images: toSafeArray(row.recipe_images).sort((a, b) => a.position - b.position),
 
     brewingMethodId: row.brewing_methods?.id ?? null,
     brewingMethodName: row.brewing_methods?.name ?? null,
@@ -135,8 +138,10 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
     roastLevel: row.coffees?.roast_level ?? null,
     roastDate: row.coffees?.roast_date ?? null,
 
-    pours: [...row.recipe_pours].sort((a, b) => a.pour_number - b.pour_number),
-    tags: row.recipe_tags.map((rt) => rt.tags).filter((tag): tag is NonNullable<typeof tag> => tag !== null),
+    pours: toSafeArray(row.recipe_pours).sort((a, b) => a.pour_number - b.pour_number),
+    tags: toSafeArray(row.recipe_tags)
+      .map((rt) => rt.tags)
+      .filter((tag): tag is NonNullable<typeof tag> => tag !== null),
 
     totalBrewTime: row.total_brew_time,
     beverageWeight: row.beverage_weight,
@@ -149,7 +154,9 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
     body: row.body,
     bitterness: row.bitterness,
 
-    tagIds: row.recipe_tags.map((rt) => rt.tags?.id).filter((id): id is string => Boolean(id)),
+    tagIds: toSafeArray(row.recipe_tags)
+      .map((rt) => rt.tags?.id)
+      .filter((id): id is string => Boolean(id)),
   };
 }
 

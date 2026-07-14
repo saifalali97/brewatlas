@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { toSafeArray } from "@/lib/utils/arrays";
 import type {
   CultureSectionRow,
   CultureSectionWithTopicCount,
@@ -33,7 +34,7 @@ type DbSectionRow = {
   position: number;
 };
 
-type DbSectionWithTopicCountRow = DbSectionRow & { culture_topics: { id: string }[] };
+type DbSectionWithTopicCountRow = DbSectionRow & { culture_topics: { id: string }[] | null | undefined };
 
 type DbTopicRow = {
   id: string;
@@ -101,7 +102,7 @@ export async function getCultureSections(
 
   return (data as unknown as DbSectionWithTopicCountRow[]).map((row) => ({
     ...mapSection(row),
-    topicCount: row.culture_topics.length,
+    topicCount: toSafeArray(row.culture_topics).length,
   }));
 }
 

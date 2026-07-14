@@ -80,5 +80,5 @@ export type DbXBloomProfileRow = {
   brew_notes: string | null;
   created_at: string;
   updated_at: string;
-  xbloom_profile_steps: DbXBloomProfileStepRow[];
+  xbloom_profile_steps: DbXBloomProfileStepRow[] | null | undefined;
 };

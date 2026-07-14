@@ -3,6 +3,7 @@ import { blendExplicitAndBehavioral, blendWeightedVectors, buildRecipeSensoryVec
 import { parseDiscoveryQuery, rankDiscoveryResults, type DiscoveryCandidate } from "@/lib/ai/discovery-engine";
 import { RECOMMENDATION_WEIGHTS, rankRecommendations, type RecipeCandidate, type RecommendationContext } from "@/lib/ai/recommendation-engine";
 import { rankSimilarRecipes, type SimilarityCandidate } from "@/lib/ai/similarity-engine";
+import { toSafeArray } from "@/lib/utils/arrays";
 import type {
   AiUserProfile,
   DbAiUserProfileRow,
@@ -65,7 +66,7 @@ type RecipeFeatureSourceRow = {
     brew_ratio_value: number | null;
     difficulty_score: number | null;
   } | null;
-  recipe_tags: { tags: { name: string } | null }[];
+  recipe_tags: { tags: { name: string } | null }[] | null | undefined;
   xbloom_profiles: { id: string } | null;
 };
 
@@ -112,7 +113,9 @@ async function buildRecipeFeatureVector(
   if (error || !data) return null;
 
   const row = data as unknown as RecipeFeatureSourceRow;
-  const tagNames = row.recipe_tags.map((rt) => rt.tags?.name).filter((name): name is string => Boolean(name));
+  const tagNames = toSafeArray(row.recipe_tags)
+    .map((rt) => rt.tags?.name)
+    .filter((name): name is string => Boolean(name));
   const insights = row.recipe_insights;
 
   const vector = buildRecipeSensoryVector({
@@ -395,7 +398,7 @@ export async function updateTasteProfile(supabase: SupabaseClient, userId: strin
         nutty: number | null;
         fermented: number | null;
         roast_preference: string | null;
-        user_taste_profile_processes: { process: string }[];
+        user_taste_profile_processes: { process: string }[] | null | undefined;
       }
     | null;
 
@@ -435,7 +438,7 @@ export async function updateTasteProfile(supabase: SupabaseClient, userId: strin
   const preferredOriginIds = [...new Set([...(favoriteOriginId ? [favoriteOriginId] : []), ...behavioralOriginIds])].slice(0, 5);
 
   const behavioralProcesses = topWeighted([...processWeights.entries()], 3);
-  const explicitProcesses = tasteProfile?.user_taste_profile_processes.map((p) => p.process) ?? [];
+  const explicitProcesses = toSafeArray(tasteProfile?.user_taste_profile_processes).map((p) => p.process);
   const preferredProcesses = [...new Set([...explicitProcesses, ...behavioralProcesses])];
 
   const brewingMethodWeights = new Map<string, number>();

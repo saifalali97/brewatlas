@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { toSafeArray } from "@/lib/utils/arrays";
 import type { RecipeAnalysisInput, RecipeAnalysisResult, RecipeInsightsRow, DbRecipeInsightsRow } from "@/types/intelligence";
 
 /**
@@ -34,7 +35,7 @@ function mapDbRecipeInsightsToRow(row: DbRecipeInsightsRow): RecipeInsightsRow {
       clarity: row.expected_clarity ?? 0,
       finish: row.expected_finish ?? 0,
     },
-    warnings: [...row.recipe_insight_warnings].map((warning) => ({
+    warnings: toSafeArray(row.recipe_insight_warnings).map((warning) => ({
       code: warning.code,
       severity: warning.severity,
       message: warning.message,
@@ -69,9 +70,9 @@ type RecipeAnalysisSourceRow = {
   total_brew_time: string | null;
   brewing_methods: { name: string } | null;
   coffees: { roast_level: string | null; process: string | null } | null;
-  recipe_pours: { id: string }[];
+  recipe_pours: { id: string }[] | null | undefined;
   brew_profiles: { agitation: string | null } | null;
-  xbloom_profiles: { agitation: string | null; pulse_pattern: string | null }[];
+  xbloom_profiles: { agitation: string | null; pulse_pattern: string | null }[] | { agitation: string | null; pulse_pattern: string | null } | null | undefined;
 };
 
 /**
@@ -96,7 +97,7 @@ export async function buildRecipeAnalysisInputForRecipe(
 
   if (error || !data) return null;
   const row = data as unknown as RecipeAnalysisSourceRow;
-  const xbloom = row.xbloom_profiles[0] ?? null;
+  const xbloom = toSafeArray(row.xbloom_profiles)[0] ?? null;
 
   return {
     brewingMethodName: row.brewing_methods?.name ?? null,
@@ -110,7 +111,7 @@ export async function buildRecipeAnalysisInputForRecipe(
     agitation: null,
     roastLevel: row.coffees?.roast_level ?? null,
     process: row.coffees?.process ?? null,
-    pourCount: row.recipe_pours.length,
+    pourCount: toSafeArray(row.recipe_pours).length,
     brewProfileAgitation: row.brew_profiles?.agitation ?? null,
     xbloomPulsePattern: xbloom?.pulse_pattern ?? null,
     xbloomAgitation: xbloom?.agitation ?? null,
