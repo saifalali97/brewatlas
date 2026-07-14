@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Heart, Star } from "lucide-react";
+import { Heart, Plus, Star } from "lucide-react";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { buttons } from "@/lib/constants/styles";
 import { getBrewLogs } from "@/lib/data/personal";
+import { translate } from "@/lib/i18n/format";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
@@ -23,7 +25,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 function formatBrewedAt(value: string, locale: string): string {
-  return new Date(value).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" });
+  return new Date(value).toLocaleDateString(locale, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export default async function DashboardBrewHistoryPage() {
@@ -41,47 +49,78 @@ export default async function DashboardBrewHistoryPage() {
 
   return (
     <SectionFrame id="dashboard-brew-history-page" ariaLabelledBy="dashboard-brew-history-page-heading" padding="compact">
-      <PageHeader eyebrow={b.eyebrow} title={b.title} description={b.description} centered={false} />
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <PageHeader eyebrow={b.eyebrow} title={b.title} description={b.description} centered={false} />
+
+        <Link href="/dashboard/brew-history/new" className={`${buttons.primary} h-10 min-w-0 gap-2 px-6 text-xs`}>
+          <Plus className="h-3.5 w-3.5" aria-hidden />
+          {b.logNewCta}
+        </Link>
+      </div>
 
       {brewLogs.length === 0 ? (
         <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
           <p className="text-lg font-medium text-stone-100">{b.noBrewsTitle}</p>
           <p className="mt-2 text-sm text-stone-500">{b.noBrewsDescription}</p>
+          <Link href="/dashboard/brew-history/new" className={`${buttons.secondary} mt-8`}>
+            {b.logNewCta}
+          </Link>
         </div>
       ) : (
         <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
           <ul className="divide-y divide-white/[0.07]">
-            {brewLogs.map((log) => (
-              <li key={log.id} className="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
-                <div>
-                  <div className="flex items-center gap-2.5">
-                    {log.recipeSlug ? (
-                      <Link
-                        href={`/recipes/${log.recipeSlug}`}
-                        className="font-medium text-stone-100 underline-offset-4 hover:text-amber-400/90 hover:underline"
-                      >
-                        {log.recipeTitle ?? b.untitledRecipe}
-                      </Link>
-                    ) : (
-                      <p className="font-medium text-stone-100">{log.recipeTitle ?? b.freeformBrew}</p>
+            {brewLogs.map((log) => {
+              const details: string[] = [formatBrewedAt(log.brewedAt, locale)];
+              if (log.coffeeName) details.push(translate(dictionary, "brewHistoryPage.coffeeTemplate", { name: log.coffeeName }));
+              if (log.grinderName) details.push(translate(dictionary, "brewHistoryPage.grinderTemplate", { name: log.grinderName }));
+              if (log.grindSize) details.push(translate(dictionary, "brewHistoryPage.grindSizeTemplate", { size: log.grindSize }));
+              if (log.waterAmount !== null) {
+                details.push(translate(dictionary, "brewHistoryPage.waterGramsTemplate", { amount: log.waterAmount }));
+              }
+              if (log.brewTime) details.push(translate(dictionary, "brewHistoryPage.brewTimeTemplate", { time: log.brewTime }));
+              if (log.brewingMethodName) details.push(log.brewingMethodName);
+              if (log.brewingDeviceName) details.push(log.brewingDeviceName);
+
+              return (
+                <li key={log.id} className="flex flex-wrap items-start justify-between gap-4 px-6 py-5">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      {log.recipeSlug ? (
+                        <Link
+                          href={`/recipes/${log.recipeSlug}`}
+                          className="font-medium text-stone-100 underline-offset-4 hover:text-amber-400/90 hover:underline"
+                        >
+                          {log.recipeTitle ?? b.untitledRecipe}
+                        </Link>
+                      ) : (
+                        <p className="font-medium text-stone-100">{log.recipeTitle ?? log.coffeeName ?? b.freeformBrew}</p>
+                      )}
+                      {log.isFavorite && (
+                        <Heart className="h-3.5 w-3.5 fill-amber-500/80 text-amber-500/80" aria-hidden />
+                      )}
+                    </div>
+                    <p className="mt-1 text-sm text-stone-500">{details.join(" · ")}</p>
+                    {log.notes && <p className="mt-1.5 max-w-xl text-sm text-stone-400">{log.notes}</p>}
+                  </div>
+
+                  <div className="flex shrink-0 flex-col items-end gap-2">
+                    {log.rating !== null && (
+                      <div className="flex items-center gap-1.5 text-sm font-semibold text-amber-400/90">
+                        <Star className="h-3.5 w-3.5 fill-amber-400/90" aria-hidden />
+                        {log.rating}
+                        {b.ratingOutOfFive}
+                      </div>
                     )}
-                    {log.isFavorite && <Heart className="h-3.5 w-3.5 fill-amber-500/80 text-amber-500/80" aria-hidden />}
+                    <Link
+                      href={`/dashboard/brew-history/${log.id}/edit`}
+                      className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline"
+                    >
+                      {b.editCta}
+                    </Link>
                   </div>
-                  <p className="mt-1 text-sm text-stone-500">
-                    {formatBrewedAt(log.brewedAt, locale)}
-                    {log.brewingMethodName ? ` · ${log.brewingMethodName}` : ""}
-                    {log.brewingDeviceName ? ` · ${log.brewingDeviceName}` : ""}
-                  </p>
-                  {log.notes && <p className="mt-1.5 max-w-xl text-sm text-stone-400">{log.notes}</p>}
-                </div>
-                {log.rating !== null && (
-                  <div className="flex items-center gap-1.5 text-sm font-semibold text-amber-400/90">
-                    <Star className="h-3.5 w-3.5 fill-amber-400/90" aria-hidden />
-                    {log.rating}/10
-                  </div>
-                )}
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
