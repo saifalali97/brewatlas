@@ -12,6 +12,7 @@ import type { Locale } from "@/types/i18n";
 const defaultNavLabels: Dictionary["nav"] = {
   home: "Home",
   recipes: "Recipes",
+  search: "Search",
   methods: "Methods",
   origins: "Origins",
   roasters: "Roasters",
@@ -39,6 +40,7 @@ const defaultNavLabels: Dictionary["nav"] = {
 export function SiteNav({ nav = defaultNavLabels, locale = DEFAULT_LOCALE }: { nav?: Dictionary["nav"]; locale?: Locale }) {
   const navLinks = [
     { href: "/recipes", label: nav.recipes, id: "recipes" },
+    { href: "/search", label: nav.search, id: "search" },
     { href: "/methods", label: nav.methods, id: "methods" },
     { href: "/origins", label: nav.origins, id: "origins" },
     { href: "/roasters", label: nav.roasters, id: "roasters" },
