@@ -7,20 +7,33 @@ import type { Faq } from "@/types/homepage";
 
 type FaqSectionProps = {
   faqs: Faq[];
+  eyebrow: string;
+  title: string;
+  description: string;
+  supportCardTitle: string;
+  supportCardBody: string;
+  contactSupport: string;
 };
 
-export function FaqSection({ faqs }: FaqSectionProps) {
+export function FaqSection({
+  faqs,
+  eyebrow,
+  title,
+  description,
+  supportCardTitle,
+  supportCardBody,
+  contactSupport,
+}: FaqSectionProps) {
   return (
     <SectionFrame id="faq" ariaLabelledBy="faq-heading">
       <div className="grid gap-12 lg:grid-cols-2 lg:items-start lg:gap-16 xl:gap-20">
         <div className="lg:sticky lg:top-28">
-          <p className={typography.eyebrow}>Support</p>
+          <p className={typography.eyebrow}>{eyebrow}</p>
           <h2 id="faq-heading" className={typography.sectionTitleModern}>
-            Frequently Asked Questions
+            {title}
           </h2>
           <p className="mt-7 max-w-md text-lg leading-[1.78] text-stone-400 md:text-xl md:leading-[1.72]">
-            Everything you need to know about BrewAtlas memberships, recipes, and
-            brewing tools.
+            {description}
           </p>
 
           <div className="mt-8 rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-5 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-6">
@@ -30,11 +43,10 @@ export function FaqSection({ faqs }: FaqSectionProps) {
               </div>
               <div>
                 <p className="text-[0.9375rem] font-semibold text-stone-50">
-                  Still have questions?
+                  {supportCardTitle}
                 </p>
                 <p className="mt-2 text-[0.8125rem] leading-[1.65] text-stone-400">
-                  Our barista support team typically responds within one business
-                  day.
+                  {supportCardBody}
                 </p>
               </div>
             </div>
@@ -45,7 +57,7 @@ export function FaqSection({ faqs }: FaqSectionProps) {
                 className={`${buttons.ghostCta}${buttons.ghostCtaAutoWidth}`}
               >
                 <Mail className="h-3.5 w-3.5 text-amber-500/80" aria-hidden />
-                Contact Support
+                {contactSupport}
                 <ArrowRight className={buttons.ghostArrow} aria-hidden />
               </RippleLink>
             </div>

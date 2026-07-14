@@ -18,6 +18,39 @@
   }
 }
 
+/*
+ * UAE Brand Theme -- additive design tokens (Sand, Palm, Dark Coffee,
+ * Warm Gold, Pearl White). Not referenced by any existing component;
+ * available as bg-uae-sand, text-uae-warm-gold, border-uae-palm-deep
+ * (etc.) utilities for new UAE-brand surfaces only. See
+ * lib/branding/uae-theme.ts.
+ */
+:root {
+  --uae-sand: #c9a876;
+  --uae-sand-deep: #a9835a;
+  --uae-palm: #3f5c3f;
+  --uae-palm-deep: #2b4030;
+  --uae-dark-coffee: #231710;
+  --uae-dark-coffee-deep: #150e09;
+  --uae-warm-gold: #c08a2e;
+  --uae-warm-gold-deep: #8f651c;
+  --uae-pearl: #f3ede3;
+  --uae-pearl-deep: #e4d9c4;
+}
+
+@theme inline {
+  --color-uae-sand: var(--uae-sand);
+  --color-uae-sand-deep: var(--uae-sand-deep);
+  --color-uae-palm: var(--uae-palm);
+  --color-uae-palm-deep: var(--uae-palm-deep);
+  --color-uae-dark-coffee: var(--uae-dark-coffee);
+  --color-uae-dark-coffee-deep: var(--uae-dark-coffee-deep);
+  --color-uae-warm-gold: var(--uae-warm-gold);
+  --color-uae-warm-gold-deep: var(--uae-warm-gold-deep);
+  --color-uae-pearl: var(--uae-pearl);
+  --color-uae-pearl-deep: var(--uae-pearl-deep);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 import {
   documentCacheHeaders,
   securityHeaders,
+  serviceWorkerCacheHeaders,
   staticAssetCacheHeaders,
 } from "./lib/security/headers";
 
@@ -22,6 +23,11 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "veqpzeatgpfwuygfbnxc.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 31,
@@ -30,6 +36,12 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ["lucide-react"],
+    serverActions: {
+      // Raised from the 1MB default so profile avatar uploads and recipe
+      // cover/gallery photo uploads (routed through Server Actions to
+      // Supabase Storage) have room to breathe.
+      bodySizeLimit: "20mb",
+    },
   },
   async headers() {
     return [
@@ -51,6 +63,14 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/favicon.ico",
+        headers: staticAssetCacheHeaders,
+      },
+      {
+        source: "/sw.js",
+        headers: serviceWorkerCacheHeaders,
+      },
+      {
+        source: "/icons/:path*",
         headers: staticAssetCacheHeaders,
       },
     ];

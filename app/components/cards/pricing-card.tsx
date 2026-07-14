@@ -16,6 +16,28 @@ import { RippleLink } from "@/app/components/ui/ripple-link";
 import { cards } from "@/lib/constants/styles";
 import type { PricingPlan } from "@/types/homepage";
 
+export type PricingCardLabels = {
+  mostPopular: string;
+  recipes: string;
+  access: string;
+  offlineAccess: string;
+  favorites: string;
+  aiRecommendations: string;
+  brewTracking: string;
+  prioritySupport: string;
+};
+
+const defaultPricingCardLabels: PricingCardLabels = {
+  mostPopular: "Most Popular",
+  recipes: "Recipes",
+  access: "Access",
+  offlineAccess: "Offline access",
+  favorites: "Favorites",
+  aiRecommendations: "AI recommendations",
+  brewTracking: "Brew tracking",
+  prioritySupport: "Priority support",
+};
+
 function FeatureValue({ enabled }: { enabled: boolean }) {
   return enabled ? (
     <Check className="h-3.5 w-3.5 text-amber-500/90" aria-hidden />
@@ -84,9 +106,12 @@ function PricingButton({
 type PricingCardProps = {
   plan: PricingPlan;
   ctaHref?: string;
+  /** Translated copy for this card's chrome. Defaults to English so existing callers (e.g. `/premium`) are unaffected. */
+  labels?: Partial<PricingCardLabels>;
 };
 
-export function PricingCard({ plan, ctaHref = "#pricing" }: PricingCardProps) {
+export function PricingCard({ plan, ctaHref = "#pricing", labels }: PricingCardProps) {
+  const l: PricingCardLabels = { ...defaultPricingCardLabels, ...labels };
   const highlighted = Boolean(plan.highlighted);
 
   return (
@@ -113,7 +138,7 @@ export function PricingCard({ plan, ctaHref = "#pricing" }: PricingCardProps) {
 
       {highlighted && (
         <div className="absolute -top-3.5 left-1/2 z-20 -translate-x-1/2 rounded-full border border-amber-500/40 bg-amber-600 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white shadow-[0_0_28px_rgba(217,119,6,0.4)]">
-          Most Popular
+          {l.mostPopular}
         </div>
       )}
 
@@ -143,23 +168,23 @@ export function PricingCard({ plan, ctaHref = "#pricing" }: PricingCardProps) {
         </p>
 
         <div className="mt-5 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3.5">
-          <PlanFeature icon={BookOpen} label="Recipes" value={plan.recipeCount} />
-          <PlanFeature icon={Shield} label="Access" value={plan.accessLevel} />
+          <PlanFeature icon={BookOpen} label={l.recipes} value={plan.recipeCount} />
+          <PlanFeature icon={Shield} label={l.access} value={plan.accessLevel} />
           <PlanFeature
             icon={plan.offlineAccess ? Wifi : WifiOff}
-            label="Offline access"
+            label={l.offlineAccess}
             booleanValue={plan.offlineAccess}
           />
-          <PlanFeature icon={Heart} label="Favorites" value={plan.favorites} />
+          <PlanFeature icon={Heart} label={l.favorites} value={plan.favorites} />
           <PlanFeature
             icon={Sparkles}
-            label="AI recommendations"
+            label={l.aiRecommendations}
             booleanValue={plan.aiRecommendations}
           />
-          <PlanFeature icon={Coffee} label="Brew tracking" value={plan.brewTracking} />
+          <PlanFeature icon={Coffee} label={l.brewTracking} value={plan.brewTracking} />
           <PlanFeature
             icon={Headphones}
-            label="Priority support"
+            label={l.prioritySupport}
             booleanValue={plan.prioritySupport}
           />
         </div>

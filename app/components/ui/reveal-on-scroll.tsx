@@ -27,7 +27,13 @@ export function RevealOnScroll({
           observer.unobserve(element);
         }
       },
-      { threshold: 0.06, rootMargin: "0px 0px -40px 0px" },
+      // `threshold: 0` fires as soon as any part of the element enters the
+      // viewport. A ratio-based threshold (e.g. 0.06) requires that fraction
+      // of the element's *entire* height to be on-screen at once -- for a
+      // tall section (e.g. a long recipe/roaster list taller than ~15x the
+      // viewport), that ratio is mathematically unreachable, so it never
+      // fires and the section stays permanently invisible (opacity: 0).
+      { threshold: 0, rootMargin: "0px 0px -40px 0px" },
     );
 
     observer.observe(element);

@@ -24,6 +24,12 @@ export const TopRoastersSection = dynamic(() =>
   ),
 );
 
+export const FeatureSpotlightSection = dynamic(() =>
+  import("@/app/components/sections/feature-spotlight-section").then(
+    (mod) => mod.FeatureSpotlightSection,
+  ),
+);
+
 export const TestimonialsSection = dynamic(() =>
   import("@/app/components/sections/testimonials-section").then(
     (mod) => mod.TestimonialsSection,

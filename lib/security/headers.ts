@@ -50,3 +50,15 @@ export const documentCacheHeaders = [
     value: "public, max-age=0, must-revalidate",
   },
 ];
+
+/**
+ * Headers for the PWA service worker script (`public/sw.js`). Never
+ * cached by the browser's HTTP cache -- `sw.js` itself is how the app
+ * ships updates (see `CACHE_VERSION` in that file), so a stale
+ * `sw.js` response would silently pin users to an old cache forever.
+ */
+export const serviceWorkerCacheHeaders = [
+  { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+  { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+  { key: "Service-Worker-Allowed", value: "/" },
+];

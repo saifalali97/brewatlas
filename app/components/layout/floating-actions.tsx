@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "@/lib/i18n/translation-context";
 
 export function FloatingActions() {
+  const { t } = useTranslations();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -26,15 +28,15 @@ export function FloatingActions() {
     >
       <a
         href="/premium"
-        aria-label="Join BrewAtlas Premium"
+        aria-label={t("nav.joinPremiumAriaLabel")}
         className="animate-float hidden items-center gap-2 rounded-full border border-amber-700/30 bg-amber-950/80 px-4 py-2.5 text-xs font-medium text-amber-100 shadow-[0_8px_32px_-8px_rgba(217,119,6,0.35)] backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:border-amber-600/40 hover:shadow-[0_12px_40px_-8px_rgba(217,119,6,0.45)] active:scale-[0.97] sm:inline-flex"
       >
-        Join Premium
+        {t("nav.joinPremium")}
       </a>
       <button
         type="button"
         onClick={scrollToTop}
-        aria-label="Scroll to top"
+        aria-label={t("common.scrollToTop")}
         className="animate-float flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-[#0a0705]/85 text-stone-300 shadow-[0_8px_28px_-8px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all duration-300 hover:scale-[1.04] hover:border-white/15 hover:text-stone-100 hover:shadow-[0_12px_36px_-8px_rgba(0,0,0,0.55)] active:scale-[0.97]"
         style={{ animationDelay: "0.6s" }}
       >

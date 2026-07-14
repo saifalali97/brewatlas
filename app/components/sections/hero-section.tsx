@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatedStat } from "@/app/components/ui/animated-stat";
 import { RippleLink } from "@/app/components/ui/ripple-link";
-import { imageAlt } from "@/lib/seo/image-alt";
+import { useTranslations } from "@/lib/i18n/translation-context";
+import type { DictionaryKey } from "@/lib/i18n/types";
 
 const HERO_VISUAL_IMAGE =
   "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=2000&q=90";
@@ -12,6 +14,7 @@ const HERO_VISUAL_IMAGE =
 const quickFilters = [
   {
     label: "V60",
+    labelKey: "homeFilters.v60" as DictionaryKey,
     icon: (
       <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5" aria-hidden>
         <path d="M8 2L3 7h10L8 2z" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="round" />
@@ -21,6 +24,7 @@ const quickFilters = [
   },
   {
     label: "Espresso",
+    labelKey: "homeFilters.espresso" as DictionaryKey,
     icon: (
       <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5" aria-hidden>
         <rect x="3" y="5" width="10" height="7" rx="1.25" stroke="currentColor" strokeWidth="1.25" />
@@ -31,6 +35,7 @@ const quickFilters = [
   },
   {
     label: "Chemex",
+    labelKey: "homeFilters.chemex" as DictionaryKey,
     icon: (
       <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5" aria-hidden>
         <path d="M5 3h6l1.5 10H3.5L5 3z" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="round" />
@@ -40,6 +45,7 @@ const quickFilters = [
   },
   {
     label: "Aeropress",
+    labelKey: "homeFilters.aeropress" as DictionaryKey,
     icon: (
       <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5" aria-hidden>
         <rect x="5.5" y="2.5" width="5" height="10" rx="2.5" stroke="currentColor" strokeWidth="1.25" />
@@ -49,6 +55,7 @@ const quickFilters = [
   },
   {
     label: "Cold Brew",
+    labelKey: "homeFilters.coldBrew" as DictionaryKey,
     icon: (
       <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5" aria-hidden>
         <path d="M5 3.5h6l1 9.5H4l1-9.5z" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="round" />
@@ -60,7 +67,7 @@ const quickFilters = [
 
 const heroStats = [
   {
-    label: "Recipes",
+    labelKey: "homeHero.statRecipesLabel" as DictionaryKey,
     value: "12,400+",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-[18px] w-[18px]" aria-hidden>
@@ -74,7 +81,7 @@ const heroStats = [
     ),
   },
   {
-    label: "Roasters",
+    labelKey: "homeHero.statRoastersLabel" as DictionaryKey,
     value: "840+",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-[18px] w-[18px]" aria-hidden>
@@ -95,7 +102,7 @@ const heroStats = [
     ),
   },
   {
-    label: "Countries",
+    labelKey: "homeHero.statCountriesLabel" as DictionaryKey,
     value: "62",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-[18px] w-[18px]" aria-hidden>
@@ -116,7 +123,15 @@ type HeroSectionProps = {
   btnSecondary: string;
 };
 
-function HeroCoffeeVisual({ fallbackImage }: { fallbackImage: string }) {
+function HeroCoffeeVisual({
+  fallbackImage,
+  featuredRecipeLabel,
+  imageAlt,
+}: {
+  fallbackImage: string;
+  featuredRecipeLabel: string;
+  imageAlt: string;
+}) {
   const [imageSrc, setImageSrc] = useState(HERO_VISUAL_IMAGE);
   const isFallback = imageSrc.startsWith("/");
 
@@ -135,7 +150,7 @@ function HeroCoffeeVisual({ fallbackImage }: { fallbackImage: string }) {
         <div className="relative h-full w-full overflow-hidden rounded-[1.125rem]">
           <Image
             src={imageSrc}
-            alt={imageAlt.hero}
+            alt={imageAlt}
             fill
             preload
             sizes="(min-width: 1024px) 44vw, 0px"
@@ -163,7 +178,7 @@ function HeroCoffeeVisual({ fallbackImage }: { fallbackImage: string }) {
           />
 
           <div className="absolute left-4 top-4 rounded-full border border-amber-700/30 bg-[#0a0705]/55 px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-amber-300/90 backdrop-blur-md">
-            Featured Recipe
+            {featuredRecipeLabel}
           </div>
         </div>
       </div>
@@ -176,6 +191,8 @@ export function HeroSection({
   btnPrimary,
   btnSecondary,
 }: HeroSectionProps) {
+  const { t } = useTranslations();
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -191,6 +208,11 @@ export function HeroSection({
 
   const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
+    const trimmed = query.trim();
+    if (trimmed) {
+      router.push(`/recipes?q=${encodeURIComponent(trimmed)}`);
+      return;
+    }
     scrollToRecipes();
   };
 
@@ -203,7 +225,7 @@ export function HeroSection({
   const ctaSecondary = `${btnSecondary} group relative isolate overflow-hidden border-amber-600/25 bg-white/[0.04] backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:border-amber-500/45 hover:bg-white/[0.07] hover:shadow-[0_0_40px_rgba(217,119,6,0.18),0_12px_32px_-16px_rgba(0,0,0,0.35)] active:translate-y-0 active:scale-[0.98]`;
 
   return (
-    <section id="hero" aria-label="BrewAtlas specialty coffee platform" className="hero-grain relative min-h-screen h-[100svh] overflow-hidden">
+    <section id="hero" aria-label={t("homeHero.sectionAriaLabel")} className="hero-grain relative min-h-screen h-[100svh] overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[#0a0705]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_12%_18%,rgba(217,119,6,0.1),transparent_55%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_88%_32%,rgba(180,120,60,0.09),transparent_52%)]" />
@@ -222,7 +244,7 @@ export function HeroSection({
             }`}
           >
             <p className="text-[0.6875rem] font-medium uppercase tracking-[0.32em] text-amber-500/75">
-              Specialty Coffee, Perfected
+              {t("homeHero.eyebrow")}
             </p>
 
             <h1 className="mt-4 text-[3.5rem] font-semibold leading-[0.92] tracking-[-0.045em] sm:text-7xl lg:text-[5.75rem]">
@@ -232,14 +254,13 @@ export function HeroSection({
             </h1>
 
             <p className="mt-5 max-w-[30rem] text-[1.0625rem] leading-[1.72] text-stone-400/95 lg:mt-6 lg:text-lg lg:leading-[1.68]">
-              The world&apos;s largest specialty coffee recipe platform.
-              Discover, dial in, and brew with precision.
+              {t("homeHero.subtitle")}
             </p>
 
             <form
               onSubmit={handleSearch}
               role="search"
-              aria-label="Search BrewAtlas recipes"
+              aria-label={t("homeHero.searchFormAriaLabel")}
               className="mt-10 max-w-[34.5rem] lg:mt-11"
             >
               <div className="group relative rounded-[1.125rem] border border-white/[0.14] bg-white/[0.045] p-1 shadow-[0_28px_72px_-28px_rgba(0,0,0,0.8)] backdrop-blur-3xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-white/18 focus-within:border-amber-500/30 focus-within:bg-white/[0.065] focus-within:shadow-[0_36px_96px_-28px_rgba(217,119,6,0.28),0_0_48px_rgba(217,119,6,0.08)]">
@@ -261,52 +282,55 @@ export function HeroSection({
                     type="search"
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
-                    placeholder="Search any coffee..."
+                    placeholder={t("homeHero.searchPlaceholder")}
                     className="w-full bg-transparent py-4 text-base text-stone-50 placeholder:text-stone-400 outline-none transition-colors duration-500"
-                    aria-label="Search any coffee"
+                    aria-label={t("homeHero.searchInputAriaLabel")}
                   />
                   <button
                     type="submit"
                     className="shrink-0 rounded-xl border border-white/[0.12] bg-white/[0.09] px-5 py-3 text-sm font-medium text-stone-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-white/22 hover:bg-white/[0.14] hover:shadow-[0_0_32px_rgba(255,255,255,0.07)] active:scale-[0.98]"
                   >
-                    Search
+                    {t("common.search")}
                   </button>
                 </div>
               </div>
             </form>
 
             <div className="mt-5 flex max-w-[34.5rem] flex-wrap gap-2.5 lg:mt-6">
-              {quickFilters.map((filter) => (
-                <button
-                  key={filter.label}
-                  type="button"
-                  aria-label={`Filter recipes by ${filter.label}`}
-                  aria-pressed={activeFilter === filter.label}
-                  onClick={() => applyFilter(filter.label)}
-                  className={`inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-[0.8125rem] font-medium backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(217,119,6,0.14)] active:scale-[0.98] ${
-                    activeFilter === filter.label
-                      ? "border-amber-600/45 bg-amber-950/45 text-amber-100/90 shadow-[0_0_24px_rgba(217,119,6,0.12)]"
-                      : "border-white/[0.1] bg-white/[0.035] text-stone-400 hover:border-amber-600/25 hover:bg-white/[0.06] hover:text-stone-200"
-                  }`}
-                >
-                  <span className={`[&_svg]:h-4 [&_svg]:w-4 ${activeFilter === filter.label ? "text-amber-400/90" : "text-stone-500"}`}>
-                    {filter.icon}
-                  </span>
-                  {filter.label}
-                </button>
-              ))}
+              {quickFilters.map((filter) => {
+                const filterLabel = t(filter.labelKey);
+                return (
+                  <button
+                    key={filter.label}
+                    type="button"
+                    aria-label={t("homeFilters.filterByAria", { filter: filterLabel })}
+                    aria-pressed={activeFilter === filter.label}
+                    onClick={() => applyFilter(filter.label)}
+                    className={`inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-[0.8125rem] font-medium backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(217,119,6,0.14)] active:scale-[0.98] ${
+                      activeFilter === filter.label
+                        ? "border-amber-600/45 bg-amber-950/45 text-amber-100/90 shadow-[0_0_24px_rgba(217,119,6,0.12)]"
+                        : "border-white/[0.1] bg-white/[0.035] text-stone-400 hover:border-amber-600/25 hover:bg-white/[0.06] hover:text-stone-200"
+                    }`}
+                  >
+                    <span className={`[&_svg]:h-4 [&_svg]:w-4 ${activeFilter === filter.label ? "text-amber-400/90" : "text-stone-500"}`}>
+                      {filter.icon}
+                    </span>
+                    {filterLabel}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center lg:mt-11">
               <RippleLink href="#recipes" className={`${btnPrimary} w-full sm:w-auto`}>
-                Explore Recipes
+                {t("homeHero.exploreRecipes")}
               </RippleLink>
               <RippleLink href="/premium" className={`${ctaSecondary} w-full sm:w-auto`}>
                 <span
                   aria-hidden
                   className="absolute inset-0 bg-gradient-to-r from-amber-600/0 via-amber-500/12 to-amber-600/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                 />
-                <span className="relative z-10">View Premium</span>
+                <span className="relative z-10">{t("homeHero.viewPremium")}</span>
               </RippleLink>
             </div>
           </div>
@@ -318,7 +342,11 @@ export function HeroSection({
                 : "motion-safe:translate-y-8 motion-safe:opacity-0"
             }`}
           >
-            <HeroCoffeeVisual fallbackImage={heroImage} />
+            <HeroCoffeeVisual
+              fallbackImage={heroImage}
+              featuredRecipeLabel={t("homeHero.featuredRecipeBadge")}
+              imageAlt={t("homeHero.heroImageAlt")}
+            />
           </div>
         </div>
 
@@ -332,14 +360,14 @@ export function HeroSection({
           <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
             {heroStats.map((stat) => (
               <div
-                key={stat.label}
+                key={stat.labelKey}
                 className="flex items-center gap-4 rounded-2xl border border-white/[0.09] bg-white/[0.035] px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl transition-all duration-500 hover:border-white/[0.14] hover:bg-white/[0.05] sm:px-6 sm:py-[1.125rem]"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-700/20 bg-amber-950/25 text-amber-500/80">
                   {stat.icon}
                 </div>
                 <div className="min-w-0 text-left [&_p:first-child]:text-2xl [&_p:first-child]:sm:text-[1.75rem] [&_p:first-child]:lg:text-[2rem]">
-                  <AnimatedStat value={stat.value} label={stat.label} />
+                  <AnimatedStat value={stat.value} label={t(stat.labelKey)} />
                 </div>
               </div>
             ))}

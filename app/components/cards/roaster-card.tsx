@@ -4,14 +4,39 @@ import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { MetaTile } from "@/app/components/ui/meta-tile";
 import { cards } from "@/lib/constants/styles";
 import type { TopRoaster } from "@/types/homepage";
+import { interpolate } from "@/lib/i18n/format";
 import { imageAlt } from "@/lib/seo/image-alt";
+
+export type RoasterCardLabels = {
+  premium: string;
+  country: string;
+  founded: string;
+  recipes: string;
+  rating: string;
+  viewRoaster: string;
+  /** Translated `{name} {country} {specialty}` image alt template. */
+  imageAltTemplate: string;
+};
+
+const defaultRoasterCardLabels: RoasterCardLabels = {
+  premium: "Premium",
+  country: "Country",
+  founded: "Founded",
+  recipes: "Recipes",
+  rating: "Rating",
+  viewRoaster: "View Roaster",
+  imageAltTemplate: imageAlt.roasterTemplate,
+};
 
 type RoasterCardProps = {
   roaster: TopRoaster;
   ctaHref?: string;
+  /** Translated copy for this card's chrome. Defaults to English so existing callers (e.g. `/roasters`) are unaffected. */
+  labels?: Partial<RoasterCardLabels>;
 };
 
-export function RoasterCard({ roaster, ctaHref = "#roasters" }: RoasterCardProps) {
+export function RoasterCard({ roaster, ctaHref = "#roasters", labels }: RoasterCardProps) {
+  const l: RoasterCardLabels = { ...defaultRoasterCardLabels, ...labels };
   return (
     <article className={cards.premiumShell}>
       <div aria-hidden className={cards.premiumSheen} />
@@ -20,7 +45,11 @@ export function RoasterCard({ roaster, ctaHref = "#roasters" }: RoasterCardProps
       <div className="relative h-40 shrink-0 overflow-hidden sm:h-44 lg:h-48">
         <Image
           src={roaster.image}
-          alt={imageAlt.roaster(roaster.name, roaster.country, roaster.specialty)}
+          alt={interpolate(l.imageAltTemplate, {
+            name: roaster.name,
+            country: roaster.country,
+            specialty: roaster.specialty,
+          })}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           unoptimized={roaster.image.endsWith(".svg")}
@@ -32,7 +61,7 @@ export function RoasterCard({ roaster, ctaHref = "#roasters" }: RoasterCardProps
 
         {roaster.premium && (
           <div className="absolute right-4 top-4 rounded-full border border-amber-700/35 bg-amber-950/65 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
-            Premium
+            {l.premium}
           </div>
         )}
 
@@ -57,14 +86,14 @@ export function RoasterCard({ roaster, ctaHref = "#roasters" }: RoasterCardProps
         </p>
 
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
-          <MetaTile icon={MapPin} label="Country" value={roaster.country} compact />
-          <MetaTile icon={Calendar} label="Founded" value={roaster.founded} compact />
-          <MetaTile icon={BookOpen} label="Recipes" value={roaster.recipes} compact />
-          <MetaTile icon={Star} label="Rating" value={roaster.rating} compact />
+          <MetaTile icon={MapPin} label={l.country} value={roaster.country} compact />
+          <MetaTile icon={Calendar} label={l.founded} value={roaster.founded} compact />
+          <MetaTile icon={BookOpen} label={l.recipes} value={roaster.recipes} compact />
+          <MetaTile icon={Star} label={l.rating} value={roaster.rating} compact />
         </div>
 
         <div className="mt-auto border-t border-white/[0.06] pt-4">
-          <GhostCtaLink href={ctaHref}>View Roaster</GhostCtaLink>
+          <GhostCtaLink href={ctaHref}>{l.viewRoaster}</GhostCtaLink>
         </div>
       </div>
     </article>
