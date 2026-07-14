@@ -925,6 +925,7 @@ const ar: Dictionary = {
     poursCountValue: "{count} صبّات",
     singlePourValue: "صبّة واحدة",
     singleSteepValue: "نقع واحد",
+    continuousFlowValue: "تدفّق مستمر",
     notApplicableValue: "—",
   },
   metadata: {

@@ -929,6 +929,7 @@ const en: Dictionary = {
     poursCountValue: "{count} pours",
     singlePourValue: "Single pour",
     singleSteepValue: "Single steep",
+    continuousFlowValue: "Continuous flow",
     notApplicableValue: "—",
   },
   metadata: {

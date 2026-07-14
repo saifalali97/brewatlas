@@ -910,6 +910,7 @@ export type Dictionary = {
     poursCountValue: string;
     singlePourValue: string;
     singleSteepValue: string;
+    continuousFlowValue: string;
     notApplicableValue: string;
   };
   metadata: {

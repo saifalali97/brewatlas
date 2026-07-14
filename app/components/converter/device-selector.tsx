@@ -16,6 +16,8 @@ export const CONVERTER_DEVICES = [
   "AeroPress",
   "Clever Dripper",
   "French Press",
+  "Switch",
+  "Moka Pot",
   "Orea",
   "April Brewer",
   "xBloom Studio",

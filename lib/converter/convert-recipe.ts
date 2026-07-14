@@ -1,174 +1,90 @@
-import { BREW_METHOD_PROFILES } from "@/lib/converter/brew-profiles";
+import { DEVICE_RULES } from "@/lib/converter/rules";
+import { applySafetyLimits, buildPourStages, clampToRange } from "@/lib/converter/rule-helpers";
 import { grindIndexToResult, parseGrindLabel } from "@/lib/converter/grind-scale";
 import { resolveBrewMethod } from "@/lib/converter/resolve-brew-method";
-import {
-  clamp,
-  denormalizePosition,
-  formatSecondsAsDuration,
-  normalizePosition,
-  parseTimeToSeconds,
-} from "@/lib/converter/time";
-import type { BrewMethodProfile, ConversionInput, ConversionResult } from "@/lib/converter/types";
+import { formatSecondsAsDuration, parseTimeToSeconds } from "@/lib/converter/time";
+import type { ConversionInput, ConversionResult, DeviceComputationContext } from "@/lib/converter/types";
 
 const MIN_DOSE_G = 5;
 const MAX_DOSE_G = 60;
 
 /**
- * Converts a recipe from one brew method to another using deterministic
- * extraction rules (Phase 17.2 -- see `lib/converter/brew-profiles.ts` for
- * the per-method numbers this is built on). No AI, no randomness: the same
- * input always produces the same output.
+ * Converts a recipe from one brew method to another using each target
+ * device's own rule module (`lib/converter/rules/`, Phase 17.3). No AI, no
+ * randomness: the same input always produces the same output.
  *
- * Coffee dose is preserved as-is (converting devices doesn't change how
- * much coffee you have); every other field is recalculated to match the
- * target method's ideal extraction window, nudged by the user's
- * preserve-body/sweetness/acidity preferences.
+ * This function is intentionally thin -- it only resolves method names,
+ * builds the shared `DeviceComputationContext` from whatever source
+ * numbers are available (falling back to the source device's own
+ * profile), hands it to the target device's `computeTarget`, and clamps
+ * the result through `applySafetyLimits`. Every actual brewing decision
+ * lives in the per-device rule module, not here.
  */
 export function convertRecipe(input: ConversionInput): ConversionResult {
   const sourceMethod = resolveBrewMethod(input.sourceMethod);
   const targetMethod = resolveBrewMethod(input.targetMethod);
-  const source = BREW_METHOD_PROFILES[sourceMethod];
-  const target = BREW_METHOD_PROFILES[targetMethod];
+  const sourceRule = DEVICE_RULES[sourceMethod];
+  const targetRule = DEVICE_RULES[targetMethod];
 
-  if (!source || !target) {
+  if (!sourceRule || !targetRule) {
     return { supported: false, reason: "unsupported-method" };
   }
 
-  const { preferences } = input;
+  const sourceProfile = sourceRule.profile;
+  const doseG = clampToRange(input.doseG ?? targetRule.profile.defaultDoseG, { min: MIN_DOSE_G, max: MAX_DOSE_G, default: targetRule.profile.defaultDoseG });
 
-  const doseG = clamp(input.doseG ?? target.defaultDoseG, MIN_DOSE_G, MAX_DOSE_G);
+  const context: DeviceComputationContext = {
+    doseG,
+    sourceGrindIndex: clampToRange(parseGrindLabel(input.grindSize, sourceProfile.grind.default), sourceProfile.grind),
+    sourceCategory: sourceProfile.category,
+    sourceProfile,
+    sourceTemperatureC: clampToRange(input.temperatureC ?? sourceProfile.temperatureC.default, sourceProfile.temperatureC),
+    sourceBrewTimeSeconds: parseTimeToSeconds(input.brewTime) ?? sourceProfile.brewTimeSeconds.default,
+    preferences: input.preferences,
+  };
 
-  const ratio = resolveTargetRatio(target, preferences);
-  const waterG = Math.round(doseG * ratio);
+  const raw = targetRule.computeTarget(context);
+  const result = applySafetyLimits(raw, targetRule.profile, doseG);
 
-  const sourceGrindIndex = clamp(
-    parseGrindLabel(input.grindSize, source.grind.default),
-    source.grind.min,
-    source.grind.max,
-  );
-  const grind = resolveTargetGrind(source, target, sourceGrindIndex, preferences);
+  const waterG = Math.round(doseG * result.ratio);
+  const pourStages = buildPourStages({
+    waterGrams: waterG,
+    bloomGrams: result.bloomGrams,
+    bloomTimeSeconds: result.bloomTimeSeconds,
+    mainPoursCount: result.poursCount,
+    totalBrewTimeSeconds: result.brewTimeSeconds,
+  });
 
-  const sourceTemperatureC = clamp(input.temperatureC ?? source.temperatureC.default, source.temperatureC.min, source.temperatureC.max);
-  const temperatureC = resolveTargetTemperature(source, target, sourceTemperatureC, preferences);
+  const bloomDisplay =
+    result.bloomGrams === null || result.bloomTimeSeconds === null
+      ? "N/A"
+      : `${result.bloomGrams}g / ${result.bloomTimeSeconds}s`;
 
-  const sourceBrewTimeSeconds = parseTimeToSeconds(input.brewTime) ?? source.brewTimeSeconds.default;
-  const brewTimeSeconds = resolveTargetBrewTime(source, target, sourceBrewTimeSeconds, preferences);
-
-  const bloom = resolveTargetBloom(target, doseG, preferences);
-  const pours = resolveTargetPours(target);
+  const poursDisplay =
+    result.poursCount > 0
+      ? `${result.poursCount} pours`
+      : targetRule.profile.category === "coldBrew"
+        ? "Single steep"
+        : targetRule.profile.category === "pressurized"
+          ? "Continuous flow"
+          : "Single pour";
 
   return {
     supported: true,
     sourceMethod,
     targetMethod,
-    targetCategory: target.category,
+    targetCategory: targetRule.profile.category,
     dose: { grams: doseG, display: `${doseG}g` },
-    water: { grams: waterG, display: `${waterG}g` },
-    grindSize: grindIndexToResult(grind),
-    temperature: { celsius: Math.round(temperatureC * 2) / 2, display: `${Math.round(temperatureC)}°C` },
-    bloom,
-    brewTime: { seconds: brewTimeSeconds, display: formatSecondsAsDuration(brewTimeSeconds) },
-    pours,
+    water: { grams: waterG, ratio: Math.round(result.ratio * 10) / 10, display: `${waterG}g` },
+    grindSize: grindIndexToResult(result.grindIndex),
+    temperature: { celsius: Math.round(result.temperatureC * 2) / 2, display: `${Math.round(result.temperatureC)}°C` },
+    bloom: { grams: result.bloomGrams, timeSeconds: result.bloomTimeSeconds, display: bloomDisplay },
+    brewTime: { seconds: result.brewTimeSeconds, display: formatSecondsAsDuration(result.brewTimeSeconds) },
+    pours: {
+      count: result.poursCount,
+      style: result.pourStyle,
+      stages: pourStages,
+      display: poursDisplay,
+    },
   };
-}
-
-function resolveTargetRatio(
-  target: BrewMethodProfile,
-  preferences: ConversionInput["preferences"],
-): number {
-  let ratio = target.ratio.default;
-
-  // Stronger (lower) ratio reads as more body; lighter (higher) ratio lets acidity/delicate notes shine through.
-  if (preferences.preserveBody) {
-    ratio = (target.ratio.min + ratio) / 2;
-  }
-  if (preferences.preserveAcidity) {
-    ratio = (ratio + target.ratio.max) / 2;
-  }
-
-  return clamp(ratio, target.ratio.min, target.ratio.max);
-}
-
-function resolveTargetGrind(
-  source: BrewMethodProfile,
-  target: BrewMethodProfile,
-  sourceGrindIndex: number,
-  preferences: ConversionInput["preferences"],
-): number {
-  const position = normalizePosition(sourceGrindIndex, source.grind.min, source.grind.max);
-  let grind = denormalizePosition(position, target.grind.min, target.grind.max);
-
-  // Finer grind extracts more (fuller body); slightly coarser reduces bitterness so acidity stands out.
-  if (preferences.preserveBody) grind -= 0.4;
-  if (preferences.preserveAcidity) grind += 0.3;
-
-  return clamp(grind, target.grind.min, target.grind.max);
-}
-
-function resolveTargetTemperature(
-  source: BrewMethodProfile,
-  target: BrewMethodProfile,
-  sourceTemperatureC: number,
-  preferences: ConversionInput["preferences"],
-): number {
-  // Cold brew's temperature is a fixed ambient/cold steep, not something preferences should nudge.
-  if (target.category === "coldBrew") {
-    return target.temperatureC.default;
-  }
-
-  const position = normalizePosition(sourceTemperatureC, source.temperatureC.min, source.temperatureC.max);
-  let temperatureC = denormalizePosition(position, target.temperatureC.min, target.temperatureC.max);
-
-  if (preferences.preserveAcidity) temperatureC -= 2;
-  if (preferences.preserveBody) temperatureC += 1.5;
-
-  return clamp(temperatureC, target.temperatureC.min, target.temperatureC.max);
-}
-
-function resolveTargetBrewTime(
-  source: BrewMethodProfile,
-  target: BrewMethodProfile,
-  sourceBrewTimeSeconds: number,
-  preferences: ConversionInput["preferences"],
-): number {
-  // Proportional scaling only makes sense within the same brewing style; across styles (e.g. pour-over -> cold
-  // brew) fall back to the target's own standard time rather than a meaningless scaled-up/down number.
-  let brewTimeSeconds =
-    source.category === target.category
-      ? denormalizePosition(
-          normalizePosition(sourceBrewTimeSeconds, source.brewTimeSeconds.min, source.brewTimeSeconds.max),
-          target.brewTimeSeconds.min,
-          target.brewTimeSeconds.max,
-        )
-      : target.brewTimeSeconds.default;
-
-  if (preferences.preserveBody) brewTimeSeconds *= 1.08;
-  if (preferences.preserveAcidity) brewTimeSeconds *= 0.92;
-
-  return Math.round(clamp(brewTimeSeconds, target.brewTimeSeconds.min, target.brewTimeSeconds.max));
-}
-
-function resolveTargetBloom(
-  target: BrewMethodProfile,
-  doseG: number,
-  preferences: ConversionInput["preferences"],
-): { grams: number | null; timeSeconds: number | null; display: string } {
-  if (!target.supportsBloom) {
-    return { grams: null, timeSeconds: null, display: "N/A" };
-  }
-
-  const grams = Math.round(doseG * target.bloomMultiplier);
-  // A slightly longer bloom lets CO2 escape more evenly, which favors sweeter extraction.
-  const timeSeconds = target.defaultBloomTimeSeconds + (preferences.preserveSweetness ? 10 : 0);
-
-  return { grams, timeSeconds, display: `${grams}g / ${timeSeconds}s` };
-}
-
-function resolveTargetPours(target: BrewMethodProfile): { count: number; display: string } {
-  if (!target.supportsPours) {
-    return { count: 0, display: target.category === "coldBrew" ? "Single steep" : "Single pour" };
-  }
-
-  const count = target.defaultPoursCount;
-  return { count, display: `${count} pours` };
 }

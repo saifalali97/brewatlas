@@ -66,11 +66,15 @@ export function RecipeConverterModal({ isOpen, onClose, currentDevice, sourceRec
         ? t("recipeConverter.poursCountValue", { count: result.pours.count })
         : result.targetCategory === "coldBrew"
           ? t("recipeConverter.singleSteepValue")
-          : t("recipeConverter.singlePourValue");
+          : result.targetCategory === "pressurized"
+            ? t("recipeConverter.continuousFlowValue")
+            : t("recipeConverter.singlePourValue");
+
+    const ratioDisplay = Number.isInteger(result.water.ratio) ? `${result.water.ratio}` : result.water.ratio.toFixed(1);
 
     return {
       dose: result.dose.display,
-      water: result.water.display,
+      water: `${result.water.display} (1:${ratioDisplay})`,
       grindSize: result.grindSize.display,
       temperature: result.temperature.display,
       bloom: bloomDisplay,

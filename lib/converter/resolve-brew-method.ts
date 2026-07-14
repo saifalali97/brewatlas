@@ -21,10 +21,12 @@ const ALIAS_RULES: Array<{ pattern: RegExp; id: BrewMethodId }> = [
   { pattern: /aero\s*press/, id: "aeropress" },
   { pattern: /french\s*press/, id: "frenchPress" },
   { pattern: /cold\s*brew|toddy|yama/, id: "coldBrew" },
-  { pattern: /espresso|marzocco|flair|nanopresso|moka/, id: "espresso" },
+  { pattern: /moka/, id: "mokaPot" },
+  { pattern: /espresso|marzocco|flair|nanopresso/, id: "espresso" },
+  { pattern: /switch/, id: "switch" },
   { pattern: /v60/, id: "v60" },
-  // Hybrid immersion/pour-over devices without a dedicated profile -- Clever Dripper is the closest analog.
-  { pattern: /switch|immersion/, id: "cleverDripper" },
+  // Generic full-immersion devices without a dedicated profile -- Clever Dripper's paper-filtered immersion is the closest analog.
+  { pattern: /immersion/, id: "cleverDripper" },
   // Vacuum/siphon brewing shares V60's clarity-focused, full-control profile closely enough to reuse it.
   { pattern: /siphon/, id: "v60" },
   // Modern high-flow conical/flat drippers without a dedicated profile default to the V60 baseline.
