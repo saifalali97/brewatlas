@@ -46,9 +46,11 @@ const TASTE_PROFILE_SELECT = `
 `;
 
 const BREW_LOG_SELECT = `
-  id, user_id, recipe_id, brewed_at, brewing_device_id, brewing_method_id,
+  id, user_id, recipe_id, coffee_name, grinder_id, grind_size, water_amount, brew_time,
+  brewed_at, brewing_device_id, brewing_method_id,
   rating, is_favorite, notes, created_at,
   recipes ( id, title, slug ),
+  grinders ( id, name ),
   devices ( id, name ),
   brewing_methods ( id, name )
 `;
@@ -105,6 +107,12 @@ function mapDbBrewLogToRow(row: DbBrewLogRow): BrewLogRow {
     recipeId: row.recipe_id,
     recipeTitle: row.recipes?.title ?? null,
     recipeSlug: row.recipes?.slug ?? null,
+    coffeeName: row.coffee_name,
+    grinderId: row.grinder_id,
+    grinderName: row.grinders?.name ?? null,
+    grindSize: row.grind_size,
+    waterAmount: row.water_amount,
+    brewTime: row.brew_time,
     brewedAt: row.brewed_at,
     brewingDeviceId: row.brewing_device_id,
     brewingDeviceName: row.devices?.name ?? null,

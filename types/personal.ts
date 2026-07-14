@@ -115,6 +115,12 @@ export type BrewLogRow = {
   recipeId: string | null;
   recipeTitle: string | null;
   recipeSlug: string | null;
+  coffeeName: string | null;
+  grinderId: string | null;
+  grinderName: string | null;
+  grindSize: string | null;
+  waterAmount: number | null;
+  brewTime: string | null;
   brewedAt: string;
   brewingDeviceId: string | null;
   brewingDeviceName: string | null;
@@ -132,6 +138,12 @@ export type DbBrewLogRow = {
   user_id: string;
   recipe_id: string | null;
   recipes: { id: string; title: string; slug: string } | null;
+  coffee_name: string | null;
+  grinder_id: string | null;
+  grinders: LookupOption | null;
+  grind_size: string | null;
+  water_amount: number | null;
+  brew_time: string | null;
   brewed_at: string;
   brewing_device_id: string | null;
   devices: LookupOption | null;

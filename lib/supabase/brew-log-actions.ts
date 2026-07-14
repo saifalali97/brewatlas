@@ -3,15 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { updateTasteProfile } from "@/lib/data/ai";
 import { evaluateAndAwardBadges, recordActivity, refreshCommunityStats } from "@/lib/data/community";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * Server Actions for "Brewing History" (`user_brew_logs`).
- *
- * Nothing in the UI calls these yet -- they're production-ready groundwork
- * for a future brew-logging flow (e.g. a "log this brew" button on a
- * recipe detail page) and feed the Personal Dashboard aggregates in
- * `lib/data/personal.ts#getPersonalDashboard`.
+ * Server Actions for "Brewing History" (`user_brew_logs`), backing the
+ * `/dashboard/brew-history` pages. Follows the same auth/validation/i18n
+ * patterns as `lib/supabase/coffee-setup-actions.ts`.
  */
 
 function optionalString(formData: FormData, key: string): string | null {
@@ -21,15 +20,29 @@ function optionalString(formData: FormData, key: string): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
-function parseRating(formData: FormData): { value: number | null } | { error: string } {
+function parseRating(
+  formData: FormData,
+  invalidMessage: string,
+): { value: number | null } | { error: string } {
   const raw = optionalString(formData, "rating");
   if (raw === null) return { value: null };
 
   const parsed = Number(raw);
   if (!Number.isFinite(parsed) || parsed < 1 || parsed > 5) {
-    return { error: "Rating must be a number between 1 and 5." };
+    return { error: invalidMessage };
   }
   return { value: Math.round(parsed) };
+}
+
+function parseWaterAmount(formData: FormData, invalidMessage: string): { value: number | null } | { error: string } {
+  const raw = optionalString(formData, "waterAmount");
+  if (raw === null) return { value: null };
+
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return { error: invalidMessage };
+  }
+  return { value: Math.round(parsed * 10) / 10 };
 }
 
 function parseBrewedAt(formData: FormData): string {
@@ -40,6 +53,50 @@ function parseBrewedAt(formData: FormData): string {
   return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
 }
 
+function brewLogPayload(formData: FormData, invalidRating: string, invalidWater: string) {
+  const rating = parseRating(formData, invalidRating);
+  if ("error" in rating) return { error: rating.error } as const;
+
+  const waterAmount = parseWaterAmount(formData, invalidWater);
+  if ("error" in waterAmount) return { error: waterAmount.error } as const;
+
+  return {
+    payload: {
+      recipe_id: optionalString(formData, "recipeId"),
+      coffee_name: optionalString(formData, "coffeeName"),
+      grinder_id: optionalString(formData, "grinderId"),
+      grind_size: optionalString(formData, "grindSize"),
+      water_amount: waterAmount.value,
+      brew_time: optionalString(formData, "brewTime"),
+      brewed_at: parseBrewedAt(formData),
+      brewing_device_id: optionalString(formData, "brewingDeviceId"),
+      brewing_method_id: optionalString(formData, "brewingMethodId"),
+      rating: rating.value,
+      is_favorite: formData.get("isFavorite") === "on" || formData.get("isFavorite") === "true",
+      notes: optionalString(formData, "notes"),
+    },
+  } as const;
+}
+
+async function afterBrewLogMutation(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, recipeId: string | null, rating: number | null, isCreate: boolean) {
+  await refreshCommunityStats(supabase, userId);
+  await evaluateAndAwardBadges(supabase, userId);
+  if (isCreate) {
+    await recordActivity(supabase, {
+      userId,
+      activityType: "brewed_recipe",
+      recipeId,
+      metadata: rating ? { rating } : {},
+    });
+  }
+  await updateTasteProfile(supabase, userId);
+}
+
+function revalidateBrewHistory() {
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/brew-history");
+}
+
 export type BrewLogActionState = { error?: string; success?: string; brewLogId?: string } | undefined;
 
 /** Logs a new brew session for the caller. */
@@ -48,27 +105,20 @@ export async function logBrewAction(
   formData: FormData,
 ): Promise<BrewLogActionState> {
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
+  const b = dictionary.brewLogPage;
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
-    return { error: "You must be signed in to log a brew." };
+    return { error: b.signInRequired };
   }
 
-  const rating = parseRating(formData);
-  if ("error" in rating) {
-    return { error: rating.error };
+  const parsed = brewLogPayload(formData, b.invalidRating, b.invalidWater);
+  if ("error" in parsed) {
+    return { error: parsed.error };
   }
 
-  const payload = {
-    user_id: authData.user.id,
-    recipe_id: optionalString(formData, "recipeId"),
-    brewed_at: parseBrewedAt(formData),
-    brewing_device_id: optionalString(formData, "brewingDeviceId"),
-    brewing_method_id: optionalString(formData, "brewingMethodId"),
-    rating: rating.value,
-    is_favorite: formData.get("isFavorite") === "on" || formData.get("isFavorite") === "true",
-    notes: optionalString(formData, "notes"),
-  };
+  const payload = { user_id: authData.user.id, ...parsed.payload };
 
   const { data: inserted, error } = await supabase
     .from("user_brew_logs")
@@ -77,29 +127,14 @@ export async function logBrewAction(
     .single();
 
   if (error || !inserted) {
-    return { error: error?.message ?? "Failed to log this brew." };
+    return { error: error?.message ?? b.saveFailed };
   }
 
   const brewLogId = inserted.id as string;
+  await afterBrewLogMutation(supabase, authData.user.id, payload.recipe_id, payload.rating, true);
 
-  // Community system: every logged brew feeds Brew Score, the "Top
-  // Brewers"/"Most Active Users" leaderboards, and badges like First
-  // Brew / V60 Master / Espresso Expert / UAE Coffee Explorer.
-  await refreshCommunityStats(supabase, authData.user.id);
-  await evaluateAndAwardBadges(supabase, authData.user.id);
-  await recordActivity(supabase, {
-    userId: authData.user.id,
-    activityType: "brewed_recipe",
-    recipeId: payload.recipe_id,
-    metadata: payload.rating ? { rating: payload.rating } : {},
-  });
-
-  // BrewAtlas AI: every logged brew is a taste signal -- the AI User
-  // Profile becomes smarter over time as it recomputes from this.
-  await updateTasteProfile(supabase, authData.user.id);
-
-  revalidatePath("/dashboard");
-  return { success: "Brew logged.", brewLogId };
+  revalidateBrewHistory();
+  return { success: b.brewLogged, brewLogId };
 }
 
 /** Updates a brew log entry the caller owns. */
@@ -108,46 +143,71 @@ export async function updateBrewLogAction(
   formData: FormData,
 ): Promise<BrewLogActionState> {
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
+  const b = dictionary.brewLogPage;
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
-    return { error: "You must be signed in to update a brew log." };
+    return { error: b.signInRequired };
   }
 
   const brewLogId = optionalString(formData, "brewLogId");
   if (!brewLogId) {
-    return { error: "Missing brew log id." };
+    return { error: b.missingBrewLogId };
   }
 
-  const rating = parseRating(formData);
-  if ("error" in rating) {
-    return { error: rating.error };
+  const parsed = brewLogPayload(formData, b.invalidRating, b.invalidWater);
+  if ("error" in parsed) {
+    return { error: parsed.error };
   }
-
-  const payload = {
-    recipe_id: optionalString(formData, "recipeId"),
-    brewed_at: parseBrewedAt(formData),
-    brewing_device_id: optionalString(formData, "brewingDeviceId"),
-    brewing_method_id: optionalString(formData, "brewingMethodId"),
-    rating: rating.value,
-    is_favorite: formData.get("isFavorite") === "on" || formData.get("isFavorite") === "true",
-    notes: optionalString(formData, "notes"),
-  };
 
   const { error } = await supabase
     .from("user_brew_logs")
-    .update(payload)
+    .update(parsed.payload)
     .eq("id", brewLogId)
     .eq("user_id", authData.user.id);
 
   if (error) {
-    return { error: error.message || "Failed to update this brew log." };
+    return { error: error.message || b.updateFailed };
   }
 
+  await afterBrewLogMutation(supabase, authData.user.id, parsed.payload.recipe_id, parsed.payload.rating, false);
+
+  revalidateBrewHistory();
+  revalidatePath(`/dashboard/brew-history/${brewLogId}/edit`);
+  return { success: b.brewUpdated, brewLogId };
+}
+
+/** Deletes a brew log entry the caller owns. */
+export async function deleteBrewLogAction(
+  _prevState: BrewLogActionState,
+  formData: FormData,
+): Promise<BrewLogActionState> {
+  const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
+  const b = dictionary.brewLogPage;
+  const { data: authData } = await supabase.auth.getUser();
+
+  if (!authData.user) {
+    return { error: b.signInRequired };
+  }
+
+  const brewLogId = optionalString(formData, "brewLogId");
+  if (!brewLogId) {
+    return { error: b.missingBrewLogId };
+  }
+
+  const { error } = await supabase.from("user_brew_logs").delete().eq("id", brewLogId).eq("user_id", authData.user.id);
+
+  if (error) {
+    return { error: error.message || b.deleteFailed };
+  }
+
+  await refreshCommunityStats(supabase, authData.user.id);
   await updateTasteProfile(supabase, authData.user.id);
 
-  revalidatePath("/dashboard");
-  return { success: "Brew log updated.", brewLogId };
+  revalidateBrewHistory();
+  return { success: b.brewDeleted };
 }
 
 /** Toggles the favorite flag on a single brew session the caller owns. */
@@ -174,19 +234,5 @@ export async function toggleBrewLogFavoriteAction(formData: FormData): Promise<v
     .eq("id", brewLogId)
     .eq("user_id", authData.user.id);
 
-  revalidatePath("/dashboard");
-}
-
-/** Deletes a brew log entry the caller owns. */
-export async function deleteBrewLogAction(formData: FormData): Promise<void> {
-  const supabase = await createClient();
-  const { data: authData } = await supabase.auth.getUser();
-  if (!authData.user) return;
-
-  const brewLogId = optionalString(formData, "brewLogId");
-  if (!brewLogId) return;
-
-  await supabase.from("user_brew_logs").delete().eq("id", brewLogId).eq("user_id", authData.user.id);
-
-  revalidatePath("/dashboard");
+  revalidateBrewHistory();
 }
