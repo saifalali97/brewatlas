@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
+import { FavoriteButton } from "@/app/components/recipes/favorite-button";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { getUserFavoriteRecipes } from "@/lib/data/db-recipes";
@@ -64,13 +65,25 @@ export default async function DashboardFavoritesPage() {
       ) : (
         <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
           {favoriteRecipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              featured={false}
-              href={`/recipes/${recipe.slug}`}
-              labels={recipeCardLabels(dictionary, recipe)}
-            />
+            <div key={recipe.id} className="relative">
+              <RecipeCard
+                recipe={recipe}
+                featured={false}
+                href={`/recipes/${recipe.slug}`}
+                labels={recipeCardLabels(dictionary, recipe)}
+              />
+              {recipe.id && (
+                <div className="pointer-events-none absolute inset-0">
+                  <div className="pointer-events-auto absolute bottom-6 end-6 z-10">
+                    <FavoriteButton
+                      recipeId={recipe.id}
+                      isFavorited
+                      currentPath="/dashboard/favorites"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}

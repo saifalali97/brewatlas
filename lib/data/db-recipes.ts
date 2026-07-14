@@ -13,7 +13,7 @@ import {
   type RecipeListItem,
 } from "@/types/recipe";
 
-const RECIPE_SELECT = `
+export const RECIPE_SELECT = `
   id, title, slug, description, video_url, difficulty, estimated_brew_time,
   author_id, coffee_dose, water_amount, ice_amount, grind_size, water_temperature,
   ratio, bloom_amount, bloom_time, total_brew_time, beverage_weight, tds,
