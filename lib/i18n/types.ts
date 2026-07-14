@@ -865,6 +865,74 @@ export type Dictionary = {
     messageSentTitle: string;
     messageSentBody: string;
   };
+  /** Shared strings reused across `/privacy`, `/terms` and `/cookies`. */
+  legalPage: {
+    lastUpdatedLabel: string;
+    contactPrefix: string;
+    contactLinkLabel: string;
+    contactSuffix: string;
+  };
+  privacyPage: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    section1Heading: string;
+    section1Body: string;
+    section2Heading: string;
+    section2Body: string;
+    section3Heading: string;
+    section3Body: string;
+    section4Heading: string;
+    section4Body: string;
+    section5Heading: string;
+    section5Body: string;
+    section6Heading: string;
+    section6Body: string;
+    section7Heading: string;
+    section7Body: string;
+    section8Heading: string;
+    section8Body: string;
+  };
+  termsPage: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    section1Heading: string;
+    section1Body: string;
+    section2Heading: string;
+    section2Body: string;
+    section3Heading: string;
+    section3Body: string;
+    section4Heading: string;
+    section4Body: string;
+    section5Heading: string;
+    section5Body: string;
+    section6Heading: string;
+    section6Body: string;
+    section7Heading: string;
+    section7Body: string;
+    section8Heading: string;
+    section8Body: string;
+    section9Heading: string;
+    section9Body: string;
+  };
+  cookiesPage: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    section1Heading: string;
+    section1Body: string;
+    section2Heading: string;
+    section2Body: string;
+    section3Heading: string;
+    section3Body: string;
+    section4Heading: string;
+    section4Body: string;
+    section5Heading: string;
+    section5Body: string;
+    section6Heading: string;
+    section6Body: string;
+  };
   offlinePage: {
     metaTitle: string;
     metaDescription: string;
@@ -1053,6 +1121,12 @@ export type Dictionary = {
     aboutDescription: string;
     contactTitle: string;
     contactDescription: string;
+    privacyTitle: string;
+    privacyDescription: string;
+    termsTitle: string;
+    termsDescription: string;
+    cookiesTitle: string;
+    cookiesDescription: string;
   };
 };
 
