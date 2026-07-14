@@ -10,17 +10,22 @@ import type {
   NotificationItem,
   ProfileSummary,
   PublicProfile,
+  RatingDistributionBucket,
   RecipeLeaderboardEntry,
   RecipeRatingSummary,
   RecipeReview,
+  RecipeReviewsResult,
+  ReviewModerationStatus,
+  ReviewSort,
   TrendingBrewingMethod,
   TrendingCoffee,
   TrendingRecipe,
   TrendingRoaster,
   UserBadge,
   UserLeaderboardEntry,
+  UserReviewListItem,
 } from "@/types/community";
-import { EMPTY_COMMUNITY_STATS } from "@/types/community";
+import { EMPTY_COMMUNITY_STATS, REVIEW_PAGE_SIZE, REVIEW_SORTS } from "@/types/community";
 
 /**
  * Data-access layer for the Coffee Community system: public profiles,
@@ -216,6 +221,16 @@ export async function getRecipeLikeCount(supabase: SupabaseClient, recipeId: str
   return count ?? 0;
 }
 
+const REVIEW_SELECT =
+  "id, recipe_id, user_id, rating, review_text, created_at, updated_at, profiles!recipe_reviews_user_id_fkey ( id, full_name, avatar_url, country ), recipe_review_helpful_votes ( user_id )";
+
+function parseReviewSort(value: string | undefined): ReviewSort {
+  if (value && (REVIEW_SORTS as readonly string[]).includes(value)) {
+    return value as ReviewSort;
+  }
+  return "newest";
+}
+
 function mapDbReviewToRecipeReview(row: DbRecipeReviewRow, viewerId?: string | null): RecipeReview {
   return {
     id: row.id,
@@ -227,30 +242,99 @@ function mapDbReviewToRecipeReview(row: DbRecipeReviewRow, viewerId?: string | n
     reviewText: row.review_text,
     helpfulCount: row.recipe_review_helpful_votes?.length ?? 0,
     isHelpfulByViewer: viewerId ? row.recipe_review_helpful_votes?.some((vote) => vote.user_id === viewerId) : undefined,
+    moderationStatus: (row.moderation_status as ReviewModerationStatus) ?? "visible",
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
 }
 
-/** All reviews for a recipe, most recent first, with helpful vote counts. */
+function sortReviews(reviews: RecipeReview[], sort: ReviewSort): RecipeReview[] {
+  const sorted = [...reviews];
+  if (sort === "highest") {
+    sorted.sort((a, b) => b.rating - a.rating || b.createdAt.localeCompare(a.createdAt));
+  } else if (sort === "lowest") {
+    sorted.sort((a, b) => a.rating - b.rating || b.createdAt.localeCompare(a.createdAt));
+  } else if (sort === "helpful") {
+    sorted.sort((a, b) => b.helpfulCount - a.helpfulCount || b.createdAt.localeCompare(a.createdAt));
+  } else {
+    sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }
+  return sorted;
+}
+
+/** Paginated, sortable reviews for a recipe. RLS hides moderated reviews from the public. */
+export async function getRecipeReviewsPage(
+  supabase: SupabaseClient,
+  recipeId: string,
+  options: {
+    sort?: ReviewSort;
+    page?: number;
+    pageSize?: number;
+    viewerId?: string | null;
+  } = {},
+): Promise<RecipeReviewsResult> {
+  const sort = options.sort ?? "newest";
+  const page = Math.max(1, options.page ?? 1);
+  const pageSize = options.pageSize ?? REVIEW_PAGE_SIZE;
+
+  if (sort === "helpful") {
+    const { data, error } = await supabase
+      .from("recipe_reviews")
+      .select(REVIEW_SELECT)
+      .eq("recipe_id", recipeId);
+
+    if (error || !data) {
+      if (error) console.error("getRecipeReviewsPage failed", error);
+      return { reviews: [], totalCount: 0, page, pageSize, sort };
+    }
+
+    const mapped = (data as unknown as DbRecipeReviewRow[]).map((row) => mapDbReviewToRecipeReview(row, options.viewerId));
+    const sorted = sortReviews(mapped, sort);
+    const offset = (page - 1) * pageSize;
+    return {
+      reviews: sorted.slice(offset, offset + pageSize),
+      totalCount: sorted.length,
+      page,
+      pageSize,
+      sort,
+    };
+  }
+
+  let query = supabase.from("recipe_reviews").select(REVIEW_SELECT, { count: "exact" }).eq("recipe_id", recipeId);
+
+  if (sort === "highest") {
+    query = query.order("rating", { ascending: false }).order("created_at", { ascending: false });
+  } else if (sort === "lowest") {
+    query = query.order("rating", { ascending: true }).order("created_at", { ascending: false });
+  } else {
+    query = query.order("created_at", { ascending: false });
+  }
+
+  const offset = (page - 1) * pageSize;
+  const { data, error, count } = await query.range(offset, offset + pageSize - 1);
+
+  if (error || !data) {
+    if (error) console.error("getRecipeReviewsPage failed", error);
+    return { reviews: [], totalCount: 0, page, pageSize, sort };
+  }
+
+  return {
+    reviews: (data as unknown as DbRecipeReviewRow[]).map((row) => mapDbReviewToRecipeReview(row, options.viewerId)),
+    totalCount: count ?? 0,
+    page,
+    pageSize,
+    sort,
+  };
+}
+
+/** @deprecated Use `getRecipeReviewsPage` — kept for any internal callers expecting the full list. */
 export async function getRecipeReviews(
   supabase: SupabaseClient,
   recipeId: string,
   viewerId?: string | null,
 ): Promise<RecipeReview[]> {
-  const { data, error } = await supabase
-    .from("recipe_reviews")
-    .select(
-      "id, recipe_id, user_id, rating, review_text, created_at, updated_at, profiles!recipe_reviews_user_id_fkey ( id, full_name, avatar_url, country ), recipe_review_helpful_votes ( user_id )",
-    )
-    .eq("recipe_id", recipeId)
-    .order("created_at", { ascending: false });
-
-  if (error || !data) {
-    if (error) console.error("getRecipeReviews failed", error);
-    return [];
-  }
-  return (data as unknown as DbRecipeReviewRow[]).map((row) => mapDbReviewToRecipeReview(row, viewerId));
+  const result = await getRecipeReviewsPage(supabase, recipeId, { viewerId, page: 1, pageSize: 500, sort: "newest" });
+  return result.reviews;
 }
 
 /** A single user's review of a recipe, if any (for pre-filling an edit form). */
@@ -261,9 +345,7 @@ export async function getUserRecipeReview(
 ): Promise<RecipeReview | null> {
   const { data, error } = await supabase
     .from("recipe_reviews")
-    .select(
-      "id, recipe_id, user_id, rating, review_text, created_at, updated_at, profiles!recipe_reviews_user_id_fkey ( id, full_name, avatar_url, country ), recipe_review_helpful_votes ( user_id )",
-    )
+    .select(REVIEW_SELECT)
     .eq("recipe_id", recipeId)
     .eq("user_id", userId)
     .maybeSingle();
@@ -287,6 +369,83 @@ export async function getRecipeRatingSummary(supabase: SupabaseClient, recipeId:
     averageRating: data?.average_rating ?? null,
   };
 }
+
+/** Distribution of 1–5 star ratings for a recipe (visible reviews only, via RLS). */
+export async function getRecipeRatingDistribution(
+  supabase: SupabaseClient,
+  recipeId: string,
+): Promise<RatingDistributionBucket[]> {
+  const { data, error } = await supabase
+    .from("recipe_reviews")
+    .select("rating")
+    .eq("recipe_id", recipeId);
+
+  if (error || !data) {
+    if (error) console.error("getRecipeRatingDistribution failed", error);
+    return [1, 2, 3, 4, 5].map((stars) => ({ stars, count: 0, percent: 0 }));
+  }
+
+  const counts = new Map<number, number>();
+  for (const row of data) {
+    const rating = row.rating as number;
+    counts.set(rating, (counts.get(rating) ?? 0) + 1);
+  }
+
+  const total = data.length;
+  return [5, 4, 3, 2, 1].map((stars) => {
+    const count = counts.get(stars) ?? 0;
+    return {
+      stars,
+      count,
+      percent: total > 0 ? Math.round((count / total) * 100) : 0,
+    };
+  });
+}
+
+/** Reviews a user has written, with recipe title/slug for profile listings. */
+export async function getUserReviewsWritten(
+  supabase: SupabaseClient,
+  userId: string,
+  options: { limit?: number } = {},
+): Promise<UserReviewListItem[]> {
+  const limit = options.limit ?? 20;
+  const { data, error } = await supabase
+    .from("recipe_reviews")
+    .select(`${REVIEW_SELECT}, recipes ( title, slug )`)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data) {
+    if (error) console.error("getUserReviewsWritten failed", error);
+    return [];
+  }
+
+  type Row = DbRecipeReviewRow & { recipes: { title: string; slug: string } | null };
+
+  return (data as unknown as Row[])
+    .filter((row) => row.recipes)
+    .map((row) => ({
+      review: mapDbReviewToRecipeReview(row, userId),
+      recipeTitle: row.recipes!.title,
+      recipeSlug: row.recipes!.slug,
+    }));
+}
+
+/** Average star rating the user has given across all their reviews. */
+export async function getUserAverageRatingGiven(supabase: SupabaseClient, userId: string): Promise<number | null> {
+  const { data, error } = await supabase.from("recipe_reviews").select("rating").eq("user_id", userId);
+
+  if (error || !data || data.length === 0) {
+    if (error) console.error("getUserAverageRatingGiven failed", error);
+    return null;
+  }
+
+  const sum = data.reduce((total, row) => total + (row.rating as number), 0);
+  return Math.round((sum / data.length) * 10) / 10;
+}
+
+export { parseReviewSort };
 
 /** The full badge catalog, in display order. */
 export async function getBadgeCatalog(supabase: SupabaseClient): Promise<Badge[]> {

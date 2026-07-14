@@ -98,6 +98,14 @@ export type ProfileSummary = {
   country: string | null;
 };
 
+/** Moderation state prepared for a future admin dashboard. */
+export type ReviewModerationStatus = "visible" | "hidden" | "flagged";
+
+export const REVIEW_SORTS = ["newest", "highest", "lowest", "helpful"] as const;
+export type ReviewSort = (typeof REVIEW_SORTS)[number];
+
+export const REVIEW_PAGE_SIZE = 10;
+
 /** `public.recipe_reviews` row, camelCased, plus the reviewing user's summary and helpful vote count. */
 export type RecipeReview = {
   id: string;
@@ -107,6 +115,7 @@ export type RecipeReview = {
   reviewText: string | null;
   helpfulCount: number;
   isHelpfulByViewer?: boolean;
+  moderationStatus: ReviewModerationStatus;
   createdAt: string;
   updatedAt: string;
 };
@@ -119,6 +128,7 @@ export type DbRecipeReviewRow = {
   profiles: { id: string; full_name: string | null; avatar_url: string | null; country: string | null } | null;
   rating: number;
   review_text: string | null;
+  moderation_status?: ReviewModerationStatus;
   created_at: string;
   updated_at: string;
   recipe_review_helpful_votes: { user_id: string }[];
@@ -129,6 +139,28 @@ export type RecipeRatingSummary = {
   recipeId: string;
   reviewCount: number;
   averageRating: number | null;
+};
+
+/** Star rating bucket for distribution charts (1–5). */
+export type RatingDistributionBucket = {
+  stars: number;
+  count: number;
+  percent: number;
+};
+
+/** A review written by a user, with recipe context for profile listings. */
+export type UserReviewListItem = {
+  review: RecipeReview;
+  recipeTitle: string;
+  recipeSlug: string;
+};
+
+export type RecipeReviewsResult = {
+  reviews: RecipeReview[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  sort: ReviewSort;
 };
 
 export const BADGE_KEYS = [
