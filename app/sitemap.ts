@@ -11,6 +11,7 @@ const publicPages: Array<{
 }> = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
   { path: "/recipes", changeFrequency: "weekly", priority: 0.9 },
+  { path: "/search", changeFrequency: "weekly", priority: 0.85 },
   { path: "/methods", changeFrequency: "monthly", priority: 0.8 },
   { path: "/origins", changeFrequency: "monthly", priority: 0.8 },
   { path: "/roasters", changeFrequency: "monthly", priority: 0.8 },

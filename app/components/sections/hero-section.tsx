@@ -210,7 +210,7 @@ export function HeroSection({
     event.preventDefault();
     const trimmed = query.trim();
     if (trimmed) {
-      router.push(`/recipes?q=${encodeURIComponent(trimmed)}`);
+      router.push(`/search?q=${encodeURIComponent(trimmed)}`);
       return;
     }
     scrollToRecipes();

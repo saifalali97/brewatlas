@@ -1,0 +1,258 @@
+"use client";
+
+import { usePathname, useRouter } from "next/navigation";
+import { Search } from "lucide-react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { SearchFiltersPanel } from "@/app/components/search/search-filters";
+import { SearchResultsView } from "@/app/components/search/search-results";
+import { SearchSkeleton } from "@/app/components/search/search-skeleton";
+import { forms } from "@/lib/constants/styles";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
+import { useTranslations } from "@/lib/i18n/translation-context";
+import { countActiveFilters, serializeSearchFilters } from "@/lib/search/params";
+import {
+  SEARCH_CATEGORIES,
+  SEARCH_SORTS,
+  type SearchCategory,
+  type SearchFilterOptions,
+  type SearchFilters,
+  type SearchResults,
+  type SearchSort,
+} from "@/types/search";
+
+type SearchExplorerProps = {
+  initialFilters: SearchFilters;
+  filterOptions: SearchFilterOptions;
+  results: SearchResults;
+  favoritedRecipeIds: string[];
+  isAuthenticated: boolean;
+};
+
+const categoryLabelKeys = {
+  all: "searchPage.categoryAll",
+  recipes: "searchPage.categoryRecipes",
+  roasters: "searchPage.categoryRoasters",
+  origins: "searchPage.categoryOrigins",
+  devices: "searchPage.categoryDevices",
+  varieties: "searchPage.categoryVarieties",
+  flavors: "searchPage.categoryFlavors",
+} as const satisfies Record<SearchCategory, `searchPage.${string}`>;
+
+const sortLabelKeys = {
+  popular: "searchPage.sortPopular",
+  rated: "searchPage.sortRated",
+  newest: "searchPage.sortNewest",
+  fastest: "searchPage.sortFastest",
+  alphabetical: "searchPage.sortAlphabetical",
+} as const satisfies Record<SearchSort, `searchPage.${string}`>;
+
+export function SearchExplorer({
+  initialFilters,
+  filterOptions,
+  results,
+  favoritedRecipeIds,
+  isAuthenticated,
+}: SearchExplorerProps) {
+  const { t } = useTranslations();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [query, setQuery] = useState(initialFilters.q);
+  const debouncedQuery = useDebouncedValue(query, 300);
+  const lastNavigatedRef = useRef(serializeSearchFilters(initialFilters).toString());
+
+  if (initialFilters.q !== query && debouncedQuery === initialFilters.q) {
+    setQuery(initialFilters.q);
+  }
+
+  const navigate = useCallback(
+    (nextFilters: SearchFilters) => {
+      const params = serializeSearchFilters(nextFilters);
+      const nextString = params.toString();
+      if (nextString === lastNavigatedRef.current) return;
+      lastNavigatedRef.current = nextString;
+      const href = nextString ? `${pathname}?${nextString}` : pathname;
+      startTransition(() => {
+        router.replace(href, { scroll: false });
+      });
+    },
+    [pathname, router],
+  );
+
+  const patchFilters = useCallback(
+    (patch: Partial<SearchFilters>) => {
+      navigate({ ...initialFilters, ...patch, q: debouncedQuery });
+    },
+    [debouncedQuery, initialFilters, navigate],
+  );
+
+  useEffect(() => {
+    if (debouncedQuery === initialFilters.q) return;
+    navigate({ ...initialFilters, q: debouncedQuery, page: 1 });
+  }, [debouncedQuery, initialFilters, navigate]);
+
+  const clearFilters = () => {
+    navigate({
+      ...initialFilters,
+      country: "",
+      region: "",
+      roastLevel: "",
+      process: "",
+      brewingMethodId: "",
+      deviceId: "",
+      grinderId: "",
+      difficulty: "",
+      brewTimeMax: "",
+      doseMin: "",
+      doseMax: "",
+      waterMin: "",
+      waterMax: "",
+      tempMin: "",
+      tempMax: "",
+      premiumOnly: false,
+      featuredOnly: false,
+      page: 1,
+      q: debouncedQuery,
+    });
+  };
+
+  const totalPages = Math.max(1, Math.ceil(results.totalRecipes / results.pageSize));
+  const showPagination = initialFilters.category === "recipes" && totalPages > 1;
+
+  return (
+    <div>
+      <div className="mb-8">
+        <label htmlFor="global-search" className="sr-only">
+          {t("searchPage.searchAriaLabel")}
+        </label>
+        <div className="relative">
+          <Search
+            className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-stone-500"
+            aria-hidden
+          />
+          <input
+            id="global-search"
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t("searchPage.searchPlaceholder")}
+            className="w-full rounded-2xl border border-white/[0.12] bg-white/[0.04] py-4 ps-12 pe-5 text-base text-stone-100 outline-none backdrop-blur-xl transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
+            autoComplete="off"
+          />
+          {(isPending || query !== debouncedQuery) && (
+            <span className="absolute end-4 top-1/2 -translate-y-1/2 text-xs text-stone-500" aria-live="polite">
+              {t("searchPage.searching")}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-wrap gap-2">
+          {SEARCH_CATEGORIES.map((category) => {
+            const isActive = initialFilters.category === category;
+            return (
+              <button
+                key={category}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => patchFilters({ category, page: 1 })}
+                className={`rounded-full border px-3.5 py-2 text-sm font-medium transition-all ${
+                  isActive
+                    ? "border-amber-600/45 bg-amber-950/50 text-amber-100"
+                    : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-amber-600/25 hover:text-stone-200"
+                }`}
+              >
+                {t(categoryLabelKeys[category])}
+              </button>
+            );
+          })}
+        </div>
+
+        {(initialFilters.category === "all" || initialFilters.category === "recipes") && (
+          <div className="flex items-center gap-2">
+            <label htmlFor="search-sort" className="text-sm text-stone-400">
+              {t("searchPage.sortLabel")}
+            </label>
+            <select
+              id="search-sort"
+              value={initialFilters.sort}
+              onChange={(event) => patchFilters({ sort: event.target.value as SearchSort, page: 1 })}
+              className={`${forms.select} mt-0 min-w-[10rem]`}
+            >
+              {SEARCH_SORTS.map((sort) => (
+                <option key={sort} value={sort}>
+                  {t(sortLabelKeys[sort])}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      <SearchFiltersPanel
+        filters={initialFilters}
+        options={filterOptions}
+        onChange={(next) => navigate({ ...next, q: debouncedQuery })}
+        onClear={clearFilters}
+        variant="sheet"
+        open={mobileFiltersOpen}
+        onOpenChange={setMobileFiltersOpen}
+      />
+
+      <div className="mt-6 grid gap-8 lg:grid-cols-[17rem_minmax(0,1fr)] lg:gap-10">
+        <SearchFiltersPanel
+          filters={initialFilters}
+          options={filterOptions}
+          onChange={(next) => navigate({ ...next, q: debouncedQuery })}
+          onClear={clearFilters}
+          variant="sidebar"
+        />
+
+        <div className="min-w-0">
+          {countActiveFilters(initialFilters) === 0 && !initialFilters.q && initialFilters.category === "all" ? (
+            <div className="mb-8 rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] px-6 py-10 text-center">
+              <p className="text-base text-stone-300">{t("searchPage.emptyPrompt")}</p>
+            </div>
+          ) : null}
+
+          {isPending ? (
+            <SearchSkeleton />
+          ) : (
+            <SearchResultsView
+              results={results}
+              favoritedRecipeIds={favoritedRecipeIds}
+              isAuthenticated={isAuthenticated}
+              showAllSections={initialFilters.category === "all"}
+            />
+          )}
+
+          {showPagination && (
+            <div className="mt-10 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                disabled={initialFilters.page <= 1}
+                onClick={() => patchFilters({ page: Math.max(1, initialFilters.page - 1) })}
+                className="rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-amber-600/30 enabled:hover:text-stone-100 disabled:opacity-40"
+              >
+                {t("searchPage.previousPage")}
+              </button>
+              <span className="text-sm text-stone-500">
+                {t("searchPage.pageIndicator", { page: initialFilters.page, total: totalPages })}
+              </span>
+              <button
+                type="button"
+                disabled={initialFilters.page >= totalPages}
+                onClick={() => patchFilters({ page: Math.min(totalPages, initialFilters.page + 1) })}
+                className="rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-amber-600/30 enabled:hover:text-stone-100 disabled:opacity-40"
+              >
+                {t("searchPage.nextPage")}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
