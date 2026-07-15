@@ -6,6 +6,8 @@ import { requireOwner } from "@/lib/auth/require-owner";
 import { buildRecipeVersionSnapshot } from "@/lib/data/owner-recipes";
 import { buildVersionMetadata } from "@/lib/data/recipe-versions";
 import { evaluateAndAwardBadges, refreshCommunityStats } from "@/lib/data/community";
+import { getMediaAssetById } from "@/lib/data/media-library";
+import { appendGalleryMediaAssets, parseMediaAssetIds, syncRecipeMediaUsages } from "@/lib/media/recipe-media";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import {
@@ -151,11 +153,21 @@ async function persistOwnerRecipe(
   }
 
   let coverImageUrl = existing?.cover_image_url ?? null;
+  let coverMediaAssetId = optionalString(formData, "coverMediaAssetId");
+  const coverImageFromLibrary = optionalString(formData, "coverImageFromLibrary");
+  if (coverImageFromLibrary) {
+    coverImageUrl = coverImageFromLibrary;
+  } else if (coverMediaAssetId) {
+    const coverAsset = await getMediaAssetById(supabase, coverMediaAssetId);
+    if (coverAsset) coverImageUrl = coverAsset.publicUrl;
+  }
+
   const coverImageFile = formData.get("coverImage");
   if (coverImageFile instanceof File && coverImageFile.size > 0) {
     const uploaded = await uploadRecipeImage(supabase, user.id, coverImageFile, dictionary);
     if ("error" in uploaded) return { error: uploaded.error };
     coverImageUrl = uploaded.url;
+    coverMediaAssetId = null;
   }
 
   const payload = {
@@ -166,6 +178,7 @@ async function persistOwnerRecipe(
     }),
     slug: slugResult.slug,
     cover_image_url: coverImageUrl,
+    cover_media_asset_id: coverMediaAssetId,
     published: status === "published",
   };
 
@@ -196,6 +209,13 @@ async function persistOwnerRecipe(
     await replaceTags(supabase, newId, tagIds);
     const galleryError = await appendGalleryImages(supabase, user.id, newId, formData, 0, dictionary);
     if (galleryError) return { error: galleryError };
+    const galleryMediaAssetIds = parseMediaAssetIds(formData, "galleryMediaAssetIds");
+    const { count: galleryCountAfterFiles } = await supabase
+      .from("recipe_images")
+      .select("*", { count: "exact", head: true })
+      .eq("recipe_id", newId);
+    await appendGalleryMediaAssets(supabase, newId, galleryMediaAssetIds, galleryCountAfterFiles ?? 0);
+    await syncRecipeMediaUsages(supabase, newId, coverMediaAssetId, galleryMediaAssetIds);
 
     const snapshot = await buildRecipeVersionSnapshot(supabase, newId);
     await captureRecipeVersion(supabase, newId, user.id, snapshot, {
@@ -252,6 +272,13 @@ async function persistOwnerRecipe(
     dictionary,
   );
   if (galleryError) return { error: galleryError };
+  const galleryMediaAssetIds = parseMediaAssetIds(formData, "galleryMediaAssetIds");
+  const { count: galleryCountAfterFiles } = await supabase
+    .from("recipe_images")
+    .select("*", { count: "exact", head: true })
+    .eq("recipe_id", recipeId);
+  await appendGalleryMediaAssets(supabase, recipeId, galleryMediaAssetIds, galleryCountAfterFiles ?? 0);
+  await syncRecipeMediaUsages(supabase, recipeId, coverMediaAssetId, galleryMediaAssetIds);
 
   await captureRecipeVersion(supabase, recipeId, user.id, snapshot, {
     title: parsed.values.title,

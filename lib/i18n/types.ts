@@ -707,6 +707,7 @@ export type Dictionary = {
   ownerNav: {
     dashboard: string;
     recipes: string;
+    media: string;
     origins: string;
     roasters: string;
     brewers: string;
@@ -842,6 +843,48 @@ export type Dictionary = {
     unsavedChangesWarning: string;
     cancelCta: string;
     versionCountTemplate: string;
+  };
+  ownerMediaPage: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    searchLabel: string;
+    searchPlaceholder: string;
+    allFolders: string;
+    noFolder: string;
+    emptyTitle: string;
+    emptyDescription: string;
+    paginationAria: string;
+    previousPage: string;
+    nextPage: string;
+    pageTemplate: string;
+    altTextLabel: string;
+    captionLabel: string;
+    tagsLabel: string;
+    saveMetadataCta: string;
+    editImageCta: string;
+    deleteConfirm: string;
+    deleteBlockedTemplate: string;
+    inUseTemplate: string;
+    usageListTitle: string;
+    uploadFolderLabel: string;
+    dropzoneTitle: string;
+    dropzoneHint: string;
+    browseFilesCta: string;
+    uploadFailed: string;
+    invalidFileType: string;
+    fileTooLargeTemplate: string;
+    assetNotFound: string;
+    rotateLabel: string;
+    maxWidthLabel: string;
+    savingCta: string;
+    replaceImageCta: string;
+    pickerTitle: string;
+    pickerLibraryTab: string;
+    pickerUploadTab: string;
+    loading: string;
+    chooseFromLibraryCta: string;
+    uploadNewCta: string;
   };
   ownerRecipePublishing: {
     eyebrow: string;
@@ -1613,6 +1656,8 @@ export type Dictionary = {
     ownerEditRecipeDescription: string;
     ownerRecipeVersionsTitle: string;
     ownerRecipeVersionsDescription: string;
+    ownerMediaTitle: string;
+    ownerMediaDescription: string;
     brewLogNewTitle: string;
     brewLogNewDescription: string;
     brewLogEditTitle: string;

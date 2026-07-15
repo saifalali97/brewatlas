@@ -37,6 +37,7 @@ export type RecipeImageRow = {
   id: string;
   url: string;
   position: number;
+  mediaAssetId?: string | null;
 };
 
 /** Raw shape of a `coffees` row selected with its roaster/origin joins. */
@@ -79,6 +80,7 @@ export type DbRecipeRow = {
   tasting_notes: string | null;
   instructions: string | null;
   cover_image_url: string | null;
+  cover_media_asset_id: string | null;
   sweetness: number | null;
   acidity: number | null;
   body: number | null;
@@ -105,7 +107,7 @@ export type DbRecipeRow = {
   // to-one embed inferred from a unique foreign key, like `xbloom_profiles`)
   // -- always read them through `toSafeArray` from `lib/utils/arrays`.
   recipe_pours: PourRow[] | null | undefined;
-  recipe_images: RecipeImageRow[] | null | undefined;
+  recipe_images: Array<{ id: string; url: string; position: number; media_asset_id: string | null }> | null | undefined;
   recipe_tags: { tags: TagRow | null }[] | null | undefined;
   xbloom_profiles: { id: string }[] | { id: string } | null | undefined;
 };
@@ -149,6 +151,7 @@ export type RecipeFullDetail = {
   featured: boolean;
   premiumOnly: boolean;
   coverImageUrl: string | null;
+  coverMediaAssetId: string | null;
   images: RecipeImageRow[];
 
   brewingMethodId: string | null;
