@@ -5,6 +5,7 @@ import { useActionState, useEffect, useRef, useState, useTransition } from "reac
 import { FormMessage } from "@/app/components/auth/form-message";
 import { OwnerRecipePublishToolbar } from "@/app/components/owner/recipes/owner-recipe-publish-toolbar";
 import { RecipeMediaField } from "@/app/components/owner/media/recipe-media-field";
+import { RecipeImageFileInput } from "@/app/components/recipes/recipe-image-file-input";
 import { buttons } from "@/lib/constants/styles";
 import { translate } from "@/lib/i18n/format";
 import { useTranslations } from "@/lib/i18n/translation-context";
@@ -311,9 +312,14 @@ export function RecipeForm({
           folders={mediaFolders}
           coverImageUrl={initialValues?.coverImageUrl}
           coverMediaAssetId={initialValues?.coverMediaAssetId}
+          coverImageBlur={initialValues?.coverImageBlur}
           galleryItems={existingImages
             .filter((image) => image.mediaAssetId)
-            .map((image) => ({ id: image.mediaAssetId as string, url: image.url }))}
+            .map((image) => ({
+              id: image.mediaAssetId as string,
+              url: image.url,
+              blurDataUrl: image.blurDataUrl,
+            }))}
         />
       ) : (
         <div className="grid gap-5 sm:grid-cols-2">
@@ -325,11 +331,13 @@ export function RecipeForm({
             {initialValues?.coverImageUrl && (
               <p className="mt-2 text-xs text-stone-500">{t("recipeForm.coverPhotoCurrentHint")}</p>
             )}
-            <input
+            <RecipeImageFileInput
               id="coverImage"
               name="coverImage"
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/gif"
+              widthFieldName="coverImageWidth"
+              heightFieldName="coverImageHeight"
+              blurFieldName="coverImageBlur"
+              accept="image/jpeg,image/png,image/webp,image/avif"
               className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
             />
           </div>
@@ -343,12 +351,12 @@ export function RecipeForm({
                 {translate(dictionary, "recipeForm.additionalPhotosAttachedTemplate", { count: existingImages.length })}
               </p>
             )}
-            <input
+            <RecipeImageFileInput
               id="galleryImages"
               name="galleryImages"
-              type="file"
               multiple
-              accept="image/png,image/jpeg,image/webp,image/gif"
+              metaFieldName="galleryImageMeta"
+              accept="image/jpeg,image/png,image/webp,image/avif"
               className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
             />
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
+import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -187,11 +188,13 @@ export function MediaLibraryExplorer({ result, folders, labels, dictionary, filt
               className="group overflow-hidden rounded-xl border border-white/[0.09] bg-white/[0.03] text-start transition hover:border-amber-500/30"
             >
               <div className="relative aspect-square bg-stone-950/40">
-                <Image
+                <OptimizedImage
                   src={asset.thumbnailUrl}
                   alt={asset.altText ?? asset.filename}
-                  fill
-                  sizes="(max-width: 640px) 50vw, 25vw"
+                  blurDataUrl={asset.blurDataUrl}
+                  width={asset.width ?? undefined}
+                  height={asset.height ?? undefined}
+                  sizes={IMAGE_SIZE_PRESETS.cmsThumb}
                   loading="lazy"
                   className="object-cover"
                 />
@@ -217,7 +220,7 @@ export function MediaLibraryExplorer({ result, folders, labels, dictionary, filt
                   className="flex w-full items-center gap-4 px-4 py-3 text-start hover:bg-white/[0.02]"
                 >
                   <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-stone-950/40">
-                    <Image src={asset.thumbnailUrl} alt="" fill sizes="56px" loading="lazy" className="object-cover" />
+                    <OptimizedImage src={asset.thumbnailUrl} alt="" sizes="56px" loading="lazy" blurDataUrl={asset.blurDataUrl} className="object-cover" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-stone-100">{asset.filename}</p>
@@ -264,7 +267,15 @@ export function MediaLibraryExplorer({ result, folders, labels, dictionary, filt
         <div className="rounded-[1.25rem] border border-white/[0.09] bg-white/[0.03] p-5">
           <div className="flex flex-wrap gap-5">
             <div className="relative h-40 w-40 overflow-hidden rounded-xl bg-stone-950/40">
-              <Image src={selected.publicUrl} alt={selected.altText ?? selected.filename} fill className="object-cover" />
+              <OptimizedImage
+                src={selected.publicUrl}
+                alt={selected.altText ?? selected.filename}
+                blurDataUrl={selected.blurDataUrl}
+                width={selected.width ?? undefined}
+                height={selected.height ?? undefined}
+                sizes={IMAGE_SIZE_PRESETS.card}
+                className="object-cover"
+              />
             </div>
             <div className="min-w-0 flex-1 space-y-3">
               <h3 className="text-lg font-medium text-stone-100">{selected.filename}</h3>

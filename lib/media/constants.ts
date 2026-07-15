@@ -11,6 +11,16 @@ export const MEDIA_ALLOWED_MIME_TYPES = new Set([
 
 export const MEDIA_ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".avif"] as const;
 
+export const ALLOWED_RECIPE_IMAGE_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "image/avif",
+  "image/gif",
+]);
+
+export const RECIPE_IMAGE_ACCEPT = "image/jpeg,image/png,image/webp,image/avif";
+
 export const MEDIA_VARIANT_WIDTHS = {
   thumbnail: 160,
   sm: 480,

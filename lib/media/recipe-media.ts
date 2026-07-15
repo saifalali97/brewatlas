@@ -53,7 +53,16 @@ export async function appendGalleryMediaAssets(
 ): Promise<void> {
   if (assetIds.length === 0) return;
 
-  const rows: { recipe_id: string; url: string; position: number; media_asset_id: string }[] = [];
+  const rows: {
+    recipe_id: string;
+    url: string;
+    position: number;
+    media_asset_id: string;
+    width: number | null;
+    height: number | null;
+    alt_text: string | null;
+    blur_data_url: string | null;
+  }[] = [];
   let position = startPosition;
 
   for (const assetId of assetIds) {
@@ -64,6 +73,10 @@ export async function appendGalleryMediaAssets(
       url: asset.publicUrl,
       position,
       media_asset_id: assetId,
+      width: asset.width,
+      height: asset.height,
+      alt_text: asset.altText,
+      blur_data_url: asset.blurDataUrl ?? null,
     });
     position += 1;
   }

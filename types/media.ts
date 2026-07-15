@@ -28,6 +28,7 @@ export type MediaAssetListItem = {
   fileSize: number;
   mimeType: string;
   uploadedByName: string | null;
+  blurDataUrl: string | null;
   createdAt: string;
   thumbnailUrl: string;
   usageCount: number;

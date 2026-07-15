@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import { Clock, Droplets, Flame, Gauge } from "lucide-react";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
@@ -81,12 +81,11 @@ export function MethodCard({ method, ctaHref = "#methods", labels }: MethodCardP
       />
 
       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden sm:aspect-[5/3] lg:aspect-auto lg:h-auto lg:min-h-0 lg:w-[46%] lg:self-stretch xl:w-[48%]">
-        <Image
+        <OptimizedImage
           src={method.image}
           alt={interpolate(l.imageAltTemplate, { name: method.name, suitableRoast: method.suitableRoast })}
-          fill
           sizes="(min-width: 1024px) 46vw, 100vw"
-          unoptimized={method.image.endsWith(".svg")}
+          loading="lazy"
           className="object-cover brightness-[0.9] contrast-[1.04] saturate-[0.94] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0705]/95 via-[#0a0705]/35 to-[#0a0705]/12 lg:bg-gradient-to-r lg:from-[#0a0705]/15 lg:via-[#0a0705]/20 lg:to-[#0a0705]/82" />

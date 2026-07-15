@@ -1,5 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
+import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { interpolate } from "@/lib/i18n/format";
 import { imageAlt } from "@/lib/seo/image-alt";
@@ -37,15 +38,17 @@ type RecipeCardProps = {
   labels?: Partial<RecipeCardLabels>;
 };
 
+type RecipeCardBodyProps = {
+  recipe: FeaturedRecipe & { imageBlur?: string | null; imageWidth?: number | null; imageHeight?: number | null };
+  featured: boolean;
+  labels: RecipeCardLabels;
+};
+
 function RecipeCardBody({
   recipe,
   featured,
   labels,
-}: {
-  recipe: FeaturedRecipe;
-  featured: boolean;
-  labels: RecipeCardLabels;
-}) {
+}: RecipeCardBodyProps) {
   const brewMethodLabel = labels.brewMethodLabel || recipe.brewMethod;
   const difficultyLabel = labels.difficultyLabel || undefined;
   return (
@@ -56,7 +59,7 @@ function RecipeCardBody({
       />
 
       <div className={`relative overflow-hidden ${featured ? "h-56 sm:h-64 lg:h-[19rem]" : "h-48 sm:h-52 lg:h-56"}`}>
-        <Image
+        <OptimizedImage
           src={recipe.image}
           alt={interpolate(labels.imageAltTemplate, {
             name: recipe.name,
@@ -64,8 +67,11 @@ function RecipeCardBody({
             brewMethod: recipe.brewMethod,
             roastLevel: recipe.roastLevel,
           })}
-          fill
-          sizes={featured ? "(min-width: 1024px) 66vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"}
+          blurDataUrl={recipe.imageBlur}
+          width={recipe.imageWidth ?? undefined}
+          height={recipe.imageHeight ?? undefined}
+          sizes={featured ? IMAGE_SIZE_PRESETS.recipeCardFeatured : IMAGE_SIZE_PRESETS.recipeCard}
+          loading="lazy"
           className="object-cover brightness-[0.88] contrast-[1.04] saturate-[0.92] transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] motion-reduce:transform-none"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0705] via-[#0a0705]/15 to-transparent" />

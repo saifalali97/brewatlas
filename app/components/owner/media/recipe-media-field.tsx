@@ -1,9 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { MediaPickerModal } from "@/app/components/owner/media/media-picker-modal";
+import { RecipeImageFileInput } from "@/app/components/recipes/recipe-image-file-input";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import { buttons } from "@/lib/constants/styles";
+import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import type { MediaFolder } from "@/types/media";
 
@@ -11,22 +13,24 @@ type RecipeMediaFieldProps = {
   folders: MediaFolder[];
   coverImageUrl?: string | null;
   coverMediaAssetId?: string | null;
-  galleryItems?: { id: string; url: string }[];
+  coverImageBlur?: string | null;
+  galleryItems?: { id: string; url: string; blurDataUrl?: string | null }[];
 };
 
 export function RecipeMediaField({
   folders,
   coverImageUrl,
   coverMediaAssetId,
+  coverImageBlur,
   galleryItems = [],
 }: RecipeMediaFieldProps) {
   const { t } = useTranslations();
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<"cover" | "gallery">("cover");
-  const [cover, setCover] = useState<{ id: string; url: string } | null>(
-    coverMediaAssetId && coverImageUrl ? { id: coverMediaAssetId, url: coverImageUrl } : null,
+  const [cover, setCover] = useState<{ id: string; url: string; blurDataUrl?: string | null } | null>(
+    coverMediaAssetId && coverImageUrl ? { id: coverMediaAssetId, url: coverImageUrl, blurDataUrl: coverImageBlur } : null,
   );
-  const [gallery, setGallery] = useState<{ id: string; url: string }[]>(galleryItems);
+  const [gallery, setGallery] = useState<{ id: string; url: string; blurDataUrl?: string | null }[]>(galleryItems);
 
   return (
     <div className="grid gap-5 sm:grid-cols-2">
@@ -34,7 +38,14 @@ export function RecipeMediaField({
         <p className="text-sm font-medium text-stone-300">{t("recipeForm.coverPhotoLabel")}</p>
         {cover ? (
           <div className="relative mt-3 aspect-video overflow-hidden rounded-xl border border-white/[0.08]">
-            <Image src={cover.url} alt="" fill className="object-cover" sizes="400px" />
+            <OptimizedImage
+              src={cover.url}
+              alt=""
+              blurDataUrl={cover.blurDataUrl}
+              sizes={IMAGE_SIZE_PRESETS.card}
+              loading="lazy"
+              className="object-cover"
+            />
           </div>
         ) : null}
         <input type="hidden" name="coverMediaAssetId" value={cover?.id ?? ""} />
@@ -53,7 +64,15 @@ export function RecipeMediaField({
         </div>
         <label className={`${buttons.secondary} mt-2 inline-flex h-9 cursor-pointer items-center px-3 text-xs`}>
           {t("ownerMediaPage.uploadNewCta")}
-          <input type="file" name="coverImage" accept="image/jpeg,image/png,image/webp,image/avif" className="sr-only" />
+          <RecipeImageFileInput
+            id="coverImage"
+            name="coverImage"
+            widthFieldName="coverImageWidth"
+            heightFieldName="coverImageHeight"
+            blurFieldName="coverImageBlur"
+            accept="image/jpeg,image/png,image/webp,image/avif"
+            className="sr-only"
+          />
         </label>
       </div>
 
@@ -74,10 +93,11 @@ export function RecipeMediaField({
         {gallery.map((item) => (
           <input key={item.id} type="hidden" name="galleryMediaAssetIds" value={item.id} />
         ))}
-        <input
-          type="file"
+        <RecipeImageFileInput
+          id="galleryImages"
           name="galleryImages"
           multiple
+          metaFieldName="galleryImageMeta"
           accept="image/jpeg,image/png,image/webp,image/avif"
           className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100"
         />
@@ -89,9 +109,9 @@ export function RecipeMediaField({
         folders={folders}
         onSelect={(asset) => {
           if (pickerTarget === "cover") {
-            setCover({ id: asset.id, url: asset.publicUrl });
+            setCover({ id: asset.id, url: asset.publicUrl, blurDataUrl: asset.blurDataUrl });
           } else {
-            setGallery((prev) => [...prev, { id: asset.id, url: asset.publicUrl }]);
+            setGallery((prev) => [...prev, { id: asset.id, url: asset.publicUrl, blurDataUrl: asset.blurDataUrl }]);
           }
         }}
       />

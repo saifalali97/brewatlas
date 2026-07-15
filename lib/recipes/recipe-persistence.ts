@@ -6,24 +6,23 @@ import { translate } from "@/lib/i18n/format";
 import type { Dictionary } from "@/lib/i18n/types";
 import { slugify } from "@/lib/utils/slugify";
 
+import { ALLOWED_RECIPE_IMAGE_TYPES } from "@/lib/media/constants";
+
 export const MAX_RECIPE_IMAGE_BYTES = 6 * 1024 * 1024;
-export const ALLOWED_RECIPE_IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
+
+export type UploadedRecipeImage = {
+  url: string;
+  width: number | null;
+  height: number | null;
+  blurDataUrl: string | null;
+  mimeType: string;
+};
 
 export type RecipeActionState = { error?: string; success?: string; savedAt?: string; recipeId?: string } | undefined;
 
-export function optionalString(formData: FormData, key: string): string | null {
-  const value = formData.get(key);
-  if (typeof value !== "string") return null;
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : null;
-}
+import { optionalNumber, optionalString } from "@/lib/forms/form-fields";
 
-export function optionalNumber(formData: FormData, key: string): number | null {
-  const value = optionalString(formData, key);
-  if (value === null) return null;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : null;
-}
+export { optionalNumber, optionalString };
 
 export function optionalRating(formData: FormData, key: string): number | null | "invalid" {
   const value = optionalNumber(formData, key);
@@ -229,7 +228,8 @@ export async function uploadRecipeImage(
   userId: string,
   file: File,
   dictionary: Dictionary,
-): Promise<{ url: string } | { error: string }> {
+  metadata: { width?: number | null; height?: number | null; blurDataUrl?: string | null } = {},
+): Promise<UploadedRecipeImage | { error: string }> {
   if (file.size > MAX_RECIPE_IMAGE_BYTES) {
     return { error: translate(dictionary, "recipeActionMessages.imageTooLargeTemplate", { size: "6MB" }) };
   }
@@ -237,7 +237,7 @@ export async function uploadRecipeImage(
     return { error: dictionary.recipeActionMessages.imagesMustBeFormat };
   }
 
-  const extension = file.type.split("/")[1] ?? "jpg";
+  const extension = file.type.split("/")[1] ?? "webp";
   const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "-").slice(0, 60);
   const path = `${userId}/${Date.now()}-${safeName || `image.${extension}`}`;
 
@@ -248,7 +248,13 @@ export async function uploadRecipeImage(
   }
 
   const { data } = supabase.storage.from("recipe-images").getPublicUrl(path);
-  return { url: data.publicUrl };
+  return {
+    url: data.publicUrl,
+    width: metadata.width ?? null,
+    height: metadata.height ?? null,
+    blurDataUrl: metadata.blurDataUrl ?? null,
+    mimeType: file.type,
+  };
 }
 
 export async function replacePours(supabase: SupabaseClient, recipeId: string, pours: PourInput[]): Promise<void> {
@@ -280,17 +286,35 @@ export async function appendGalleryImages(
   formData: FormData,
   startPosition: number,
   dictionary: Dictionary,
+  metadataList: Array<{ width?: number | null; height?: number | null; blurDataUrl?: string | null; alt?: string | null }> = [],
 ): Promise<string | null> {
   const files = formData.getAll("galleryImages").filter((value): value is File => value instanceof File && value.size > 0);
   if (files.length === 0) return null;
 
-  const rows: { recipe_id: string; url: string; position: number }[] = [];
+  const rows: Array<{
+    recipe_id: string;
+    url: string;
+    position: number;
+    width: number | null;
+    height: number | null;
+    alt_text: string | null;
+    blur_data_url: string | null;
+  }> = [];
   let position = startPosition;
 
-  for (const file of files) {
-    const uploaded = await uploadRecipeImage(supabase, userId, file, dictionary);
+  for (const [index, file] of files.entries()) {
+    const meta = metadataList[index] ?? {};
+    const uploaded = await uploadRecipeImage(supabase, userId, file, dictionary, meta);
     if ("error" in uploaded) return uploaded.error;
-    rows.push({ recipe_id: recipeId, url: uploaded.url, position });
+    rows.push({
+      recipe_id: recipeId,
+      url: uploaded.url,
+      position,
+      width: uploaded.width,
+      height: uploaded.height,
+      alt_text: meta.alt ?? null,
+      blur_data_url: uploaded.blurDataUrl,
+    });
     position += 1;
   }
 

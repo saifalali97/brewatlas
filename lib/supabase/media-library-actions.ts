@@ -116,6 +116,8 @@ export async function uploadMediaAssetAction(formData: FormData): Promise<MediaU
     return { error: labels.uploadFailed };
   }
 
+  const blurDataUrl = optionalString(formData, "blurDataUrl");
+
   const { error: insertError } = await supabase.from("media_assets").insert({
     id: assetId,
     folder_id: folderId,
@@ -129,6 +131,7 @@ export async function uploadMediaAssetAction(formData: FormData): Promise<MediaU
     height,
     file_size: totalSize,
     mime_type: mimeType,
+    blur_data_url: blurDataUrl,
     uploaded_by: user.id,
   });
 
@@ -287,6 +290,7 @@ export async function replaceMediaAssetFileAction(formData: FormData): Promise<M
       width,
       height,
       file_size: totalSize,
+      blur_data_url: optionalString(formData, "blurDataUrl"),
       mime_type: mimeType,
     })
     .eq("id", assetId);

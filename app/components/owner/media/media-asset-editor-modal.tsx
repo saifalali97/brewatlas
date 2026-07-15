@@ -38,6 +38,7 @@ export function MediaAssetEditorModal({ asset, folderId, onClose, onSaved }: Med
       formData.set("width", String(processed.width));
       formData.set("height", String(processed.height));
       formData.set("altText", asset.altText ?? "");
+      formData.set("blurDataUrl", asset.blurDataUrl ?? "");
 
       for (const variant of processed.variants) {
         formData.set(`variant_${variant.key}`, variant.blob, `${variant.key}-${processed.filename}`);

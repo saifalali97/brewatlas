@@ -1,4 +1,5 @@
-import Image from "next/image";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
+import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { BookOpen } from "lucide-react";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { cards } from "@/lib/constants/styles";
@@ -23,12 +24,11 @@ export async function CultureTopicCard({ topic, sectionSlug }: CultureTopicCardP
       <div aria-hidden className={cards.premiumGlow} />
 
       <div className="relative h-44 shrink-0 overflow-hidden sm:h-48 lg:h-52">
-        <Image
+        <OptimizedImage
           src={image}
           alt={`${topic.title} — BrewAtlas culture guide`}
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          unoptimized={image.endsWith(".svg")}
+          sizes={IMAGE_SIZE_PRESETS.card}
+          loading="lazy"
           className="object-cover brightness-[0.9] contrast-[1.04] saturate-[0.94] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
         />
         <div className={cards.imageOverlay} />

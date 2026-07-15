@@ -19,6 +19,7 @@ import {
   uploadRecipeImage,
   type RecipeActionState,
 } from "@/lib/recipes/recipe-persistence";
+import { coverImageColumns, parseCoverImageMetadata, parseGalleryImageMetadata } from "@/lib/media/image-metadata";
 import { createClient } from "@/lib/supabase/server";
 
 export type { RecipeActionState };
@@ -43,12 +44,19 @@ export async function createRecipeAction(
   const coffeeId = await resolveCoffeeId(supabase, authData.user.id, formData);
   const slug = await generateUniqueRecipeSlug(supabase, parsed.values.title);
 
+  const coverMeta = parseCoverImageMetadata(formData);
   const coverImageFile = formData.get("coverImage");
   let coverImageUrl: string | null = null;
+  let coverColumns = coverImageColumns({});
   if (coverImageFile instanceof File && coverImageFile.size > 0) {
-    const uploaded = await uploadRecipeImage(supabase, authData.user.id, coverImageFile, dictionary);
+    const uploaded = await uploadRecipeImage(supabase, authData.user.id, coverImageFile, dictionary, coverMeta);
     if ("error" in uploaded) return { error: uploaded.error };
     coverImageUrl = uploaded.url;
+    coverColumns = coverImageColumns({
+      width: uploaded.width,
+      height: uploaded.height,
+      blurDataUrl: uploaded.blurDataUrl,
+    });
   }
 
   const { data: inserted, error } = await supabase
@@ -58,6 +66,7 @@ export async function createRecipeAction(
       slug,
       author_id: authData.user.id,
       cover_image_url: coverImageUrl,
+      ...coverColumns,
     })
     .select("id")
     .single();
@@ -70,7 +79,15 @@ export async function createRecipeAction(
 
   await replacePours(supabase, recipeId, parsePours(formData));
   await replaceTags(supabase, recipeId, parseTagIds(formData));
-  const galleryError = await appendGalleryImages(supabase, authData.user.id, recipeId, formData, 0, dictionary);
+  const galleryError = await appendGalleryImages(
+    supabase,
+    authData.user.id,
+    recipeId,
+    formData,
+    0,
+    dictionary,
+    parseGalleryImageMetadata(formData),
+  );
   if (galleryError) return { error: galleryError };
 
   if (parsed.values.published) {
@@ -133,11 +150,18 @@ export async function updateRecipeAction(
       : await generateUniqueRecipeSlug(supabase, parsed.values.title, recipeId);
 
   let coverImageUrl = existing.cover_image_url as string | null;
+  let coverColumns = coverImageColumns({});
+  const coverMeta = parseCoverImageMetadata(formData);
   const coverImageFile = formData.get("coverImage");
   if (coverImageFile instanceof File && coverImageFile.size > 0) {
-    const uploaded = await uploadRecipeImage(supabase, authData.user.id, coverImageFile, dictionary);
+    const uploaded = await uploadRecipeImage(supabase, authData.user.id, coverImageFile, dictionary, coverMeta);
     if ("error" in uploaded) return { error: uploaded.error };
     coverImageUrl = uploaded.url;
+    coverColumns = coverImageColumns({
+      width: uploaded.width,
+      height: uploaded.height,
+      blurDataUrl: uploaded.blurDataUrl,
+    });
   }
 
   const { count: existingImageCount } = await supabase
@@ -151,6 +175,7 @@ export async function updateRecipeAction(
       ...recipeUpdatePayload(parsed.values, coffeeId),
       ...(slug ? { slug } : {}),
       cover_image_url: coverImageUrl,
+      ...coverColumns,
     })
     .eq("id", recipeId)
     .eq("author_id", authData.user.id);
@@ -168,6 +193,7 @@ export async function updateRecipeAction(
     formData,
     existingImageCount ?? 0,
     dictionary,
+    parseGalleryImageMetadata(formData),
   );
   if (galleryError) return { error: galleryError };
 

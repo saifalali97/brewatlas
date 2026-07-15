@@ -1,4 +1,5 @@
-import Image from "next/image";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
+import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { BookOpen, Calendar, MapPin, Sparkles, Star } from "lucide-react";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { MetaTile } from "@/app/components/ui/meta-tile";
@@ -43,16 +44,15 @@ export function RoasterCard({ roaster, ctaHref = "#roasters", labels }: RoasterC
       <div aria-hidden className={cards.premiumGlow} />
 
       <div className="relative h-40 shrink-0 overflow-hidden sm:h-44 lg:h-48">
-        <Image
+        <OptimizedImage
           src={roaster.image}
           alt={interpolate(l.imageAltTemplate, {
             name: roaster.name,
             country: roaster.country,
             specialty: roaster.specialty,
           })}
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          unoptimized={roaster.image.endsWith(".svg")}
+          sizes={IMAGE_SIZE_PRESETS.card}
+          loading="lazy"
           className="object-cover brightness-[0.92] contrast-[1.04] saturate-[0.94] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
         />
         <div className={cards.imageOverlay} />

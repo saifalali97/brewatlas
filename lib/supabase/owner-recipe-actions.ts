@@ -8,6 +8,12 @@ import { buildVersionMetadata } from "@/lib/data/recipe-versions";
 import { evaluateAndAwardBadges, refreshCommunityStats } from "@/lib/data/community";
 import { getMediaAssetById } from "@/lib/data/media-library";
 import { appendGalleryMediaAssets, parseMediaAssetIds, syncRecipeMediaUsages } from "@/lib/media/recipe-media";
+import {
+  coverImageColumns,
+  metadataFromMediaAsset,
+  parseCoverImageMetadata,
+  parseGalleryImageMetadata,
+} from "@/lib/media/image-metadata";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import {
@@ -154,20 +160,29 @@ async function persistOwnerRecipe(
 
   let coverImageUrl = existing?.cover_image_url ?? null;
   let coverMediaAssetId = optionalString(formData, "coverMediaAssetId");
+  let coverMeta = parseCoverImageMetadata(formData);
   const coverImageFromLibrary = optionalString(formData, "coverImageFromLibrary");
   if (coverImageFromLibrary) {
     coverImageUrl = coverImageFromLibrary;
   } else if (coverMediaAssetId) {
     const coverAsset = await getMediaAssetById(supabase, coverMediaAssetId);
-    if (coverAsset) coverImageUrl = coverAsset.publicUrl;
+    if (coverAsset) {
+      coverImageUrl = coverAsset.publicUrl;
+      coverMeta = metadataFromMediaAsset(coverAsset);
+    }
   }
 
   const coverImageFile = formData.get("coverImage");
   if (coverImageFile instanceof File && coverImageFile.size > 0) {
-    const uploaded = await uploadRecipeImage(supabase, user.id, coverImageFile, dictionary);
+    const uploaded = await uploadRecipeImage(supabase, user.id, coverImageFile, dictionary, coverMeta);
     if ("error" in uploaded) return { error: uploaded.error };
     coverImageUrl = uploaded.url;
     coverMediaAssetId = null;
+    coverMeta = {
+      width: uploaded.width,
+      height: uploaded.height,
+      blurDataUrl: uploaded.blurDataUrl,
+    };
   }
 
   const payload = {
@@ -180,6 +195,7 @@ async function persistOwnerRecipe(
     cover_image_url: coverImageUrl,
     cover_media_asset_id: coverMediaAssetId,
     published: status === "published",
+    ...coverImageColumns(coverMeta),
   };
 
   const pours = parsePours(formData);
@@ -207,7 +223,15 @@ async function persistOwnerRecipe(
     const newId = inserted.id as string;
     await replacePours(supabase, newId, pours);
     await replaceTags(supabase, newId, tagIds);
-    const galleryError = await appendGalleryImages(supabase, user.id, newId, formData, 0, dictionary);
+    const galleryError = await appendGalleryImages(
+      supabase,
+      user.id,
+      newId,
+      formData,
+      0,
+      dictionary,
+      parseGalleryImageMetadata(formData),
+    );
     if (galleryError) return { error: galleryError };
     const galleryMediaAssetIds = parseMediaAssetIds(formData, "galleryMediaAssetIds");
     const { count: galleryCountAfterFiles } = await supabase
@@ -270,6 +294,7 @@ async function persistOwnerRecipe(
     formData,
     existingImageCount ?? 0,
     dictionary,
+    parseGalleryImageMetadata(formData),
   );
   if (galleryError) return { error: galleryError };
   const galleryMediaAssetIds = parseMediaAssetIds(formData, "galleryMediaAssetIds");
