@@ -1748,8 +1748,10 @@ const ar: Dictionary = {
     messageLabel: "الرسالة",
     messagePlaceholder: "كيف يمكننا المساعدة؟",
     sendMessageCta: "إرسال الرسالة",
+    sendingMessage: "جارٍ الإرسال…",
     messageSentTitle: "تم إرسال الرسالة",
     messageSentBody: "شكرًا لتواصلك معنا — سيرد فريق دعم الباريستا في غضون يوم عمل واحد.",
+    messageSendFailed: "يُرجى التحقق من التفاصيل والمحاولة مرة أخرى.",
   },
   legalPage: {
     lastUpdatedLabel: "آخر تحديث",

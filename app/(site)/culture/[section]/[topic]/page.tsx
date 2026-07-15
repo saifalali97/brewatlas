@@ -6,12 +6,11 @@ import { notFound } from "next/navigation";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons, cards } from "@/lib/constants/styles";
-import { getCultureTopicBySlug } from "@/lib/data/culture";
+import { getCachedCultureTopicBySlug } from "@/lib/data/cached-public-data";
 import { translate } from "@/lib/i18n/format";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
-import { createClient } from "@/lib/supabase/server";
 import { CULTURE_IMAGE_PLACEHOLDER } from "@/types/culture";
 
 type CultureTopicPageProps = {
@@ -22,8 +21,7 @@ export async function generateMetadata({ params }: CultureTopicPageProps): Promi
   const { section: sectionSlug, topic: topicSlug } = await params;
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const supabase = await createClient();
-  const topic = await getCultureTopicBySlug(supabase, sectionSlug, topicSlug, locale);
+  const topic = await getCachedCultureTopicBySlug(sectionSlug, topicSlug, locale);
 
   if (!topic) {
     return buildLocalizedMetadata({
@@ -49,8 +47,7 @@ export default async function CultureTopicPage({ params }: CultureTopicPageProps
   const { section: sectionSlug, topic: topicSlug } = await params;
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const supabase = await createClient();
-  const topic = await getCultureTopicBySlug(supabase, sectionSlug, topicSlug, locale);
+  const topic = await getCachedCultureTopicBySlug(sectionSlug, topicSlug, locale);
 
   if (!topic) {
     notFound();

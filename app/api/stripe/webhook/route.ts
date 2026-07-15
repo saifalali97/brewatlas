@@ -11,6 +11,12 @@ import {
   resolveUserIdFromStripe,
   syncStripeSubscriptionToDb,
 } from "@/lib/data/stripe-membership";
+import {
+  isStripeWebhookEventProcessed,
+  pruneStripeWebhookEvents,
+  recordStripeWebhookEvent,
+} from "@/lib/data/stripe-webhook-events";
+import { checkRateLimit, getClientIp, RATE_LIMITS } from "@/lib/security/rate-limit";
 import { createAdminClient, hasAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -45,6 +51,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Stripe billing is not configured." }, { status: 503 });
   }
 
+  const ip = getClientIp(request);
+  const rateLimit = checkRateLimit(ip, RATE_LIMITS.stripeWebhook);
+  if (!rateLimit.allowed) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
   const body = await request.text();
   const signature = (await headers()).get("stripe-signature");
 
@@ -64,6 +76,10 @@ export async function POST(request: Request) {
   }
 
   const admin = createAdminClient();
+
+  if (await isStripeWebhookEventProcessed(admin, event.id)) {
+    return NextResponse.json({ received: true, duplicate: true });
+  }
 
   try {
     switch (event.type) {
@@ -119,6 +135,9 @@ export async function POST(request: Request) {
       default:
         break;
     }
+
+    await recordStripeWebhookEvent(admin, event.id, event.type);
+    await pruneStripeWebhookEvents(admin);
   } catch (error) {
     console.error("Stripe webhook handler failed", event.type, error);
     return NextResponse.json({ error: "Webhook handler failed." }, { status: 500 });

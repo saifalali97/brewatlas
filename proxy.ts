@@ -1,7 +1,36 @@
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { isSupportedLocale, matchAcceptLanguage } from "@/lib/i18n/config";
+import { checkRateLimit, getClientIp, RATE_LIMITS } from "@/lib/security/rate-limit";
 import { updateSession } from "@/lib/supabase/middleware";
 import { DEFAULT_LOCALE, LOCALE_COOKIE_NAME } from "@/types/i18n";
+
+const AUTH_PATHS = new Set(["/login", "/signup", "/forgot-password", "/reset-password"]);
+
+function applyRateLimit(request: NextRequest): NextResponse | null {
+  const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/api/")) {
+    const ip = getClientIp(request);
+    const limit = pathname.startsWith("/api/stripe/webhook")
+      ? RATE_LIMITS.stripeWebhook
+      : RATE_LIMITS.apiRoute;
+    const result = checkRateLimit(ip, limit);
+    if (!result.allowed) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+  }
+
+  if (request.method === "POST" && AUTH_PATHS.has(pathname)) {
+    const ip = getClientIp(request);
+    const result = checkRateLimit(ip, RATE_LIMITS.authPage);
+    if (!result.allowed) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+  }
+
+  return null;
+}
 
 /**
  * Runs on (almost) every request. In Next.js 16, this file replaces the
@@ -21,6 +50,9 @@ import { DEFAULT_LOCALE, LOCALE_COOKIE_NAME } from "@/types/i18n";
  * 3. The browser's `Accept-Language` header, on first visit.
  */
 export async function proxy(request: NextRequest) {
+  const rateLimited = applyRateLimit(request);
+  if (rateLimited) return rateLimited;
+
   const response = await updateSession(request);
 
   const queryLocale = request.nextUrl.searchParams.get("lang");
