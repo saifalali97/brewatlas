@@ -5,7 +5,8 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons } from "@/lib/constants/styles";
-import { getHighestRatedRecipesLeaderboard, getTopBrewersLeaderboard } from "@/lib/data/community";
+import { getHighestRatedRecipesLeaderboard, getTopBrewersLeaderboard, getActivityFeed } from "@/lib/data/community";
+import { CommunityActivityFeed } from "@/app/components/profile/community-activity-feed";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { translate } from "@/lib/i18n/format";
 import { getLocale } from "@/lib/i18n/locale";
@@ -28,9 +29,10 @@ export default async function CommunityPage() {
   const dictionary = await getDictionary(locale);
   const p = dictionary.communityPage;
   const supabase = await createClient();
-  const [topBrewers, topRecipes] = await Promise.all([
+  const [topBrewers, topRecipes, activityFeed] = await Promise.all([
     getTopBrewersLeaderboard(supabase, 8),
     getHighestRatedRecipesLeaderboard(supabase, 6),
+    getActivityFeed(supabase, 10),
   ]);
 
   return (
@@ -57,7 +59,12 @@ export default async function CommunityPage() {
                         {entry.rank}
                       </span>
                       <div>
-                        <p className="font-medium text-stone-100">{entry.profile.displayName ?? p.anonymousBrewer}</p>
+                        <Link
+                          href={`/users/${entry.profile.id}`}
+                          className="font-medium text-stone-100 transition-colors hover:text-amber-300"
+                        >
+                          {entry.profile.displayName ?? p.anonymousBrewer}
+                        </Link>
                         {entry.profile.country && <p className="text-xs text-stone-500">{entry.profile.country}</p>}
                       </div>
                     </div>
@@ -111,6 +118,15 @@ export default async function CommunityPage() {
           </div>
         </div>
       </div>
+
+      <section className="mt-14" aria-labelledby="community-activity-heading">
+        <h2 id="community-activity-heading" className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">
+          {dictionary.community.activityFeed}
+        </h2>
+        <div className="mt-4">
+          <CommunityActivityFeed items={activityFeed} dictionary={dictionary} locale={locale} />
+        </div>
+      </section>
 
       <div className="mt-14 flex flex-col gap-3 border-t border-white/[0.06] pt-10 sm:flex-row sm:items-center">
         <RippleLink href="/signup" className={`${buttons.primary} w-full sm:w-auto`}>

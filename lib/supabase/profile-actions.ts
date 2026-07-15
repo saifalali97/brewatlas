@@ -42,6 +42,7 @@ export async function updateProfileAction(
     bio: optionalString(formData, "bio"),
     favorite_brewing_method_id: optionalString(formData, "favoriteBrewingMethodId"),
     favorite_device_id: optionalString(formData, "favoriteDeviceId"),
+    profile_visibility: formData.get("profileVisibility") === "private" ? "private" : "public",
   };
 
   const avatarFile = formData.get("avatar");
@@ -81,5 +82,6 @@ export async function updateProfileAction(
   revalidatePath("/account");
   revalidatePath("/account/profile");
   revalidatePath("/account/coffee-setup");
+  revalidatePath(`/users/${authData.user.id}`);
   return { success: dictionary.profilePage.profileUpdated };
 }

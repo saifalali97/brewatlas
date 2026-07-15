@@ -233,6 +233,34 @@ export async function getUserRecipes(
   return (data as unknown as DbRecipeRow[]).map((row) => mapDbRecipeToListItem(row, dictionary));
 }
 
+/** Published recipes authored by a user, for public profile pages. */
+export async function getUserPublishedRecipes(
+  supabase: SupabaseClient,
+  userId: string,
+  options: { limit?: number } = {},
+): Promise<RecipeListItem[]> {
+  let query = supabase
+    .from("recipes")
+    .select(RECIPE_SELECT)
+    .eq("author_id", userId)
+    .eq("status", "published")
+    .order("created_at", { ascending: false });
+
+  if (options.limit) {
+    query = query.limit(options.limit);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("getUserPublishedRecipes failed", error);
+    return [];
+  }
+
+  const dictionary = await getDictionary(await getLocale());
+  return (data as unknown as DbRecipeRow[]).map((row) => mapDbRecipeToListItem(row, dictionary));
+}
+
 /** Looks up a single DB recipe by slug, fully expanded. RLS decides visibility. */
 export async function getDbRecipeDetailBySlug(
   supabase: SupabaseClient,

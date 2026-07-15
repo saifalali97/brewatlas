@@ -67,6 +67,7 @@ export async function followUserAction(formData: FormData): Promise<void> {
 
   revalidatePath(path);
   revalidatePath("/community");
+  revalidatePath(`/users/${targetUserId}`);
 }
 
 /** Unfollows a user on behalf of the signed-in caller. */
@@ -95,4 +96,5 @@ export async function unfollowUserAction(formData: FormData): Promise<void> {
 
   revalidatePath(path);
   revalidatePath("/community");
+  revalidatePath(`/users/${targetUserId}`);
 }
