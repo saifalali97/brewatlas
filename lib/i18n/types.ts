@@ -1021,6 +1021,8 @@ export type Dictionary = {
     filterAny: string;
     filterCountry: string;
     filterRegion: string;
+    filterOrigin: string;
+    filterRoaster: string;
     filterRoast: string;
     filterProcess: string;
     filterMethod: string;
@@ -1029,6 +1031,9 @@ export type Dictionary = {
     filterDifficulty: string;
     filterBrewTime: string;
     filterBrewTimePlaceholder: string;
+    filterTastingNotes: string;
+    filterTastingNotesPlaceholder: string;
+    filterTag: string;
     filterDoseMin: string;
     filterDoseMax: string;
     filterWaterMin: string;
@@ -1061,6 +1066,7 @@ export type Dictionary = {
     previousPage: string;
     nextPage: string;
     pageIndicator: string;
+    resultsCount: string;
   };
   recipeDetail: {
     backToAllRecipes: string;

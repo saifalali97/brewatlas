@@ -97,6 +97,8 @@ export function SearchExplorer({
       ...initialFilters,
       country: "",
       region: "",
+      originId: "",
+      roasterId: "",
       roastLevel: "",
       process: "",
       brewingMethodId: "",
@@ -104,6 +106,8 @@ export function SearchExplorer({
       grinderId: "",
       difficulty: "",
       brewTimeMax: "",
+      tastingNotes: "",
+      tagId: "",
       doseMin: "",
       doseMax: "",
       waterMin: "",
@@ -211,6 +215,13 @@ export function SearchExplorer({
         />
 
         <div className="min-w-0">
+          {(initialFilters.category === "all" || initialFilters.category === "recipes") &&
+            (initialFilters.q || countActiveFilters(initialFilters) > 0) && (
+              <p className="mb-4 text-sm text-stone-400" aria-live="polite">
+                {t("searchPage.resultsCount", { count: results.totalRecipes })}
+              </p>
+            )}
+
           {countActiveFilters(initialFilters) === 0 && !initialFilters.q && initialFilters.category === "all" ? (
             <div className="mb-8 rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] px-6 py-10 text-center">
               <p className="text-base text-stone-300">{t("searchPage.emptyPrompt")}</p>

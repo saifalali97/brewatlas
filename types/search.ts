@@ -23,6 +23,8 @@ export type SearchFilters = {
   sort: SearchSort;
   country: string;
   region: string;
+  originId: string;
+  roasterId: string;
   roastLevel: string;
   process: string;
   brewingMethodId: string;
@@ -30,6 +32,8 @@ export type SearchFilters = {
   grinderId: string;
   difficulty: string;
   brewTimeMax: string;
+  tastingNotes: string;
+  tagId: string;
   doseMin: string;
   doseMax: string;
   waterMin: string;
@@ -44,6 +48,9 @@ export type SearchFilters = {
 export type SearchFilterOptions = {
   countries: string[];
   regions: string[];
+  originOptions: { id: string; label: string }[];
+  roasters: { id: string; name: string }[];
+  tags: { id: string; name: string }[];
   roastLevels: string[];
   processes: string[];
   brewingMethods: { id: string; name: string }[];
