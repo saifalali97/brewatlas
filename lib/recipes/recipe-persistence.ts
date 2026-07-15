@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { RecipePublishStatus } from "@/types/recipe-publishing";
 import { createCoffee, generateUniqueRecipeSlug } from "@/lib/data/db-recipes";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { translate } from "@/lib/i18n/format";
@@ -303,7 +304,7 @@ export async function appendGalleryImages(
 export function recipeUpdatePayload(
   values: RecipeFormValues,
   coffeeId: string | null,
-  options: { includeSeo?: boolean } = {},
+  options: { includeSeo?: boolean; status?: RecipePublishStatus; scheduledPublishAt?: string | null } = {},
 ) {
   const payload: Record<string, unknown> = {
     title: values.title,
@@ -340,6 +341,16 @@ export function recipeUpdatePayload(
     published: values.published,
   };
 
+  if (options.status) {
+    payload.status = options.status;
+    payload.scheduled_publish_at = options.scheduledPublishAt ?? null;
+    if (options.status === "archived") {
+      payload.archived_at = new Date().toISOString();
+    } else {
+      payload.archived_at = null;
+    }
+  }
+
   if (options.includeSeo) {
     payload.seo_title = values.seoTitle;
     payload.seo_description = values.seoDescription;
@@ -374,11 +385,24 @@ export async function resolveRecipeSlug(
   return { slug: await generateUniqueRecipeSlug(supabase, values.title, options.recipeId) };
 }
 
+export type RecipeVersionInput = {
+  title: string;
+  description: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  canonicalUrl: string | null;
+  authorId: string | null;
+  status: RecipePublishStatus | null;
+  scheduledPublishAt: string | null;
+  metadata: Record<string, unknown>;
+  snapshot: Record<string, unknown>;
+};
+
 export async function saveRecipeVersion(
   supabase: SupabaseClient,
   recipeId: string,
   editorId: string,
-  snapshot: Record<string, unknown>,
+  input: RecipeVersionInput,
 ): Promise<void> {
   const { data: latest } = await supabase
     .from("recipe_versions")
@@ -392,7 +416,16 @@ export async function saveRecipeVersion(
   await supabase.from("recipe_versions").insert({
     recipe_id: recipeId,
     version_number: versionNumber,
-    snapshot,
+    snapshot: input.snapshot,
     editor_id: editorId,
+    title: input.title,
+    description: input.description,
+    seo_title: input.seoTitle,
+    seo_description: input.seoDescription,
+    canonical_url: input.canonicalUrl,
+    author_id: input.authorId,
+    status: input.status,
+    scheduled_publish_at: input.scheduledPublishAt,
+    metadata: input.metadata,
   });
 }

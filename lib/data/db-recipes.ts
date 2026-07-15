@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
+import { processScheduledRecipePublishes } from "@/lib/data/recipe-publishing";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import type { Dictionary } from "@/lib/i18n/types";
@@ -20,6 +21,7 @@ export const RECIPE_SELECT = `
   extraction_percentage, tasting_notes, instructions, cover_image_url,
   sweetness, acidity, body, bitterness,
   featured, premium_only, published,
+  status, scheduled_publish_at, archived_at,
   seo_title, seo_description, canonical_url,
   created_at, updated_at,
   brewing_methods ( id, name ),
@@ -105,6 +107,9 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
     estimatedBrewTime: row.estimated_brew_time,
     authorId: row.author_id,
     published: row.published,
+    status: row.status ?? (row.published ? "published" : "draft"),
+    scheduledPublishAt: row.scheduled_publish_at ?? null,
+    archivedAt: row.archived_at ?? null,
     featured: row.featured,
     premiumOnly: row.premium_only,
     coverImageUrl: row.cover_image_url,
@@ -171,10 +176,12 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
 
 /** Published recipes visible to everyone (RLS enforces this even without the `.eq` below, but it's explicit here). */
 export async function getPublishedDbRecipes(supabase: SupabaseClient): Promise<RecipeListItem[]> {
+  await processScheduledRecipePublishes(supabase);
+
   const { data, error } = await supabase
     .from("recipes")
     .select(RECIPE_SELECT)
-    .eq("published", true)
+    .eq("status", "published")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -211,6 +218,8 @@ export async function getDbRecipeDetailBySlug(
   supabase: SupabaseClient,
   slug: string,
 ): Promise<RecipeFullDetail | null> {
+  await processScheduledRecipePublishes(supabase);
+
   const { data, error } = await supabase
     .from("recipes")
     .select(RECIPE_SELECT)

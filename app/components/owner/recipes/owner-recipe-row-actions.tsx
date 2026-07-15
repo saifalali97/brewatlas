@@ -1,33 +1,75 @@
 "use client";
 
-import { deleteOwnerRecipeAction, toggleOwnerRecipePublishedAction } from "@/lib/supabase/owner-recipe-actions";
+import { deleteOwnerRecipeAction, quickOwnerRecipeWorkflowAction } from "@/lib/supabase/owner-recipe-actions";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { translate } from "@/lib/i18n/format";
+import type { RecipePublishStatus } from "@/types/recipe-publishing";
 
 type OwnerRecipeRowActionsProps = {
   recipeId: string;
   title: string;
-  published: boolean;
+  status: RecipePublishStatus;
 };
 
-export function OwnerRecipeRowActions({ recipeId, title, published }: OwnerRecipeRowActionsProps) {
+export function OwnerRecipeRowActions({ recipeId, title, status }: OwnerRecipeRowActionsProps) {
   const { t, dictionary } = useTranslations();
 
   return (
     <div className="flex items-center gap-4">
-      <form
-        action={toggleOwnerRecipePublishedAction}
-        className="inline"
-      >
-        <input type="hidden" name="recipeId" value={recipeId} />
-        <input type="hidden" name="published" value={published ? "false" : "true"} />
-        <button
-          type="submit"
-          className="text-xs font-medium text-stone-400 underline-offset-4 hover:text-amber-400/90 hover:underline"
+      {status === "published" ? (
+        <form action={quickOwnerRecipeWorkflowAction} className="inline">
+          <input type="hidden" name="recipeId" value={recipeId} />
+          <input type="hidden" name="publishIntent" value="unpublish" />
+          <button
+            type="submit"
+            className="text-xs font-medium text-stone-400 underline-offset-4 hover:text-amber-400/90 hover:underline"
+          >
+            {t("ownerRecipePublishing.unpublishCta")}
+          </button>
+        </form>
+      ) : status !== "archived" ? (
+        <form action={quickOwnerRecipeWorkflowAction} className="inline">
+          <input type="hidden" name="recipeId" value={recipeId} />
+          <input type="hidden" name="publishIntent" value="publish" />
+          <button
+            type="submit"
+            className="text-xs font-medium text-stone-400 underline-offset-4 hover:text-amber-400/90 hover:underline"
+          >
+            {t("ownerRecipePublishing.publishCta")}
+          </button>
+        </form>
+      ) : (
+        <form action={quickOwnerRecipeWorkflowAction} className="inline">
+          <input type="hidden" name="recipeId" value={recipeId} />
+          <input type="hidden" name="publishIntent" value="restore" />
+          <button
+            type="submit"
+            className="text-xs font-medium text-stone-400 underline-offset-4 hover:text-amber-400/90 hover:underline"
+          >
+            {t("ownerRecipePublishing.restoreCta")}
+          </button>
+        </form>
+      )}
+      {status !== "archived" ? (
+        <form
+          action={quickOwnerRecipeWorkflowAction}
+          className="inline"
+          onSubmit={(event) => {
+            if (!window.confirm(t("ownerRecipePublishing.archiveConfirmTemplate"))) {
+              event.preventDefault();
+            }
+          }}
         >
-          {published ? t("ownerRecipesPage.unpublishAction") : t("ownerRecipesPage.publishAction")}
-        </button>
-      </form>
+          <input type="hidden" name="recipeId" value={recipeId} />
+          <input type="hidden" name="publishIntent" value="archive" />
+          <button
+            type="submit"
+            className="text-xs font-medium text-amber-300/80 underline-offset-4 hover:text-amber-300 hover:underline"
+          >
+            {t("ownerRecipePublishing.archiveCta")}
+          </button>
+        </form>
+      ) : null}
       <form
         action={deleteOwnerRecipeAction}
         onSubmit={(event) => {
