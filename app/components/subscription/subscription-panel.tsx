@@ -79,6 +79,10 @@ export function SubscriptionPanel({
         </div>
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">{labels.billingCycleLabel}</dt>
+            <dd className="mt-1 text-sm text-stone-200">{intervalLabel ?? labels.freePlanInterval}</dd>
+          </div>
           {membership.trial.isTrialing && (
             <div>
               <dt className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">{labels.trialRemainingLabel}</dt>

@@ -1,10 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import Link from "next/link";
+import { Lock, Search } from "lucide-react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
 import { EmptyState } from "@/app/components/ui/empty-state";
+import { RippleLink } from "@/app/components/ui/ripple-link";
+import { buttons } from "@/lib/constants/styles";
+import { GUEST_RECIPE_LIMIT } from "@/lib/membership/premium";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import type { RecipeListItem } from "@/types/recipe";
@@ -29,6 +33,8 @@ type RecipesExplorerProps = {
   recipes: RecipeListItem[];
   favoritedRecipeIds?: string[];
   isAuthenticated?: boolean;
+  isPremium?: boolean;
+  hiddenRecipeCount?: number;
   currentPath?: string;
   initialQuery?: string;
 };
@@ -37,6 +43,8 @@ export function RecipesExplorer({
   recipes,
   favoritedRecipeIds = [],
   isAuthenticated = false,
+  isPremium = false,
+  hiddenRecipeCount = 0,
   currentPath = "/recipes",
   initialQuery = "",
 }: RecipesExplorerProps) {
@@ -71,6 +79,11 @@ export function RecipesExplorer({
 
     return haystack.includes(normalizedSearch);
   });
+
+  const visibleRecipes =
+    isPremium || isAuthenticated ? filteredRecipes : filteredRecipes.slice(0, GUEST_RECIPE_LIMIT);
+  const lockedCount = isPremium || isAuthenticated ? 0 : Math.max(0, filteredRecipes.length - GUEST_RECIPE_LIMIT);
+  const guestLimitBannerCount = hiddenRecipeCount > 0 ? hiddenRecipeCount : lockedCount;
 
   return (
     <div>
@@ -118,7 +131,7 @@ export function RecipesExplorer({
       </div>
 
       <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
-        {filteredRecipes.map((recipe) => {
+        {visibleRecipes.map((recipe) => {
           const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
           return (
             <div key={`${recipe.source}-${recipe.slug}`} className="relative h-full">
@@ -152,7 +165,35 @@ export function RecipesExplorer({
         })}
       </div>
 
-      {filteredRecipes.length === 0 && (
+      {!isAuthenticated && !isPremium && guestLimitBannerCount > 0 && (
+        <div className="relative mt-12 overflow-hidden rounded-[1.5rem] border border-amber-600/25 bg-gradient-to-b from-amber-950/35 via-[#0a0705]/90 to-[#0a0705] p-8 text-center shadow-[0_24px_64px_-24px_rgba(180,120,60,0.35)] sm:p-10">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-amber-600/10 blur-3xl"
+          />
+          <div className="relative mx-auto max-w-lg">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-amber-600/30 bg-amber-950/50 text-amber-400/90">
+              <Lock className="h-5 w-5" aria-hidden />
+            </div>
+            <h2 className="mt-5 text-xl font-semibold tracking-tight text-stone-50 sm:text-2xl">
+              {t("recipesPage.guestLimitTitle")}
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-stone-400 sm:text-base">
+              {t("recipesPage.guestLimitDescription", { count: String(guestLimitBannerCount) })}
+            </p>
+            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <RippleLink href={`/login?redirectTo=${encodeURIComponent(currentPath)}`} className={`${buttons.primary} w-full sm:w-auto`}>
+                {t("recipesPage.guestLimitSignInCta")}
+              </RippleLink>
+              <Link href="/premium" className={`${buttons.secondary} w-full sm:w-auto`}>
+                {t("recipesPage.guestLimitPremiumCta")}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {visibleRecipes.length === 0 && (
         <EmptyState
           icon={<Search className="h-6 w-6" aria-hidden />}
           title={t("emptyStates.noRecipesMatchSearch")}

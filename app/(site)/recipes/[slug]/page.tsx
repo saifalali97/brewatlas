@@ -33,7 +33,9 @@ import { RecipeConverterButton } from "@/app/components/converter/recipe-convert
 import { DeleteRecipeButton } from "@/app/components/recipes/delete-recipe-button";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
 import { cards, buttons } from "@/lib/constants/styles";
-import { getAllRecipeSlugs, getStaticRecipeIndexBySlug } from "@/lib/data/recipes";
+import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
+import { getCachedPublishedDbRecipes } from "@/lib/data/cached-public-data";
+import { getAllRecipeSlugs, getRecipeSlug, getStaticRecipeIndexBySlug } from "@/lib/data/recipes";
 import { getDbRecipeDetailBySlug, getFavoritesCount, getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
 import { recipeHasXBloomProfile } from "@/lib/data/xbloom";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
@@ -55,7 +57,7 @@ import {
   parseReviewSort,
 } from "@/lib/data/community";
 import { isRecipePubliclyVisible } from "@/lib/recipes/recipe-status";
-import { canAccessRecipe } from "@/lib/membership/access";
+import { canAccessFullRecipeContent } from "@/lib/membership/premium";
 import { recordRecipeView } from "@/lib/data/recipe-analytics";
 import { getMembershipSummary } from "@/lib/data/membership";
 import { createClient } from "@/lib/supabase/server";
@@ -167,12 +169,23 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   if (staticIndex !== -1) {
     const content = await getHomeContent(locale);
+    const supabase = await createClient();
+    const { data: authData } = await supabase.auth.getUser();
+    const membership = authData.user ? await getMembershipSummary(supabase, authData.user.id) : null;
+    const recipe = content.featuredRecipes[staticIndex];
+    const canAccessFull = canAccessFullRecipeContent(
+      membership,
+      { premiumOnly: Boolean(recipe.premium) },
+      authData.user ? undefined : { guestRecipeIndex: staticIndex },
+    );
+
     return (
       <StaticRecipeView
-        recipe={content.featuredRecipes[staticIndex]}
+        recipe={recipe}
         slug={slug}
         dictionary={dictionary}
-        isAuthenticated={false}
+        isAuthenticated={Boolean(authData.user)}
+        canAccessFull={canAccessFull}
       />
     );
   }
@@ -187,7 +200,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   const viewerId = authData.user?.id ?? null;
 
-  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview, membership] =
+  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview, membership, guestRecipeIndex] =
     await Promise.all([
       getFavoritesCount(supabase, recipe.id),
       viewerId ? getUserFavoriteRecipeIds(supabase, viewerId) : Promise.resolve(new Set<string>()),
@@ -197,10 +210,21 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
       getRecipeReviewsPage(supabase, recipe.id, { sort: reviewSort, page: reviewPage, viewerId }),
       viewerId ? getUserRecipeReview(supabase, recipe.id, viewerId) : Promise.resolve(null),
       viewerId ? getMembershipSummary(supabase, viewerId) : Promise.resolve(null),
+      viewerId
+        ? Promise.resolve(undefined)
+        : (async () => {
+            const content = await getHomeContent(locale);
+            const staticSlugs = content.featuredRecipes.map((_entry, index) => getRecipeSlug(staticRecipesEn[index]));
+            const dbRecipes = await getCachedPublishedDbRecipes(locale);
+            const allSlugs = [...staticSlugs, ...dbRecipes.map((entry) => entry.slug)];
+            return allSlugs.indexOf(slug);
+          })(),
     ]);
 
   const isOwner = Boolean(viewerId && recipe.authorId === viewerId);
-  const canAccessFull = isOwner || canAccessRecipe(membership, recipe);
+  const canAccessFull =
+    isOwner ||
+    canAccessFullRecipeContent(membership, recipe, viewerId ? undefined : { guestRecipeIndex: guestRecipeIndex ?? -1 });
 
   void recordRecipeView(supabase, recipe.id, viewerId);
   const reviewJsonLd = buildRecipeReviewJsonLd({
@@ -236,11 +260,13 @@ function StaticRecipeView({
   slug,
   dictionary,
   isAuthenticated,
+  canAccessFull,
 }: {
   recipe: FeaturedRecipe;
   slug: string;
   dictionary: Dictionary;
   isAuthenticated: boolean;
+  canAccessFull: boolean;
 }) {
   const d = dictionary.recipeDetail;
   const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
@@ -308,7 +334,7 @@ function StaticRecipeView({
 
           <CompatibleDevices hasXBloom={false} dictionary={dictionary} />
 
-          {!recipe.premium && (
+          {!recipe.premium && canAccessFull && (
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
               <RippleLink href="/recipes" className={`${buttons.secondary} w-full sm:w-auto`}>
                 {d.browseMoreRecipes}
@@ -319,7 +345,7 @@ function StaticRecipeView({
         </div>
       </div>
 
-      {recipe.premium && (
+      {!canAccessFull && (
         <RecipePremiumPaywall dictionary={dictionary} isAuthenticated={isAuthenticated} recipeSlug={slug} />
       )}
     </SectionFrame>
@@ -526,7 +552,7 @@ function DbRecipeView({
         </div>
       </div>
 
-      {!canAccessFull && recipe.premiumOnly && (
+      {!canAccessFull && (
         <RecipePremiumPaywall dictionary={dictionary} isAuthenticated={isAuthenticated} recipeSlug={slug} />
       )}
 

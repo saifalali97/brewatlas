@@ -23,6 +23,8 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getRecipeSlug } from "@/lib/data/recipes";
 import { getUserFavoriteRecipes, getUserRecipes } from "@/lib/data/db-recipes";
+import { AccountSubscriptionSummary } from "@/app/components/subscription/account-subscription-summary";
+import { getMembershipSummary } from "@/lib/data/membership";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
@@ -77,7 +79,7 @@ export default async function DashboardPage() {
 
   await ensureProfile(supabase, data.user);
 
-  const [{ data: profile }, favoriteRecipes, ownRecipes] = await Promise.all([
+  const [{ data: profile }, favoriteRecipes, ownRecipes, membership] = await Promise.all([
     supabase
       .from("profiles")
       .select("full_name, avatar_url, country, bio, brewing_methods(name), devices(name)")
@@ -85,6 +87,7 @@ export default async function DashboardPage() {
       .maybeSingle(),
     getUserFavoriteRecipes(supabase, data.user.id),
     getUserRecipes(supabase, data.user.id),
+    getMembershipSummary(supabase, data.user.id),
   ]);
 
   const displayName = profile?.full_name || data.user.email || dictionary.communityPage.anonymousBrewer;
@@ -175,6 +178,8 @@ export default async function DashboardPage() {
           {d.editProfile}
         </Link>
       </div>
+
+      <AccountSubscriptionSummary membership={membership} dictionary={dictionary} locale={locale} />
 
       <div className="mt-16">
         <h2 className="text-xl font-semibold tracking-tight text-stone-50">{d.quickLinksTitle}</h2>

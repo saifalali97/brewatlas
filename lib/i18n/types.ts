@@ -418,6 +418,11 @@ export type Dictionary = {
     perYearLabel: string;
     trialIncludedNote: string;
     trialActiveNote: string;
+    billingCycleLabel: string;
+    freePlanInterval: string;
+    accountSummaryEyebrow: string;
+    accountSummaryTitle: string;
+    viewDetailsCta: string;
   };
   recipes: {
     title: string;
@@ -1331,6 +1336,10 @@ export type Dictionary = {
     searchPlaceholder: string;
     originNotSpecified: string;
     communityRoast: string;
+    guestLimitTitle: string;
+    guestLimitDescription: string;
+    guestLimitSignInCta: string;
+    guestLimitPremiumCta: string;
   };
   searchPage: {
     eyebrow: string;

@@ -2,7 +2,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ActivityFeedItem } from "@/types/community";
 
 /** Display price used to estimate MRR from active premium subscriptions. */
-export const PREMIUM_MONTHLY_PRICE_USD = 12;
+import { PREMIUM_MONTHLY_AED } from "@/lib/billing/pricing";
+
+export const PREMIUM_MONTHLY_PRICE_USD = PREMIUM_MONTHLY_AED;
 
 export type OwnerDashboardStats = {
   totalUsers: number;
