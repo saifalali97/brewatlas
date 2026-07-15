@@ -43,6 +43,7 @@ import { translate, interpolate } from "@/lib/i18n/format";
 import { getLocale } from "@/lib/i18n/locale";
 import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
+import { resolveSitePathname } from "@/lib/seo/path-utils";
 import { buildRecipeReviewJsonLd } from "@/lib/seo/recipe-review-json-ld";
 import { RecipeReviewsPanel } from "@/app/components/reviews/recipe-reviews-panel";
 import { RecipeRatingBadge } from "@/app/components/reviews/recipe-rating-badge";
@@ -113,15 +114,20 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<Met
   }
 
   const supabase = await createClient();
+  const dictionary = await getDictionary(locale);
   const dbRecipe = await getDbRecipeDetailBySlug(supabase, slug);
 
   if (!dbRecipe) {
-    const dictionary = await getDictionary(locale);
-    return { title: dictionary.metadata.recipeNotFoundTitle };
+    return buildLocalizedMetadata({
+      pathname: `/recipes/${slug}`,
+      locale,
+      title: dictionary.metadata.recipeNotFoundTitle,
+      description: dictionary.metadata.notFoundDescription,
+      noIndex: true,
+    });
   }
 
   const ratingSummary = await getRecipeRatingSummary(supabase, dbRecipe.id);
-  const dictionary = await getDictionary(locale);
   const descriptionBase = dbRecipe.seoDescription ?? dbRecipe.tastingNotes ?? dbRecipe.description ?? undefined;
   const countLabel =
     ratingSummary.reviewCount === 1
@@ -133,20 +139,17 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<Met
       : "";
   const description = descriptionBase ? `${descriptionBase}${ratingSuffix}` : undefined;
   const title = dbRecipe.seoTitle ?? dbRecipe.title;
-  const canonical = dbRecipe.canonicalUrl ?? `/recipes/${slug}`;
+  const pathname = resolveSitePathname(dbRecipe.canonicalUrl ?? `/recipes/${slug}`, `/recipes/${slug}`);
   const indexable = isRecipePubliclyVisible({ status: dbRecipe.status });
 
-  return {
+  return buildLocalizedMetadata({
+    pathname,
+    locale,
     title,
-    description,
-    robots: indexable ? undefined : { index: false, follow: false },
-    alternates: { canonical },
-    openGraph: {
-      title,
-      description,
-      images: dbRecipe.coverImageUrl ? [dbRecipe.coverImageUrl] : undefined,
-    },
-  };
+    description: description ?? dictionary.metadata.recipesDescription,
+    ogImage: dbRecipe.coverImageUrl ? { url: dbRecipe.coverImageUrl, alt: title } : undefined,
+    noIndex: !indexable,
+  });
 }
 
 export default async function RecipePage({ params, searchParams }: RecipePageProps) {

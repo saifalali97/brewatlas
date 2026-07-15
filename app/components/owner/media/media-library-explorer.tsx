@@ -154,18 +154,20 @@ export function MediaLibraryExplorer({ result, folders, labels, dictionary, filt
           <button
             type="button"
             aria-pressed={filters.view === "grid"}
+            aria-label={labels.viewGridAria}
             onClick={() => applyFilters({ view: "grid" })}
             className={`${buttons.secondary} h-10 w-10 p-0 ${filters.view === "grid" ? "text-amber-300" : ""}`}
           >
-            <Grid3X3 className="mx-auto h-4 w-4" />
+            <Grid3X3 className="mx-auto h-4 w-4" aria-hidden />
           </button>
           <button
             type="button"
             aria-pressed={filters.view === "list"}
+            aria-label={labels.viewListAria}
             onClick={() => applyFilters({ view: "list" })}
             className={`${buttons.secondary} h-10 w-10 p-0 ${filters.view === "list" ? "text-amber-300" : ""}`}
           >
-            <List className="mx-auto h-4 w-4" />
+            <List className="mx-auto h-4 w-4" aria-hidden />
           </button>
         </div>
       </form>

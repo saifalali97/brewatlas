@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Coffee, Cpu, Landmark, Sparkles } from "lucide-react";
 import { HeroSection } from "@/app/components/sections/hero-section";
 import {
@@ -14,6 +15,18 @@ import { buttons } from "@/lib/constants/styles";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { getLocale } from "@/lib/i18n/locale";
+import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  return buildLocalizedMetadata({
+    pathname: "/",
+    locale,
+    title: dictionary.metadata.homeTitle,
+    description: dictionary.metadata.homeDescription,
+  });
+}
 
 export default async function Home() {
   const locale = await getLocale();

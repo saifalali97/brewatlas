@@ -1019,6 +1019,8 @@ const ar: Dictionary = {
     usageListTitle: "مستخدمة في",
     uploadFolderLabel: "المجلد",
     dropzoneTitle: "اسحب الصور وأفلتها هنا",
+    viewGridAria: "عرض شبكي",
+    viewListAria: "عرض قائمة",
     dropzoneHint: "JPG أو PNG أو WEBP أو AVIF — تُحسَّن تلقائياً عند الرفع.",
     browseFilesCta: "استعراض الملفات",
     uploadFailed: "فشل الرفع. حاول مرة أخرى.",
@@ -1787,6 +1789,9 @@ const ar: Dictionary = {
     flavorMuddy: "غير واضح",
   },
   metadata: {
+    homeTitle: "بريو أطلس — وصفات القهوة المتخصصة",
+    homeDescription:
+      "أكبر منصة وصفات قهوة متخصصة في العالم. استكشف وصفات منتقاة، ومناشئ القهوة، وطرق التحضير، وأفضل المحامص، وأدوات الباريستا المميزة.",
     methodsTitle: "طرق التحضير",
     methodsDescription:
       "استكشف كل طريقة تحضير قهوة متخصصة يغطيها بريو أطلس، من التقطير اليدوي إلى السيفون، مع أزمنة التحضير وملامح الكوب وتوافق التحميص.",

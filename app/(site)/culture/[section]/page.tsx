@@ -23,7 +23,13 @@ export async function generateMetadata({ params }: CultureSectionPageProps): Pro
   const section = await getCultureSectionBySlug(supabase, sectionSlug, locale);
 
   if (!section) {
-    return { title: dictionary.culturePage.sectionNotFoundTitle };
+    return buildLocalizedMetadata({
+      pathname: `/culture/${sectionSlug}`,
+      locale,
+      title: dictionary.culturePage.sectionNotFoundTitle,
+      description: dictionary.metadata.notFoundDescription,
+      noIndex: true,
+    });
   }
 
   return buildLocalizedMetadata({

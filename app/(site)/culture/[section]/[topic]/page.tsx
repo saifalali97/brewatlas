@@ -26,7 +26,13 @@ export async function generateMetadata({ params }: CultureTopicPageProps): Promi
   const topic = await getCultureTopicBySlug(supabase, sectionSlug, topicSlug, locale);
 
   if (!topic) {
-    return { title: dictionary.culturePage.articleNotFoundTitle };
+    return buildLocalizedMetadata({
+      pathname: `/culture/${sectionSlug}/${topicSlug}`,
+      locale,
+      title: dictionary.culturePage.articleNotFoundTitle,
+      description: dictionary.metadata.notFoundDescription,
+      noIndex: true,
+    });
   }
 
   return buildLocalizedMetadata({
@@ -34,7 +40,8 @@ export async function generateMetadata({ params }: CultureTopicPageProps): Promi
     locale,
     title: topic.seoTitle ?? topic.title,
     description: topic.seoDescription ?? topic.excerpt,
-    ogImage: topic.heroImageUrl ? { url: topic.heroImageUrl } : undefined,
+    ogImage: topic.heroImageUrl ? { url: topic.heroImageUrl, alt: topic.title } : undefined,
+    openGraphType: "article",
   });
 }
 

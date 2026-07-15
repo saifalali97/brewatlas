@@ -1010,6 +1010,8 @@ export type Dictionary = {
     usageListTitle: string;
     uploadFolderLabel: string;
     dropzoneTitle: string;
+    viewGridAria: string;
+    viewListAria: string;
     dropzoneHint: string;
     browseFilesCta: string;
     uploadFailed: string;
@@ -1750,6 +1752,8 @@ export type Dictionary = {
     flavorMuddy: string;
   };
   metadata: {
+    homeTitle: string;
+    homeDescription: string;
     methodsTitle: string;
     methodsDescription: string;
     originsTitle: string;

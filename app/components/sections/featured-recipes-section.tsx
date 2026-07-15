@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
+import { EmptyState } from "@/app/components/ui/empty-state";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { SectionIntro } from "@/app/components/ui/section-intro";
@@ -94,9 +95,7 @@ export function FeaturedRecipesSection({
       </div>
 
       {filteredRecipes.length === 0 && (
-        <p className="py-16 text-center text-sm text-stone-500">
-          {t("homeFeaturedRecipes.noResults")}
-        </p>
+        <EmptyState title={t("homeFeaturedRecipes.noResults")} actionLabel={t("emptyStates.startExploring")} actionHref="/recipes" />
       )}
 
       <div className="mt-16 flex justify-center md:mt-20">

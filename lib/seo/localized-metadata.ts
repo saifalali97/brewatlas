@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/lib/i18n/config";
-import { getSiteUrl } from "@/lib/seo/site";
+import { resolveAbsoluteAssetUrl } from "@/lib/seo/path-utils";
+import { getSiteUrl, siteConfig } from "@/lib/seo/site";
 import { LOCALE_METADATA, type Locale } from "@/types/i18n";
 
 /**
@@ -39,15 +40,48 @@ export type LocalizedMetadataInput = {
   title: string;
   description: string;
   ogImage?: { url: string; width?: number; height?: number; alt?: string };
+  openGraphType?: "website" | "article";
   /** Set for account-only utility pages (login, signup, password reset) that shouldn't be indexed. */
   noIndex?: boolean;
 };
 
+function defaultOgImage() {
+  return {
+    url: resolveAbsoluteAssetUrl(siteConfig.ogImage.url),
+    width: siteConfig.ogImage.width,
+    height: siteConfig.ogImage.height,
+    alt: siteConfig.ogImage.alt,
+  };
+}
+
+function resolveOgImages(ogImage?: LocalizedMetadataInput["ogImage"]) {
+  if (ogImage?.url) {
+    return [
+      {
+        url: resolveAbsoluteAssetUrl(ogImage.url),
+        width: ogImage.width,
+        height: ogImage.height,
+        alt: ogImage.alt ?? siteConfig.ogImage.alt,
+      },
+    ];
+  }
+  return [defaultOgImage()];
+}
+
 /** Builds a `generateMetadata()` result with a locale-correct canonical URL, full hreflang alternates, and localized OpenGraph/Twitter tags. */
-export function buildLocalizedMetadata({ pathname, locale, title, description, ogImage, noIndex }: LocalizedMetadataInput): Metadata {
+export function buildLocalizedMetadata({
+  pathname,
+  locale,
+  title,
+  description,
+  ogImage,
+  openGraphType = "website",
+  noIndex,
+}: LocalizedMetadataInput): Metadata {
   const canonical = localizedPathUrl(pathname, locale);
   const localeMeta = LOCALE_METADATA[locale];
-  const images = ogImage ? [ogImage] : undefined;
+  const images = resolveOgImages(ogImage);
+  const twitterImages = images.map((image) => ({ url: image.url, alt: image.alt }));
 
   return {
     title,
@@ -58,18 +92,21 @@ export function buildLocalizedMetadata({ pathname, locale, title, description, o
       languages: buildHreflangAlternates(pathname),
     },
     openGraph: {
-      type: "website",
+      type: openGraphType,
       locale: localeMeta.bcp47.replace("-", "_"),
+      siteName: siteConfig.name,
       url: canonical,
       title,
       description,
       images,
     },
     twitter: {
-      card: "summary_large_image",
+      card: siteConfig.twitter.card,
+      site: siteConfig.twitter.site,
+      creator: siteConfig.twitter.creator,
       title,
       description,
-      images: ogImage ? [{ url: ogImage.url, alt: ogImage.alt }] : undefined,
+      images: twitterImages,
     },
   };
 }
