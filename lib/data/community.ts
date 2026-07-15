@@ -41,7 +41,7 @@ import { EMPTY_COMMUNITY_STATS, NOTIFICATION_PAGE_SIZE, REVIEW_PAGE_SIZE, REVIEW
  */
 
 const PUBLIC_PROFILE_SELECT = `
-  id, full_name, avatar_url, country, bio, owns_xbloom,
+  id, full_name, avatar_url, country, bio, owns_xbloom, profile_visibility,
   favorite_brewing_method_id, brewing_methods ( id, name ),
   favorite_origin_id, origins ( id, country, region ),
   favorite_coffee_id, coffees!profiles_favorite_coffee_id_fkey ( id, name ),
@@ -137,6 +137,7 @@ export async function getPublicProfile(
     favoriteGrinder: row.grinders,
     favoriteBrewer: row.devices,
     ownsXbloom: row.owns_xbloom,
+    profileVisibility: (row.profile_visibility as PublicProfile["profileVisibility"]) ?? "public",
     stats,
     isFollowedByViewer,
   };

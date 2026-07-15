@@ -22,6 +22,7 @@ type ProfileFormProps = {
   initialAvatarUrl: string | null;
   initialFavoriteBrewingMethodId: string;
   initialFavoriteDeviceId: string;
+  initialProfileVisibility: "public" | "private";
   brewingMethods: LookupOption[];
   devices: LookupOption[];
 };
@@ -33,6 +34,7 @@ export function ProfileForm({
   initialAvatarUrl,
   initialFavoriteBrewingMethodId,
   initialFavoriteDeviceId,
+  initialProfileVisibility,
   brewingMethods,
   devices,
 }: ProfileFormProps) {
@@ -163,6 +165,22 @@ export function ProfileForm({
           className={inputClass}
           placeholder={t("profilePage.bioPlaceholder")}
         />
+      </div>
+
+      <div>
+        <label htmlFor="profileVisibility" className={labelClass}>
+          {t("profilePage.visibilityLabel")}
+        </label>
+        <select
+          id="profileVisibility"
+          name="profileVisibility"
+          defaultValue={initialProfileVisibility}
+          className={selectClass}
+        >
+          <option value="public">{t("profilePage.visibilityPublic")}</option>
+          <option value="private">{t("profilePage.visibilityPrivate")}</option>
+        </select>
+        <p className="mt-1.5 text-xs text-stone-500">{t("profilePage.visibilityHint")}</p>
       </div>
 
       <FormMessage error={state?.error} success={state?.success} />

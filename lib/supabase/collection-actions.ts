@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getUserCollections } from "@/lib/data/collections";
+import { recordActivity } from "@/lib/data/community";
 import { getMembershipSummary } from "@/lib/data/membership";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -163,7 +164,7 @@ export async function addRecipeToCollectionAction(
 
   const { data: owned } = await supabase
     .from("recipe_collections")
-    .select("id")
+    .select("id, name")
     .eq("id", collectionId)
     .eq("user_id", authData.user.id)
     .maybeSingle();
@@ -180,7 +181,15 @@ export async function addRecipeToCollectionAction(
     return { error: error.message || c.addRecipeFailed };
   }
 
+  await recordActivity(supabase, {
+    userId: authData.user.id,
+    activityType: "added_to_collection",
+    recipeId,
+    metadata: { collectionName: owned.name as string, collectionId },
+  });
+
   revalidateCollections(collectionId);
+  revalidatePath(`/users/${authData.user.id}`);
   return { success: c.recipeAdded };
 }
 

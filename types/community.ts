@@ -27,9 +27,12 @@ export type PublicProfile = {
   favoriteGrinder: LookupOption | null;
   favoriteBrewer: LookupOption | null;
   ownsXbloom: boolean;
+  profileVisibility: ProfileVisibility;
   stats: CommunityStats;
   isFollowedByViewer?: boolean;
 };
+
+export type ProfileVisibility = "public" | "private";
 
 /** Raw shape of a `profiles` row as selected for a public profile, including its lookup joins. */
 export type DbPublicProfileRow = {
@@ -39,6 +42,7 @@ export type DbPublicProfileRow = {
   country: string | null;
   bio: string | null;
   owns_xbloom: boolean;
+  profile_visibility?: ProfileVisibility;
   favorite_brewing_method_id: string | null;
   brewing_methods: LookupOption | null;
   favorite_origin_id: string | null;
@@ -260,6 +264,8 @@ export const ACTIVITY_TYPES = [
   "reviewed_recipe",
   "earned_badge",
   "followed_user",
+  "saved_recipe",
+  "added_to_collection",
 ] as const;
 export type ActivityType = (typeof ACTIVITY_TYPES)[number];
 

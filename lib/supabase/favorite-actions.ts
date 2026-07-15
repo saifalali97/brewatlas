@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { updateTasteProfile } from "@/lib/data/ai";
-import { refreshCommunityStats } from "@/lib/data/community";
+import { recordActivity, refreshCommunityStats } from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
 
 function readCurrentPath(formData: FormData): string {
@@ -34,6 +34,12 @@ export async function addFavoriteAction(formData: FormData): Promise<void> {
     .from("favorites")
     .upsert({ user_id: data.user.id, recipe_id: recipeId }, { onConflict: "user_id,recipe_id", ignoreDuplicates: true });
 
+  await recordActivity(supabase, {
+    userId: data.user.id,
+    activityType: "saved_recipe",
+    recipeId,
+  });
+
   // Community system: "saving" a recipe (favorites) feeds recipesSaved in
   // user_community_stats and the Brew Score.
   await refreshCommunityStats(supabase, data.user.id);
@@ -43,6 +49,7 @@ export async function addFavoriteAction(formData: FormData): Promise<void> {
   revalidatePath(path);
   revalidatePath("/account");
   revalidatePath("/account/favorites");
+  revalidatePath(`/users/${data.user.id}`);
 }
 
 export async function removeFavoriteAction(formData: FormData): Promise<void> {
@@ -65,4 +72,5 @@ export async function removeFavoriteAction(formData: FormData): Promise<void> {
   revalidatePath(path);
   revalidatePath("/account");
   revalidatePath("/account/favorites");
+  revalidatePath(`/users/${data.user.id}`);
 }

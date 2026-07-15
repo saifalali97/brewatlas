@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ThumbsUp } from "lucide-react";
 import { StarRatingDisplay } from "@/app/components/reviews/star-rating";
 import { useTranslations } from "@/lib/i18n/translation-context";
@@ -30,7 +31,9 @@ export function RecipeReviewItem({ review, currentPath, viewerId }: RecipeReview
     <article className="rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="font-medium text-stone-100">{displayName}</p>
+          <Link href={`/users/${review.user.id}`} className="font-medium text-stone-100 transition-colors hover:text-amber-300">
+            {displayName}
+          </Link>
           {review.user.country && <p className="mt-0.5 text-xs text-stone-500">{review.user.country}</p>}
         </div>
         <div className="text-end">

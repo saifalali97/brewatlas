@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { evaluateAndAwardBadges } from "@/lib/data/community";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getLocale } from "@/lib/i18n/locale";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -26,6 +28,7 @@ export async function updateCommunityFavoritesAction(
   formData: FormData,
 ): Promise<CommunityProfileActionState> {
   const supabase = await createClient();
+  const dictionary = await getDictionary(await getLocale());
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
@@ -54,5 +57,6 @@ export async function updateCommunityFavoritesAction(
 
   revalidatePath("/account");
   revalidatePath("/account/profile");
-  return { success: "Community profile updated." };
+  revalidatePath(`/users/${authData.user.id}`);
+  return { success: dictionary.profilePage.communityFavoritesUpdated };
 }
