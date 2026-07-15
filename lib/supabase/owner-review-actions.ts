@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { userHasPermission } from "@/lib/auth/permission-middleware";
 import { requireOwner } from "@/lib/auth/require-owner";
+import { recordAdminAudit } from "@/lib/data/admin-audit";
 import { createNotification } from "@/lib/data/community";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -56,7 +57,7 @@ async function notifyModeration(
 
 /** Hides a review from public listings while keeping it in the database. */
 export async function hideOwnerReviewAction(formData: FormData): Promise<void> {
-  const { supabase } = await requireReviewsPermission();
+  const { supabase, user } = await requireReviewsPermission();
   const reviewId = readReviewId(formData);
   if (!reviewId) {
     revalidatePath("/dashboard/reviews");
@@ -75,6 +76,12 @@ export async function hideOwnerReviewAction(formData: FormData): Promise<void> {
     .eq("id", reviewId);
 
   if (!error) {
+    await recordAdminAudit(supabase, {
+      actorId: user.id,
+      targetType: "review",
+      targetId: reviewId,
+      action: "review_hidden",
+    });
     await notifyModeration(supabase, context.authorId, context.recipeId, "hidden");
     if (context.recipeSlug) {
       revalidatePath(`/recipes/${context.recipeSlug}`);
@@ -86,7 +93,7 @@ export async function hideOwnerReviewAction(formData: FormData): Promise<void> {
 
 /** Restores a hidden or flagged review to visible status. */
 export async function restoreOwnerReviewAction(formData: FormData): Promise<void> {
-  const { supabase } = await requireReviewsPermission();
+  const { supabase, user } = await requireReviewsPermission();
   const reviewId = readReviewId(formData);
   if (!reviewId) {
     revalidatePath("/dashboard/reviews");
@@ -105,6 +112,12 @@ export async function restoreOwnerReviewAction(formData: FormData): Promise<void
     .eq("id", reviewId);
 
   if (!error) {
+    await recordAdminAudit(supabase, {
+      actorId: user.id,
+      targetType: "review",
+      targetId: reviewId,
+      action: "review_restored",
+    });
     await notifyModeration(supabase, context.authorId, context.recipeId, "restored");
     if (context.recipeSlug) {
       revalidatePath(`/recipes/${context.recipeSlug}`);
@@ -118,7 +131,7 @@ export async function restoreOwnerReviewAction(formData: FormData): Promise<void
 export async function deleteOwnerReviewAction(formData: FormData): Promise<void> {
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const { supabase } = await requireReviewsPermission();
+  const { supabase, user } = await requireReviewsPermission();
   const reviewId = readReviewId(formData);
   if (!reviewId) {
     revalidatePath("/dashboard/reviews");
@@ -134,6 +147,12 @@ export async function deleteOwnerReviewAction(formData: FormData): Promise<void>
   const { error } = await supabase.from("recipe_reviews").delete().eq("id", reviewId);
 
   if (!error) {
+    await recordAdminAudit(supabase, {
+      actorId: user.id,
+      targetType: "review",
+      targetId: reviewId,
+      action: "review_deleted",
+    });
     await notifyModeration(supabase, context.authorId, context.recipeId, "deleted");
     if (context.recipeSlug) {
       revalidatePath(`/recipes/${context.recipeSlug}`);

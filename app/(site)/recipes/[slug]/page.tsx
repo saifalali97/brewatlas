@@ -56,6 +56,7 @@ import {
 } from "@/lib/data/community";
 import { isRecipePubliclyVisible } from "@/lib/recipes/recipe-status";
 import { canAccessRecipe } from "@/lib/membership/access";
+import { recordRecipeView } from "@/lib/data/recipe-analytics";
 import { getMembershipSummary } from "@/lib/data/membership";
 import { createClient } from "@/lib/supabase/server";
 import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
@@ -200,6 +201,8 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   const isOwner = Boolean(viewerId && recipe.authorId === viewerId);
   const canAccessFull = isOwner || canAccessRecipe(membership, recipe);
+
+  void recordRecipeView(supabase, recipe.id, viewerId);
   const reviewJsonLd = buildRecipeReviewJsonLd({
     recipe,
     slug,
