@@ -5,11 +5,10 @@ import { notFound } from "next/navigation";
 import { CultureTopicCard } from "@/app/components/cards/culture-topic-card";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
-import { getCultureSectionBySlug } from "@/lib/data/culture";
+import { getCachedCultureSectionBySlug } from "@/lib/data/cached-public-data";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
-import { createClient } from "@/lib/supabase/server";
 
 type CultureSectionPageProps = {
   params: Promise<{ section: string }>;
@@ -19,8 +18,7 @@ export async function generateMetadata({ params }: CultureSectionPageProps): Pro
   const { section: sectionSlug } = await params;
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const supabase = await createClient();
-  const section = await getCultureSectionBySlug(supabase, sectionSlug, locale);
+  const section = await getCachedCultureSectionBySlug(sectionSlug, locale);
 
   if (!section) {
     return buildLocalizedMetadata({
@@ -46,8 +44,7 @@ export default async function CultureSectionPage({ params }: CultureSectionPageP
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
   const c = dictionary.culturePage;
-  const supabase = await createClient();
-  const section = await getCultureSectionBySlug(supabase, sectionSlug, locale);
+  const section = await getCachedCultureSectionBySlug(sectionSlug, locale);
 
   if (!section) {
     notFound();

@@ -117,6 +117,7 @@ export function SiteNav({
               <Link
                 key={link.id}
                 href={link.href}
+                prefetch={link.href.startsWith("/") && !link.href.includes("#")}
                 aria-current={isActive ? "page" : undefined}
                 className={`group relative px-0.5 py-1.5 transition-colors duration-300 ${
                   isActive ? "text-stone-100" : "text-stone-400 hover:text-stone-100"

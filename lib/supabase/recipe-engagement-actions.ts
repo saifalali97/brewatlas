@@ -8,6 +8,7 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { createClient } from "@/lib/supabase/server";
 import { REVIEW_TEXT_MAX_LENGTH } from "@/types/community";
+import { sanitizeOptionalText } from "@/lib/security/sanitize";
 
 /**
  * Server Actions for Recipe Engagement: liking/unliking a recipe, rating +
@@ -121,11 +122,10 @@ export async function submitRecipeReviewAction(
   }
 
   const reviewTextRaw = formData.get("reviewText");
-  const reviewText = typeof reviewTextRaw === "string" && reviewTextRaw.trim().length > 0 ? reviewTextRaw.trim() : null;
-
-  if (reviewText && reviewText.length > REVIEW_TEXT_MAX_LENGTH) {
-    return { error: r.reviewTooLong };
-  }
+  const reviewText = sanitizeOptionalText(
+    typeof reviewTextRaw === "string" ? reviewTextRaw : null,
+    REVIEW_TEXT_MAX_LENGTH,
+  );
 
   const { error } = await supabase
     .from("recipe_reviews")

@@ -1,6 +1,20 @@
 const UNSPLASH_ORIGIN = "https://images.unsplash.com";
 const isDev = process.env.NODE_ENV !== "production";
 
+function getSupabaseOrigin(): string | null {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!url) return null;
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+}
+
+const supabaseOrigin = getSupabaseOrigin();
+const connectSrc = ["'self'", "https://api.stripe.com", ...(supabaseOrigin ? [supabaseOrigin] : [])].join(" ");
+const imgSrc = ["'self'", "data:", "blob:", UNSPLASH_ORIGIN, ...(supabaseOrigin ? [supabaseOrigin] : [])].join(" ");
+
 // React/Next.js dev mode uses eval() in the browser to reconstruct stack
 // traces for the error overlay and Fast Refresh — it is never used in a
 // production build. We only relax `script-src` with `unsafe-eval` for local
@@ -13,9 +27,9 @@ const contentSecurityPolicy = [
   "object-src 'none'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: blob: ${UNSPLASH_ORIGIN}`,
+  `img-src ${imgSrc}`,
   "font-src 'self'",
-  "connect-src 'self'",
+  `connect-src ${connectSrc}`,
   "media-src 'self'",
   "manifest-src 'self'",
   "worker-src 'self' blob:",

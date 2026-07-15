@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Locale } from "@/types/i18n";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { processScheduledRecipePublishes } from "@/lib/data/recipe-publishing";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -195,7 +196,10 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
 }
 
 /** Published recipes visible to everyone (RLS enforces this even without the `.eq` below, but it's explicit here). */
-export async function getPublishedDbRecipes(supabase: SupabaseClient): Promise<RecipeListItem[]> {
+export async function getPublishedDbRecipes(
+  supabase: SupabaseClient,
+  options: { locale?: Locale } = {},
+): Promise<RecipeListItem[]> {
   await processScheduledRecipePublishes(supabase);
 
   const { data, error } = await supabase
@@ -209,7 +213,8 @@ export async function getPublishedDbRecipes(supabase: SupabaseClient): Promise<R
     return [];
   }
 
-  const dictionary = await getDictionary(await getLocale());
+  const locale = options.locale ?? (await getLocale());
+  const dictionary = await getDictionary(locale);
   return (data as unknown as DbRecipeRow[]).map((row) => mapDbRecipeToListItem(row, dictionary));
 }
 

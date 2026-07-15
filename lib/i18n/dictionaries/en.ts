@@ -1751,8 +1751,10 @@ const en: Dictionary = {
     messageLabel: "Message",
     messagePlaceholder: "How can we help?",
     sendMessageCta: "Send Message",
+    sendingMessage: "Sending…",
     messageSentTitle: "Message sent",
     messageSentBody: "Thanks for reaching out — our barista support team will reply within one business day.",
+    messageSendFailed: "Please check your details and try again.",
   },
   legalPage: {
     lastUpdatedLabel: "Last updated",

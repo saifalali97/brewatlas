@@ -3,11 +3,10 @@ import { CultureSectionCard } from "@/app/components/cards/culture-section-card"
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
-import { getCultureSections } from "@/lib/data/culture";
+import { getCachedCultureSections } from "@/lib/data/cached-public-data";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
-import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -24,8 +23,7 @@ export default async function CulturePage() {
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
   const c = dictionary.culturePage;
-  const supabase = await createClient();
-  const sections = await getCultureSections(supabase, locale);
+  const sections = await getCachedCultureSections(locale);
 
   return (
     <SectionFrame id="culture-hub" ariaLabelledBy="culture-hub-heading" padding="compact">

@@ -1729,8 +1729,10 @@ export type Dictionary = {
     messageLabel: string;
     messagePlaceholder: string;
     sendMessageCta: string;
+    sendingMessage: string;
     messageSentTitle: string;
     messageSentBody: string;
+    messageSendFailed: string;
   };
   /** Shared strings reused across `/privacy`, `/terms` and `/cookies`. */
   legalPage: {
