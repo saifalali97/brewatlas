@@ -1,29 +1,66 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #150e09;
+  --foreground: #f3ede3;
+
+  /* BrewAtlas DS v2 — semantic tokens */
+  --ds-page-bg: #150e09;
+  --ds-footer-bg: #231710;
+  --ds-surface: rgba(255, 255, 255, 0.03);
+  --ds-surface-raised: rgba(255, 255, 255, 0.06);
+  --ds-border: rgba(255, 255, 255, 0.08);
+  --ds-border-strong: rgba(255, 255, 255, 0.12);
+  --ds-text-primary: #f3ede3;
+  --ds-text-secondary: #a8a29e;
+  --ds-text-muted: #78716c;
+  --ds-accent: #c08a2e;
+  --ds-accent-deep: #8f651c;
+  --ds-focus: rgba(192, 138, 46, 0.85);
+
+  /* Spacing (8px base) */
+  --ds-space-1: 0.5rem;
+  --ds-space-2: 1rem;
+  --ds-space-3: 1.5rem;
+  --ds-space-4: 2rem;
+  --ds-space-5: 3rem;
+  --ds-space-6: 4rem;
+  --ds-space-7: 6rem;
+  --ds-space-8: 8rem;
+
+  /* Radius */
+  --ds-radius-sm: 0.5rem;
+  --ds-radius-md: 0.75rem;
+  --ds-radius-lg: 1rem;
+  --ds-radius-xl: 1.5rem;
+  --ds-radius-card: 1.5rem;
+
+  /* Motion */
+  --ds-easing-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --ds-duration-fast: 200ms;
+  --ds-duration-normal: 300ms;
+  --ds-duration-slow: 500ms;
+
+  /* Header */
+  --ds-header-height: 4.5rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-ds-page: var(--ds-page-bg);
+  --color-ds-footer: var(--ds-footer-bg);
+  --color-ds-accent: var(--ds-accent);
+  --color-ds-accent-deep: var(--ds-accent-deep);
+  --color-ds-text-primary: var(--ds-text-primary);
+  --color-ds-text-secondary: var(--ds-text-secondary);
 }
 
 /*
- * UAE Brand Theme -- additive design tokens (Sand, Palm, Dark Coffee,
- * Warm Gold, Pearl White). Not referenced by any existing component;
- * available as bg-uae-sand, text-uae-warm-gold, border-uae-palm-deep
- * (etc.) utilities for new UAE-brand surfaces only. See
- * lib/branding/uae-theme.ts.
+ * UAE Brand Theme — Sand, Palm, Dark Coffee, Warm Gold, Pearl.
+ * See lib/branding/uae-theme.ts and lib/design-system/tokens.ts.
  */
 :root {
   --uae-sand: #c9a876;
@@ -52,8 +89,8 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--ds-page-bg);
+  color: var(--ds-text-primary);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -67,7 +104,7 @@ body {
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5.5rem;
+  scroll-padding-top: var(--ds-header-height);
 }
 
 :focus {
@@ -75,7 +112,7 @@ html {
 }
 
 :focus-visible {
-  outline: 2px solid rgba(217, 119, 6, 0.85);
+  outline: 2px solid var(--ds-focus);
   outline-offset: 2px;
 }
 
@@ -109,6 +146,26 @@ html {
   }
 }
 
+@keyframes drawer-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes drawer-backdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .animate-ripple {
   animation: ripple 650ms ease-out forwards;
 }
@@ -119,6 +176,14 @@ html {
 
 .animate-loader-bar {
   animation: loader-bar 1.15s ease-in-out infinite;
+}
+
+.animate-drawer-enter {
+  animation: drawer-enter var(--ds-duration-slow) var(--ds-easing-premium) forwards;
+}
+
+.animate-drawer-backdrop {
+  animation: drawer-backdrop var(--ds-duration-normal) ease-out forwards;
 }
 
 @keyframes hero-float {
@@ -145,9 +210,51 @@ html {
   background-size: 180px 180px;
 }
 
+/* feTurbulence filters break painting on iOS Safari — disable grain overlay there. */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 1023px) {
+    .site-header-mobile {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+
+    #main-content {
+      padding-top: calc(var(--ds-header-height) + env(safe-area-inset-top, 0px));
+    }
+  }
+
+  #site-header [data-mobile-nav-trigger] {
+    position: relative;
+    z-index: 10;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* rounded-full uses a circular hit region on iOS — corners miss the button */
+  @media (max-width: 1023px) {
+    #site-header [data-mobile-nav-trigger]::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 0;
+      pointer-events: auto;
+    }
+  }
+
+  .hero-grain::before {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-hero-float {
+  .animate-hero-float,
+  .animate-drawer-enter,
+  .animate-drawer-backdrop {
     animation: none;
-    opacity: 0.2;
+    opacity: 1;
+    transform: none;
   }
 }

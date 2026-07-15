@@ -14,6 +14,7 @@
 export type Dictionary = {
   nav: {
     home: string;
+    discover: string;
     recipes: string;
     search: string;
     methods: string;
@@ -28,6 +29,7 @@ export type Dictionary = {
     community: string;
     profile: string;
     settings: string;
+    account: string;
     joinPremium: string;
     login: string;
     signup: string;
@@ -36,6 +38,10 @@ export type Dictionary = {
     mainNavigationAriaLabel: string;
     homeAriaLabel: string;
     joinPremiumAriaLabel: string;
+    discoverMenuAriaLabel: string;
+    mobileMenuAriaLabel: string;
+    openMenu: string;
+    closeMenu: string;
     switchLanguageAria: string;
     languageAriaLabel: string;
   };
@@ -73,6 +79,7 @@ export type Dictionary = {
   homeHero: {
     sectionAriaLabel: string;
     eyebrow: string;
+    headline: string;
     subtitle: string;
     searchFormAriaLabel: string;
     searchPlaceholder: string;
@@ -84,6 +91,46 @@ export type Dictionary = {
     statRoastersLabel: string;
     statCountriesLabel: string;
     heroImageAlt: string;
+  };
+  homeDiscover: {
+    sectionAriaLabel: string;
+    eyebrow: string;
+    title: string;
+    description: string;
+    enterLabel: string;
+    worlds: {
+      recipes: { eyebrow: string; title: string; tagline: string; imageAlt: string };
+      devices: { eyebrow: string; title: string; tagline: string; imageAlt: string };
+      origins: { eyebrow: string; title: string; tagline: string; imageAlt: string };
+      roasters: { eyebrow: string; title: string; tagline: string; imageAlt: string };
+      culture: { eyebrow: string; title: string; tagline: string; imageAlt: string };
+      premium: { eyebrow: string; title: string; tagline: string; imageAlt: string };
+    };
+  };
+  homePremiumExperience: {
+    sectionAriaLabel: string;
+    eyebrow: string;
+    title: string;
+    benefits: {
+      recipes: { title: string; description: string };
+      coach: { title: string; description: string };
+      tracking: { title: string; description: string };
+      saves: { title: string; description: string };
+    };
+    testimonialsEyebrow: string;
+    testimonialsTitle: string;
+    statRecipesValue: string;
+    statRecipesLabel: string;
+    statMembersValue: string;
+    statMembersLabel: string;
+    statRatingValue: string;
+    statRatingLabel: string;
+    statPriceValue: string;
+    statPriceLabel: string;
+    ctaTitle: string;
+    ctaDescription: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
   };
   homeFilters: {
     all: string;
@@ -217,14 +264,18 @@ export type Dictionary = {
     startPremium: string;
     browseRecipes: string;
     exploreColumn: string;
+    productColumn: string;
     companyColumn: string;
+    legalColumn: string;
     supportColumn: string;
     linkRecipes: string;
     linkMethods: string;
     linkOrigins: string;
     linkRoasters: string;
+    linkDevices: string;
     linkPremium: string;
     linkCulture: string;
+    linkSearch: string;
     linkArabicCoffee: string;
     linkTeaKarak: string;
     linkCoach: string;
