@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
+import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
@@ -216,11 +217,10 @@ function StaticRecipeView({ recipe, dictionary }: { recipe: FeaturedRecipe; dict
 
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div className="relative h-72 overflow-hidden rounded-[1.5rem] border border-white/[0.11] sm:h-96 lg:h-full lg:min-h-[26rem]">
-          <Image
+          <OptimizedImage
             src={recipe.image}
             alt={`${recipe.name} ${recipe.country} ${recipe.brewMethod} ${recipe.roastLevel}`}
-            fill
-            sizes="(min-width: 1024px) 50vw, 100vw"
+            sizes={IMAGE_SIZE_PRESETS.recipeDetailCover}
             priority
             className="object-cover brightness-[0.9] contrast-[1.04] saturate-[0.94]"
           />
@@ -317,6 +317,7 @@ function DbRecipeView({
 }: DbRecipeViewProps) {
   const d = dictionary.recipeDetail;
   const coverImage = recipe.coverImageUrl ?? RECIPE_IMAGE_PLACEHOLDER;
+  const coverAlt = recipe.coverImageAlt ?? d.recipeCoverAltTemplate.replace("{title}", recipe.title);
   const notes = recipe.tastingNotes ?? recipe.description ?? d.noTastingNotes;
   const ratings = [
     { label: dictionary.homeBrewingMethods.sweetnessLabel, value: recipe.sweetness },
@@ -348,11 +349,13 @@ function DbRecipeView({
 
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
         <div className="relative h-72 overflow-hidden rounded-[1.5rem] border border-white/[0.11] sm:h-96 lg:h-full lg:min-h-[26rem]">
-          <Image
+          <OptimizedImage
             src={coverImage}
-            alt={d.recipeCoverAltTemplate.replace("{title}", recipe.title)}
-            fill
-            sizes="(min-width: 1024px) 50vw, 100vw"
+            alt={coverAlt}
+            blurDataUrl={recipe.coverImageBlur}
+            width={recipe.coverImageWidth ?? undefined}
+            height={recipe.coverImageHeight ?? undefined}
+            sizes={IMAGE_SIZE_PRESETS.recipeDetailCover}
             priority
             className="object-cover brightness-[0.9] contrast-[1.04] saturate-[0.94]"
           />
@@ -591,11 +594,14 @@ function DbRecipeView({
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {recipe.images.map((image) => (
               <div key={image.id} className="relative h-48 overflow-hidden rounded-xl border border-white/[0.1]">
-                <Image
+                <OptimizedImage
                   src={image.url}
-                  alt={d.additionalPhotoAltTemplate.replace("{title}", recipe.title)}
-                  fill
-                  sizes="33vw"
+                  alt={image.altText ?? d.additionalPhotoAltTemplate.replace("{title}", recipe.title)}
+                  blurDataUrl={image.blurDataUrl}
+                  width={image.width ?? undefined}
+                  height={image.height ?? undefined}
+                  sizes={IMAGE_SIZE_PRESETS.recipeGallery}
+                  loading="lazy"
                   className="object-cover"
                 />
               </div>

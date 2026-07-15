@@ -1,18 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
-
-const FALLBACK_SRC = "/images/coffee-placeholder.svg";
-
-type PremiumImageProps = {
-  src: string;
-  alt: string;
-  className?: string;
-  overlay?: "hero" | "card" | "portrait" | "banner";
-  preload?: boolean;
-  sizes?: string;
-};
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
+import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 
 const overlayStyles = {
   hero: "bg-gradient-to-b from-[#0a0705]/92 via-[#0a0705]/78 to-[#0a0705]/96",
@@ -21,30 +10,43 @@ const overlayStyles = {
   banner: "bg-gradient-to-r from-[#0a0705]/90 via-[#0a0705]/50 to-[#0a0705]/20",
 };
 
+type PremiumImageProps = {
+  src: string;
+  alt: string;
+  className?: string;
+  overlay?: "hero" | "card" | "portrait" | "banner";
+  preload?: boolean;
+  priority?: boolean;
+  sizes?: string;
+  blurDataUrl?: string | null;
+  width?: number;
+  height?: number;
+};
+
 export function PremiumImage({
   src,
   alt,
   className = "",
   overlay = "card",
   preload = false,
-  sizes = "100vw",
+  priority = false,
+  sizes = IMAGE_SIZE_PRESETS.fullWidth,
+  blurDataUrl,
+  width,
+  height,
 }: PremiumImageProps) {
-  const [imageSrc, setImageSrc] = useState(src);
-
   return (
     <div className={`relative overflow-hidden ${className}`}>
-      <Image
-        src={imageSrc}
+      <OptimizedImage
+        src={src}
         alt={alt}
-        fill
+        blurDataUrl={blurDataUrl}
+        width={width}
+        height={height}
+        priority={priority}
         preload={preload}
         sizes={sizes}
-        unoptimized={imageSrc === FALLBACK_SRC}
-        onError={() => {
-          if (imageSrc !== FALLBACK_SRC) {
-            setImageSrc(FALLBACK_SRC);
-          }
-        }}
+        loading={priority ? undefined : "lazy"}
         className="object-cover brightness-[0.62] contrast-[1.08] saturate-[0.8] transition-all duration-700 ease-out group-hover:scale-[1.04] group-hover:brightness-[0.72]"
       />
       <div className={`absolute inset-0 ${overlayStyles[overlay]}`} aria-hidden />

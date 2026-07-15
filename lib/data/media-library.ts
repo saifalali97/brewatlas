@@ -21,6 +21,7 @@ type AssetRow = {
   height: number | null;
   file_size: number;
   mime_type: string;
+  blur_data_url: string | null;
   created_at: string;
   media_folders: { name: string } | null;
   profiles: { full_name: string | null } | null;
@@ -30,7 +31,7 @@ type AssetRow = {
 
 const ASSET_LIST_SELECT = `
   id, folder_id, filename, storage_path, public_url, alt_text, caption, tags,
-  width, height, file_size, mime_type, created_at,
+  width, height, file_size, mime_type, blur_data_url, created_at,
   media_folders ( name ),
   profiles:uploaded_by ( full_name ),
   media_asset_variants ( variant_key, public_url ),
@@ -56,6 +57,7 @@ function mapAssetListItem(row: AssetRow): MediaAssetListItem {
     height: row.height,
     fileSize: row.file_size,
     mimeType: row.mime_type,
+    blurDataUrl: row.blur_data_url,
     uploadedByName: row.profiles?.full_name ?? null,
     createdAt: row.created_at,
     thumbnailUrl: thumbnailFromRow(row),

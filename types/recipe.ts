@@ -38,6 +38,10 @@ export type RecipeImageRow = {
   url: string;
   position: number;
   mediaAssetId?: string | null;
+  width?: number | null;
+  height?: number | null;
+  altText?: string | null;
+  blurDataUrl?: string | null;
 };
 
 /** Raw shape of a `coffees` row selected with its roaster/origin joins. */
@@ -81,6 +85,10 @@ export type DbRecipeRow = {
   instructions: string | null;
   cover_image_url: string | null;
   cover_media_asset_id: string | null;
+  cover_image_width: number | null;
+  cover_image_height: number | null;
+  cover_image_alt: string | null;
+  cover_image_blur: string | null;
   sweetness: number | null;
   acidity: number | null;
   body: number | null;
@@ -107,7 +115,16 @@ export type DbRecipeRow = {
   // to-one embed inferred from a unique foreign key, like `xbloom_profiles`)
   // -- always read them through `toSafeArray` from `lib/utils/arrays`.
   recipe_pours: PourRow[] | null | undefined;
-  recipe_images: Array<{ id: string; url: string; position: number; media_asset_id: string | null }> | null | undefined;
+  recipe_images: Array<{
+    id: string;
+    url: string;
+    position: number;
+    media_asset_id: string | null;
+    width: number | null;
+    height: number | null;
+    alt_text: string | null;
+    blur_data_url: string | null;
+  }> | null | undefined;
   recipe_tags: { tags: TagRow | null }[] | null | undefined;
   xbloom_profiles: { id: string }[] | { id: string } | null | undefined;
 };
@@ -130,6 +147,12 @@ export type RecipeListItem = FeaturedRecipe & {
   favoritesCount?: number;
   instructions?: string | null;
   tags?: string[];
+  /** Cover blur data URL for Next.js placeholder (DB recipes only). */
+  imageBlur?: string | null;
+  /** Intrinsic cover width in pixels (DB recipes only). */
+  imageWidth?: number | null;
+  /** Intrinsic cover height in pixels (DB recipes only). */
+  imageHeight?: number | null;
   /** Extra searchable strings not otherwise surfaced on the card, joined in for the search box. */
   searchableExtras?: string[];
 };
@@ -152,6 +175,10 @@ export type RecipeFullDetail = {
   premiumOnly: boolean;
   coverImageUrl: string | null;
   coverMediaAssetId: string | null;
+  coverImageWidth: number | null;
+  coverImageHeight: number | null;
+  coverImageAlt: string | null;
+  coverImageBlur: string | null;
   images: RecipeImageRow[];
 
   brewingMethodId: string | null;

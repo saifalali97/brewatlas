@@ -47,8 +47,9 @@ export function MediaUploadZone({ folders, defaultFolderId, onUploaded }: MediaU
           formData.set("folderId", folderId);
           formData.set("filename", processed.filename);
           formData.set("mimeType", processed.mimeType);
-          formData.set("width", String(processed.width));
-          formData.set("height", String(processed.height));
+      formData.set("width", String(processed.width));
+      formData.set("height", String(processed.height));
+      formData.set("blurDataUrl", processed.blurDataUrl);
 
           for (const variant of processed.variants) {
             formData.set(`variant_${variant.key}`, variant.blob, `${variant.key}-${processed.filename}`);

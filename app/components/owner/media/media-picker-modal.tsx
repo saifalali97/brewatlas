@@ -1,6 +1,7 @@
 "use client";
 
-import Image from "next/image";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
+import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { useEffect, useState, useTransition } from "react";
 import { buttons, modal } from "@/lib/constants/styles";
 import { createClient } from "@/lib/supabase/client";
@@ -11,7 +12,7 @@ import { MediaUploadZone } from "@/app/components/owner/media/media-upload-zone"
 type MediaPickerModalProps = {
   open: boolean;
   onClose: () => void;
-  onSelect: (asset: { id: string; publicUrl: string; altText: string | null }) => void;
+  onSelect: (asset: { id: string; publicUrl: string; altText: string | null; blurDataUrl?: string | null }) => void;
   folders: MediaFolder[];
 };
 
@@ -33,7 +34,7 @@ export function MediaPickerModal({ open, onClose, onSelect, folders }: MediaPick
         let query = supabase
           .from("media_assets")
           .select(
-            `id, filename, public_url, alt_text, file_size, width, height, created_at, media_asset_variants ( variant_key, public_url )`,
+            `id, filename, public_url, alt_text, blur_data_url, file_size, width, height, created_at, media_asset_variants ( variant_key, public_url )`,
           )
           .order("created_at", { ascending: false })
           .limit(48);
@@ -50,6 +51,7 @@ export function MediaPickerModal({ open, onClose, onSelect, folders }: MediaPick
               filename: row.filename as string,
               publicUrl: row.public_url as string,
               altText: row.alt_text as string | null,
+              blurDataUrl: row.blur_data_url as string | null,
               caption: null,
               tags: [],
               width: row.width as number | null,
@@ -116,13 +118,13 @@ export function MediaPickerModal({ open, onClose, onSelect, folders }: MediaPick
                       key={asset.id}
                       type="button"
                       onClick={() => {
-                        onSelect({ id: asset.id, publicUrl: asset.publicUrl, altText: asset.altText });
+                        onSelect({ id: asset.id, publicUrl: asset.publicUrl, altText: asset.altText, blurDataUrl: asset.blurDataUrl });
                         onClose();
                       }}
                       className="overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.02] text-start hover:border-amber-500/40"
                     >
                       <div className="relative aspect-square">
-                        <Image src={asset.thumbnailUrl} alt="" fill sizes="120px" loading="lazy" className="object-cover" />
+                        <OptimizedImage src={asset.thumbnailUrl} alt="" sizes={IMAGE_SIZE_PRESETS.cmsPicker} loading="lazy" blurDataUrl={asset.blurDataUrl} className="object-cover" />
                       </div>
                       <p className="truncate p-2 text-xs text-stone-300">{asset.filename}</p>
                     </button>

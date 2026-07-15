@@ -19,6 +19,7 @@ export const RECIPE_SELECT = `
   author_id, coffee_dose, water_amount, ice_amount, grind_size, water_temperature,
   ratio, bloom_amount, bloom_time, total_brew_time, beverage_weight, tds,
   extraction_percentage, tasting_notes, instructions, cover_image_url, cover_media_asset_id,
+  cover_image_width, cover_image_height, cover_image_alt, cover_image_blur,
   sweetness, acidity, body, bitterness,
   featured, premium_only, published,
   status, scheduled_publish_at, archived_at,
@@ -35,7 +36,7 @@ export const RECIPE_SELECT = `
     origins ( id, country, region )
   ),
   recipe_pours ( id, pour_number, water_amount, time_label, notes ),
-  recipe_images ( id, url, position, media_asset_id ),
+  recipe_images ( id, url, position, media_asset_id, width, height, alt_text, blur_data_url ),
   recipe_tags ( tags ( id, name, slug ) ),
   xbloom_profiles ( id )
 `;
@@ -68,6 +69,9 @@ export function mapDbRecipeToListItem(row: DbRecipeRow, dictionary: Dictionary):
     time: row.total_brew_time ?? row.estimated_brew_time ?? dictionary.recipeDetail.dashValue,
     notes: row.tasting_notes ?? row.description ?? dictionary.recipeDetail.noTastingNotes,
     image: row.cover_image_url ?? RECIPE_IMAGE_PLACEHOLDER,
+    imageBlur: row.cover_image_blur ?? null,
+    imageWidth: row.cover_image_width ?? null,
+    imageHeight: row.cover_image_height ?? null,
     premium: row.premium_only,
     featured: row.featured,
     slug: row.slug,
@@ -114,6 +118,10 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
     premiumOnly: row.premium_only,
     coverImageUrl: row.cover_image_url,
     coverMediaAssetId: row.cover_media_asset_id ?? null,
+    coverImageWidth: row.cover_image_width ?? null,
+    coverImageHeight: row.cover_image_height ?? null,
+    coverImageAlt: row.cover_image_alt ?? null,
+    coverImageBlur: row.cover_image_blur ?? null,
     images: toSafeArray(row.recipe_images)
       .sort((a, b) => a.position - b.position)
       .map((image) => ({
@@ -121,6 +129,10 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
         url: image.url,
         position: image.position,
         mediaAssetId: image.media_asset_id ?? null,
+        width: image.width ?? null,
+        height: image.height ?? null,
+        altText: image.alt_text ?? null,
+        blurDataUrl: image.blur_data_url ?? null,
       })),
 
     brewingMethodId: row.brewing_methods?.id ?? null,

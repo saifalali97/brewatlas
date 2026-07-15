@@ -1,6 +1,7 @@
 "use client";
 
 import { MEDIA_VARIANT_WIDTHS } from "@/lib/media/constants";
+import { generateBlurDataUrl } from "@/lib/media/blur-placeholder";
 
 export type ProcessedImageVariant = {
   key: keyof typeof MEDIA_VARIANT_WIDTHS | "original";
@@ -15,6 +16,7 @@ export type ProcessedImageResult = {
   width: number;
   height: number;
   fileSize: number;
+  blurDataUrl: string;
   variants: ProcessedImageVariant[];
 };
 
@@ -134,6 +136,7 @@ export async function processImageFile(
 
   const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "-").slice(0, 80);
   const extension = mimeType.split("/")[1] ?? "webp";
+  const blurDataUrl = await generateBlurDataUrl(baseCanvas, baseCanvas.width, baseCanvas.height);
 
   return {
     filename: safeName.includes(".") ? safeName : `${safeName}.${extension}`,
@@ -141,6 +144,7 @@ export async function processImageFile(
     width: baseCanvas.width,
     height: baseCanvas.height,
     fileSize: originalBlob.size,
+    blurDataUrl,
     variants,
   };
 }
