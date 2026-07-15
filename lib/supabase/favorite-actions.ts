@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { updateTasteProfile } from "@/lib/data/ai";
-import { recordActivity, refreshCommunityStats } from "@/lib/data/community";
+import { createNotification, recordActivity, refreshCommunityStats } from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
 
 function readCurrentPath(formData: FormData): string {
@@ -18,6 +18,14 @@ function readRecipeId(formData: FormData): string | null {
   return typeof value === "string" && value.length > 0 ? value : null;
 }
 
+async function getRecipeAuthor(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  recipeId: string,
+): Promise<string | null> {
+  const { data } = await supabase.from("recipes").select("author_id").eq("id", recipeId).maybeSingle();
+  return (data?.author_id as string | null) ?? null;
+}
+
 export async function addFavoriteAction(formData: FormData): Promise<void> {
   const path = readCurrentPath(formData);
   const supabase = await createClient();
@@ -30,9 +38,29 @@ export async function addFavoriteAction(formData: FormData): Promise<void> {
   const recipeId = readRecipeId(formData);
   if (!recipeId) return;
 
+  const { data: existingFavorite } = await supabase
+    .from("favorites")
+    .select("recipe_id")
+    .eq("user_id", data.user.id)
+    .eq("recipe_id", recipeId)
+    .maybeSingle();
+
+  const isNewFavorite = !existingFavorite;
+
   await supabase
     .from("favorites")
     .upsert({ user_id: data.user.id, recipe_id: recipeId }, { onConflict: "user_id,recipe_id", ignoreDuplicates: true });
+
+  const authorId = isNewFavorite ? await getRecipeAuthor(supabase, recipeId) : null;
+  if (authorId) {
+    await createNotification(supabase, {
+      recipientId: authorId,
+      notificationType: "recipe_favorited",
+      actorId: data.user.id,
+      recipeId,
+      message: "Someone favorited your recipe.",
+    });
+  }
 
   await recordActivity(supabase, {
     userId: data.user.id,

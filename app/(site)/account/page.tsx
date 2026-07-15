@@ -11,6 +11,7 @@ import {
   FolderOpen,
   Heart,
   Plus,
+  Settings2,
   Sparkles,
   Users,
   Wrench,
@@ -110,6 +111,7 @@ export default async function DashboardPage() {
     { icon: Cpu, label: d.xbloomProfilesLabel, description: d.xbloomProfilesDescription, href: "/account/xbloom" },
     { icon: Wrench, label: d.coffeeSetupLabel, description: d.coffeeSetupDescription, href: "/account/coffee-setup" },
     { icon: Bell, label: d.notificationsLabel, description: d.notificationsDescription, href: "/account/notifications" },
+    { icon: Settings2, label: d.notificationPreferencesLabel, description: d.notificationPreferencesDescription, href: "/account/notification-preferences" },
     { icon: Heart, label: d.savedRecipesLabel, description: d.savedRecipesDescription, href: "/account/favorites" },
     { icon: FolderOpen, label: d.collectionsLabel, description: d.collectionsDescription, href: "/account/collections" },
   ];

@@ -285,6 +285,7 @@ export type ActivityFeedItem = {
 export const NOTIFICATION_TYPES = [
   "new_follower",
   "recipe_liked",
+  "recipe_favorited",
   "recipe_reviewed",
   "badge_earned",
   "recipe_published",
@@ -292,6 +293,7 @@ export const NOTIFICATION_TYPES = [
   "collection_updated",
   "review_received",
   "review_liked",
+  "mention",
   "ai_recommendation",
   "subscription_reminder",
   "achievement_unlocked",
@@ -317,6 +319,8 @@ export type NotificationMetadata = {
   approvalId?: string;
   teamId?: string;
   href?: string;
+  reviewId?: string;
+  mentionContext?: string;
   [key: string]: unknown;
 };
 
@@ -340,4 +344,5 @@ export type NotificationsPageResult = {
   unreadCount: number;
   page: number;
   pageSize: number;
+  hasMore: boolean;
 };

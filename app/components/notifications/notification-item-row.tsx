@@ -10,6 +10,7 @@ import {
 import {
   deleteNotificationAction,
   markNotificationReadAction,
+  markNotificationUnreadAction,
 } from "@/lib/supabase/notification-actions";
 import type { Dictionary } from "@/lib/i18n/types";
 import type { NotificationItem } from "@/types/community";
@@ -79,7 +80,19 @@ export function NotificationItemRow({
                   {labels.markAsRead}
                 </button>
               </form>
-            ) : null}
+            ) : (
+              <form action={markNotificationUnreadAction}>
+                <input type="hidden" name="notificationId" value={item.id} />
+                <input type="hidden" name="currentPath" value={currentPath} />
+                <button
+                  type="submit"
+                  className="text-xs font-medium text-stone-500 underline-offset-4 hover:text-stone-300 hover:underline"
+                  aria-label={labels.markAsUnreadAria}
+                >
+                  {labels.markAsUnread}
+                </button>
+              </form>
+            )}
             <form action={deleteNotificationAction}>
               <input type="hidden" name="notificationId" value={item.id} />
               <input type="hidden" name="currentPath" value={currentPath} />

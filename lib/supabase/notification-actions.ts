@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getNotificationsPage } from "@/lib/data/community";
 import { createClient } from "@/lib/supabase/server";
+import type { NotificationsPageResult } from "@/types/community";
 
 /**
  * Server Actions for the private notification inbox (`user_notifications`).
@@ -59,6 +61,49 @@ export async function markAllNotificationsReadAction(formData: FormData): Promis
 
   revalidatePath(path);
   revalidatePath("/", "layout");
+}
+
+/** Marks a single notification the caller owns as unread. */
+export async function markNotificationUnreadAction(formData: FormData): Promise<void> {
+  const path = readCurrentPath(formData);
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  if (!authData.user) {
+    redirect(`/login?redirectTo=${encodeURIComponent(path)}`);
+  }
+
+  const notificationId = formData.get("notificationId");
+  if (typeof notificationId !== "string" || notificationId.length === 0) {
+    revalidatePath(path);
+    revalidatePath("/", "layout");
+    return;
+  }
+
+  await supabase
+    .from("user_notifications")
+    .update({ is_read: false })
+    .eq("id", notificationId)
+    .eq("user_id", authData.user.id);
+
+  revalidatePath(path);
+  revalidatePath("/", "layout");
+}
+
+/** Paginated inbox fetch for infinite-scroll clients. */
+export async function loadNotificationsPageAction(input: {
+  page: number;
+  unreadOnly: boolean;
+}): Promise<NotificationsPageResult> {
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+  if (!authData.user) {
+    return { notifications: [], totalCount: 0, unreadCount: 0, page: 1, pageSize: 20, hasMore: false };
+  }
+
+  return getNotificationsPage(supabase, authData.user.id, {
+    page: Math.max(1, input.page),
+    unreadOnly: input.unreadOnly,
+  });
 }
 
 /** Deletes a single notification the caller owns. */
