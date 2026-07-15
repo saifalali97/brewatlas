@@ -56,6 +56,8 @@ export type Subscription = {
   status: SubscriptionStatus;
   billingProvider: BillingProvider;
   billingProviderRef: string | null;
+  stripeCustomerId: string | null;
+  billingInterval: "month" | "year" | null;
   trialStartedAt: string | null;
   trialEndsAt: string | null;
   currentPeriodStart: string;
@@ -73,6 +75,8 @@ export type DbSubscriptionRow = {
   status: string;
   billing_provider: string;
   billing_provider_ref: string | null;
+  stripe_customer_id: string | null;
+  billing_interval: string | null;
   trial_started_at: string | null;
   trial_ends_at: string | null;
   current_period_start: string;
@@ -216,6 +220,8 @@ export type MembershipSummary = {
   status: SubscriptionStatus;
   isPremium: boolean;
   billingProvider: BillingProvider;
+  billingInterval: "month" | "year" | null;
+  stripeCustomerId: string | null;
   currentPeriodEnd: string | null;
   cancelAtPeriodEnd: boolean;
   expiresAt: string | null;

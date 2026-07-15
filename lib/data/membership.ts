@@ -31,7 +31,7 @@ import type {
  */
 
 const SUBSCRIPTION_FIELDS =
-  "id, user_id, plan, status, billing_provider, billing_provider_ref, trial_started_at, trial_ends_at, current_period_start, current_period_end, cancel_at_period_end, canceled_at, created_at, updated_at";
+  "id, user_id, plan, status, billing_provider, billing_provider_ref, stripe_customer_id, billing_interval, trial_started_at, trial_ends_at, current_period_start, current_period_end, cancel_at_period_end, canceled_at, created_at, updated_at";
 const PLAN_PERMISSION_FIELDS = "id, plan, feature_key, is_enabled, usage_limit";
 const TRIAL_USAGE_FIELDS = "id, user_id, plan, started_at, ends_at, status";
 const FEATURE_ACCESS_FIELDS = "id, user_id, feature_key, is_enabled, usage_count, usage_limit, granted_reason, expires_at";
@@ -44,6 +44,8 @@ function mapSubscription(row: DbSubscriptionRow): Subscription {
     status: row.status as SubscriptionStatus,
     billingProvider: row.billing_provider as BillingProvider,
     billingProviderRef: row.billing_provider_ref,
+    stripeCustomerId: row.stripe_customer_id,
+    billingInterval: (row.billing_interval as "month" | "year" | null) ?? null,
     trialStartedAt: row.trial_started_at,
     trialEndsAt: row.trial_ends_at,
     currentPeriodStart: row.current_period_start,
@@ -293,7 +295,11 @@ export async function getMembershipSummary(supabase: SupabaseClient, userId: str
   ]);
 
   const isPremium =
-    isPlanAtLeast(subscription.plan, "premium") && (subscription.status === "active" || subscription.status === "trialing");
+    isPlanAtLeast(subscription.plan, "premium") &&
+    (subscription.status === "active" ||
+      subscription.status === "trialing" ||
+      subscription.status === "past_due" ||
+      (subscription.cancelAtPeriodEnd && subscription.plan !== "free"));
 
   const features: Partial<Record<FeatureKey, boolean>> = {};
   const usage: Partial<Record<FeatureKey, FeatureUsageSummary>> = {};
@@ -334,6 +340,8 @@ export async function getMembershipSummary(supabase: SupabaseClient, userId: str
     status: subscription.status,
     isPremium,
     billingProvider: subscription.billingProvider,
+    billingInterval: subscription.billingInterval,
+    stripeCustomerId: subscription.stripeCustomerId,
     currentPeriodEnd: subscription.currentPeriodEnd,
     cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
     expiresAt,
