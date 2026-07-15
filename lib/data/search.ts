@@ -1,17 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { processScheduledRecipePublishes } from "@/lib/data/recipe-publishing";
 import {
-  mapDbRecipeToListItem,
-  RECIPE_SELECT,
   getBrewingMethodOptions,
   getDeviceOptions,
   getGrinderOptions,
 } from "@/lib/data/db-recipes";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { getLocale } from "@/lib/i18n/locale";
+import { searchPublishedRecipesPaginated } from "@/lib/data/recipe-search";
 import { SEARCH_PAGE_SIZE } from "@/lib/search/params";
 import type { CoffeeOrigin, TopRoaster } from "@/types/homepage";
-import type { DbRecipeRow, RecipeListItem } from "@/types/recipe";
+import type { RecipeListItem } from "@/types/recipe";
 import type {
   DeviceSearchHit,
   FlavorSearchHit,
@@ -81,6 +77,8 @@ function recipePassesFilters(recipe: RecipeListItem, filters: SearchFilters): bo
     if (!haystack.includes(filters.process.toLowerCase())) return false;
   }
 
+  if (filters.tastingNotes && !matchesQuery(recipe.notes ?? "", filters.tastingNotes)) return false;
+
   if (filters.q && !matchesQuery(buildRecipeHaystack(recipe), filters.q)) return false;
 
   return true;
@@ -134,77 +132,18 @@ function sortRecipes(
   return sorted;
 }
 
-async function searchDbRecipes(
-  supabase: SupabaseClient,
-  filters: SearchFilters,
-): Promise<RecipeListItem[]> {
-  await processScheduledRecipePublishes(supabase);
-
-  let query = supabase.from("recipes").select(RECIPE_SELECT).eq("status", "published");
-
-  if (filters.brewingMethodId) query = query.eq("brewing_method_id", filters.brewingMethodId);
-  if (filters.deviceId) query = query.eq("device_id", filters.deviceId);
-  if (filters.grinderId) query = query.eq("grinder_id", filters.grinderId);
-  if (filters.difficulty) query = query.eq("difficulty", filters.difficulty);
-  if (filters.premiumOnly) query = query.eq("premium_only", true);
-  if (filters.featuredOnly) query = query.eq("featured", true);
-
-  const doseMin = parseNumber(filters.doseMin);
-  const doseMax = parseNumber(filters.doseMax);
-  const waterMin = parseNumber(filters.waterMin);
-  const waterMax = parseNumber(filters.waterMax);
-  const tempMin = parseNumber(filters.tempMin);
-  const tempMax = parseNumber(filters.tempMax);
-
-  if (doseMin !== null) query = query.gte("coffee_dose", doseMin);
-  if (doseMax !== null) query = query.lte("coffee_dose", doseMax);
-  if (waterMin !== null) query = query.gte("water_amount", waterMin);
-  if (waterMax !== null) query = query.lte("water_amount", waterMax);
-  if (tempMin !== null) query = query.gte("water_temperature", tempMin);
-  if (tempMax !== null) query = query.lte("water_temperature", tempMax);
-
-  if (filters.country) query = query.eq("coffees.origins.country", filters.country);
-  if (filters.region) query = query.ilike("coffees.origins.region", `%${filters.region}%`);
-  if (filters.roastLevel) query = query.eq("coffees.roast_level", filters.roastLevel);
-  if (filters.process) query = query.eq("coffees.process", filters.process);
-
-  if (filters.q) {
-    const pattern = `%${filters.q}%`;
-    query = query.or(
-      `title.ilike.${pattern},description.ilike.${pattern},tasting_notes.ilike.${pattern}`,
-    );
-  }
-
-  if (filters.sort === "alphabetical") {
-    query = query.order("title", { ascending: true });
-  } else {
-    query = query.order("created_at", { ascending: false });
-  }
-
-  const { data, error } = await query;
-  if (error) {
-    console.error("searchDbRecipes failed", error);
-    return [];
-  }
-
-  const dictionary = await getDictionary(await getLocale());
-  let recipes = (data as unknown as DbRecipeRow[]).map((row) => mapDbRecipeToListItem(row, dictionary));
-
-  const brewTimeMax = parseNumber(filters.brewTimeMax);
-  if (brewTimeMax !== null) {
-    recipes = recipes.filter((recipe) => parseBrewTimeMinutes(recipe.time) <= brewTimeMax);
-  }
-
-  if (filters.q) {
-    recipes = recipes.filter((recipe) => matchesQuery(buildRecipeHaystack(recipe), filters.q));
-  }
-
-  return recipes;
-}
-
 function filterStaticRecipes(recipes: RecipeListItem[], filters: SearchFilters): RecipeListItem[] {
   return recipes.filter((recipe) => {
-    if (filters.brewingMethodId || filters.deviceId || filters.grinderId) return false;
+    if (
+      filters.brewingMethodId ||
+      filters.deviceId ||
+      filters.grinderId ||
+      filters.originId ||
+      filters.roasterId ||
+      filters.tagId
+    ) {
+      return false;
+    }
     if (filters.premiumOnly && !recipe.premium) return false;
     if (filters.featuredOnly && !recipe.featured) return false;
 
@@ -365,13 +304,14 @@ async function searchVarieties(supabase: SupabaseClient, filters: SearchFilters)
 async function searchFlavors(supabase: SupabaseClient, filters: SearchFilters): Promise<FlavorSearchHit[]> {
   let query = supabase
     .from("recipes")
-    .select("id, title, slug, tasting_notes, recipe_tags ( tags ( name ) )")
-    .eq("published", true)
+    .select("id, title, slug, tasting_notes, recipe_tags ( tags ( id, name ) )")
+    .eq("status", "published")
     .not("tasting_notes", "is", null);
 
-  if (filters.q) {
-    const pattern = `%${filters.q}%`;
-    query = query.ilike("tasting_notes", pattern);
+  if (filters.tastingNotes) {
+    query = query.ilike("tasting_notes", `%${filters.tastingNotes}%`);
+  } else if (filters.q) {
+    query = query.ilike("tasting_notes", `%${filters.q}%`);
   }
 
   const { data, error } = await query.limit(48);
@@ -385,11 +325,15 @@ async function searchFlavors(supabase: SupabaseClient, filters: SearchFilters): 
     title: string;
     slug: string;
     tasting_notes: string | null;
-    recipe_tags: { tags: { name: string } | null }[] | null;
+    recipe_tags: { tags: { id: string; name: string } | null }[] | null;
   };
 
   return ((data ?? []) as unknown as FlavorRow[])
     .filter((row) => row.tasting_notes)
+    .filter((row) => {
+      if (!filters.tagId) return true;
+      return toSafeArray(row.recipe_tags).some((entry) => entry.tags?.id === filters.tagId);
+    })
     .map((row) => ({
       id: row.id,
       recipeSlug: row.slug,
@@ -403,22 +347,34 @@ async function searchFlavors(supabase: SupabaseClient, filters: SearchFilters): 
 }
 
 export async function getSearchFilterOptions(supabase: SupabaseClient): Promise<SearchFilterOptions> {
-  const [{ data: origins }, { data: coffees }, brewingMethods, devices, grinders] = await Promise.all([
-    supabase.from("origins").select("country, region").order("country"),
-    supabase.from("coffees").select("process, roast_level").not("process", "is", null),
-    getBrewingMethodOptions(supabase),
-    getDeviceOptions(supabase),
-    getGrinderOptions(supabase),
-  ]);
+  const [{ data: origins }, { data: coffees }, { data: roasters }, { data: tags }, brewingMethods, devices, grinders] =
+    await Promise.all([
+      supabase.from("origins").select("id, country, region").order("country"),
+      supabase.from("coffees").select("process, roast_level").not("process", "is", null),
+      supabase.from("roasters").select("id, name").order("name"),
+      supabase.from("tags").select("id, name").order("name"),
+      getBrewingMethodOptions(supabase),
+      getDeviceOptions(supabase),
+      getGrinderOptions(supabase),
+    ]);
 
   const countries = [...new Set((origins ?? []).map((row) => row.country as string))].sort();
   const regions = [...new Set((origins ?? []).map((row) => row.region as string))].sort();
+  const originOptions = (origins ?? [])
+    .map((row) => ({
+      id: row.id as string,
+      label: `${row.country as string} — ${row.region as string}`,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
   const processes = [...new Set((coffees ?? []).map((row) => row.process as string).filter(Boolean))].sort();
   const roastLevels = [...new Set((coffees ?? []).map((row) => row.roast_level as string).filter(Boolean))].sort();
 
   return {
     countries,
     regions,
+    originOptions,
+    roasters: (roasters ?? []).map((row) => ({ id: row.id as string, name: row.name as string })),
+    tags: (tags ?? []).map((row) => ({ id: row.id as string, name: row.name as string })),
     roastLevels,
     processes,
     brewingMethods,
@@ -450,33 +406,66 @@ export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<Sear
   const needsVarieties = category === "all" || category === "varieties";
   const needsFlavors = category === "all" || category === "flavors";
 
-  const [dbRecipes, staticFiltered, dbRoasters, staticRoastersFiltered, dbOrigins, staticOriginsFiltered, dbDevices, varieties, flavors, sortMaps] =
-    await Promise.all([
-      needsRecipes ? searchDbRecipes(supabase, filters) : Promise.resolve([]),
-      needsRecipes ? Promise.resolve(filterStaticRecipes(staticRecipes, filters)) : Promise.resolve([]),
-      needsRoasters ? searchDbRoasters(supabase, filters.q, filters.country) : Promise.resolve([]),
-      needsRoasters ? Promise.resolve(filterStaticRoasters(staticRoasters, filters.q, filters.country)) : Promise.resolve([]),
-      needsOrigins ? searchDbOrigins(supabase, filters) : Promise.resolve([]),
-      needsOrigins ? Promise.resolve(filterStaticOrigins(staticOrigins, filters)) : Promise.resolve([]),
-      needsDevices ? searchDbDevices(supabase, filters.q) : Promise.resolve([]),
-      needsVarieties ? searchVarieties(supabase, filters) : Promise.resolve([]),
-      needsFlavors ? searchFlavors(supabase, filters) : Promise.resolve([]),
-      needsRecipes ? loadRecipeSortMaps(supabase) : Promise.resolve({ ratingById: new Map(), favoriteCounts: new Map() }),
-    ]);
+  const [
+    staticFiltered,
+    dbRoasters,
+    staticRoastersFiltered,
+    dbOrigins,
+    staticOriginsFiltered,
+    dbDevices,
+    varieties,
+    flavors,
+    sortMaps,
+  ] = await Promise.all([
+    needsRecipes ? Promise.resolve(filterStaticRecipes(staticRecipes, filters)) : Promise.resolve([]),
+    needsRoasters ? searchDbRoasters(supabase, filters.q, filters.country) : Promise.resolve([]),
+    needsRoasters ? Promise.resolve(filterStaticRoasters(staticRoasters, filters.q, filters.country)) : Promise.resolve([]),
+    needsOrigins ? searchDbOrigins(supabase, filters) : Promise.resolve([]),
+    needsOrigins ? Promise.resolve(filterStaticOrigins(staticOrigins, filters)) : Promise.resolve([]),
+    needsDevices ? searchDbDevices(supabase, filters.q) : Promise.resolve([]),
+    needsVarieties ? searchVarieties(supabase, filters) : Promise.resolve([]),
+    needsFlavors ? searchFlavors(supabase, filters) : Promise.resolve([]),
+    needsRecipes ? loadRecipeSortMaps(supabase) : Promise.resolve({ ratingById: new Map(), favoriteCounts: new Map() }),
+  ]);
 
-  let recipes = sortRecipes(
-    [...staticFiltered, ...dbRecipes],
-    filters.sort,
-    sortMaps.ratingById,
-    sortMaps.favoriteCounts,
-  );
+  let recipes: RecipeListItem[] = [];
+  let totalRecipes = 0;
 
-  const totalRecipes = recipes.length;
-  if (category === "recipes" || category === "all") {
-    const offset = (page - 1) * SEARCH_PAGE_SIZE;
-    recipes = recipes.slice(offset, offset + (category === "all" ? previewLimit : SEARCH_PAGE_SIZE));
-  } else {
-    recipes = [];
+  if (needsRecipes) {
+    const sortedStatic = sortRecipes(
+      staticFiltered,
+      filters.sort,
+      sortMaps.ratingById,
+      sortMaps.favoriteCounts,
+    );
+
+    if (category === "all") {
+      const staticSlice = sortedStatic.slice(0, previewLimit);
+      const remaining = Math.max(0, previewLimit - staticSlice.length);
+      const paginated = await searchPublishedRecipesPaginated(supabase, filters, {
+        page: 1,
+        pageSize: remaining > 0 ? remaining : 1,
+        staticCount: 0,
+      });
+
+      recipes = remaining > 0 ? [...staticSlice, ...paginated.recipes] : staticSlice;
+      totalRecipes = sortedStatic.length + paginated.dbTotalCount;
+    } else {
+      const paginated = await searchPublishedRecipesPaginated(supabase, filters, {
+        page,
+        pageSize: SEARCH_PAGE_SIZE,
+        staticCount: sortedStatic.length,
+      });
+
+      if (page === 1) {
+        const staticSlice = sortedStatic.slice(0, Math.min(sortedStatic.length, SEARCH_PAGE_SIZE));
+        recipes = [...staticSlice, ...paginated.recipes];
+      } else {
+        recipes = paginated.recipes;
+      }
+
+      totalRecipes = sortedStatic.length + paginated.dbTotalCount;
+    }
   }
 
   const roasterNames = new Set<string>();

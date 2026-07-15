@@ -98,6 +98,36 @@ function FiltersForm({
         </select>
       </FilterField>
 
+      <FilterField label={t("searchPage.filterOrigin")}>
+        <select
+          value={filters.originId}
+          onChange={(event) => patch({ originId: event.target.value })}
+          className={forms.select}
+        >
+          <option value="">{t("searchPage.filterAny")}</option>
+          {options.originOptions.map((origin) => (
+            <option key={origin.id} value={origin.id}>
+              {origin.label}
+            </option>
+          ))}
+        </select>
+      </FilterField>
+
+      <FilterField label={t("searchPage.filterRoaster")}>
+        <select
+          value={filters.roasterId}
+          onChange={(event) => patch({ roasterId: event.target.value })}
+          className={forms.select}
+        >
+          <option value="">{t("searchPage.filterAny")}</option>
+          {options.roasters.map((roaster) => (
+            <option key={roaster.id} value={roaster.id}>
+              {roaster.name}
+            </option>
+          ))}
+        </select>
+      </FilterField>
+
       <FilterField label={t("searchPage.filterRoast")}>
         <select
           value={filters.roastLevel}
@@ -197,6 +227,31 @@ function FiltersForm({
           placeholder={t("searchPage.filterBrewTimePlaceholder")}
           className={forms.input}
         />
+      </FilterField>
+
+      <FilterField label={t("searchPage.filterTastingNotes")}>
+        <input
+          type="search"
+          value={filters.tastingNotes}
+          onChange={(event) => patch({ tastingNotes: event.target.value })}
+          placeholder={t("searchPage.filterTastingNotesPlaceholder")}
+          className={forms.input}
+        />
+      </FilterField>
+
+      <FilterField label={t("searchPage.filterTag")}>
+        <select
+          value={filters.tagId}
+          onChange={(event) => patch({ tagId: event.target.value })}
+          className={forms.select}
+        >
+          <option value="">{t("searchPage.filterAny")}</option>
+          {options.tags.map((tag) => (
+            <option key={tag.id} value={tag.id}>
+              {tag.name}
+            </option>
+          ))}
+        </select>
       </FilterField>
 
       <div className="grid grid-cols-2 gap-3">

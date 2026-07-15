@@ -46,6 +46,8 @@ export function parseSearchParams(
     sort: parseSort(single("sort")),
     country: single("country") ?? "",
     region: single("region") ?? "",
+    originId: single("origin") ?? "",
+    roasterId: single("roaster") ?? "",
     roastLevel: single("roast") ?? "",
     process: single("process") ?? "",
     brewingMethodId: single("method") ?? "",
@@ -53,6 +55,8 @@ export function parseSearchParams(
     grinderId: single("grinder") ?? "",
     difficulty: single("diff") ?? "",
     brewTimeMax: single("bt") ?? "",
+    tastingNotes: single("notes") ?? "",
+    tagId: single("tag") ?? "",
     doseMin: single("dmin") ?? "",
     doseMax: single("dmax") ?? "",
     waterMin: single("wmin") ?? "",
@@ -74,6 +78,8 @@ export function serializeSearchFilters(filters: SearchFilters): URLSearchParams 
   if (filters.sort !== "newest") params.set("sort", filters.sort);
   if (filters.country) params.set("country", filters.country);
   if (filters.region) params.set("region", filters.region);
+  if (filters.originId) params.set("origin", filters.originId);
+  if (filters.roasterId) params.set("roaster", filters.roasterId);
   if (filters.roastLevel) params.set("roast", filters.roastLevel);
   if (filters.process) params.set("process", filters.process);
   if (filters.brewingMethodId) params.set("method", filters.brewingMethodId);
@@ -81,6 +87,8 @@ export function serializeSearchFilters(filters: SearchFilters): URLSearchParams 
   if (filters.grinderId) params.set("grinder", filters.grinderId);
   if (filters.difficulty) params.set("diff", filters.difficulty);
   if (filters.brewTimeMax) params.set("bt", filters.brewTimeMax);
+  if (filters.tastingNotes) params.set("notes", filters.tastingNotes);
+  if (filters.tagId) params.set("tag", filters.tagId);
   if (filters.doseMin) params.set("dmin", filters.doseMin);
   if (filters.doseMax) params.set("dmax", filters.doseMax);
   if (filters.waterMin) params.set("wmin", filters.waterMin);
@@ -98,6 +106,8 @@ export function countActiveFilters(filters: SearchFilters): number {
   let count = 0;
   if (filters.country) count += 1;
   if (filters.region) count += 1;
+  if (filters.originId) count += 1;
+  if (filters.roasterId) count += 1;
   if (filters.roastLevel) count += 1;
   if (filters.process) count += 1;
   if (filters.brewingMethodId) count += 1;
@@ -105,6 +115,8 @@ export function countActiveFilters(filters: SearchFilters): number {
   if (filters.grinderId) count += 1;
   if (filters.difficulty) count += 1;
   if (filters.brewTimeMax) count += 1;
+  if (filters.tastingNotes) count += 1;
+  if (filters.tagId) count += 1;
   if (filters.doseMin || filters.doseMax) count += 1;
   if (filters.waterMin || filters.waterMax) count += 1;
   if (filters.tempMin || filters.tempMax) count += 1;

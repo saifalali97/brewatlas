@@ -9,13 +9,35 @@ import { getSearchFilterOptions, runGlobalSearch } from "@/lib/data/search";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { getLocale } from "@/lib/i18n/locale";
-import { parseSearchParams } from "@/lib/search/params";
+import { countActiveFilters, parseSearchParams } from "@/lib/search/params";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { getSiteUrl } from "@/lib/seo/site";
 import { createClient } from "@/lib/supabase/server";
 import type { Dictionary } from "@/lib/i18n/types";
-import type { DeviceSearchHit } from "@/types/search";
+import type { DeviceSearchHit, SearchFilters } from "@/types/search";
 import type { RecipeListItem } from "@/types/recipe";
+
+function buildSearchTitle(dictionary: Dictionary, filters: SearchFilters): string {
+  const parts: string[] = [];
+  if (filters.q) parts.push(filters.q);
+  if (filters.category !== "all") {
+    const categoryLabels: Record<SearchFilters["category"], string> = {
+      all: "",
+      recipes: dictionary.searchPage.categoryRecipes,
+      roasters: dictionary.searchPage.categoryRoasters,
+      origins: dictionary.searchPage.categoryOrigins,
+      devices: dictionary.searchPage.categoryDevices,
+      varieties: dictionary.searchPage.categoryVarieties,
+      flavors: dictionary.searchPage.categoryFlavors,
+    };
+    const label = categoryLabels[filters.category];
+    if (label) parts.push(label);
+  }
+  if (countActiveFilters(filters) > 0) parts.push(dictionary.searchPage.filtersTitle);
+
+  if (parts.length === 0) return dictionary.metadata.searchTitle;
+  return `${dictionary.searchPage.title}: ${parts.join(" · ")}`;
+}
 
 export async function generateMetadata({
   searchParams,
@@ -27,9 +49,7 @@ export async function generateMetadata({
   const params = await searchParams;
   const filters = parseSearchParams(params);
 
-  const title = filters.q
-    ? `${dictionary.searchPage.title}: ${filters.q}`
-    : dictionary.metadata.searchTitle;
+  const title = buildSearchTitle(dictionary, filters);
 
   return buildLocalizedMetadata({
     pathname: "/search",
