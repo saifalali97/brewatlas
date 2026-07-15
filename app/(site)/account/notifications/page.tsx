@@ -56,6 +56,7 @@ export default async function DashboardNotificationsPage({ searchParams }: PageP
         dictionary={dictionary}
         locale={locale}
         unreadOnly={unreadOnly}
+        pathname="/account/notifications"
       />
     </SectionFrame>
   );

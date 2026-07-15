@@ -13,7 +13,8 @@ export type NotificationTypeConfig = {
 const recipeHref = (item: NotificationItem) =>
   item.recipe ? `/recipes/${item.recipe.slug}` : null;
 
-const profileHref = () => "/community";
+const actorProfileHref = (item: NotificationItem) =>
+  item.actor?.id ? `/users/${item.actor.id}` : "/community";
 
 const collectionHref = (item: NotificationItem) => {
   const collectionId = item.metadata.collectionId;
@@ -35,12 +36,18 @@ export const NOTIFICATION_TYPE_REGISTRY: Record<NotificationType, NotificationTy
     category: "social",
     titleKey: "notificationsPage.typeNewFollowerTitle",
     messageKey: "notificationsPage.typeNewFollowerMessage",
-    resolveHref: profileHref,
+    resolveHref: actorProfileHref,
   },
   recipe_liked: {
     category: "social",
     titleKey: "notificationsPage.typeRecipeLikedTitle",
     messageKey: "notificationsPage.typeRecipeLikedMessage",
+    resolveHref: recipeHref,
+  },
+  recipe_favorited: {
+    category: "social",
+    titleKey: "notificationsPage.typeRecipeFavoritedTitle",
+    messageKey: "notificationsPage.typeRecipeFavoritedMessage",
     resolveHref: recipeHref,
   },
   recipe_reviewed: {
@@ -84,6 +91,18 @@ export const NOTIFICATION_TYPE_REGISTRY: Record<NotificationType, NotificationTy
     titleKey: "notificationsPage.typeReviewLikedTitle",
     messageKey: "notificationsPage.typeReviewLikedMessage",
     resolveHref: recipeHref,
+  },
+  mention: {
+    category: "social",
+    titleKey: "notificationsPage.typeMentionTitle",
+    messageKey: "notificationsPage.typeMentionMessage",
+    resolveHref: (item) => {
+      const reviewId = item.metadata.reviewId;
+      if (typeof reviewId === "string" && item.recipe) {
+        return `/recipes/${item.recipe.slug}#review-${reviewId}`;
+      }
+      return metadataHref(item);
+    },
   },
   ai_recommendation: {
     category: "content",

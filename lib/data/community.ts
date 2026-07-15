@@ -1,3 +1,8 @@
+import {
+  parseNotificationPreferences,
+  shouldDeliverInApp,
+  type NotificationPreferences,
+} from "@/lib/notifications/preferences";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   ActivityFeedItem,
@@ -870,17 +875,19 @@ export async function getNotificationsPage(
   const { data, error, count } = await query.range(offset, offset + pageSize - 1);
   if (error || !data) {
     if (error) console.error("getNotificationsPage failed", error);
-    return { notifications: [], totalCount: 0, unreadCount: 0, page, pageSize };
+    return { notifications: [], totalCount: 0, unreadCount: 0, page, pageSize, hasMore: false };
   }
 
   const unreadCount = await getUnreadNotificationCount(supabase, userId);
+  const totalCount = count ?? 0;
 
   return {
     notifications: (data as unknown as DbNotificationRow[]).map(mapDbNotificationRow),
-    totalCount: count ?? 0,
+    totalCount,
     unreadCount,
     page,
     pageSize,
+    hasMore: totalCount > offset + data.length,
   };
 }
 
@@ -895,7 +902,7 @@ export async function getUnreadNotificationCount(supabase: SupabaseClient, userI
   return count ?? 0;
 }
 
-/** Creates a notification for `recipientId` via the `create_notification` RPC (bypasses RLS; see migration for why). No-op for self-notifications. */
+/** Creates a notification for `recipientId` via the `create_notification` RPC (bypasses RLS; see migration for why). No-op for self-notifications or when in-app prefs are disabled. */
 export async function createNotification(
   supabase: SupabaseClient,
   params: {
@@ -909,6 +916,11 @@ export async function createNotification(
     metadata?: Record<string, unknown>;
   },
 ): Promise<void> {
+  if (params.actorId && params.actorId === params.recipientId) return;
+
+  const preferences = await getNotificationPreferences(supabase, params.recipientId);
+  if (!shouldDeliverInApp(preferences, params.notificationType)) return;
+
   const { error } = await supabase.rpc("create_notification", {
     recipient: params.recipientId,
     notif_type: params.notificationType,
@@ -920,4 +932,55 @@ export async function createNotification(
     notif_metadata: params.metadata ?? {},
   });
   if (error) console.error("createNotification failed", error);
+}
+
+/** Loads notification channel preferences for a user (defaults when unset). */
+export async function getNotificationPreferences(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<NotificationPreferences> {
+  const { data, error } = await supabase
+    .from("user_notification_preferences")
+    .select("in_app, email")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) console.error("getNotificationPreferences failed", error);
+  return parseNotificationPreferences(data);
+}
+
+/** Upserts in-app and email notification preferences for a user. */
+export async function upsertNotificationPreferences(
+  supabase: SupabaseClient,
+  userId: string,
+  preferences: NotificationPreferences,
+): Promise<void> {
+  const { error } = await supabase.from("user_notification_preferences").upsert(
+    {
+      user_id: userId,
+      in_app: preferences.inApp,
+      email: preferences.email,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" },
+  );
+  if (error) console.error("upsertNotificationPreferences failed", error);
+}
+
+/** Broadcasts a system announcement to all users (admin RPC). Returns rows inserted. */
+export async function broadcastSystemAnnouncement(
+  supabase: SupabaseClient,
+  params: { title: string; message: string; href?: string | null },
+): Promise<number> {
+  const metadata = params.href?.trim() ? { href: params.href.trim() } : {};
+  const { data, error } = await supabase.rpc("broadcast_system_announcement", {
+    ann_title: params.title,
+    ann_message: params.message,
+    ann_metadata: metadata,
+  });
+  if (error) {
+    console.error("broadcastSystemAnnouncement failed", error);
+    return 0;
+  }
+  return typeof data === "number" ? data : 0;
 }

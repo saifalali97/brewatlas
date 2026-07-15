@@ -22,12 +22,16 @@ function collectionName(item: NotificationItem): string {
 }
 
 function templateVars(item: NotificationItem): Record<string, string> {
+  const mentionContext =
+    typeof item.metadata.mentionContext === "string" ? item.metadata.mentionContext.trim() : "a conversation";
+
   return {
     actor: actorName(item),
     recipe: recipeName(item),
     badge: badgeName(item),
     collection: collectionName(item),
     message: item.message,
+    context: mentionContext,
   };
 }
 
