@@ -86,6 +86,9 @@ export type DbRecipeRow = {
   featured: boolean;
   premium_only: boolean;
   published: boolean;
+  seo_title: string | null;
+  seo_description: string | null;
+  canonical_url: string | null;
   created_at: string;
   updated_at: string;
   brewing_methods: { id: string; name: string } | null;
@@ -188,6 +191,10 @@ export type RecipeFullDetail = {
   acidity: number | null;
   body: number | null;
   bitterness: number | null;
+
+  seoTitle: string | null;
+  seoDescription: string | null;
+  canonicalUrl: string | null;
 
   tagIds: string[];
 };

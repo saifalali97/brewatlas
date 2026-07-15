@@ -1,11 +1,18 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import Link from "next/link";
+import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { buttons } from "@/lib/constants/styles";
 import { translate } from "@/lib/i18n/format";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { createRecipeAction, updateRecipeAction, type RecipeActionState } from "@/lib/supabase/recipe-actions";
+import {
+  autosaveOwnerRecipeAction,
+  createOwnerRecipeAction,
+  updateOwnerRecipeAction,
+  type OwnerRecipeActionState,
+} from "@/lib/supabase/owner-recipe-actions";
 import type { LookupOption, PourRow, RecipeFullDetail, RecipeImageRow } from "@/types/recipe";
 
 const inputClass =
@@ -27,8 +34,10 @@ function SectionHeading({ title, description }: { title: string; description?: s
 
 type RecipeFormProps = {
   mode: "create" | "edit";
+  variant?: "user" | "owner";
   recipeId?: string;
   initialValues?: RecipeFullDetail;
+  versionCount?: number;
   brewingMethods: LookupOption[];
   devices: LookupOption[];
   grinders: LookupOption[];
@@ -44,8 +53,10 @@ type PourFieldRow = { key: number; pour?: PourRow };
 
 export function RecipeForm({
   mode,
+  variant = "user",
   recipeId,
   initialValues,
+  versionCount = 0,
   brewingMethods,
   devices,
   grinders,
@@ -57,9 +68,27 @@ export function RecipeForm({
   tags,
 }: RecipeFormProps) {
   const { t, dictionary } = useTranslations();
+  const isOwner = variant === "owner";
   const optionalLabel = <span className="ml-1 text-xs text-stone-500">{t("recipeForm.optionalTag")}</span>;
-  const action = mode === "create" ? createRecipeAction : updateRecipeAction;
-  const [state, formAction, pending] = useActionState<RecipeActionState, FormData>(action, undefined);
+  const action =
+    mode === "create"
+      ? isOwner
+        ? createOwnerRecipeAction
+        : createRecipeAction
+      : isOwner
+        ? updateOwnerRecipeAction
+        : updateRecipeAction;
+  const [state, formAction, pending] = useActionState<RecipeActionState | OwnerRecipeActionState, FormData>(
+    action,
+    undefined,
+  );
+  const [autosaveState, autosaveAction] = useActionState<OwnerRecipeActionState, FormData>(
+    autosaveOwnerRecipeAction,
+    undefined,
+  );
+  const [autosavePending, startAutosave] = useTransition();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [dirty, setDirty] = useState(false);
 
   const initialPours = initialValues?.pours ?? [];
   const [pourRows, setPourRows] = useState<PourFieldRow[]>(() =>
@@ -72,8 +101,55 @@ export function RecipeForm({
   const existingImages: RecipeImageRow[] = initialValues?.images ?? [];
   const selectedTagIds = new Set(initialValues?.tagIds ?? []);
 
+  useEffect(() => {
+    if (!isOwner || mode !== "edit") return;
+    const form = formRef.current;
+    if (!form) return;
+
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const scheduleAutosave = () => {
+      setDirty(true);
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        const formData = new FormData(form);
+        startAutosave(() => {
+          autosaveAction(formData);
+        });
+      }, 2500);
+    };
+
+    form.addEventListener("input", scheduleAutosave);
+    form.addEventListener("change", scheduleAutosave);
+    return () => {
+      form.removeEventListener("input", scheduleAutosave);
+      form.removeEventListener("change", scheduleAutosave);
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [autosaveAction, isOwner, mode, startAutosave]);
+
+  useEffect(() => {
+    if (!dirty) return;
+    const handler = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [dirty]);
+
+  const savedAtLabel =
+    autosaveState?.savedAt &&
+    translate(dictionary, "ownerRecipesPage.autosaveSavedAtTemplate", {
+      time: new Date(autosaveState.savedAt).toLocaleTimeString(),
+    });
+
   return (
-    <form action={formAction} className="space-y-7">
+    <form
+      ref={formRef}
+      action={formAction}
+      className="space-y-7"
+      onSubmit={() => setDirty(false)}
+    >
       {recipeId && <input type="hidden" name="recipeId" value={recipeId} />}
 
       {/* GENERAL */}
@@ -93,6 +169,76 @@ export function RecipeForm({
           placeholder={t("recipeForm.recipeTitlePlaceholder")}
         />
       </div>
+
+      {isOwner ? (
+        <>
+          <SectionHeading
+            title={t("ownerRecipesPage.sectionSeo")}
+            description={t("ownerRecipesPage.sectionSeoDescription")}
+          />
+
+          <div>
+            <label htmlFor="slug" className={labelClass}>
+              {t("ownerRecipesPage.slugLabel")}
+              {optionalLabel}
+            </label>
+            <input
+              id="slug"
+              name="slug"
+              type="text"
+              defaultValue={initialValues?.slug ?? ""}
+              className={inputClass}
+              placeholder={t("ownerRecipesPage.slugPlaceholder")}
+            />
+            <p className="mt-1.5 text-xs text-stone-500">{t("ownerRecipesPage.slugHelp")}</p>
+          </div>
+
+          <div>
+            <label htmlFor="seoTitle" className={labelClass}>
+              {t("ownerRecipesPage.seoTitleLabel")}
+              {optionalLabel}
+            </label>
+            <input
+              id="seoTitle"
+              name="seoTitle"
+              type="text"
+              defaultValue={initialValues?.seoTitle ?? ""}
+              className={inputClass}
+              placeholder={t("ownerRecipesPage.seoTitlePlaceholder")}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="seoDescription" className={labelClass}>
+              {t("ownerRecipesPage.seoDescriptionLabel")}
+              {optionalLabel}
+            </label>
+            <textarea
+              id="seoDescription"
+              name="seoDescription"
+              rows={2}
+              defaultValue={initialValues?.seoDescription ?? ""}
+              className={inputClass}
+              placeholder={t("ownerRecipesPage.seoDescriptionPlaceholder")}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="canonicalUrl" className={labelClass}>
+              {t("ownerRecipesPage.canonicalUrlLabel")}
+              {optionalLabel}
+            </label>
+            <input
+              id="canonicalUrl"
+              name="canonicalUrl"
+              type="text"
+              defaultValue={initialValues?.canonicalUrl ?? ""}
+              className={inputClass}
+              placeholder={t("ownerRecipesPage.canonicalUrlPlaceholder")}
+            />
+          </div>
+        </>
+      ) : null}
 
       <div>
         <label htmlFor="description" className={labelClass}>
@@ -819,11 +965,45 @@ export function RecipeForm({
         </label>
       </div>
 
-      <FormMessage error={state?.error} success={state?.success} />
+      <FormMessage error={state?.error ?? autosaveState?.error} success={state?.success} />
 
-      <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70 sm:w-auto`}>
-        {pending ? t("recipeForm.savingCta") : mode === "create" ? t("recipeForm.createRecipeCta") : t("recipeForm.saveChangesCta")}
-      </button>
+      {isOwner && mode === "edit" ? (
+        <div className="flex flex-wrap items-center gap-3 text-xs text-stone-500">
+          {autosavePending ? (
+            <span>{t("ownerRecipesPage.autosaveSaving")}</span>
+          ) : savedAtLabel ? (
+            <span className="text-emerald-400/90">{savedAtLabel}</span>
+          ) : null}
+          {versionCount > 0 ? (
+            <span>
+              {translate(dictionary, "ownerRecipesPage.versionCountTemplate", { count: String(versionCount) })}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div className="flex flex-wrap items-center gap-4">
+        {isOwner ? (
+          <Link
+            href="/dashboard/recipes"
+            className={`${buttons.secondary} w-full sm:w-auto`}
+            onClick={(event) => {
+              if (dirty && !window.confirm(t("ownerRecipesPage.unsavedChangesWarning"))) {
+                event.preventDefault();
+              }
+            }}
+          >
+            {t("ownerRecipesPage.cancelCta")}
+          </Link>
+        ) : null}
+        <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70 sm:w-auto`}>
+          {pending
+            ? t("recipeForm.savingCta")
+            : mode === "create"
+              ? t("recipeForm.createRecipeCta")
+              : t("recipeForm.saveChangesCta")}
+        </button>
+      </div>
     </form>
   );
 }

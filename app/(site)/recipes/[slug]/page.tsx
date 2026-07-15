@@ -117,17 +117,17 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<Met
     return { title: dictionary.metadata.recipeNotFoundTitle };
   }
 
-  const description = dbRecipe.tastingNotes ?? dbRecipe.description ?? undefined;
+  const description = dbRecipe.seoDescription ?? dbRecipe.tastingNotes ?? dbRecipe.description ?? undefined;
+  const title = dbRecipe.seoTitle ?? dbRecipe.title;
+  const canonical = dbRecipe.canonicalUrl ?? `/recipes/${slug}`;
 
   return {
-    title: dbRecipe.title,
+    title,
     description,
-    // Draft recipes are only ever visible to their author or an admin
-    // (enforced by RLS), so they're excluded from search indexing.
     robots: dbRecipe.published ? undefined : { index: false, follow: false },
-    alternates: { canonical: `/recipes/${slug}` },
+    alternates: { canonical },
     openGraph: {
-      title: dbRecipe.title,
+      title,
       description,
       images: dbRecipe.coverImageUrl ? [dbRecipe.coverImageUrl] : undefined,
     },
