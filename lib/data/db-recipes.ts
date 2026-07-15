@@ -19,7 +19,9 @@ export const RECIPE_SELECT = `
   ratio, bloom_amount, bloom_time, total_brew_time, beverage_weight, tds,
   extraction_percentage, tasting_notes, instructions, cover_image_url,
   sweetness, acidity, body, bitterness,
-  featured, premium_only, published, created_at, updated_at,
+  featured, premium_only, published,
+  seo_title, seo_description, canonical_url,
+  created_at, updated_at,
   brewing_methods ( id, name ),
   devices ( id, name ),
   grinders ( id, name ),
@@ -156,6 +158,10 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
     acidity: row.acidity,
     body: row.body,
     bitterness: row.bitterness,
+
+    seoTitle: row.seo_title ?? null,
+    seoDescription: row.seo_description ?? null,
+    canonicalUrl: row.canonical_url ?? null,
 
     tagIds: toSafeArray(row.recipe_tags)
       .map((rt) => rt.tags?.id)
