@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { processScheduledRecipePublishes } from "@/lib/data/recipe-publishing";
 import {
   mapDbRecipeToListItem,
   RECIPE_SELECT,
@@ -137,7 +138,9 @@ async function searchDbRecipes(
   supabase: SupabaseClient,
   filters: SearchFilters,
 ): Promise<RecipeListItem[]> {
-  let query = supabase.from("recipes").select(RECIPE_SELECT).eq("published", true);
+  await processScheduledRecipePublishes(supabase);
+
+  let query = supabase.from("recipes").select(RECIPE_SELECT).eq("status", "published");
 
   if (filters.brewingMethodId) query = query.eq("brewing_method_id", filters.brewingMethodId);
   if (filters.deviceId) query = query.eq("device_id", filters.deviceId);

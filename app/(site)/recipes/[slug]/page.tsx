@@ -51,6 +51,7 @@ import {
   getUserRecipeReview,
   parseReviewSort,
 } from "@/lib/data/community";
+import { isRecipePubliclyVisible } from "@/lib/recipes/recipe-status";
 import { createClient } from "@/lib/supabase/server";
 import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
 import type { FeaturedRecipe } from "@/types/homepage";
@@ -120,11 +121,12 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<Met
   const description = dbRecipe.seoDescription ?? dbRecipe.tastingNotes ?? dbRecipe.description ?? undefined;
   const title = dbRecipe.seoTitle ?? dbRecipe.title;
   const canonical = dbRecipe.canonicalUrl ?? `/recipes/${slug}`;
+  const indexable = isRecipePubliclyVisible({ status: dbRecipe.status });
 
   return {
     title,
     description,
-    robots: dbRecipe.published ? undefined : { index: false, follow: false },
+    robots: indexable ? undefined : { index: false, follow: false },
     alternates: { canonical },
     openGraph: {
       title,

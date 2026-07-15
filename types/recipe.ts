@@ -86,6 +86,9 @@ export type DbRecipeRow = {
   featured: boolean;
   premium_only: boolean;
   published: boolean;
+  status: "draft" | "published" | "archived" | "scheduled";
+  scheduled_publish_at: string | null;
+  archived_at: string | null;
   seo_title: string | null;
   seo_description: string | null;
   canonical_url: string | null;
@@ -140,6 +143,9 @@ export type RecipeFullDetail = {
   estimatedBrewTime: string | null;
   authorId: string | null;
   published: boolean;
+  status: "draft" | "published" | "archived" | "scheduled";
+  scheduledPublishAt: string | null;
+  archivedAt: string | null;
   featured: boolean;
   premiumOnly: boolean;
   coverImageUrl: string | null;

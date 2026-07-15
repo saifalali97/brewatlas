@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
+import { OwnerRecipePublishToolbar } from "@/app/components/owner/recipes/owner-recipe-publish-toolbar";
 import { buttons } from "@/lib/constants/styles";
 import { translate } from "@/lib/i18n/format";
 import { useTranslations } from "@/lib/i18n/translation-context";
@@ -89,6 +90,7 @@ export function RecipeForm({
   const [autosavePending, startAutosave] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
   const [dirty, setDirty] = useState(false);
+  const [publishIntent, setPublishIntent] = useState("draft");
 
   const initialPours = initialValues?.pours ?? [];
   const [pourRows, setPourRows] = useState<PourFieldRow[]>(() =>
@@ -151,6 +153,7 @@ export function RecipeForm({
       onSubmit={() => setDirty(false)}
     >
       {recipeId && <input type="hidden" name="recipeId" value={recipeId} />}
+      {isOwner ? <input type="hidden" name="publishIntent" value={publishIntent} /> : null}
 
       {/* GENERAL */}
       <SectionHeading title={t("recipeForm.sectionGeneral")} />
@@ -935,16 +938,29 @@ export function RecipeForm({
       {/* STATUS */}
       <SectionHeading title={t("recipeForm.sectionStatus")} />
 
+      {isOwner ? (
+        <OwnerRecipePublishToolbar
+          recipeId={recipeId}
+          status={initialValues?.status ?? "draft"}
+          scheduledPublishAt={initialValues?.scheduledPublishAt}
+          versionCount={versionCount}
+          pending={pending}
+          onIntentChange={setPublishIntent}
+        />
+      ) : null}
+
       <div className="flex flex-wrap gap-6 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-4">
-        <label className={checkboxRowClass}>
-          <input
-            type="checkbox"
-            name="published"
-            defaultChecked={initialValues?.published ?? false}
-            className={checkboxClass}
-          />
-          {t("recipeForm.publishedCheckboxLabel")}
-        </label>
+        {!isOwner ? (
+          <label className={checkboxRowClass}>
+            <input
+              type="checkbox"
+              name="published"
+              defaultChecked={initialValues?.published ?? false}
+              className={checkboxClass}
+            />
+            {t("recipeForm.publishedCheckboxLabel")}
+          </label>
+        ) : null}
         <label className={checkboxRowClass}>
           <input
             type="checkbox"
@@ -974,11 +990,6 @@ export function RecipeForm({
           ) : savedAtLabel ? (
             <span className="text-emerald-400/90">{savedAtLabel}</span>
           ) : null}
-          {versionCount > 0 ? (
-            <span>
-              {translate(dictionary, "ownerRecipesPage.versionCountTemplate", { count: String(versionCount) })}
-            </span>
-          ) : null}
         </div>
       ) : null}
 
@@ -996,13 +1007,15 @@ export function RecipeForm({
             {t("ownerRecipesPage.cancelCta")}
           </Link>
         ) : null}
-        <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70 sm:w-auto`}>
-          {pending
-            ? t("recipeForm.savingCta")
-            : mode === "create"
-              ? t("recipeForm.createRecipeCta")
-              : t("recipeForm.saveChangesCta")}
-        </button>
+        {!isOwner ? (
+          <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70 sm:w-auto`}>
+            {pending
+              ? t("recipeForm.savingCta")
+              : mode === "create"
+                ? t("recipeForm.createRecipeCta")
+                : t("recipeForm.saveChangesCta")}
+          </button>
+        ) : null}
       </div>
     </form>
   );

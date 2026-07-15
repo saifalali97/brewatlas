@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useTransition } from "react";
 import { OwnerRecipeRowActions } from "@/app/components/owner/recipes/owner-recipe-row-actions";
+import { OwnerRecipeStatusBadge } from "@/app/components/owner/recipes/owner-recipe-status-badge";
 import { buttons } from "@/lib/constants/styles";
 import { translate } from "@/lib/i18n/format";
 import type { Dictionary } from "@/lib/i18n/types";
 import type { OwnerRecipeFilterOptions, OwnerRecipesPageResult } from "@/lib/data/owner-recipes";
-
 const inputClass =
   "w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-2.5 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45";
 
@@ -149,8 +149,10 @@ export function OwnerRecipesExplorer({
           </label>
           <select id="owner-recipe-status" name="status" defaultValue={filters.published} className={`${selectClass} max-w-xs`}>
             <option value="">{labels.filterAll}</option>
-            <option value="published">{labels.filterPublished}</option>
             <option value="draft">{labels.filterDraft}</option>
+            <option value="published">{labels.filterPublished}</option>
+            <option value="scheduled">{labels.filterScheduled}</option>
+            <option value="archived">{labels.filterArchived}</option>
           </select>
           <button type="submit" className={`${buttons.secondary} h-10 px-4 text-xs`} disabled={isPending}>
             {labels.searchLabel}
@@ -171,15 +173,7 @@ export function OwnerRecipesExplorer({
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2.5">
                     <p className="font-medium text-stone-100">{recipe.title}</p>
-                    <span
-                      className={`rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
-                        recipe.published
-                          ? "border-emerald-600/35 bg-emerald-950/40 text-emerald-300/90"
-                          : "border-stone-600/35 bg-stone-800/40 text-stone-400"
-                      }`}
-                    >
-                      {recipe.published ? labels.publishedBadge : labels.draftBadge}
-                    </span>
+                    <OwnerRecipeStatusBadge status={recipe.status} scheduledPublishAt={recipe.scheduledPublishAt} />
                     {recipe.featured ? (
                       <span className="rounded-full border border-amber-600/35 bg-amber-950/40 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-300/90">
                         {labels.featuredBadge}
@@ -195,7 +189,7 @@ export function OwnerRecipesExplorer({
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-5">
-                  {recipe.published ? (
+                  {recipe.status === "published" ? (
                     <Link
                       href={`/recipes/${recipe.slug}`}
                       className="text-xs font-medium text-stone-400 underline-offset-4 hover:text-amber-400/90 hover:underline"
@@ -204,12 +198,18 @@ export function OwnerRecipesExplorer({
                     </Link>
                   ) : null}
                   <Link
+                    href={`/dashboard/recipes/${recipe.id}/versions`}
+                    className="text-xs font-medium text-stone-400 underline-offset-4 hover:text-amber-400/90 hover:underline"
+                  >
+                    {labels.versionHistoryLink}
+                  </Link>
+                  <Link
                     href={`/dashboard/recipes/${recipe.id}/edit`}
                     className="text-xs font-medium text-amber-400/90 underline-offset-4 hover:underline"
                   >
                     {labels.editLink}
                   </Link>
-                  <OwnerRecipeRowActions recipeId={recipe.id} title={recipe.title} published={recipe.published} />
+                  <OwnerRecipeRowActions recipeId={recipe.id} title={recipe.title} status={recipe.status} />
                 </div>
               </li>
             ))}

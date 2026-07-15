@@ -44,7 +44,10 @@ export default async function OwnerRecipesPage({ searchParams }: PageProps) {
   const deviceId = params.device ?? "";
   const originId = params.origin ?? "";
   const status = params.status ?? "";
-  const published = status === "published" ? true : status === "draft" ? false : undefined;
+  const statusFilter =
+    status === "draft" || status === "published" || status === "archived" || status === "scheduled"
+      ? status
+      : undefined;
 
   const { supabase } = await requireOwner();
 
@@ -54,7 +57,7 @@ export default async function OwnerRecipesPage({ searchParams }: PageProps) {
       brewingMethodId: brewingMethodId || undefined,
       deviceId: deviceId || undefined,
       originId: originId || undefined,
-      published,
+      status: statusFilter,
       page,
     }),
     getOwnerRecipeFilterOptions(supabase),

@@ -1,9 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { RecipePublishStatus } from "@/types/recipe-publishing";
 
 export const OWNER_RECIPE_PAGE_SIZE = 12;
 
 export const OWNER_RECIPE_LIST_SELECT = `
-  id, title, slug, published, featured, cover_image_url, created_at, updated_at,
+  id, title, slug, published, status, scheduled_publish_at, featured, cover_image_url, created_at, updated_at,
   brewing_methods ( name ),
   devices ( name ),
   coffees ( origins ( country, region ) ),
@@ -15,6 +16,8 @@ type OwnerRecipeListRow = {
   title: string;
   slug: string;
   published: boolean;
+  status: RecipePublishStatus;
+  scheduled_publish_at: string | null;
   featured: boolean;
   cover_image_url: string | null;
   created_at: string;
@@ -30,6 +33,8 @@ export type OwnerRecipeListItem = {
   title: string;
   slug: string;
   published: boolean;
+  status: RecipePublishStatus;
+  scheduledPublishAt: string | null;
   featured: boolean;
   coverImageUrl: string | null;
   createdAt: string;
@@ -45,7 +50,7 @@ export type OwnerRecipeFilters = {
   brewingMethodId?: string;
   deviceId?: string;
   originId?: string;
-  published?: boolean;
+  status?: RecipePublishStatus;
   page?: number;
 };
 
@@ -63,6 +68,8 @@ function mapOwnerRecipeRow(row: OwnerRecipeListRow): OwnerRecipeListItem {
     title: row.title,
     slug: row.slug,
     published: row.published,
+    status: row.status ?? (row.published ? "published" : "draft"),
+    scheduledPublishAt: row.scheduled_publish_at,
     featured: row.featured,
     coverImageUrl: row.cover_image_url,
     createdAt: row.created_at,
@@ -101,8 +108,8 @@ export async function getOwnerRecipesPage(
   if (filters.originId) {
     query = query.eq("coffees.origin_id", filters.originId);
   }
-  if (filters.published !== undefined) {
-    query = query.eq("published", filters.published);
+  if (filters.status) {
+    query = query.eq("status", filters.status);
   }
 
   const { data, error, count } = await query

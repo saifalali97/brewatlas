@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
+import { getPublishedRecipeSlugs } from "@/lib/data/recipe-publishing";
 import { buildHreflangAlternates } from "@/lib/seo/localized-metadata";
 import { getSiteUrl } from "@/lib/seo/site";
+import { createClient } from "@/lib/supabase/server";
 
 /** Public App Router pages included in the sitemap. */
 const publicPages: Array<{
@@ -32,11 +34,13 @@ const publicPages: Array<{
   { path: "/cookies", changeFrequency: "yearly", priority: 0.3 },
 ];
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl();
   const lastModified = new Date();
+  const supabase = await createClient();
+  const dbPublished = await getPublishedRecipeSlugs(supabase);
 
   const staticEntries = publicPages.map(({ path, changeFrequency, priority }) => ({
     url: path === "/" ? baseUrl : `${baseUrl}${path}`,
@@ -46,13 +50,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     alternates: { languages: buildHreflangAlternates(path) },
   }));
 
-  const recipeEntries = getAllRecipeSlugs().map((slug) => ({
-    url: `${baseUrl}/recipes/${slug}`,
-    lastModified,
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-    alternates: { languages: buildHreflangAlternates(`/recipes/${slug}`) },
-  }));
+  const staticSlugs = new Set(getAllRecipeSlugs());
+
+  const recipeEntries = [
+    ...getAllRecipeSlugs().map((slug) => ({
+      url: `${baseUrl}/recipes/${slug}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+      alternates: { languages: buildHreflangAlternates(`/recipes/${slug}`) },
+    })),
+    ...dbPublished
+      .filter(({ slug }) => !staticSlugs.has(slug))
+      .map(({ slug, updatedAt }) => ({
+      url: `${baseUrl}/recipes/${slug}`,
+      lastModified: new Date(updatedAt),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+      alternates: { languages: buildHreflangAlternates(`/recipes/${slug}`) },
+    })),
+  ];
 
   return [...staticEntries, ...recipeEntries];
 }
