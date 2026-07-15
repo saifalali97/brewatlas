@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { OwnerRecipePublishToolbar } from "@/app/components/owner/recipes/owner-recipe-publish-toolbar";
+import { RecipeMediaField } from "@/app/components/owner/media/recipe-media-field";
 import { buttons } from "@/lib/constants/styles";
 import { translate } from "@/lib/i18n/format";
 import { useTranslations } from "@/lib/i18n/translation-context";
@@ -15,6 +16,7 @@ import {
   type OwnerRecipeActionState,
 } from "@/lib/supabase/owner-recipe-actions";
 import type { LookupOption, PourRow, RecipeFullDetail, RecipeImageRow } from "@/types/recipe";
+import type { MediaFolder } from "@/types/media";
 
 const inputClass =
   "mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45";
@@ -48,6 +50,7 @@ type RecipeFormProps = {
   roasters: LookupOption[];
   coffees: LookupOption[];
   tags: LookupOption[];
+  mediaFolders?: MediaFolder[];
 };
 
 type PourFieldRow = { key: number; pour?: PourRow };
@@ -67,6 +70,7 @@ export function RecipeForm({
   roasters,
   coffees,
   tags,
+  mediaFolders = [],
 }: RecipeFormProps) {
   const { t, dictionary } = useTranslations();
   const isOwner = variant === "owner";
@@ -302,43 +306,54 @@ export function RecipeForm({
       {/* FILES */}
       <SectionHeading title={t("recipeForm.sectionPhotos")} description={t("recipeForm.sectionPhotosDescription")} />
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div>
-          <label htmlFor="coverImage" className={labelClass}>
-            {t("recipeForm.coverPhotoLabel")}
-            {optionalLabel}
-          </label>
-          {initialValues?.coverImageUrl && (
-            <p className="mt-2 text-xs text-stone-500">{t("recipeForm.coverPhotoCurrentHint")}</p>
-          )}
-          <input
-            id="coverImage"
-            name="coverImage"
-            type="file"
-            accept="image/png,image/jpeg,image/webp,image/gif"
-            className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
-          />
+      {isOwner && mediaFolders.length > 0 ? (
+        <RecipeMediaField
+          folders={mediaFolders}
+          coverImageUrl={initialValues?.coverImageUrl}
+          coverMediaAssetId={initialValues?.coverMediaAssetId}
+          galleryItems={existingImages
+            .filter((image) => image.mediaAssetId)
+            .map((image) => ({ id: image.mediaAssetId as string, url: image.url }))}
+        />
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="coverImage" className={labelClass}>
+              {t("recipeForm.coverPhotoLabel")}
+              {optionalLabel}
+            </label>
+            {initialValues?.coverImageUrl && (
+              <p className="mt-2 text-xs text-stone-500">{t("recipeForm.coverPhotoCurrentHint")}</p>
+            )}
+            <input
+              id="coverImage"
+              name="coverImage"
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
+            />
+          </div>
+          <div>
+            <label htmlFor="galleryImages" className={labelClass}>
+              {t("recipeForm.additionalPhotosLabel")}
+              {optionalLabel}
+            </label>
+            {existingImages.length > 0 && (
+              <p className="mt-2 text-xs text-stone-500">
+                {translate(dictionary, "recipeForm.additionalPhotosAttachedTemplate", { count: existingImages.length })}
+              </p>
+            )}
+            <input
+              id="galleryImages"
+              name="galleryImages"
+              type="file"
+              multiple
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="galleryImages" className={labelClass}>
-            {t("recipeForm.additionalPhotosLabel")}
-            {optionalLabel}
-          </label>
-          {existingImages.length > 0 && (
-            <p className="mt-2 text-xs text-stone-500">
-              {translate(dictionary, "recipeForm.additionalPhotosAttachedTemplate", { count: existingImages.length })}
-            </p>
-          )}
-          <input
-            id="galleryImages"
-            name="galleryImages"
-            type="file"
-            multiple
-            accept="image/png,image/jpeg,image/webp,image/gif"
-            className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
-          />
-        </div>
-      </div>
+      )}
 
       {/* COFFEE */}
       <SectionHeading title={t("recipeForm.sectionCoffee")} description={t("recipeForm.sectionCoffeeDescription")} />

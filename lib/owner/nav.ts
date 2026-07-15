@@ -6,6 +6,7 @@ import {
   Cpu,
   FolderOpen,
   Globe2,
+  Image,
   LayoutDashboard,
   Settings,
   Star,
@@ -27,6 +28,7 @@ export function buildOwnerNavItems(labels: Dictionary["ownerNav"]): OwnerNavItem
   return [
     { id: "dashboard", href: "/dashboard", label: labels.dashboard, icon: LayoutDashboard, permission: "cms.access" },
     { id: "recipes", href: "/dashboard/recipes", label: labels.recipes, icon: Coffee, permission: "cms.access" },
+    { id: "media", href: "/dashboard/media", label: labels.media, icon: Image, permission: "cms.access" },
     { id: "origins", href: "/dashboard/origins", label: labels.origins, icon: Globe2, permission: "cms.access" },
     { id: "roasters", href: "/dashboard/roasters", label: labels.roasters, icon: Store, permission: "cms.access" },
     { id: "brewers", href: "/dashboard/brewers", label: labels.brewers, icon: Users, permission: "cms.access" },

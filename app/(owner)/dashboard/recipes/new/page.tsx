@@ -12,6 +12,7 @@ import {
   getTagOptions,
   getWaterProfileOptions,
 } from "@/lib/data/db-recipes";
+import { getMediaFolders } from "@/lib/data/media-library";
 import { requireOwner } from "@/lib/auth/require-owner";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -35,7 +36,7 @@ export default async function OwnerNewRecipePage() {
   const labels = dictionary.ownerRecipesPage;
   const { supabase } = await requireOwner();
 
-  const [brewingMethods, devices, grinders, filterTypes, waterProfiles, origins, roasters, coffees, tags] =
+  const [brewingMethods, devices, grinders, filterTypes, waterProfiles, origins, roasters, coffees, tags, mediaFolders] =
     await Promise.all([
       getBrewingMethodOptions(supabase),
       getDeviceOptions(supabase),
@@ -46,6 +47,7 @@ export default async function OwnerNewRecipePage() {
       getRoasterOptions(supabase),
       getCoffeeOptions(supabase),
       getTagOptions(supabase),
+      getMediaFolders(supabase),
     ]);
 
   return (
@@ -65,6 +67,7 @@ export default async function OwnerNewRecipePage() {
           roasters={roasters}
           coffees={coffees}
           tags={tags}
+          mediaFolders={mediaFolders}
         />
       </div>
     </div>

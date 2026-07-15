@@ -18,7 +18,7 @@ export const RECIPE_SELECT = `
   id, title, slug, description, video_url, difficulty, estimated_brew_time,
   author_id, coffee_dose, water_amount, ice_amount, grind_size, water_temperature,
   ratio, bloom_amount, bloom_time, total_brew_time, beverage_weight, tds,
-  extraction_percentage, tasting_notes, instructions, cover_image_url,
+  extraction_percentage, tasting_notes, instructions, cover_image_url, cover_media_asset_id,
   sweetness, acidity, body, bitterness,
   featured, premium_only, published,
   status, scheduled_publish_at, archived_at,
@@ -35,7 +35,7 @@ export const RECIPE_SELECT = `
     origins ( id, country, region )
   ),
   recipe_pours ( id, pour_number, water_amount, time_label, notes ),
-  recipe_images ( id, url, position ),
+  recipe_images ( id, url, position, media_asset_id ),
   recipe_tags ( tags ( id, name, slug ) ),
   xbloom_profiles ( id )
 `;
@@ -113,7 +113,15 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
     featured: row.featured,
     premiumOnly: row.premium_only,
     coverImageUrl: row.cover_image_url,
-    images: toSafeArray(row.recipe_images).sort((a, b) => a.position - b.position),
+    coverMediaAssetId: row.cover_media_asset_id ?? null,
+    images: toSafeArray(row.recipe_images)
+      .sort((a, b) => a.position - b.position)
+      .map((image) => ({
+        id: image.id,
+        url: image.url,
+        position: image.position,
+        mediaAssetId: image.media_asset_id ?? null,
+      })),
 
     brewingMethodId: row.brewing_methods?.id ?? null,
     brewingMethodName: row.brewing_methods?.name ?? null,

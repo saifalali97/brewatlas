@@ -15,6 +15,7 @@ import {
   getWaterProfileOptions,
 } from "@/lib/data/db-recipes";
 import { getOwnerRecipeVersionCount } from "@/lib/data/owner-recipes";
+import { getMediaFolders } from "@/lib/data/media-library";
 import { requireOwner } from "@/lib/auth/require-owner";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -63,6 +64,7 @@ export default async function OwnerEditRecipePage({ params }: PageProps) {
     coffees,
     tags,
     versionCount,
+    mediaFolders,
   ] = await Promise.all([
     getBrewingMethodOptions(supabase),
     getDeviceOptions(supabase),
@@ -74,6 +76,7 @@ export default async function OwnerEditRecipePage({ params }: PageProps) {
     getCoffeeOptions(supabase),
     getTagOptions(supabase),
     getOwnerRecipeVersionCount(supabase, id),
+    getMediaFolders(supabase),
   ]);
 
   return (
@@ -101,6 +104,7 @@ export default async function OwnerEditRecipePage({ params }: PageProps) {
           roasters={roasters}
           coffees={coffees}
           tags={tags}
+          mediaFolders={mediaFolders}
         />
       </div>
     </div>
