@@ -76,20 +76,37 @@ function PricingButton({
   href,
   highlighted,
   children,
+  asSubmit = false,
 }: {
-  href: string;
+  href?: string;
   highlighted: boolean;
   children: ReactNode;
+  asSubmit?: boolean;
 }) {
+  const className = `group/btn relative isolate inline-flex h-11 w-full items-center justify-center gap-2 overflow-hidden rounded-full px-5 text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.98] motion-reduce:hover:translate-y-0 ${
+    highlighted
+      ? "bg-amber-600 text-white shadow-[0_0_32px_rgba(217,119,6,0.3)] hover:-translate-y-1 hover:bg-amber-500 hover:shadow-[0_0_44px_rgba(217,119,6,0.45)]"
+      : "border border-white/[0.12] bg-white/[0.06] text-stone-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-2xl hover:-translate-y-1 hover:border-amber-500/45 hover:bg-white/[0.1] hover:shadow-[0_0_36px_rgba(217,119,6,0.18),inset_0_1px_0_rgba(255,255,255,0.14)]"
+  }`;
+
+  if (asSubmit) {
+    return (
+      <button type="submit" className={className}>
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-500 ease-out group-hover/btn:translate-x-full motion-reduce:transition-none"
+        />
+        <span className="relative">{children}</span>
+        <ArrowRight
+          className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5 motion-reduce:transform-none"
+          aria-hidden
+        />
+      </button>
+    );
+  }
+
   return (
-    <RippleLink
-      href={href}
-      className={`group/btn relative isolate inline-flex h-11 w-full items-center justify-center gap-2 overflow-hidden rounded-full px-5 text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.98] motion-reduce:hover:translate-y-0 ${
-        highlighted
-          ? "bg-amber-600 text-white shadow-[0_0_32px_rgba(217,119,6,0.3)] hover:-translate-y-1 hover:bg-amber-500 hover:shadow-[0_0_44px_rgba(217,119,6,0.45)]"
-          : "border border-white/[0.12] bg-white/[0.06] text-stone-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-2xl hover:-translate-y-1 hover:border-amber-500/45 hover:bg-white/[0.1] hover:shadow-[0_0_36px_rgba(217,119,6,0.18),inset_0_1px_0_rgba(255,255,255,0.14)]"
-      }`}
-    >
+    <RippleLink href={href ?? "#pricing"} className={className}>
       <span
         aria-hidden
         className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-500 ease-out group-hover/btn:translate-x-full motion-reduce:transition-none"
@@ -106,11 +123,12 @@ function PricingButton({
 type PricingCardProps = {
   plan: PricingPlan;
   ctaHref?: string;
+  ctaAsSubmit?: boolean;
   /** Translated copy for this card's chrome. Defaults to English so existing callers (e.g. `/premium`) are unaffected. */
   labels?: Partial<PricingCardLabels>;
 };
 
-export function PricingCard({ plan, ctaHref = "#pricing", labels }: PricingCardProps) {
+export function PricingCard({ plan, ctaHref = "#pricing", ctaAsSubmit = false, labels }: PricingCardProps) {
   const l: PricingCardLabels = { ...defaultPricingCardLabels, ...labels };
   const highlighted = Boolean(plan.highlighted);
 
@@ -202,7 +220,7 @@ export function PricingCard({ plan, ctaHref = "#pricing", labels }: PricingCardP
         </ul>
 
         <div className="mt-6 pt-2">
-          <PricingButton href={ctaHref} highlighted={highlighted}>
+          <PricingButton href={ctaHref} highlighted={highlighted} asSubmit={ctaAsSubmit}>
             {plan.cta}
           </PricingButton>
         </div>

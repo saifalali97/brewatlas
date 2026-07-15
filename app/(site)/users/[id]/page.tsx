@@ -11,7 +11,9 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons } from "@/lib/constants/styles";
+import { PremiumMemberBadge } from "@/app/components/subscription/subscription-status-badge";
 import { getUserPublishedRecipes } from "@/lib/data/db-recipes";
+import { getMembershipSummary } from "@/lib/data/membership";
 import {
   getPublicProfile,
   getUserActivityFeed,
@@ -136,12 +138,15 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
   const isOwner = viewerId === profile.id;
   const currentPath = `/users/${id}${tab !== "recipes" ? `?tab=${tab}` : ""}`;
 
-  const [publishedRecipes, reviewsWritten, activity, badges] = await Promise.all([
+  const [publishedRecipes, reviewsWritten, activity, badges, membership] = await Promise.all([
     getUserPublishedRecipes(supabase, id, { limit: 24 }),
     getUserReviewsWritten(supabase, id, { limit: 12 }),
     getUserActivityFeed(supabase, id, 20),
     getUserBadges(supabase, id),
+    getMembershipSummary(supabase, id),
   ]);
+
+  const isPremiumMember = membership.isPremium;
 
   const displayName = profile.displayName ?? labels.anonymousMember;
 
@@ -164,6 +169,16 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
                   </div>
                 )}
               </div>
+
+              <h1 id="public-profile-heading" className="sr-only">
+                {displayName}
+              </h1>
+
+              {isPremiumMember && (
+                <div className="mt-3">
+                  <PremiumMemberBadge dictionary={dictionary} />
+                </div>
+              )}
 
               {profile.country && (
                 <p className="mt-4 inline-flex items-center gap-1.5 text-sm text-stone-400">

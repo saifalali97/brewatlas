@@ -55,8 +55,11 @@ import {
   parseReviewSort,
 } from "@/lib/data/community";
 import { isRecipePubliclyVisible } from "@/lib/recipes/recipe-status";
+import { canAccessRecipe } from "@/lib/membership/access";
+import { getMembershipSummary } from "@/lib/data/membership";
 import { createClient } from "@/lib/supabase/server";
 import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
+import { RecipePremiumPaywall } from "@/app/components/recipes/recipe-premium-paywall";
 import type { FeaturedRecipe } from "@/types/homepage";
 import type {
   RatingDistributionBucket,
@@ -163,7 +166,14 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   if (staticIndex !== -1) {
     const content = await getHomeContent(locale);
-    return <StaticRecipeView recipe={content.featuredRecipes[staticIndex]} dictionary={dictionary} />;
+    return (
+      <StaticRecipeView
+        recipe={content.featuredRecipes[staticIndex]}
+        slug={slug}
+        dictionary={dictionary}
+        isAuthenticated={false}
+      />
+    );
   }
 
   const supabase = await createClient();
@@ -176,7 +186,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   const viewerId = authData.user?.id ?? null;
 
-  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview] =
+  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview, membership] =
     await Promise.all([
       getFavoritesCount(supabase, recipe.id),
       viewerId ? getUserFavoriteRecipeIds(supabase, viewerId) : Promise.resolve(new Set<string>()),
@@ -185,9 +195,11 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
       getRecipeRatingDistribution(supabase, recipe.id),
       getRecipeReviewsPage(supabase, recipe.id, { sort: reviewSort, page: reviewPage, viewerId }),
       viewerId ? getUserRecipeReview(supabase, recipe.id, viewerId) : Promise.resolve(null),
+      viewerId ? getMembershipSummary(supabase, viewerId) : Promise.resolve(null),
     ]);
 
   const isOwner = Boolean(viewerId && recipe.authorId === viewerId);
+  const canAccessFull = isOwner || canAccessRecipe(membership, recipe);
   const reviewJsonLd = buildRecipeReviewJsonLd({
     recipe,
     slug,
@@ -203,6 +215,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
       isFavorited={favoriteIds.has(recipe.id)}
       isOwner={isOwner}
       isAuthenticated={Boolean(viewerId)}
+      canAccessFull={canAccessFull}
       hasXBloomProfile={hasXBloomProfile}
       dictionary={dictionary}
       ratingSummary={ratingSummary}
@@ -215,7 +228,17 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
   );
 }
 
-function StaticRecipeView({ recipe, dictionary }: { recipe: FeaturedRecipe; dictionary: Dictionary }) {
+function StaticRecipeView({
+  recipe,
+  slug,
+  dictionary,
+  isAuthenticated,
+}: {
+  recipe: FeaturedRecipe;
+  slug: string;
+  dictionary: Dictionary;
+  isAuthenticated: boolean;
+}) {
   const d = dictionary.recipeDetail;
   const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
   const brewMethodLabel = brewMethodKey ? translate(dictionary, brewMethodKey) : recipe.brewMethod;
@@ -282,17 +305,20 @@ function StaticRecipeView({ recipe, dictionary }: { recipe: FeaturedRecipe; dict
 
           <CompatibleDevices hasXBloom={false} dictionary={dictionary} />
 
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <RippleLink href="/premium" className={`${buttons.primary} w-full sm:w-auto`}>
-              {d.unlockFullGuide}
-            </RippleLink>
-            <RippleLink href="/recipes" className={`${buttons.secondary} w-full sm:w-auto`}>
-              {d.browseMoreRecipes}
-            </RippleLink>
-            <RecipeConverterButton currentDevice={brewMethodLabel} sourceRecipe={{ brewTime: recipe.time }} />
-          </div>
+          {!recipe.premium && (
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <RippleLink href="/recipes" className={`${buttons.secondary} w-full sm:w-auto`}>
+                {d.browseMoreRecipes}
+              </RippleLink>
+              <RecipeConverterButton currentDevice={brewMethodLabel} sourceRecipe={{ brewTime: recipe.time }} />
+            </div>
+          )}
         </div>
       </div>
+
+      {recipe.premium && (
+        <RecipePremiumPaywall dictionary={dictionary} isAuthenticated={isAuthenticated} recipeSlug={slug} />
+      )}
     </SectionFrame>
   );
 }
@@ -304,6 +330,7 @@ type DbRecipeViewProps = {
   isFavorited: boolean;
   isOwner: boolean;
   isAuthenticated: boolean;
+  canAccessFull: boolean;
   hasXBloomProfile: boolean;
   dictionary: Dictionary;
   ratingSummary: RecipeRatingSummary;
@@ -321,6 +348,7 @@ function DbRecipeView({
   isFavorited,
   isOwner,
   isAuthenticated,
+  canAccessFull,
   hasXBloomProfile,
   dictionary,
   ratingSummary,
@@ -459,42 +487,47 @@ function DbRecipeView({
                 </RippleLink>
                 <DeleteRecipeButton recipeId={recipe.id} recipeTitle={recipe.title} />
               </>
-            ) : (
-              <RippleLink href="/premium" className={`${buttons.primary} w-full sm:w-auto`}>
-                {d.unlockFullGuide}
-              </RippleLink>
+            ) : canAccessFull ? (
+              <>
+                <RippleLink href="/recipes" className={`${buttons.secondary} w-full sm:w-auto`}>
+                  {d.browseMoreRecipes}
+                </RippleLink>
+                {recipe.videoUrl && (
+                  <a
+                    href={recipe.videoUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className={`${buttons.secondary} w-full sm:w-auto`}
+                  >
+                    {d.watchVideo}
+                  </a>
+                )}
+              </>
+            ) : null}
+            {canAccessFull && (
+              <RecipeConverterButton
+                currentDevice={recipe.deviceName ?? recipe.brewingMethodName ?? d.dashValue}
+                sourceRecipe={{
+                  doseG: recipe.coffeeDose,
+                  waterG: recipe.waterAmount,
+                  grindSize: recipe.grindSize,
+                  temperatureC: recipe.waterTemperature,
+                  bloomAmountG: recipe.bloomAmount,
+                  bloomTime: recipe.bloomTime,
+                  brewTime: recipe.totalBrewTime ?? recipe.estimatedBrewTime,
+                  poursCount: recipe.pours.length > 0 ? recipe.pours.length : null,
+                }}
+              />
             )}
-            <RippleLink href="/recipes" className={`${buttons.secondary} w-full sm:w-auto`}>
-              {d.browseMoreRecipes}
-            </RippleLink>
-            {recipe.videoUrl && (
-              <a
-                href={recipe.videoUrl}
-                target="_blank"
-                rel="noreferrer noopener"
-                className={`${buttons.secondary} w-full sm:w-auto`}
-              >
-                {d.watchVideo}
-              </a>
-            )}
-            <RecipeConverterButton
-              currentDevice={recipe.deviceName ?? recipe.brewingMethodName ?? d.dashValue}
-              sourceRecipe={{
-                doseG: recipe.coffeeDose,
-                waterG: recipe.waterAmount,
-                grindSize: recipe.grindSize,
-                temperatureC: recipe.waterTemperature,
-                bloomAmountG: recipe.bloomAmount,
-                bloomTime: recipe.bloomTime,
-                brewTime: recipe.totalBrewTime ?? recipe.estimatedBrewTime,
-                poursCount: recipe.pours.length > 0 ? recipe.pours.length : null,
-              }}
-            />
           </div>
         </div>
       </div>
 
-      {hasCoffeeInfo && (
+      {!canAccessFull && recipe.premiumOnly && (
+        <RecipePremiumPaywall dictionary={dictionary} isAuthenticated={isAuthenticated} recipeSlug={slug} />
+      )}
+
+      {canAccessFull && hasCoffeeInfo && (
         <div className="mt-12">
           <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.coffeeSectionTitle}</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -513,121 +546,125 @@ function DbRecipeView({
         </div>
       )}
 
-      <div className="mt-12">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.brewingDetailsTitle}</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {recipe.deviceName && <MetaTile icon={Settings2} label={d.deviceLabel} value={recipe.deviceName} />}
-          {recipe.grinderName && <MetaTile icon={Settings2} label={d.grinderLabel} value={recipe.grinderName} />}
-          {recipe.grindSize && <MetaTile icon={Settings2} label={d.grindSizeLabel} value={recipe.grindSize} />}
-          {recipe.filterTypeName && <MetaTile icon={Filter} label={d.filterLabel} value={recipe.filterTypeName} />}
-          {recipe.waterProfileName && (
-            <MetaTile icon={Droplets} label={d.waterRecipeLabel} value={recipe.waterProfileName} />
-          )}
-          {recipe.waterTemperature !== null && (
-            <MetaTile icon={Thermometer} label={d.waterTempLabel} value={`${recipe.waterTemperature}°C`} />
-          )}
-          {recipe.coffeeDose !== null && (
-            <MetaTile icon={Scale} label={d.coffeeDoseLabel} value={`${recipe.coffeeDose}g`} />
-          )}
-          {recipe.waterAmount !== null && (
-            <MetaTile icon={Droplets} label={d.waterLabel} value={`${recipe.waterAmount}g`} />
-          )}
-          {recipe.bloomAmount !== null && (
-            <MetaTile
-              icon={Droplets}
-              label={d.bloomLabel}
-              value={`${recipe.bloomAmount}g${recipe.bloomTime ? ` / ${recipe.bloomTime}` : ""}`}
-            />
-          )}
-          {recipe.iceAmount !== null && recipe.iceAmount > 0 && (
-            <MetaTile icon={Snowflake} label={d.iceLabel} value={`${recipe.iceAmount}g`} />
-          )}
-        </div>
-      </div>
-
-      {recipe.pours.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.pourStructureTitle}</h2>
-          <ol className="mt-4 space-y-3">
-            {recipe.pours.map((pour) => (
-              <li
-                key={pour.id}
-                className="flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3"
-              >
-                <span className="text-sm font-medium text-amber-400/90">
-                  {d.pourPrefix} {pour.pour_number}
-                </span>
-                {pour.water_amount !== null && <span className="text-sm text-stone-300">{pour.water_amount}g</span>}
-                {pour.time_label && (
-                  <span className="text-sm text-stone-500">
-                    {d.atTimeLabel} {pour.time_label}
-                  </span>
-                )}
-                {pour.notes && <span className="text-sm text-stone-500">— {pour.notes}</span>}
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
-
-      {hasResults && (
-        <div className="mt-12">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.resultsTitle}</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {recipe.beverageWeight !== null && (
-              <MetaTile icon={Scale} label={d.beverageWeightLabel} value={`${recipe.beverageWeight}g`} />
-            )}
-            {recipe.tds !== null && <MetaTile icon={FlaskConical} label={d.tdsLabel} value={`${recipe.tds}%`} />}
-            {recipe.extractionPercentage !== null && (
-              <MetaTile icon={Percent} label={d.extractionLabel} value={`${recipe.extractionPercentage}%`} />
-            )}
-            {ratings.map((rating) => (
-              <MetaTile key={rating.label} icon={Coffee} label={rating.label} value={`${rating.value}/10`} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {recipe.tags.length > 0 && (
-        <div className="mt-8 flex flex-wrap gap-2">
-          {recipe.tags.map((tag) => (
-            <span
-              key={tag.id}
-              className="rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-300"
-            >
-              {tag.name}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {recipe.instructions && (
-        <div className="mt-8 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">{dictionary.recipes.instructions}</p>
-          <p className="mt-2.5 whitespace-pre-line text-sm leading-relaxed text-stone-300">{recipe.instructions}</p>
-        </div>
-      )}
-
-      {recipe.images.length > 0 && (
-        <div className="mt-12">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.galleryTitle}</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {recipe.images.map((image) => (
-              <div key={image.id} className="relative h-48 overflow-hidden rounded-xl border border-white/[0.1]">
-                <OptimizedImage
-                  src={image.url}
-                  alt={image.altText ?? d.additionalPhotoAltTemplate.replace("{title}", recipe.title)}
-                  blurDataUrl={image.blurDataUrl}
-                  width={image.width ?? undefined}
-                  height={image.height ?? undefined}
-                  sizes={IMAGE_SIZE_PRESETS.recipeGallery}
-                  loading="lazy"
-                  className="object-cover"
+      {canAccessFull && (
+        <>
+          <div className="mt-12">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.brewingDetailsTitle}</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {recipe.deviceName && <MetaTile icon={Settings2} label={d.deviceLabel} value={recipe.deviceName} />}
+              {recipe.grinderName && <MetaTile icon={Settings2} label={d.grinderLabel} value={recipe.grinderName} />}
+              {recipe.grindSize && <MetaTile icon={Settings2} label={d.grindSizeLabel} value={recipe.grindSize} />}
+              {recipe.filterTypeName && <MetaTile icon={Filter} label={d.filterLabel} value={recipe.filterTypeName} />}
+              {recipe.waterProfileName && (
+                <MetaTile icon={Droplets} label={d.waterRecipeLabel} value={recipe.waterProfileName} />
+              )}
+              {recipe.waterTemperature !== null && (
+                <MetaTile icon={Thermometer} label={d.waterTempLabel} value={`${recipe.waterTemperature}°C`} />
+              )}
+              {recipe.coffeeDose !== null && (
+                <MetaTile icon={Scale} label={d.coffeeDoseLabel} value={`${recipe.coffeeDose}g`} />
+              )}
+              {recipe.waterAmount !== null && (
+                <MetaTile icon={Droplets} label={d.waterLabel} value={`${recipe.waterAmount}g`} />
+              )}
+              {recipe.bloomAmount !== null && (
+                <MetaTile
+                  icon={Droplets}
+                  label={d.bloomLabel}
+                  value={`${recipe.bloomAmount}g${recipe.bloomTime ? ` / ${recipe.bloomTime}` : ""}`}
                 />
-              </div>
-            ))}
+              )}
+              {recipe.iceAmount !== null && recipe.iceAmount > 0 && (
+                <MetaTile icon={Snowflake} label={d.iceLabel} value={`${recipe.iceAmount}g`} />
+              )}
+            </div>
           </div>
-        </div>
+
+          {recipe.pours.length > 0 && (
+            <div className="mt-12">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.pourStructureTitle}</h2>
+              <ol className="mt-4 space-y-3">
+                {recipe.pours.map((pour) => (
+                  <li
+                    key={pour.id}
+                    className="flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3"
+                  >
+                    <span className="text-sm font-medium text-amber-400/90">
+                      {d.pourPrefix} {pour.pour_number}
+                    </span>
+                    {pour.water_amount !== null && <span className="text-sm text-stone-300">{pour.water_amount}g</span>}
+                    {pour.time_label && (
+                      <span className="text-sm text-stone-500">
+                        {d.atTimeLabel} {pour.time_label}
+                      </span>
+                    )}
+                    {pour.notes && <span className="text-sm text-stone-500">— {pour.notes}</span>}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {hasResults && (
+            <div className="mt-12">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.resultsTitle}</h2>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {recipe.beverageWeight !== null && (
+                  <MetaTile icon={Scale} label={d.beverageWeightLabel} value={`${recipe.beverageWeight}g`} />
+                )}
+                {recipe.tds !== null && <MetaTile icon={FlaskConical} label={d.tdsLabel} value={`${recipe.tds}%`} />}
+                {recipe.extractionPercentage !== null && (
+                  <MetaTile icon={Percent} label={d.extractionLabel} value={`${recipe.extractionPercentage}%`} />
+                )}
+                {ratings.map((rating) => (
+                  <MetaTile key={rating.label} icon={Coffee} label={rating.label} value={`${rating.value}/10`} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {recipe.tags.length > 0 && (
+            <div className="mt-8 flex flex-wrap gap-2">
+              {recipe.tags.map((tag) => (
+                <span
+                  key={tag.id}
+                  className="rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-300"
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {recipe.instructions && (
+            <div className="mt-8 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5">
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">{dictionary.recipes.instructions}</p>
+              <p className="mt-2.5 whitespace-pre-line text-sm leading-relaxed text-stone-300">{recipe.instructions}</p>
+            </div>
+          )}
+
+          {recipe.images.length > 0 && (
+            <div className="mt-12">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.galleryTitle}</h2>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {recipe.images.map((image) => (
+                  <div key={image.id} className="relative h-48 overflow-hidden rounded-xl border border-white/[0.1]">
+                    <OptimizedImage
+                      src={image.url}
+                      alt={image.altText ?? d.additionalPhotoAltTemplate.replace("{title}", recipe.title)}
+                      blurDataUrl={image.blurDataUrl}
+                      width={image.width ?? undefined}
+                      height={image.height ?? undefined}
+                      sizes={IMAGE_SIZE_PRESETS.recipeGallery}
+                      loading="lazy"
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <RecipeReviewsPanel
