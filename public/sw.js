@@ -6,7 +6,7 @@
 // (`/_next/static/...`) don't need a version bump to stay fresh -- a
 // new build produces new hashed filenames, so old cache entries simply
 // become unreferenced and get replaced by real network requests.
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v4";
 const APP_SHELL_CACHE = `brewatlas-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `brewatlas-runtime-${CACHE_VERSION}`;
 const CURRENT_CACHES = [APP_SHELL_CACHE, RUNTIME_CACHE];
@@ -75,7 +75,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (isBuildAsset(url)) {
-    event.respondWith(cacheFirst(request, RUNTIME_CACHE));
+    event.respondWith(networkFirst(request, RUNTIME_CACHE));
     return;
   }
 
@@ -106,18 +106,21 @@ async function networkFirstNavigation(request) {
   }
 }
 
-// Hashed static build assets: content-addressed by filename, so once
-// cached they never go stale -- safe to serve straight from cache.
-async function cacheFirst(request, cacheName) {
+// Hashed static build assets: prefer network so deploys reach clients immediately;
+// fall back to cache only when offline.
+async function networkFirst(request, cacheName) {
   const cache = await caches.open(cacheName);
-  const cached = await cache.match(request);
-  if (cached) return cached;
-
-  const response = await fetch(request);
-  if (response && response.ok) {
-    cache.put(request, response.clone());
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await cache.match(request);
+    if (cached) return cached;
+    return Response.error();
   }
-  return response;
 }
 
 // Images: serve the cached copy instantly while refreshing it in the

@@ -48,25 +48,47 @@ export default async function SiteLayout({
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0a0705] font-sans text-stone-100">
+    <div className="relative min-h-screen bg-uae-dark-coffee-deep font-sans text-uae-pearl">
+      {/* Server-rendered stamp — visible without JS; proves HTML is from this deploy */}
+      <div
+        data-server-build="15-jul-2026"
+        style={{
+          position: "fixed",
+          top: "1.25rem",
+          left: 0,
+          zIndex: 99998,
+          color: "yellow",
+          background: "black",
+          fontSize: "10px",
+          padding: "2px 4px",
+          pointerEvents: "none",
+        }}
+      >
+        SERVER HTML 15 JUL
+      </div>
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(180,120,60,0.35),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_20%,rgba(120,70,40,0.2),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_10%_80%,rgba(90,50,30,0.25),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_50%_50%,rgba(180,120,60,0.06),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(217,119,6,0.04),transparent_40%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_65%,rgba(120,70,40,0.05),transparent_35%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_45%_at_50%_100%,rgba(90,50,30,0.12),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(217,119,6,0.03),transparent_50%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f0a]/40 via-transparent to-[#0a0705]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(192,138,46,0.22),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_20%,rgba(169,131,90,0.14),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_10%_80%,rgba(35,23,16,0.35),transparent)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-uae-dark-coffee/30 via-transparent to-uae-dark-coffee-deep" />
       </div>
 
-      <SiteNav nav={dictionary.nav} locale={locale} notificationsSlot={notificationsSlot} />
+      <SiteNav
+        nav={dictionary.nav}
+        locale={locale}
+        isAuthenticated={Boolean(authData.user)}
+        notificationsSlot={notificationsSlot}
+      />
 
       <main id="main-content">{children}</main>
 
       <FloatingActions />
-      <SiteFooter footer={dictionary.homeFooter} locale={locale} />
+      <SiteFooter
+        footer={dictionary.homeFooter}
+        locale={locale}
+        switchLanguageAria={dictionary.nav.switchLanguageAria}
+        languageAriaLabel={dictionary.nav.languageAriaLabel}
+      />
     </div>
   );
 }

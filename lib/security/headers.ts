@@ -19,6 +19,10 @@ const imgSrc = ["'self'", "data:", "blob:", UNSPLASH_ORIGIN, ...(supabaseOrigin 
 // traces for the error overlay and Fast Refresh — it is never used in a
 // production build. We only relax `script-src` with `unsafe-eval` for local
 // development so the production CSP stays fully locked down.
+// `upgrade-insecure-requests` must NOT be sent when the page is served over
+// plain HTTP (e.g. `next start -H 0.0.0.0` on a LAN IP). Safari upgrades
+// every script URL to HTTPS, TLS fails, and zero client JS runs (SSR-only).
+// Production HTTPS is enforced via hosting + HSTS below.
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -33,7 +37,6 @@ const contentSecurityPolicy = [
   "media-src 'self'",
   "manifest-src 'self'",
   "worker-src 'self' blob:",
-  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 export const securityHeaders = [
@@ -46,7 +49,7 @@ export const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-DNS-Prefetch-Control", value: "on" },
-  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+  ...(isDev ? [] : [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }]),
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
 ];
