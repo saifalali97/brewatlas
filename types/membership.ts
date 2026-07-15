@@ -57,7 +57,9 @@ export type Subscription = {
   billingProvider: BillingProvider;
   billingProviderRef: string | null;
   stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
   billingInterval: "month" | "year" | null;
+  billingPeriod: "month" | "year" | null;
   trialStartedAt: string | null;
   trialEndsAt: string | null;
   currentPeriodStart: string;
@@ -76,7 +78,9 @@ export type DbSubscriptionRow = {
   billing_provider: string;
   billing_provider_ref: string | null;
   stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
   billing_interval: string | null;
+  billing_period: string | null;
   trial_started_at: string | null;
   trial_ends_at: string | null;
   current_period_start: string;

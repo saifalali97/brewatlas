@@ -5,9 +5,11 @@ import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getCachedPublishedDbRecipes } from "@/lib/data/cached-public-data";
 import { getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
 import { getRecipeSlug } from "@/lib/data/recipes";
+import { getMembershipSummary } from "@/lib/data/membership";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { getLocale } from "@/lib/i18n/locale";
+import { getHiddenRecipeCount, isPremium } from "@/lib/membership/premium";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
 import type { RecipeListItem } from "@/types/recipe";
@@ -44,12 +46,15 @@ export default async function RecipesPage({ searchParams }: RecipesPageProps) {
     source: "static",
   }));
 
-  const [dbRecipes, favoritedRecipeIds] = await Promise.all([
+  const [dbRecipes, favoritedRecipeIds, membership] = await Promise.all([
     getCachedPublishedDbRecipes(locale),
     authData.user ? getUserFavoriteRecipeIds(supabase, authData.user.id) : Promise.resolve(new Set<string>()),
+    authData.user ? getMembershipSummary(supabase, authData.user.id) : Promise.resolve(null),
   ]);
 
   const allRecipes = [...staticRecipes, ...dbRecipes];
+  const isAuthenticated = Boolean(authData.user);
+  const hiddenRecipeCount = getHiddenRecipeCount(allRecipes.length, membership, isAuthenticated);
 
   return (
     <SectionFrame id="recipes-listing" ariaLabelledBy="recipes-listing-heading" padding="compact">
@@ -61,7 +66,9 @@ export default async function RecipesPage({ searchParams }: RecipesPageProps) {
       <RecipesExplorer
         recipes={allRecipes}
         favoritedRecipeIds={Array.from(favoritedRecipeIds)}
-        isAuthenticated={Boolean(authData.user)}
+        isAuthenticated={isAuthenticated}
+        isPremium={isPremium(membership)}
+        hiddenRecipeCount={hiddenRecipeCount}
         currentPath="/recipes"
         initialQuery={q ?? ""}
       />

@@ -359,7 +359,7 @@ export const pricingPlans: PricingPlan[] = [
     price: "$0",
     period: "forever",
     description: "Start your specialty coffee journey with community recipes and essential tools.",
-    recipeCount: "500+",
+    recipeCount: "3",
     accessLevel: "Community",
     offlineAccess: false,
     favorites: "10 saves",
@@ -376,7 +376,7 @@ export const pricingPlans: PricingPlan[] = [
   },
   {
     name: "Premium",
-    price: "$12",
+    price: "AED 35",
     period: "month",
     description: "For enthusiasts who brew daily and want the complete BrewAtlas experience.",
     recipeCount: "12,400+",

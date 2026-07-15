@@ -122,6 +122,7 @@ export async function POST(request: Request) {
         await syncSubscriptionEvent(admin, stripeSubscription);
         break;
       }
+      case "invoice.paid":
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
         if (!invoice.subscription) break;

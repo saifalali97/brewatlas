@@ -3,6 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { BillingNotConfiguredError, getBillingAdapter, isStripeBillingEnabled } from "@/lib/billing/billing-adapter";
+import {
+  createStripeCheckoutForUser,
+  createStripeCustomerPortalForUser,
+  StripeApiError,
+} from "@/lib/billing/stripe-sessions";
 import { cancelUserSubscription, getMembershipSummary, getOrCreateSubscription, refreshUserMembership } from "@/lib/data/membership";
 import { createClient } from "@/lib/supabase/server";
 import { BILLING_PROVIDERS, MEMBERSHIP_PLANS } from "@/types/membership";
@@ -91,35 +96,22 @@ export async function upgradePlan(_prevState: MembershipActionState, formData: F
 
 /** Creates a Stripe Checkout session and redirects the user to complete payment. */
 export async function createCheckoutSessionAction(formData: FormData): Promise<void> {
-  const { supabase, userId, userEmail } = await requireUser();
-  if (!userId) {
-    redirect("/login?redirectTo=/premium");
-  }
-
   const intervalRaw = readString(formData, "interval");
   const interval = isBillingInterval(intervalRaw) ? intervalRaw : "month";
   const returnPath = readString(formData, "returnPath") ?? "/premium";
 
-  const membership = await getMembershipSummary(supabase, userId);
-  if (membership.isPremium && !membership.cancelAtPeriodEnd) {
-    redirect("/account/subscription?error=already_subscribed");
-  }
-
-  const adapter = getBillingAdapter();
-
   try {
-    const result = await adapter.createCheckout({
-      userId,
-      userEmail,
-      plan: "premium",
+    const { checkoutUrl } = await createStripeCheckoutForUser({
       interval,
-      includeTrial: membership.trial.eligible,
-      successUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/account/subscription?checkout=success`,
-      cancelUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}${returnPath}?checkout=canceled`,
+      cancelPath: returnPath,
     });
-
-    redirect(result.checkoutUrl);
+    redirect(checkoutUrl);
   } catch (error) {
+    if (error instanceof StripeApiError) {
+      if (error.status === 401) redirect("/login?redirectTo=/premium");
+      if (error.status === 409) redirect("/account/subscription?error=already_subscribed");
+      if (error.status === 503) redirect(`${returnPath}?error=billing_not_configured`);
+    }
     if (error instanceof BillingNotConfiguredError) {
       redirect(`${returnPath}?error=billing_not_configured`);
     }
@@ -129,30 +121,17 @@ export async function createCheckoutSessionAction(formData: FormData): Promise<v
 
 /** Opens the Stripe Customer Billing Portal for invoice and payment management. */
 export async function createBillingPortalAction(formData: FormData): Promise<void> {
-  const { supabase, userId } = await requireUser();
-  if (!userId) {
-    redirect("/login?redirectTo=/account/subscription");
-  }
-
   void formData;
-  const subscription = await refreshUserMembership(supabase, userId);
-
-  if (!subscription.stripeCustomerId) {
-    redirect("/account/subscription?error=no_billing_account");
-  }
-
-  const adapter = getBillingAdapter();
-  if (!adapter.createBillingPortal) {
-    redirect("/account/subscription?error=billing_not_configured");
-  }
 
   try {
-    const result = await adapter.createBillingPortal({
-      userId,
-      stripeCustomerId: subscription.stripeCustomerId,
-    });
-    redirect(result.portalUrl);
+    const { portalUrl } = await createStripeCustomerPortalForUser();
+    redirect(portalUrl);
   } catch (error) {
+    if (error instanceof StripeApiError) {
+      if (error.status === 401) redirect("/login?redirectTo=/account/subscription");
+      if (error.status === 404) redirect("/account/subscription?error=no_billing_account");
+      if (error.status === 503) redirect("/account/subscription?error=billing_not_configured");
+    }
     if (error instanceof BillingNotConfiguredError) {
       redirect("/account/subscription?error=billing_not_configured");
     }

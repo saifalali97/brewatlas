@@ -3,9 +3,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient, hasAdminClient } from "@/lib/supabase/admin";
 import type { OwnerChartPoint } from "@/lib/data/owner-dashboard";
 
-export const PREMIUM_MONTHLY_USD = 12;
-export const PREMIUM_YEARLY_USD = 99;
-export const PREMIUM_YEARLY_MRR_USD = PREMIUM_YEARLY_USD / 12;
+import { PREMIUM_MONTHLY_AED, PREMIUM_YEARLY_AED, PREMIUM_YEARLY_MRR_AED } from "@/lib/billing/pricing";
+
+export const PREMIUM_MONTHLY_USD = PREMIUM_MONTHLY_AED;
+export const PREMIUM_YEARLY_USD = PREMIUM_YEARLY_AED;
+export const PREMIUM_YEARLY_MRR_USD = PREMIUM_YEARLY_MRR_AED;
 
 export type OwnerKpiStats = {
   totalUsers: number;
