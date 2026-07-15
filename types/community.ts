@@ -105,6 +105,7 @@ export const REVIEW_SORTS = ["newest", "highest", "lowest", "helpful"] as const;
 export type ReviewSort = (typeof REVIEW_SORTS)[number];
 
 export const REVIEW_PAGE_SIZE = 10;
+export const REVIEW_TEXT_MAX_LENGTH = 2000;
 
 /** `public.recipe_reviews` row, camelCased, plus the reviewing user's summary and helpful vote count. */
 export type RecipeReview = {

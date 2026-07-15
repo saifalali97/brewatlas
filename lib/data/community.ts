@@ -223,7 +223,7 @@ export async function getRecipeLikeCount(supabase: SupabaseClient, recipeId: str
 }
 
 const REVIEW_SELECT =
-  "id, recipe_id, user_id, rating, review_text, created_at, updated_at, profiles!recipe_reviews_user_id_fkey ( id, full_name, avatar_url, country ), recipe_review_helpful_votes ( user_id )";
+  "id, recipe_id, user_id, rating, review_text, moderation_status, flagged_at, flag_reason, created_at, updated_at, profiles!recipe_reviews_user_id_fkey ( id, full_name, avatar_url, country ), recipe_review_helpful_votes ( user_id )";
 
 function parseReviewSort(value: string | undefined): ReviewSort {
   if (value && (REVIEW_SORTS as readonly string[]).includes(value)) {

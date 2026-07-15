@@ -39,12 +39,13 @@ import { recipeHasXBloomProfile } from "@/lib/data/xbloom";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
-import { translate } from "@/lib/i18n/format";
+import { translate, interpolate } from "@/lib/i18n/format";
 import { getLocale } from "@/lib/i18n/locale";
 import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { buildRecipeReviewJsonLd } from "@/lib/seo/recipe-review-json-ld";
 import { RecipeReviewsPanel } from "@/app/components/reviews/recipe-reviews-panel";
+import { RecipeRatingBadge } from "@/app/components/reviews/recipe-rating-badge";
 import {
   getRecipeRatingDistribution,
   getRecipeRatingSummary,
@@ -119,7 +120,18 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<Met
     return { title: dictionary.metadata.recipeNotFoundTitle };
   }
 
-  const description = dbRecipe.seoDescription ?? dbRecipe.tastingNotes ?? dbRecipe.description ?? undefined;
+  const ratingSummary = await getRecipeRatingSummary(supabase, dbRecipe.id);
+  const dictionary = await getDictionary(locale);
+  const descriptionBase = dbRecipe.seoDescription ?? dbRecipe.tastingNotes ?? dbRecipe.description ?? undefined;
+  const countLabel =
+    ratingSummary.reviewCount === 1
+      ? interpolate(dictionary.recipeReviews.reviewCountSingular, { count: ratingSummary.reviewCount })
+      : interpolate(dictionary.recipeReviews.reviewCountPlural, { count: ratingSummary.reviewCount });
+  const ratingSuffix =
+    ratingSummary.reviewCount > 0 && ratingSummary.averageRating !== null
+      ? ` · ${ratingSummary.averageRating.toFixed(1)}/5 (${countLabel})`
+      : "";
+  const description = descriptionBase ? `${descriptionBase}${ratingSuffix}` : undefined;
   const title = dbRecipe.seoTitle ?? dbRecipe.title;
   const canonical = dbRecipe.canonicalUrl ?? `/recipes/${slug}`;
   const indexable = isRecipePubliclyVisible({ status: dbRecipe.status });
@@ -405,6 +417,11 @@ function DbRecipeView({
           >
             {recipe.title}
           </h1>
+
+          <div className="mt-4">
+            <RecipeRatingBadge summary={ratingSummary} labels={dictionary.recipeReviews} />
+          </div>
+
           <p className="mt-5 text-lg leading-[1.75] text-stone-400">{notes}</p>
 
           {recipe.difficulty && (

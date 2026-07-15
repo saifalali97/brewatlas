@@ -7,6 +7,7 @@ import { createNotification, evaluateAndAwardBadges, recordActivity, refreshComm
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { createClient } from "@/lib/supabase/server";
+import { REVIEW_TEXT_MAX_LENGTH } from "@/types/community";
 
 /**
  * Server Actions for Recipe Engagement: liking/unliking a recipe, rating +
@@ -122,6 +123,10 @@ export async function submitRecipeReviewAction(
   const reviewTextRaw = formData.get("reviewText");
   const reviewText = typeof reviewTextRaw === "string" && reviewTextRaw.trim().length > 0 ? reviewTextRaw.trim() : null;
 
+  if (reviewText && reviewText.length > REVIEW_TEXT_MAX_LENGTH) {
+    return { error: r.reviewTooLong };
+  }
+
   const { error } = await supabase
     .from("recipe_reviews")
     .upsert(
@@ -195,17 +200,33 @@ export async function markReviewHelpfulAction(formData: FormData): Promise<void>
     return;
   }
 
+  const { data: review } = await supabase
+    .from("recipe_reviews")
+    .select("user_id, recipe_id")
+    .eq("id", reviewId)
+    .maybeSingle();
+
+  if (!review || review.user_id === authData.user.id) {
+    revalidatePath(path);
+    return;
+  }
+
   const { error } = await supabase
     .from("recipe_review_helpful_votes")
     .upsert({ review_id: reviewId, user_id: authData.user.id }, { onConflict: "review_id,user_id", ignoreDuplicates: true });
 
   if (!error) {
-    const { data: review } = await supabase.from("recipe_reviews").select("user_id").eq("id", reviewId).maybeSingle();
-    const reviewAuthorId = review?.user_id as string | undefined;
-    if (reviewAuthorId) {
-      await refreshCommunityStats(supabase, reviewAuthorId);
-      await evaluateAndAwardBadges(supabase, reviewAuthorId);
-    }
+    const reviewAuthorId = review.user_id as string;
+    const recipeId = review.recipe_id as string;
+    await refreshCommunityStats(supabase, reviewAuthorId);
+    await evaluateAndAwardBadges(supabase, reviewAuthorId);
+    await createNotification(supabase, {
+      recipientId: reviewAuthorId,
+      notificationType: "review_liked",
+      actorId: authData.user.id,
+      recipeId,
+      message: "Someone found your review helpful.",
+    });
   }
 
   revalidatePath(path);
@@ -233,6 +254,52 @@ export async function unmarkReviewHelpfulAction(formData: FormData): Promise<voi
   if (reviewAuthorId) {
     await refreshCommunityStats(supabase, reviewAuthorId);
   }
+
+  revalidatePath(path);
+}
+
+/** Reports a review for owner moderation. */
+export async function flagReviewAction(formData: FormData): Promise<void> {
+  const path = readCurrentPath(formData);
+  const locale = await getLocale();
+  const dictionary = await getDictionary(locale);
+  const r = dictionary.recipeReviews;
+  const supabase = await createClient();
+  const { data: authData } = await supabase.auth.getUser();
+
+  if (!authData.user) {
+    redirect(`/login?redirectTo=${encodeURIComponent(path)}`);
+  }
+
+  const reviewId = readId(formData, "reviewId");
+  if (!reviewId) {
+    revalidatePath(path);
+    return;
+  }
+
+  const { data: review } = await supabase
+    .from("recipe_reviews")
+    .select("user_id")
+    .eq("id", reviewId)
+    .maybeSingle();
+
+  if (!review || review.user_id === authData.user.id) {
+    revalidatePath(path);
+    return;
+  }
+
+  const reasonRaw = formData.get("flagReason");
+  const flagReason =
+    typeof reasonRaw === "string" && reasonRaw.trim().length > 0 ? reasonRaw.trim().slice(0, 500) : r.reportDefaultReason;
+
+  await supabase
+    .from("recipe_reviews")
+    .update({
+      moderation_status: "flagged",
+      flagged_at: new Date().toISOString(),
+      flag_reason: flagReason,
+    })
+    .eq("id", reviewId);
 
   revalidatePath(path);
 }

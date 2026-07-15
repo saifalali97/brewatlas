@@ -590,6 +590,10 @@ export type Dictionary = {
     invalidRating: string;
     submitFailed: string;
     reviewSubmitted: string;
+    reviewTooLong: string;
+    reportReview: string;
+    reportDefaultReason: string;
+    heroRatingLink: string;
   };
   settings: {
     title: string;
@@ -843,6 +847,40 @@ export type Dictionary = {
     unsavedChangesWarning: string;
     cancelCta: string;
     versionCountTemplate: string;
+  };
+  ownerReviewsPage: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    searchLabel: string;
+    searchPlaceholder: string;
+    filterStatus: string;
+    filterAll: string;
+    applyFilters: string;
+    statusVisible: string;
+    statusHidden: string;
+    statusFlagged: string;
+    columnReviewer: string;
+    columnRecipe: string;
+    columnRating: string;
+    columnReview: string;
+    columnStatus: string;
+    columnDate: string;
+    columnActions: string;
+    anonymousReviewer: string;
+    ratingOnlyReview: string;
+    helpfulCountTemplate: string;
+    flagReasonTemplate: string;
+    hideAction: string;
+    restoreAction: string;
+    deleteAction: string;
+    deleteConfirm: string;
+    deleteFailed: string;
+    noReviewsTitle: string;
+    noReviewsDescription: string;
+    previousPage: string;
+    nextPage: string;
+    pageTemplate: string;
   };
   ownerMediaPage: {
     eyebrow: string;
@@ -1656,6 +1694,8 @@ export type Dictionary = {
     ownerNotificationsDescription: string;
     ownerRecipesTitle: string;
     ownerRecipesDescription: string;
+    ownerReviewsTitle: string;
+    ownerReviewsDescription: string;
     ownerNewRecipeTitle: string;
     ownerNewRecipeDescription: string;
     ownerEditRecipeTitle: string;
