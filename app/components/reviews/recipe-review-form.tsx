@@ -70,6 +70,7 @@ export function RecipeReviewForm({
             onChange={(event) => setReviewText(event.target.value)}
             placeholder={t("recipeReviews.reviewTextPlaceholder")}
             className={`${forms.input} min-h-[6rem] resize-y`}
+            maxLength={2000}
             disabled={pending}
           />
         </div>

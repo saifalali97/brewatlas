@@ -3,7 +3,7 @@
 import { ThumbsUp } from "lucide-react";
 import { StarRatingDisplay } from "@/app/components/reviews/star-rating";
 import { useTranslations } from "@/lib/i18n/translation-context";
-import { markReviewHelpfulAction, unmarkReviewHelpfulAction } from "@/lib/supabase/recipe-engagement-actions";
+import { markReviewHelpfulAction, unmarkReviewHelpfulAction, flagReviewAction } from "@/lib/supabase/recipe-engagement-actions";
 import type { RecipeReview } from "@/types/community";
 
 type RecipeReviewItemProps = {
@@ -53,23 +53,38 @@ export function RecipeReviewItem({ review, currentPath, viewerId }: RecipeReview
       )}
 
       {!isOwnReview && viewerId && (
-        <form action={helpfulAction} className="mt-4">
-          <input type="hidden" name="reviewId" value={review.id} />
-          <input type="hidden" name="currentPath" value={currentPath} />
-          <button
-            type="submit"
-            aria-pressed={Boolean(review.isHelpfulByViewer)}
-            className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-              review.isHelpfulByViewer
-                ? "border-amber-600/40 bg-amber-950/40 text-amber-200"
-                : "border-white/[0.1] bg-white/[0.03] text-stone-400 hover:border-amber-600/25 hover:text-stone-200"
-            }`}
-          >
-            <ThumbsUp className="h-3.5 w-3.5" aria-hidden />
-            {review.isHelpfulByViewer ? t("recipeReviews.helpfulMarked") : t("recipeReviews.markHelpful")}
-            <span className="text-stone-500">({review.helpfulCount})</span>
-          </button>
-        </form>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <form action={helpfulAction}>
+            <input type="hidden" name="reviewId" value={review.id} />
+            <input type="hidden" name="currentPath" value={currentPath} />
+            <button
+              type="submit"
+              aria-pressed={Boolean(review.isHelpfulByViewer)}
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                review.isHelpfulByViewer
+                  ? "border-amber-600/40 bg-amber-950/40 text-amber-200"
+                  : "border-white/[0.1] bg-white/[0.03] text-stone-400 hover:border-amber-600/25 hover:text-stone-200"
+              }`}
+            >
+              <ThumbsUp className="h-3.5 w-3.5" aria-hidden />
+              {review.isHelpfulByViewer ? t("recipeReviews.helpfulMarked") : t("recipeReviews.markHelpful")}
+              <span className="text-stone-500">({review.helpfulCount})</span>
+            </button>
+          </form>
+
+          {review.moderationStatus === "visible" && (
+            <form action={flagReviewAction}>
+              <input type="hidden" name="reviewId" value={review.id} />
+              <input type="hidden" name="currentPath" value={currentPath} />
+              <button
+                type="submit"
+                className="text-xs font-medium text-stone-500 underline-offset-4 transition-colors hover:text-amber-400/90 hover:underline"
+              >
+                {t("recipeReviews.reportReview")}
+              </button>
+            </form>
+          )}
+        </div>
       )}
 
       {isOwnReview && review.helpfulCount > 0 && (
