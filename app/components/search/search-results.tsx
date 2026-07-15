@@ -19,12 +19,22 @@ type SearchResultsViewProps = {
   showAllSections: boolean;
 };
 
-function SectionHeading({ title, count, href }: { title: string; count: number; href?: string }) {
+function SectionHeading({
+  id,
+  title,
+  count,
+  href,
+}: {
+  id: string;
+  title: string;
+  count: number;
+  href?: string;
+}) {
   const { t } = useTranslations();
 
   return (
     <div className="mb-5 flex items-end justify-between gap-4">
-      <h2 className="text-lg font-semibold tracking-tight text-stone-50">
+      <h2 id={id} className="text-lg font-semibold tracking-tight text-stone-50">
         {title}
         <span className="ms-2 text-sm font-normal text-stone-500">({count})</span>
       </h2>
@@ -71,6 +81,7 @@ export function SearchResultsView({
       {(showAllSections || results.recipes.length > 0) && results.recipes.length > 0 && (
         <section aria-labelledby="search-recipes-heading">
           <SectionHeading
+            id="search-recipes-heading"
             title={t("searchPage.sectionRecipes")}
             count={results.totalRecipes}
             href={showAllSections ? "/search?cat=recipes" : undefined}
@@ -115,6 +126,7 @@ export function SearchResultsView({
       {(showAllSections || results.roasters.length > 0) && results.roasters.length > 0 && (
         <section aria-labelledby="search-roasters-heading">
           <SectionHeading
+            id="search-roasters-heading"
             title={t("searchPage.sectionRoasters")}
             count={results.roasters.length}
             href={showAllSections ? "/search?cat=roasters" : undefined}
@@ -143,6 +155,7 @@ export function SearchResultsView({
       {(showAllSections || results.origins.length > 0) && results.origins.length > 0 && (
         <section aria-labelledby="search-origins-heading">
           <SectionHeading
+            id="search-origins-heading"
             title={t("searchPage.sectionOrigins")}
             count={results.origins.length}
             href={showAllSections ? "/search?cat=origins" : undefined}
@@ -171,6 +184,7 @@ export function SearchResultsView({
       {(showAllSections || results.devices.length > 0) && results.devices.length > 0 && (
         <section aria-labelledby="search-devices-heading">
           <SectionHeading
+            id="search-devices-heading"
             title={t("searchPage.sectionDevices")}
             count={results.devices.length}
             href={showAllSections ? "/search?cat=devices" : undefined}
@@ -199,6 +213,7 @@ export function SearchResultsView({
       {(showAllSections || results.varieties.length > 0) && results.varieties.length > 0 && (
         <section aria-labelledby="search-varieties-heading">
           <SectionHeading
+            id="search-varieties-heading"
             title={t("searchPage.sectionVarieties")}
             count={results.varieties.length}
             href={showAllSections ? "/search?cat=varieties" : undefined}
@@ -240,6 +255,7 @@ export function SearchResultsView({
       {(showAllSections || results.flavors.length > 0) && results.flavors.length > 0 && (
         <section aria-labelledby="search-flavors-heading">
           <SectionHeading
+            id="search-flavors-heading"
             title={t("searchPage.sectionFlavors")}
             count={results.flavors.length}
             href={showAllSections ? "/search?cat=flavors" : undefined}

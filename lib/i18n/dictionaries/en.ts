@@ -1019,6 +1019,8 @@ const en: Dictionary = {
     usageListTitle: "Used in",
     uploadFolderLabel: "Folder",
     dropzoneTitle: "Drag & drop images here",
+    viewGridAria: "Grid view",
+    viewListAria: "List view",
     dropzoneHint: "JPG, PNG, WEBP, or AVIF — automatically optimized on upload.",
     browseFilesCta: "Browse files",
     uploadFailed: "Upload failed. Try again.",
@@ -1791,6 +1793,9 @@ const en: Dictionary = {
     flavorMuddy: "Muddy",
   },
   metadata: {
+    homeTitle: "BrewAtlas — Specialty Coffee Recipes",
+    homeDescription:
+      "The world's largest specialty coffee recipe platform. Explore curated recipes, coffee origins, brew methods, top roasters, and premium barista tools.",
     methodsTitle: "Brewing Methods",
     methodsDescription:
       "Explore every specialty coffee brewing method BrewAtlas covers, from pour over to siphon, with brew times, cup profiles, and roast pairings.",

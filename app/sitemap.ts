@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getCultureTopicSitemapEntries } from "@/lib/data/culture-sitemap";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { getPublishedRecipeSlugs } from "@/lib/data/recipe-publishing";
 import { buildHreflangAlternates } from "@/lib/seo/localized-metadata";
@@ -40,7 +41,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl();
   const lastModified = new Date();
   const supabase = await createClient();
-  const dbPublished = await getPublishedRecipeSlugs(supabase);
+  const [dbPublished, cultureTopics] = await Promise.all([
+    getPublishedRecipeSlugs(supabase),
+    getCultureTopicSitemapEntries(supabase),
+  ]);
 
   const staticEntries = publicPages.map(({ path, changeFrequency, priority }) => ({
     url: path === "/" ? baseUrl : `${baseUrl}${path}`,
@@ -71,5 +75,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticEntries, ...recipeEntries];
+  const cultureEntries = cultureTopics.map(({ sectionSlug, topicSlug, lastModified }) => {
+    const path = `/culture/${sectionSlug}/${topicSlug}`;
+    return {
+      url: `${baseUrl}${path}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.55,
+      alternates: { languages: buildHreflangAlternates(path) },
+    };
+  });
+
+  return [...staticEntries, ...recipeEntries, ...cultureEntries];
 }

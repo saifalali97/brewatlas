@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
+import { EmptyState } from "@/app/components/ui/empty-state";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import type { RecipeListItem } from "@/types/recipe";
@@ -152,7 +153,13 @@ export function RecipesExplorer({
       </div>
 
       {filteredRecipes.length === 0 && (
-        <p className="py-16 text-center text-sm text-stone-500">{t("emptyStates.noRecipesMatchSearch")}</p>
+        <EmptyState
+          icon={<Search className="h-6 w-6" aria-hidden />}
+          title={t("emptyStates.noRecipesMatchSearch")}
+          description={t("emptyStates.noResultsHint")}
+          actionLabel={t("emptyStates.startExploring")}
+          actionHref="/recipes"
+        />
       )}
     </div>
   );

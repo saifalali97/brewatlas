@@ -57,21 +57,22 @@ export const cards = {
 } as const;
 
 export const buttons = {
+  focusRing: "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/70",
   primary:
-    "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-stone-50 px-8 text-sm font-medium text-stone-900 transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-stone-200 hover:shadow-[0_14px_44px_rgba(255,255,255,0.16)] active:scale-[0.97]",
+    "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full bg-stone-50 px-8 text-sm font-medium text-stone-900 transition-all duration-300 ease-out hover:scale-[1.04] hover:bg-stone-200 hover:shadow-[0_14px_44px_rgba(255,255,255,0.16)] active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/70",
   secondary:
-    "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-stone-600/45 bg-white/[0.04] px-8 text-sm font-medium text-stone-100 backdrop-blur-sm transition-all duration-300 ease-out hover:scale-[1.04] hover:border-amber-600/40 hover:bg-white/[0.08] hover:shadow-[0_0_40px_rgba(217,119,6,0.16)] active:scale-[0.97]",
+    "inline-flex h-12 min-w-[180px] items-center justify-center rounded-full border border-stone-600/45 bg-white/[0.04] px-8 text-sm font-medium text-stone-100 backdrop-blur-sm transition-all duration-300 ease-out hover:scale-[1.04] hover:border-amber-600/40 hover:bg-white/[0.08] hover:shadow-[0_0_40px_rgba(217,119,6,0.16)] active:scale-[0.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500/70",
   ghostCta:
     "group/btn inline-flex h-10 w-full items-center justify-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.06] px-5 text-sm font-medium text-stone-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-amber-500/45 hover:bg-white/[0.1] hover:shadow-[0_0_36px_rgba(217,119,6,0.22),0_10px_28px_-10px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.14)] active:scale-[0.98] motion-reduce:hover:translate-y-0",
   ghostCtaAutoWidth: " sm:w-auto",
   ghostArrow:
-    "h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5 motion-reduce:transform-none",
+    "h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/btn:-translate-x-0.5 motion-reduce:transform-none",
 } as const;
 
 export const forms = {
   label: "text-sm font-medium text-stone-300",
   input:
-    "mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45",
+    "mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45 focus-visible:ring-2 focus-visible:ring-amber-500/35",
   select:
     "mt-2 w-full appearance-none rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 focus:border-amber-500/45",
   readOnlyField:

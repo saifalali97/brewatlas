@@ -50,12 +50,14 @@ export async function generateMetadata({
   const filters = parseSearchParams(params);
 
   const title = buildSearchTitle(dictionary, filters);
+  const hasActiveQuery = Boolean(filters.q?.trim()) || countActiveFilters(filters) > 0;
 
   return buildLocalizedMetadata({
     pathname: "/search",
     locale,
     title,
     description: dictionary.metadata.searchDescription,
+    noIndex: hasActiveQuery,
   });
 }
 
