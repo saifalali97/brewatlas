@@ -60,6 +60,20 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  if (isAccountPath(pathname) && user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("suspended_at")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile?.suspended_at) {
+      const redirectUrl = new URL("/login", request.url);
+      redirectUrl.searchParams.set("error", encodeURIComponent("Your account has been suspended."));
+      return NextResponse.redirect(redirectUrl);
+    }
+  }
+
   if (isAccountPath(pathname) && !user) {
     const redirectUrl = new URL("/login", request.url);
     redirectUrl.searchParams.set("redirectTo", pathname);

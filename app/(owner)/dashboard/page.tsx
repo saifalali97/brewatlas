@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   Coffee,
+  Eye,
   FolderOpen,
   Globe2,
   Star,
@@ -10,6 +11,7 @@ import {
 import { OwnerActivityFeed } from "@/app/components/owner/activity-feed";
 import { OwnerChartPlaceholder } from "@/app/components/owner/chart-placeholder";
 import { OwnerStatCard } from "@/app/components/owner/stat-card";
+import { getOwnerAnalyticsOverview } from "@/lib/data/owner-analytics";
 import { getOwnerDashboardOverview } from "@/lib/data/owner-dashboard";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -41,8 +43,12 @@ export default async function OwnerDashboardHomePage() {
   const dictionary = await getDictionary(locale);
   const labels = dictionary.ownerDashboardPage;
   const { supabase } = await requireOwner();
-  const overview = await getOwnerDashboardOverview(supabase);
+  const [overview, analytics] = await Promise.all([
+    getOwnerDashboardOverview(supabase),
+    getOwnerAnalyticsOverview(supabase),
+  ]);
   const { stats } = overview;
+  const { kpis } = analytics;
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -53,12 +59,12 @@ export default async function OwnerDashboardHomePage() {
       </div>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <OwnerStatCard label={labels.totalUsers} value={stats.totalUsers} icon={Users} accent="sky" />
-        <OwnerStatCard label={labels.premiumUsers} value={stats.premiumUsers} icon={Wallet} accent="emerald" />
+        <OwnerStatCard label={labels.totalUsers} value={kpis.totalUsers} icon={Users} accent="sky" />
+        <OwnerStatCard label={labels.premiumUsers} value={kpis.premiumSubscribers} icon={Wallet} accent="emerald" />
         <OwnerStatCard label={labels.recipes} value={stats.recipes} icon={Coffee} />
         <OwnerStatCard
           label={labels.monthlyRevenue}
-          value={formatCurrency(stats.monthlyRevenueUsd, locale)}
+          value={formatCurrency(kpis.monthlyRecurringRevenueUsd, locale)}
           hint={labels.monthlyRevenueHint}
           icon={Wallet}
           accent="violet"
@@ -66,10 +72,17 @@ export default async function OwnerDashboardHomePage() {
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <OwnerStatCard label={labels.brewers} value={stats.brewers} icon={Users} accent="sky" />
-        <OwnerStatCard label={labels.coffeeOrigins} value={stats.coffeeOrigins} icon={Globe2} />
+        <OwnerStatCard label={labels.activeUsers30d} value={kpis.activeUsers30d} icon={Users} accent="sky" />
+        <OwnerStatCard label={labels.recipeViews} value={kpis.recipeViews} icon={Eye} />
         <OwnerStatCard label={labels.reviews} value={stats.reviews} icon={Star} accent="emerald" />
         <OwnerStatCard label={labels.collections} value={stats.collections} icon={FolderOpen} accent="violet" />
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <OwnerStatCard label={labels.brewers} value={stats.brewers} icon={Users} accent="sky" />
+        <OwnerStatCard label={labels.coffeeOrigins} value={stats.coffeeOrigins} icon={Globe2} />
+        <OwnerStatCard label={labels.recipeSaves} value={kpis.recipeSaves} icon={FolderOpen} />
+        <OwnerStatCard label={labels.flaggedReviews} value={kpis.flaggedReviews} icon={Star} accent="violet" />
       </div>
 
       <div className="mt-8 grid gap-6 xl:grid-cols-3">
@@ -77,18 +90,18 @@ export default async function OwnerDashboardHomePage() {
           <OwnerChartPlaceholder
             title={labels.userGrowthChartTitle}
             description={labels.userGrowthChartDescription}
-            points={overview.userGrowth}
+            points={analytics.userGrowth}
           />
           <OwnerChartPlaceholder
             title={labels.recipeGrowthChartTitle}
             description={labels.recipeGrowthChartDescription}
-            points={overview.recipeGrowth}
+            points={analytics.subscriptionGrowth}
           />
         </div>
         <OwnerChartPlaceholder
           title={labels.revenueChartTitle}
           description={labels.revenueChartDescription}
-          points={overview.revenueTrend}
+          points={analytics.revenueTrend}
           valuePrefix="$"
         />
       </div>
