@@ -17,23 +17,19 @@ type DiscoverSectionProps = {
   copy: Dictionary["homeDiscover"];
 };
 
-/** Editorial Discover section — six immersive world portals. */
+/** Explore Coffee — immersive editorial portals in a bento rhythm. */
 export function DiscoverSection({ copy }: DiscoverSectionProps) {
   const { worlds } = copy;
   const enter = copy.enterLabel;
 
   return (
-    <SectionFrame
-      id="discover"
-      ariaLabelledBy="discover-heading"
-      padding="compact"
-      className="border-t border-white/[0.04]"
-    >
+    <SectionFrame id="discover" ariaLabelledBy="discover-heading" theme="sand" padding="compact" wide>
       <SectionIntro
         headingId="discover-heading"
         eyebrow={copy.eyebrow}
         title={copy.title}
         description={copy.description}
+        centered
       />
 
       <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">

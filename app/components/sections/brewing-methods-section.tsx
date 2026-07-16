@@ -19,11 +19,7 @@ export function BrewingMethodsSection({
   cardLabels,
 }: BrewingMethodsSectionProps) {
   return (
-    <SectionFrame
-      id="methods"
-      ariaLabelledBy="methods-heading"
-      className="border-y border-white/[0.04] bg-white/[0.015]"
-    >
+    <SectionFrame id="methods" ariaLabelledBy="methods-heading" theme="pearl" padding="compact">
       <SectionIntro
         headingId="methods-heading"
         eyebrow={eyebrow}

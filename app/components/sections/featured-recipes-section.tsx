@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
-import { dsFocus, dsMotion } from "@/lib/constants/styles";
+import { dsFocus, dsMotion, filterChips } from "@/lib/constants/styles";
 import { EmptyState } from "@/app/components/ui/empty-state";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
@@ -12,10 +13,12 @@ import { useTranslations } from "@/lib/i18n/translation-context";
 import type { FeaturedRecipe } from "@/types/homepage";
 
 const filters = ["All", "V60", "Espresso", "Chemex", "Aeropress", "Cold Brew"] as const;
-
 type Filter = (typeof filters)[number];
 
-const filterLabelKeys: Record<Filter, "homeFilters.all" | "homeFilters.v60" | "homeFilters.espresso" | "homeFilters.chemex" | "homeFilters.aeropress" | "homeFilters.coldBrew"> = {
+const filterLabelKeys: Record<
+  Filter,
+  "homeFilters.all" | "homeFilters.v60" | "homeFilters.espresso" | "homeFilters.chemex" | "homeFilters.aeropress" | "homeFilters.coldBrew"
+> = {
   All: "homeFilters.all",
   V60: "homeFilters.v60",
   Espresso: "homeFilters.espresso",
@@ -24,33 +27,63 @@ const filterLabelKeys: Record<Filter, "homeFilters.all" | "homeFilters.v60" | "h
   "Cold Brew": "homeFilters.coldBrew",
 };
 
+type FeaturedRecipeItem = {
+  recipe: FeaturedRecipe;
+  slug: string;
+};
+
 type FeaturedRecipesSectionProps = {
-  recipes: FeaturedRecipe[];
+  items: FeaturedRecipeItem[];
   btnSecondary: string;
 };
 
-export function FeaturedRecipesSection({
-  recipes,
-  btnSecondary,
-}: FeaturedRecipesSectionProps) {
+/** Horizontal premium recipe rail — editorial, not a generic grid. */
+export function FeaturedRecipesSection({ items, btnSecondary }: FeaturedRecipesSectionProps) {
   const { t } = useTranslations();
   const [activeFilter, setActiveFilter] = useState<Filter>("All");
 
-  const filteredRecipes =
+  const filteredItems =
     activeFilter === "All"
-      ? recipes
-      : recipes.filter((recipe) => recipe.brewMethod === activeFilter);
+      ? items
+      : items.filter(({ recipe }) => recipe.brewMethod === activeFilter);
+
+  const scrollRail = (direction: "left" | "right") => {
+    const rail = document.getElementById("featured-recipes-rail");
+    if (!rail) return;
+    const amount = direction === "left" ? -360 : 360;
+    rail.scrollBy({ left: amount, behavior: "smooth" });
+  };
 
   return (
-    <SectionFrame id="recipes" ariaLabelledBy="recipes-heading">
-      <SectionIntro
-        headingId="recipes-heading"
-        eyebrow={t("homeFeaturedRecipes.eyebrow")}
-        title={t("homeFeaturedRecipes.title")}
-        description={t("homeFeaturedRecipes.description")}
-      />
+    <SectionFrame id="recipes" ariaLabelledBy="recipes-heading" theme="light" padding="compact">
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <SectionIntro
+          headingId="recipes-heading"
+          eyebrow={t("homeFeaturedRecipes.eyebrow")}
+          title={t("homeFeaturedRecipes.title")}
+          description={t("homeFeaturedRecipes.description")}
+        />
+        <div className="hidden gap-2 lg:flex">
+          <button
+            type="button"
+            onClick={() => scrollRail("left")}
+            aria-label="Scroll recipes left"
+            className={`flex h-11 w-11 items-center justify-center rounded-full border border-ba-espresso/10 bg-ba-pearl ${dsMotion.transition} hover:border-ba-bronze/30 ${dsFocus.ring}`}
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollRail("right")}
+            aria-label="Scroll recipes right"
+            className={`flex h-11 w-11 items-center justify-center rounded-full border border-ba-espresso/10 bg-ba-pearl ${dsMotion.transition} hover:border-ba-bronze/30 ${dsFocus.ring}`}
+          >
+            <ChevronRight className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+      </div>
 
-      <div className="mb-10 flex flex-wrap gap-2.5 md:mb-12">
+      <div className="mb-8 flex flex-wrap gap-2.5">
         {filters.map((filter) => {
           const isActive = activeFilter === filter;
           const filterLabel = t(filterLabelKeys[filter]);
@@ -61,11 +94,7 @@ export function FeaturedRecipesSection({
               aria-label={t("homeFilters.filterByAria", { filter: filterLabel })}
               aria-pressed={isActive}
               onClick={() => setActiveFilter(filter)}
-              className={`rounded-full border px-4 py-2.5 text-sm font-medium backdrop-blur-xl ${dsMotion.transition} hover:-translate-y-0.5 active:scale-[0.98] ${dsFocus.ring} ${
-                isActive
-                  ? "border-uae-warm-gold/40 bg-uae-warm-gold/10 text-uae-pearl shadow-[0_0_32px_rgba(192,138,46,0.12)]"
-                  : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-uae-warm-gold/25 hover:bg-white/[0.06] hover:text-stone-200"
-              }`}
+              className={`${filterChips.base} ${isActive ? filterChips.active : filterChips.inactive}`}
             >
               {filterLabel}
             </button>
@@ -73,37 +102,42 @@ export function FeaturedRecipesSection({
         })}
       </div>
 
-      <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
-        {filteredRecipes.map((recipe) => {
-          const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
-          return (
-            <RecipeCard
-              key={recipe.name}
-              recipe={recipe}
-              featured={Boolean(recipe.featured) && activeFilter === "All"}
-              labels={{
-                premium: t("common.premiumBadge"),
-                editorsChoice: t("homeFeaturedRecipes.editorsChoice"),
-                ratio: t("homeFeaturedRecipes.ratioLabel"),
-                time: t("homeFeaturedRecipes.timeLabel"),
-                difficultyLabel: t(difficultyLabelKey(recipe.difficulty)),
-                brewMethodLabel: brewMethodKey ? t(brewMethodKey) : recipe.brewMethod,
-                imageAltTemplate: t("homeFeaturedRecipes.imageAltTemplate"),
-              }}
-            />
-          );
-        })}
-      </div>
-
-      {filteredRecipes.length === 0 && (
-        <EmptyState title={t("homeFeaturedRecipes.noResults")} actionLabel={t("emptyStates.startExploring")} actionHref="/recipes" />
+      {filteredItems.length === 0 ? (
+        <EmptyState title={t("homeFeaturedRecipes.noResults")} />
+      ) : (
+        <div
+          id="featured-recipes-rail"
+          className="scrollbar-hide -mx-6 flex snap-x snap-mandatory gap-6 overflow-x-auto px-6 pb-4 sm:-mx-8 sm:px-8 lg:-mx-12 lg:gap-8 lg:px-12"
+        >
+          {filteredItems.map(({ recipe, slug }, index) => {
+            const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
+            return (
+              <div
+                key={slug}
+                className="w-[85vw] shrink-0 snap-start sm:w-[22rem] lg:w-[26rem]"
+              >
+                <RecipeCard
+                  recipe={recipe}
+                  featured={index === 0 && activeFilter === "All"}
+                  href={`/recipes/${slug}`}
+                  labels={{
+                    premium: t("common.premiumBadge"),
+                    editorsChoice: t("homeFeaturedRecipes.editorsChoice"),
+                    ratio: t("homeFeaturedRecipes.ratioLabel"),
+                    time: t("homeFeaturedRecipes.timeLabel"),
+                    difficultyLabel: t(difficultyLabelKey(recipe.difficulty)),
+                    brewMethodLabel: brewMethodKey ? t(brewMethodKey) : recipe.brewMethod,
+                    imageAltTemplate: t("homeFeaturedRecipes.imageAltTemplate"),
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
       )}
 
-      <div className="mt-16 flex justify-center md:mt-20">
-        <RippleLink
-          href="/recipes"
-          className={`${btnSecondary} min-w-[240px] border-amber-600/30 bg-white/[0.05] px-10 backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:border-amber-500/45 hover:bg-white/[0.08] hover:shadow-[0_0_48px_rgba(217,119,6,0.18),0_16px_40px_-16px_rgba(0,0,0,0.4)] motion-reduce:hover:translate-y-0`}
-        >
+      <div className="mt-12 text-center">
+        <RippleLink href="/recipes" className={btnSecondary}>
           {t("homeFeaturedRecipes.viewAll")}
         </RippleLink>
       </div>
