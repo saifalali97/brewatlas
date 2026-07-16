@@ -35,7 +35,7 @@ function HeroVisual({ image, alt }: { image: string; alt: string }) {
   const src = useFallback ? HERO_FALLBACK_IMAGE : image || HERO_FALLBACK_IMAGE;
 
   return (
-    <div className="relative mx-auto aspect-[4/5] w-full max-w-lg overflow-hidden rounded-[1.75rem] border border-white/[0.08] shadow-[0_32px_80px_-32px_rgba(0,0,0,0.65)] lg:max-w-none lg:justify-self-end">
+    <div className="relative mx-auto aspect-[4/5] w-full max-w-lg overflow-hidden rounded-[1.75rem] border border-white/[0.1] shadow-[0_40px_100px_-40px_rgba(0,0,0,0.75)] ring-1 ring-white/[0.06] lg:max-w-none lg:justify-self-end">
       <Image
         src={src}
         alt={alt}
@@ -100,7 +100,7 @@ export function HeroSection({ heroImage }: HeroSectionProps) {
 
           <h1
             id="hero-heading"
-            className="mt-5 text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.04em] text-uae-pearl sm:text-6xl lg:text-[4.25rem]"
+            className="font-display mt-5 text-[2.75rem] leading-[1.02] tracking-[-0.03em] text-uae-pearl sm:text-6xl lg:text-[4.25rem]"
           >
             {t("homeHero.headline")}
           </h1>

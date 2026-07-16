@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { RecipeCard } from "@/app/components/cards/recipe-card";
+import { dsFocus, dsMotion } from "@/lib/constants/styles";
 import { EmptyState } from "@/app/components/ui/empty-state";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
@@ -60,10 +61,10 @@ export function FeaturedRecipesSection({
               aria-label={t("homeFilters.filterByAria", { filter: filterLabel })}
               aria-pressed={isActive}
               onClick={() => setActiveFilter(filter)}
-              className={`rounded-full border px-4 py-2.5 text-sm font-medium backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.98] ${
+              className={`rounded-full border px-4 py-2.5 text-sm font-medium backdrop-blur-xl ${dsMotion.transition} hover:-translate-y-0.5 active:scale-[0.98] ${dsFocus.ring} ${
                 isActive
-                  ? "border-amber-600/45 bg-amber-950/50 text-amber-100 shadow-[0_0_32px_rgba(217,119,6,0.14)]"
-                  : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-amber-600/25 hover:bg-white/[0.06] hover:text-stone-200 hover:shadow-[0_0_24px_rgba(217,119,6,0.08)]"
+                  ? "border-uae-warm-gold/40 bg-uae-warm-gold/10 text-uae-pearl shadow-[0_0_32px_rgba(192,138,46,0.12)]"
+                  : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-uae-warm-gold/25 hover:bg-white/[0.06] hover:text-stone-200"
               }`}
             >
               {filterLabel}

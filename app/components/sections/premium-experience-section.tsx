@@ -68,7 +68,7 @@ export function PremiumExperienceSection({ copy, testimonials }: PremiumExperien
         </p>
         <h2
           id="premium-experience-heading"
-          className="mt-5 max-w-2xl text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-uae-pearl sm:text-4xl"
+          className="font-display mt-5 max-w-2xl text-3xl leading-[1.08] tracking-[-0.03em] text-uae-pearl sm:text-4xl"
         >
           {copy.title}
         </h2>
