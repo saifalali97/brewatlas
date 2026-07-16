@@ -495,7 +495,7 @@ export function SiteNav({
                 console.log("previous state =", prev);
                 return !prev;
               });
-            }}            }}
+            }}            
             style={{
               position: "relative",
               zIndex: 999999,
