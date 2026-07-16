@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { buttons, surfaces } from "@/lib/constants/styles";
+import { buttons, dsTypography, surfaces } from "@/lib/constants/styles";
 
 type EmptyStateProps = {
   title: string;
@@ -23,12 +23,14 @@ export function EmptyState({
   return (
     <div className={`${surfaces.emptyState} ${className}`.trim()}>
       {icon ? (
-        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-uae-warm-gold/20 bg-uae-warm-gold/8 text-uae-warm-gold">
+        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-ba-gold/25 bg-ba-gold/10 text-ba-bronze">
           {icon}
         </div>
       ) : null}
-      <h2 className="font-display text-lg text-uae-pearl">{title}</h2>
-      {description ? <p className="mx-auto mt-2 max-w-md text-sm text-stone-500">{description}</p> : null}
+      <h2 className={`font-display text-lg text-ba-espresso`}>{title}</h2>
+      {description ? (
+        <p className={`mx-auto mt-2 max-w-md text-sm ${dsTypography.caption}`}>{description}</p>
+      ) : null}
       {actionLabel && actionHref ? (
         <Link href={actionHref} className={`${buttons.secondary} mt-6 inline-flex h-10 min-w-0 px-5 text-xs`}>
           {actionLabel}

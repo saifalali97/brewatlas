@@ -93,7 +93,7 @@ export function RecipesExplorer({
         </label>
         <div className="relative max-w-md">
           <Search
-            className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-500"
+            className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ba-coffee/55"
             aria-hidden
           />
           <input
@@ -162,19 +162,19 @@ export function RecipesExplorer({
       </div>
 
       {!isAuthenticated && !isPremium && guestLimitBannerCount > 0 && (
-        <div className="relative mt-12 overflow-hidden rounded-[1.5rem] border border-uae-warm-gold/25 bg-gradient-to-b from-uae-warm-gold-deep/35 via-[#0a0705]/90 to-[#0a0705] p-8 text-center shadow-[0_24px_64px_-24px_rgba(192,138,46,0.35)] sm:p-10">
+        <div className="relative mt-12 overflow-hidden rounded-[1.25rem] border border-ba-gold/25 bg-ba-pearl p-8 text-center shadow-[0_24px_64px_-24px_rgba(184,149,107,0.15)] sm:p-10">
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-uae-warm-gold/10 blur-3xl"
+            className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-ba-gold/10 blur-3xl"
           />
           <div className="relative mx-auto max-w-lg">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-uae-warm-gold/30 bg-uae-warm-gold/10 text-uae-warm-gold/90">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-ba-gold/30 bg-ba-gold/10 text-ba-bronze">
               <Lock className="h-5 w-5" aria-hidden />
             </div>
-            <h2 className="font-display mt-5 text-xl tracking-[-0.02em] text-stone-50 sm:text-2xl">
+            <h2 className="font-display mt-5 text-xl tracking-[-0.02em] text-ba-espresso sm:text-2xl">
               {t("recipesPage.guestLimitTitle")}
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-stone-400 sm:text-base">
+            <p className="mt-3 text-sm leading-relaxed text-ba-coffee/70 sm:text-base">
               {t("recipesPage.guestLimitDescription", { count: String(guestLimitBannerCount) })}
             </p>
             <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">

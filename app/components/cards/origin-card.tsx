@@ -15,7 +15,6 @@ export type OriginCardLabels = {
   roast: string;
   brewMethod: string;
   exploreOrigin: string;
-  /** Translated `{country} {region} {process}` image alt template. */
   imageAltTemplate: string;
 };
 
@@ -32,7 +31,6 @@ const defaultOriginCardLabels: OriginCardLabels = {
 type OriginCardProps = {
   origin: CoffeeOrigin;
   ctaHref?: string;
-  /** Translated copy for this card's chrome. Defaults to English so existing callers (e.g. `/origins`) are unaffected. */
   labels?: Partial<OriginCardLabels>;
 };
 
@@ -53,34 +51,30 @@ export function OriginCard({ origin, ctaHref = "#origins", labels }: OriginCardP
           })}
           sizes={IMAGE_SIZE_PRESETS.card}
           loading="lazy"
-          className="object-cover brightness-[0.9] contrast-[1.04] saturate-[0.94] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
+          className="object-cover brightness-[0.94] contrast-[1.02] saturate-[0.96] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
         />
         <div className={cards.imageOverlay} />
         <div className={cards.imageAmberWash} />
         <div className={cards.imageRadial} />
 
         {origin.premium && (
-          <div className={`absolute end-4 top-4 ${badges.premiumCompact}`}>
-            {l.premium}
-          </div>
+          <div className={`absolute end-4 top-4 ${badges.premiumCompact}`}>{l.premium}</div>
         )}
 
-        <div className="absolute bottom-4 start-4 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
-          <MapPin className="h-3 w-3 text-uae-warm-gold/80" aria-hidden />
+        <div className="absolute bottom-4 start-4 flex items-center gap-1.5 rounded-full border border-white/[0.15] bg-ba-espresso/55 px-3 py-1 text-[10px] font-medium text-ba-pearl backdrop-blur-xl">
+          <MapPin className="h-3 w-3 text-ba-gold/85" aria-hidden />
           {origin.region}
         </div>
       </div>
 
       <div className="relative flex flex-1 flex-col p-5 lg:p-6">
-        <h3 className="font-display text-[1.25rem] leading-[1.15] tracking-[-0.02em] text-stone-50 transition-colors duration-300 group-hover:text-uae-pearl lg:text-[1.3rem]">
+        <h3 className="font-display text-[1.25rem] leading-[1.15] tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-coffee lg:text-[1.3rem]">
           {origin.country}
         </h3>
 
         <div className="mt-3 flex items-start gap-2">
-          <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-uae-warm-gold/75" aria-hidden />
-          <p className="text-[0.8125rem] leading-[1.65] text-stone-300/90">
-            {origin.tastingProfile}
-          </p>
+          <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ba-bronze/80" aria-hidden />
+          <p className="text-[0.8125rem] leading-[1.65] text-ba-coffee/75">{origin.tastingProfile}</p>
         </div>
 
         <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
@@ -90,7 +84,7 @@ export function OriginCard({ origin, ctaHref = "#origins", labels }: OriginCardP
           <MetaTile icon={Coffee} label={l.brewMethod} value={origin.brewingMethod} />
         </div>
 
-        <div className="mt-auto border-t border-white/[0.06] pt-4">
+        <div className="mt-auto border-t border-ba-espresso/[0.06] pt-4">
           <GhostCtaLink href={ctaHref}>{l.exploreOrigin}</GhostCtaLink>
         </div>
       </div>

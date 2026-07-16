@@ -52,12 +52,10 @@ export default async function SiteLayout({
   }
 
   return (
-    <div className="relative min-h-screen bg-uae-dark-coffee-deep font-sans text-uae-pearl">
+    <div className="relative min-h-screen bg-ba-ivory font-sans text-ba-espresso">
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(192,138,46,0.22),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_20%,rgba(169,131,90,0.14),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_10%_80%,rgba(35,23,16,0.35),transparent)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-uae-dark-coffee/30 via-transparent to-uae-dark-coffee-deep" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(184,149,107,0.08),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_90%_30%,rgba(237,228,214,0.5),transparent)]" />
       </div>
 
       <SiteNav

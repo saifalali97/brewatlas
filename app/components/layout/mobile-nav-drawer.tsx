@@ -123,7 +123,7 @@ export function MobileNavDrawer({
       <button
         type="button"
         aria-label={nav.closeMenu}
-        className="absolute inset-0 z-0 cursor-pointer bg-uae-dark-coffee-deep/80 touch-manipulation"
+        className="absolute inset-0 z-0 cursor-pointer bg-ba-espresso/60 backdrop-blur-sm touch-manipulation"
         onTouchEnd={handleBackdropTouchEnd}
         onClick={handleBackdropClick}
       />
@@ -135,22 +135,22 @@ export function MobileNavDrawer({
         aria-label={nav.mobileMenuAriaLabel}
         className={joinClasses(
           "pointer-events-auto absolute inset-y-0 end-0 z-[1] flex w-full max-w-sm flex-col",
-          "border-s border-white/[0.08] bg-uae-dark-coffee",
+          "border-s border-ba-espresso/[0.08] bg-ba-pearl",
           "max-lg:pt-[env(safe-area-inset-top,0px)] max-lg:pb-[env(safe-area-inset-bottom,0px)]",
         )}
       >
-        <div className="flex h-[4.5rem] items-center justify-between border-b border-white/[0.06] px-6">
-          <span className="text-lg font-semibold tracking-tight text-uae-pearl">BrewAtlas</span>
+        <div className="flex h-[4.5rem] items-center justify-between border-b border-ba-espresso/[0.06] px-6">
+          <span className="font-display text-lg tracking-[-0.02em] text-ba-espresso">BrewAtlas</span>
           <button
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
             aria-label={nav.closeMenu}
             className={joinClasses(
-              "flex h-11 w-11 min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full border border-white/[0.1] bg-white/[0.03] text-stone-400 touch-manipulation",
+              "flex h-11 w-11 min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full border border-ba-espresso/10 bg-ba-sand/40 text-ba-coffee touch-manipulation",
               "[touch-action:manipulation]",
               dsMotion.transition,
-              "hover:border-uae-warm-gold/35 hover:text-uae-pearl",
+              "hover:border-ba-bronze/35 hover:text-ba-espresso",
               dsFocus.ring,
             )}
           >
@@ -159,7 +159,7 @@ export function MobileNavDrawer({
         </div>
 
         <nav aria-label={nav.mainNavigationAriaLabel} className="flex-1 overflow-y-auto px-6 py-8">
-          <p className="text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-stone-500">
+          <p className="text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-ba-coffee/55">
             {nav.discover}
           </p>
           <ul className="mt-4 space-y-1">
@@ -169,9 +169,9 @@ export function MobileNavDrawer({
                   href={link.href}
                   onClick={onClose}
                   className={joinClasses(
-                    "flex min-h-11 items-center py-2 text-lg font-medium text-stone-300 touch-manipulation",
+                    "flex min-h-11 items-center py-2 text-lg font-medium text-ba-coffee touch-manipulation",
                     dsMotion.transition,
-                    "hover:text-uae-pearl",
+                    "hover:text-ba-espresso",
                     dsFocus.ring,
                   )}
                 >
@@ -181,7 +181,7 @@ export function MobileNavDrawer({
             ))}
           </ul>
 
-          <div className="my-8 h-px bg-white/[0.06]" aria-hidden />
+          <div className="my-8 h-px bg-ba-espresso/[0.06]" aria-hidden />
 
           <ul className="space-y-1">
             <li>
@@ -189,7 +189,7 @@ export function MobileNavDrawer({
                 href="/recipes"
                 onClick={onClose}
                 className={joinClasses(
-                  "flex min-h-11 items-center py-2 text-lg font-medium text-uae-pearl touch-manipulation",
+                  "flex min-h-11 items-center py-2 text-lg font-medium text-ba-espresso touch-manipulation",
                   dsFocus.ring,
                 )}
               >
@@ -201,7 +201,7 @@ export function MobileNavDrawer({
                 href="/premium"
                 onClick={onClose}
                 className={joinClasses(
-                  "flex min-h-11 items-center py-2 text-lg font-medium text-uae-warm-gold touch-manipulation",
+                  "flex min-h-11 items-center py-2 text-lg font-medium text-ba-bronze touch-manipulation",
                   dsFocus.ring,
                 )}
               >
@@ -214,7 +214,7 @@ export function MobileNavDrawer({
                   href="/admin"
                   onClick={onClose}
                   className={joinClasses(
-                    "flex min-h-11 items-center py-2 text-lg font-medium text-uae-pearl touch-manipulation",
+                    "flex min-h-11 items-center py-2 text-lg font-medium text-ba-espresso touch-manipulation",
                     dsFocus.ring,
                   )}
                 >
@@ -225,7 +225,7 @@ export function MobileNavDrawer({
           </ul>
         </nav>
 
-        <div className="space-y-5 border-t border-white/[0.06] px-6 py-6">
+        <div className="space-y-5 border-t border-ba-espresso/[0.06] px-6 py-6">
           {notificationsSlot ? <div className="flex items-center gap-3">{notificationsSlot}</div> : null}
 
           <LanguageSwitcher

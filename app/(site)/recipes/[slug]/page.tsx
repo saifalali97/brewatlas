@@ -74,17 +74,17 @@ import type {
 function CompatibleDevices({ hasXBloom, dictionary }: { hasXBloom: boolean; dictionary: Dictionary }) {
   return (
     <div className="mt-6">
-      <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">
+      <p className="text-xs font-medium uppercase tracking-[0.16em] text-ba-coffee/55">
         {dictionary.recipeDetail.compatibleDevicesLabel}
       </p>
       <div className="mt-2.5 flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-300">
-          <Hand className="h-3 w-3 text-stone-400" aria-hidden />
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-ba-espresso/[0.12] bg-ba-sand/35 px-3 py-1 text-xs font-medium text-ba-coffee/75">
+          <Hand className="h-3 w-3 text-ba-coffee/70" aria-hidden />
           {dictionary.recipeDetail.manualDevice}
         </span>
         {hasXBloom && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-uae-warm-gold/30 bg-uae-warm-gold-deep/40 px-3 py-1 text-xs font-medium text-uae-warm-gold/90">
-            <Cpu className="h-3 w-3 text-uae-warm-gold/90" aria-hidden />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-ba-gold/30 bg-ba-gold/15 px-3 py-1 text-xs font-medium text-ba-bronze">
+            <Cpu className="h-3 w-3 text-ba-bronze" aria-hidden />
             {dictionary.recipeDetail.xbloomDevice}
           </span>
         )}
@@ -276,7 +276,7 @@ function StaticRecipeView({
     <SectionFrame id="recipe-detail" ariaLabelledBy="recipe-detail-heading" padding="compact">
       <Link
         href="/recipes"
-        className="mb-10 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-uae-warm-gold/90"
+        className="mb-10 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-ba-coffee/70 transition-colors duration-300 hover:text-ba-bronze"
       >
         <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
         {d.backToAllRecipes}
@@ -300,27 +300,27 @@ function StaticRecipeView({
             </div>
           )}
 
-          <div className="absolute bottom-5 start-5 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
-            <MapPin className="h-3 w-3 text-uae-warm-gold/80" aria-hidden />
+          <div className="absolute bottom-5 start-5 flex items-center gap-1.5 rounded-full border border-ba-espresso/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-ba-espresso backdrop-blur-xl">
+            <MapPin className="h-3 w-3 text-ba-bronze/85" aria-hidden />
             {recipe.origin}
           </div>
         </div>
 
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-uae-warm-gold/70">{recipe.country}</p>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-ba-bronze/75">{recipe.country}</p>
           <h1
             id="recipe-detail-heading"
             className={`mt-3 ${typography.sectionTitleModern}`}
           >
             {recipe.name}
           </h1>
-          <p className="mt-5 text-lg leading-[1.75] text-stone-400">{recipe.notes}</p>
+          <p className="mt-5 text-lg leading-[1.75] text-ba-coffee/70">{recipe.notes}</p>
 
           <div className="mt-8">
             <DifficultyIndicator
               level={recipe.difficulty}
               label={translate(dictionary, difficultyLabelKey(recipe.difficulty))}
-              labelClassName="text-sm text-stone-400"
+              labelClassName="text-sm text-ba-coffee/70"
               className="flex items-center gap-2.5"
             />
           </div>
@@ -413,7 +413,7 @@ function DbRecipeView({
       />
       <Link
         href="/recipes"
-        className="mb-10 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-uae-warm-gold/90"
+        className="mb-10 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-ba-coffee/70 transition-colors duration-300 hover:text-ba-bronze"
       >
         <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
         {d.backToAllRecipes}
@@ -435,7 +435,7 @@ function DbRecipeView({
           <div className={cards.imageAmberWash} />
 
           {!recipe.published && (
-            <div className="absolute start-5 top-5 rounded-full border border-stone-500/40 bg-stone-900/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-stone-300 backdrop-blur-xl">
+            <div className="absolute start-5 top-5 rounded-full border border-stone-500/40 bg-stone-900/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-ba-coffee/75 backdrop-blur-xl">
               {d.draftBadge}
             </div>
           )}
@@ -447,8 +447,8 @@ function DbRecipeView({
           )}
 
           {recipe.originLabel && (
-            <div className="absolute bottom-5 start-5 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
-              <MapPin className="h-3 w-3 text-uae-warm-gold/80" aria-hidden />
+            <div className="absolute bottom-5 start-5 flex items-center gap-1.5 rounded-full border border-ba-espresso/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-ba-espresso backdrop-blur-xl">
+              <MapPin className="h-3 w-3 text-ba-bronze/85" aria-hidden />
               {recipe.originLabel}
             </div>
           )}
@@ -456,13 +456,13 @@ function DbRecipeView({
 
         <div>
           <div className="flex items-center justify-between gap-4">
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-uae-warm-gold/70">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-ba-bronze/75">
               {recipe.roasterName ?? d.communityRecipe}
             </p>
 
             <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 text-xs text-stone-500">
-                <Heart className="h-3.5 w-3.5 text-uae-warm-gold/70" aria-hidden />
+              <span className="flex items-center gap-1.5 text-xs text-ba-coffee/55">
+                <Heart className="h-3.5 w-3.5 text-ba-bronze/75" aria-hidden />
                 {favoritesCount}
               </span>
               {isAuthenticated && (
@@ -482,14 +482,14 @@ function DbRecipeView({
             <RecipeRatingBadge summary={ratingSummary} labels={dictionary.recipeReviews} />
           </div>
 
-          <p className="mt-5 text-lg leading-[1.75] text-stone-400">{notes}</p>
+          <p className="mt-5 text-lg leading-[1.75] text-ba-coffee/70">{notes}</p>
 
           {recipe.difficulty && (
             <div className="mt-8">
               <DifficultyIndicator
                 level={recipe.difficulty}
                 label={translate(dictionary, difficultyLabelKey(recipe.difficulty))}
-                labelClassName="text-sm text-stone-400"
+                labelClassName="text-sm text-ba-coffee/70"
                 className="flex items-center gap-2.5"
               />
             </div>
@@ -558,7 +558,7 @@ function DbRecipeView({
 
       {canAccessFull && hasCoffeeInfo && (
         <div className="mt-12">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.coffeeSectionTitle}</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ba-coffee/55">{d.coffeeSectionTitle}</h2>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {recipe.coffeeName && <MetaTile icon={Coffee} label={d.coffeeLabel} value={recipe.coffeeName} />}
             {recipe.farm && <MetaTile icon={Sprout} label={d.farmLabel} value={recipe.farm} />}
@@ -578,7 +578,7 @@ function DbRecipeView({
       {canAccessFull && (
         <>
           <div className="mt-12">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.brewingDetailsTitle}</h2>
+            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ba-coffee/55">{d.brewingDetailsTitle}</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {recipe.deviceName && <MetaTile icon={Settings2} label={d.deviceLabel} value={recipe.deviceName} />}
               {recipe.grinderName && <MetaTile icon={Settings2} label={d.grinderLabel} value={recipe.grinderName} />}
@@ -611,23 +611,23 @@ function DbRecipeView({
 
           {recipe.pours.length > 0 && (
             <div className="mt-12">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.pourStructureTitle}</h2>
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ba-coffee/55">{d.pourStructureTitle}</h2>
               <ol className="mt-4 space-y-3">
                 {recipe.pours.map((pour) => (
                   <li
                     key={pour.id}
-                    className="flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3"
+                    className="flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-xl border border-ba-espresso/[0.08] bg-ba-sand/25 px-4 py-3"
                   >
-                    <span className="text-sm font-medium text-uae-warm-gold/90">
+                    <span className="text-sm font-medium text-ba-bronze">
                       {d.pourPrefix} {pour.pour_number}
                     </span>
-                    {pour.water_amount !== null && <span className="text-sm text-stone-300">{pour.water_amount}g</span>}
+                    {pour.water_amount !== null && <span className="text-sm text-ba-coffee/75">{pour.water_amount}g</span>}
                     {pour.time_label && (
-                      <span className="text-sm text-stone-500">
+                      <span className="text-sm text-ba-coffee/55">
                         {d.atTimeLabel} {pour.time_label}
                       </span>
                     )}
-                    {pour.notes && <span className="text-sm text-stone-500">— {pour.notes}</span>}
+                    {pour.notes && <span className="text-sm text-ba-coffee/55">— {pour.notes}</span>}
                   </li>
                 ))}
               </ol>
@@ -636,7 +636,7 @@ function DbRecipeView({
 
           {hasResults && (
             <div className="mt-12">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.resultsTitle}</h2>
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ba-coffee/55">{d.resultsTitle}</h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {recipe.beverageWeight !== null && (
                   <MetaTile icon={Scale} label={d.beverageWeightLabel} value={`${recipe.beverageWeight}g`} />
@@ -657,7 +657,7 @@ function DbRecipeView({
               {recipe.tags.map((tag) => (
                 <span
                   key={tag.id}
-                  className="rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1 text-xs font-medium text-stone-300"
+                  className="rounded-full border border-ba-espresso/[0.12] bg-ba-sand/35 px-3 py-1 text-xs font-medium text-ba-coffee/75"
                 >
                   {tag.name}
                 </span>
@@ -666,15 +666,15 @@ function DbRecipeView({
           )}
 
           {recipe.instructions && (
-            <div className="mt-8 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5">
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">{dictionary.recipes.instructions}</p>
-              <p className="mt-2.5 whitespace-pre-line text-sm leading-relaxed text-stone-300">{recipe.instructions}</p>
+            <div className="mt-8 rounded-2xl border border-ba-espresso/[0.08] bg-ba-sand/30 p-5">
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-ba-coffee/55">{dictionary.recipes.instructions}</p>
+              <p className="mt-2.5 whitespace-pre-line text-sm leading-relaxed text-ba-coffee/75">{recipe.instructions}</p>
             </div>
           )}
 
           {recipe.images.length > 0 && (
             <div className="mt-12">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{d.galleryTitle}</h2>
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ba-coffee/55">{d.galleryTitle}</h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {recipe.images.map((image) => (
                   <div key={image.id} className="relative h-48 overflow-hidden rounded-xl border border-white/[0.1]">

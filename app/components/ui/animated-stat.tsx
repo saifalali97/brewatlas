@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 type AnimatedStatProps = {
   value: string;
   label: string;
+  variant?: "light" | "dark";
 };
 
 function parseStatValue(value: string) {
@@ -25,10 +26,11 @@ function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
 }
 
-export function AnimatedStat({ value, label }: AnimatedStatProps) {
+export function AnimatedStat({ value, label, variant = "light" }: AnimatedStatProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [display, setDisplay] = useState("0");
   const hasAnimated = useRef(false);
+  const isDark = variant === "dark";
 
   useEffect(() => {
     const element = ref.current;
@@ -47,9 +49,7 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
         const tick = (now: number) => {
           const progress = Math.min((now - start) / duration, 1);
           const current = Math.floor(target * easeOutCubic(progress));
-          setDisplay(
-            `${useComma ? current.toLocaleString("en-US") : current}${suffix}`,
-          );
+          setDisplay(`${useComma ? current.toLocaleString("en-US") : current}${suffix}`);
 
           if (progress < 1) {
             requestAnimationFrame(tick);
@@ -68,11 +68,17 @@ export function AnimatedStat({ value, label }: AnimatedStatProps) {
 
   return (
     <div ref={ref} className="text-center sm:text-left">
-      <p className="text-3xl font-semibold tracking-tight text-stone-50 tabular-nums sm:text-4xl lg:text-[2.75rem] lg:leading-none">
+      <p
+        className={`font-display text-3xl tracking-tight tabular-nums sm:text-4xl lg:text-[2.75rem] lg:leading-none ${
+          isDark ? "text-ba-pearl" : "text-ba-espresso"
+        }`}
+      >
         <span className="motion-reduce:hidden">{display}</span>
         <span className="hidden motion-reduce:inline">{value}</span>
       </p>
-      <p className="mt-2.5 text-sm leading-relaxed text-stone-500">{label}</p>
+      <p className={`mt-2.5 text-sm leading-relaxed ${isDark ? "text-ba-sand-deep/65" : "text-ba-coffee/55"}`}>
+        {label}
+      </p>
     </div>
   );
 }

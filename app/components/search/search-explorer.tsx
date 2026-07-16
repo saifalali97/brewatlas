@@ -132,7 +132,7 @@ export function SearchExplorer({
         </label>
         <div className="relative">
           <Search
-            className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-stone-500"
+            className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ba-coffee/55"
             aria-hidden
           />
           <input
@@ -145,7 +145,7 @@ export function SearchExplorer({
             autoComplete="off"
           />
           {(isPending || query !== debouncedQuery) && (
-            <span className="absolute end-4 top-1/2 -translate-y-1/2 text-xs text-stone-500" aria-live="polite">
+            <span className="absolute end-4 top-1/2 -translate-y-1/2 text-xs text-ba-coffee/55" aria-live="polite">
               {t("searchPage.searching")}
             </span>
           )}
@@ -172,7 +172,7 @@ export function SearchExplorer({
 
         {(initialFilters.category === "all" || initialFilters.category === "recipes") && (
           <div className="flex items-center gap-2">
-            <label htmlFor="search-sort" className="text-sm text-stone-400">
+            <label htmlFor="search-sort" className="text-sm text-ba-coffee/70">
               {t("searchPage.sortLabel")}
             </label>
             <select
@@ -213,14 +213,14 @@ export function SearchExplorer({
         <div className="min-w-0">
           {(initialFilters.category === "all" || initialFilters.category === "recipes") &&
             (initialFilters.q || countActiveFilters(initialFilters) > 0) && (
-              <p className="mb-4 text-sm text-stone-400" aria-live="polite">
+              <p className="mb-4 text-sm text-ba-coffee/70" aria-live="polite">
                 {t("searchPage.resultsCount", { count: results.totalRecipes })}
               </p>
             )}
 
           {countActiveFilters(initialFilters) === 0 && !initialFilters.q && initialFilters.category === "all" ? (
             <div className="mb-8 rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] px-6 py-10 text-center">
-              <p className="text-base text-stone-300">{t("searchPage.emptyPrompt")}</p>
+              <p className="text-base text-ba-coffee/75">{t("searchPage.emptyPrompt")}</p>
             </div>
           ) : null}
 
@@ -241,18 +241,18 @@ export function SearchExplorer({
                 type="button"
                 disabled={initialFilters.page <= 1}
                 onClick={() => patchFilters({ page: Math.max(1, initialFilters.page - 1) })}
-                className={`min-h-11 rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-uae-warm-gold/30 enabled:hover:text-stone-100 disabled:opacity-40 ${dsFocus.ring}`}
+                className={`min-h-11 rounded-full border border-ba-espresso/[0.12] px-4 py-2 text-sm text-ba-coffee/75 transition-colors enabled:hover:border-ba-gold/30 enabled:hover:text-ba-espresso disabled:opacity-40 ${dsFocus.ring}`}
               >
                 {t("searchPage.previousPage")}
               </button>
-              <span className="text-sm text-stone-500">
+              <span className="text-sm text-ba-coffee/55">
                 {t("searchPage.pageIndicator", { page: initialFilters.page, total: totalPages })}
               </span>
               <button
                 type="button"
                 disabled={initialFilters.page >= totalPages}
                 onClick={() => patchFilters({ page: Math.min(totalPages, initialFilters.page + 1) })}
-                className={`min-h-11 rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-uae-warm-gold/30 enabled:hover:text-stone-100 disabled:opacity-40 ${dsFocus.ring}`}
+                className={`min-h-11 rounded-full border border-ba-espresso/[0.12] px-4 py-2 text-sm text-ba-coffee/75 transition-colors enabled:hover:border-ba-gold/30 enabled:hover:text-ba-espresso disabled:opacity-40 ${dsFocus.ring}`}
               >
                 {t("searchPage.nextPage")}
               </button>

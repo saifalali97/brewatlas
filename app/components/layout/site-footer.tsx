@@ -54,7 +54,7 @@ function FooterLink({ href, label }: FooterLinkItem) {
 function FooterColumn({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
-      <h3 className="text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-stone-400">
+      <h3 className="text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-ba-sand-deep/70">
         {title}
       </h3>
       <ul className="mt-5 space-y-3.5">{children}</ul>
@@ -74,10 +74,10 @@ export function SiteFooter({ footer, locale, switchLanguageAria, languageAriaLab
   const copyright = `© ${year} BrewAtlas. ${footer.allRightsReserved}`;
 
   return (
-    <footer className="relative border-t border-white/[0.06] bg-uae-dark-coffee px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] pt-16 sm:px-8 lg:px-12 lg:pt-20">
+    <footer className="relative border-t border-white/[0.06] bg-ba-espresso px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] pt-16 sm:px-8 lg:px-12 lg:pt-20">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-uae-warm-gold/20 to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ba-gold/25 to-transparent"
       />
       <div className={dsLayout.container}>
         <nav aria-label={footer.footerNavAriaLabel} className="grid gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
@@ -85,17 +85,17 @@ export function SiteFooter({ footer, locale, switchLanguageAria, languageAriaLab
             <Link
               href="/"
               aria-label={footer.homeAriaLabel}
-              className="inline-flex items-center gap-2.5 text-xl font-semibold tracking-tight text-uae-pearl transition-colors duration-300 hover:text-uae-sand"
+              className="inline-flex items-center gap-2.5 font-display text-xl tracking-[-0.02em] text-ba-pearl transition-colors duration-300 hover:text-ba-sand"
             >
               <span
                 aria-hidden
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-uae-warm-gold/25 bg-uae-warm-gold/10 text-sm text-uae-warm-gold"
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-ba-gold/25 bg-ba-gold/10 text-sm text-ba-gold"
               >
                 B
               </span>
               BrewAtlas
             </Link>
-            <p className="mt-5 max-w-xs text-sm leading-[1.8] text-stone-500">{footer.tagline}</p>
+            <p className="mt-5 max-w-xs text-sm leading-[1.8] text-ba-sand-deep/65">{footer.tagline}</p>
           </div>
 
           <div className="grid gap-10 sm:col-span-1 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-3">
@@ -128,13 +128,14 @@ export function SiteFooter({ footer, locale, switchLanguageAria, languageAriaLab
         </nav>
 
         <div className="mt-14 flex flex-col gap-6 border-t border-white/[0.06] pt-8 lg:mt-16 lg:flex-row lg:items-center lg:justify-between">
-          <p className={`text-sm ${dsTypography.caption}`}>{copyright}</p>
+          <p className={`text-sm ${dsTypography.captionDark}`}>{copyright}</p>
 
           <LanguageSwitcher
             currentLocale={locale}
             switchLanguageAria={switchLanguageAria}
             languageAriaLabel={languageAriaLabel}
             size="large"
+            onDark
           />
         </div>
       </div>

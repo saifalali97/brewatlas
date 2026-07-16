@@ -34,9 +34,9 @@ function SectionHeading({
 
   return (
     <div className="mb-5 flex items-end justify-between gap-4">
-      <h2 id={id} className="text-lg font-semibold tracking-tight text-stone-50">
+      <h2 id={id} className="text-lg font-semibold tracking-tight text-ba-espresso">
         {title}
-        <span className="ms-2 text-sm font-normal text-stone-500">({count})</span>
+        <span className="ms-2 text-sm font-normal text-ba-coffee/55">({count})</span>
       </h2>
       {href && count > 0 && (
         <RippleLink href={href} className="text-sm font-medium text-amber-500/90 hover:text-amber-400">
@@ -67,8 +67,8 @@ export function SearchResultsView({
   if (!hasAnyResults) {
     return (
       <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.02] px-6 py-16 text-center">
-        <p className="text-base font-medium text-stone-300">{t("emptyStates.noResults")}</p>
-        <p className="mx-auto mt-2 max-w-md text-sm text-stone-500">{t("emptyStates.noResultsHint")}</p>
+        <p className="text-base font-medium text-ba-coffee/75">{t("emptyStates.noResults")}</p>
+        <p className="mx-auto mt-2 max-w-md text-sm text-ba-coffee/55">{t("emptyStates.noResultsHint")}</p>
         <RippleLink href="/recipes" className="mt-6 inline-flex text-sm font-medium text-amber-500/90 hover:text-amber-400">
           {t("emptyStates.startExploring")}
         </RippleLink>
@@ -200,9 +200,9 @@ export function SearchResultsView({
                   <Cpu className="h-5 w-5 text-amber-500/85" aria-hidden />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-stone-50">{device.name}</h3>
-                  {device.manufacturer && <p className="mt-1 text-sm text-stone-400">{device.manufacturer}</p>}
-                  {device.description && <p className="mt-2 text-sm text-stone-500">{device.description}</p>}
+                  <h3 className="font-semibold text-ba-espresso">{device.name}</h3>
+                  {device.manufacturer && <p className="mt-1 text-sm text-ba-coffee/70">{device.manufacturer}</p>}
+                  {device.description && <p className="mt-2 text-sm text-ba-coffee/55">{device.description}</p>}
                 </div>
               </Link>
             ))}
@@ -228,13 +228,13 @@ export function SearchResultsView({
                 <div className="flex items-start gap-3">
                   <Leaf className="mt-0.5 h-4 w-4 shrink-0 text-amber-500/80" aria-hidden />
                   <div>
-                    <h3 className="font-semibold text-stone-50">{variety.name}</h3>
+                    <h3 className="font-semibold text-ba-espresso">{variety.name}</h3>
                     {variety.variety && (
-                      <p className="mt-1 text-sm text-stone-400">
+                      <p className="mt-1 text-sm text-ba-coffee/70">
                         {t("searchPage.varietyLabel")}: {variety.variety}
                       </p>
                     )}
-                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-stone-500">
+                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-ba-coffee/55">
                       {variety.roasterName && <span>{variety.roasterName}</span>}
                       {variety.country && (
                         <span className="inline-flex items-center gap-1">
@@ -270,14 +270,14 @@ export function SearchResultsView({
                 <div className="flex items-start gap-3">
                   <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-amber-500/80" aria-hidden />
                   <div>
-                    <h3 className="font-semibold text-stone-50">{flavor.recipeName}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-stone-400">{flavor.flavorText}</p>
+                    <h3 className="font-semibold text-ba-espresso">{flavor.recipeName}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-ba-coffee/70">{flavor.flavorText}</p>
                     {flavor.tags.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-2">
                         {flavor.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-full border border-white/[0.1] bg-white/[0.04] px-2.5 py-0.5 text-[11px] text-stone-400"
+                            className="rounded-full border border-ba-espresso/[0.1] bg-ba-sand/35 px-2.5 py-0.5 text-[11px] text-ba-coffee/70"
                           >
                             {tag}
                           </span>

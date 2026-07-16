@@ -56,12 +56,12 @@ function FiltersForm({
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold text-stone-100">{t("searchPage.filtersTitle")}</h2>
+        <h2 className="text-sm font-semibold text-ba-espresso">{t("searchPage.filtersTitle")}</h2>
         {activeCount > 0 && (
           <button
             type="button"
             onClick={onClear}
-            className="text-xs font-medium text-uae-warm-gold/90 transition-colors hover:text-uae-warm-gold"
+            className="text-xs font-medium text-ba-bronze transition-colors hover:text-ba-bronze"
           >
             {t("searchPage.clearFilters")}
           </button>
@@ -363,7 +363,7 @@ export function SearchFiltersPanel({
   if (variant === "sidebar") {
     return (
       <aside className="hidden lg:block">
-        <div className="sticky top-28 rounded-[1.25rem] border border-white/[0.1] bg-white/[0.03] p-5 backdrop-blur-xl">
+        <div className="sticky top-28 rounded-[1.25rem] border border-ba-espresso/[0.1] bg-white/[0.03] p-5 backdrop-blur-xl">
           <FiltersForm filters={filters} options={options} onChange={onChange} onClear={onClear} />
         </div>
       </aside>
@@ -382,7 +382,7 @@ export function SearchFiltersPanel({
         <SlidersHorizontal className="h-4 w-4" aria-hidden />
         {t("searchPage.filtersTitle")}
         {activeCount > 0 && (
-          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-uae-warm-gold/90 px-1.5 text-[10px] font-semibold text-uae-dark-coffee-deep">
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-ba-gold px-1.5 text-[10px] font-semibold text-ba-espresso">
             {activeCount}
           </span>
         )}
@@ -401,14 +401,14 @@ export function SearchFiltersPanel({
             role="dialog"
             aria-modal="true"
             aria-label={t("searchPage.filtersTitle")}
-            className="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-[1.5rem] border border-white/[0.12] bg-[#0f0b08] p-5 pb-[max(2rem,env(safe-area-inset-bottom))] shadow-[0_-24px_64px_rgba(0,0,0,0.55)]"
+            className="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-[1.5rem] border border-ba-espresso/[0.12] bg-[#0f0b08] p-5 pb-[max(2rem,env(safe-area-inset-bottom))] shadow-[0_-24px_64px_rgba(0,0,0,0.55)]"
           >
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-stone-50">{t("searchPage.filtersTitle")}</h2>
+              <h2 className="text-base font-semibold text-ba-espresso">{t("searchPage.filtersTitle")}</h2>
               <button
                 type="button"
                 onClick={() => onOpenChange?.(false)}
-                className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-white/[0.12] text-stone-400 transition-colors hover:text-stone-200"
+                className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-ba-espresso/[0.12] text-ba-coffee/70 transition-colors hover:text-ba-espresso"
                 aria-label={t("searchPage.closeFilters")}
               >
                 <X className="h-4 w-4" aria-hidden />
