@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { SectionFrame } from "@/app/components/ui/section-frame";
-import { PageHeader } from "@/app/components/ui/page-header";
+import { Chapter } from "@/app/components/atlas/chapter";
 import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getCachedPublishedDbRecipes } from "@/lib/data/cached-public-data";
 import { getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
@@ -38,9 +37,6 @@ export default async function RecipesPage({ searchParams }: RecipesPageProps) {
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 
-  // Display uses the locale's translated copy, but the slug is always
-  // derived from the English name at the same array index (see
-  // `getStaticRecipeIndexBySlug`) so URLs never change across locales.
   const staticRecipes: RecipeListItem[] = content.featuredRecipes.map((recipe, index) => ({
     ...recipe,
     slug: getRecipeSlug(staticRecipesEn[index]),
@@ -58,7 +54,7 @@ export default async function RecipesPage({ searchParams }: RecipesPageProps) {
   const hiddenRecipeCount = getHiddenRecipeCount(allRecipes.length, membership, isAuthenticated);
 
   return (
-    <SectionFrame id="recipes-listing" ariaLabelledBy="recipes-listing-heading" padding="compact">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -72,20 +68,23 @@ export default async function RecipesPage({ searchParams }: RecipesPageProps) {
           ),
         }}
       />
-      <PageHeader headingId="recipes-listing-heading"
-        eyebrow={dictionary.recipesPage.eyebrow}
-        title={dictionary.recipesPage.title}
-        description={dictionary.recipesPage.description}
-      />
-      <RecipesExplorer
-        recipes={allRecipes}
-        favoritedRecipeIds={Array.from(favoritedRecipeIds)}
-        isAuthenticated={isAuthenticated}
-        isPremium={isPremium(membership)}
-        hiddenRecipeCount={hiddenRecipeCount}
-        currentPath="/recipes"
-        initialQuery={q ?? ""}
-      />
-    </SectionFrame>
+      <Chapter
+        id="recipes-archive"
+        rhythm="dawn"
+        padding="compact"
+        wide
+        ariaLabelledBy="recipes-archive-heading"
+      >
+        <RecipesExplorer
+          recipes={allRecipes}
+          favoritedRecipeIds={Array.from(favoritedRecipeIds)}
+          isAuthenticated={isAuthenticated}
+          isPremium={isPremium(membership)}
+          hiddenRecipeCount={hiddenRecipeCount}
+          currentPath="/recipes"
+          initialQuery={q ?? ""}
+        />
+      </Chapter>
+    </>
   );
 }

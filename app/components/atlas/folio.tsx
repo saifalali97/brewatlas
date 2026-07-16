@@ -11,9 +11,11 @@ export type FolioItemProps = {
   href: string;
   title: string;
   meta?: ReactNode;
+  description?: string;
   imageSrc?: string;
   imageAlt?: string;
   index?: string | number;
+  trailing?: ReactNode;
   className?: string;
 };
 
@@ -26,51 +28,59 @@ export function FolioItem({
   href,
   title,
   meta,
+  description,
   imageSrc,
   imageAlt = "",
   index,
+  trailing,
   className = "",
 }: FolioItemProps) {
   return (
     <li className={joinClasses("ac-folio-divider", className)}>
-      <Link
-        href={href}
-        className={joinClasses(
-          "group flex items-center gap-6 py-6 sm:gap-8 sm:py-8",
-          acFocus.ring,
-          acMotion.transition,
-        )}
-      >
-        {index !== undefined ? (
-          <span className={joinClasses(acTypography.caption, "w-8 shrink-0 tabular-nums")}>
-            {index}
-          </span>
-        ) : null}
-
-        {imageSrc ? (
-          <div className="relative h-16 w-16 shrink-0 overflow-hidden sm:h-20 sm:w-20">
-            <Image
-              src={imageSrc}
-              alt={imageAlt}
-              fill
-              sizes="80px"
-              className="object-cover object-center photo-grade-library motion-safe:group-hover:brightness-[1.03]"
-            />
-          </div>
-        ) : null}
-
-        <div className="min-w-0 flex-1">
-          <h3 className={acTypography.folioTitle}>{title}</h3>
-          {meta ? <div className="mt-2">{meta}</div> : null}
-        </div>
-
-        <span
-          aria-hidden
-          className="shrink-0 text-ac-copper opacity-0 transition-opacity duration-[400ms] group-hover:opacity-100 motion-reduce:opacity-100"
+      <div className="group flex items-center gap-6 py-6 sm:gap-8 sm:py-7">
+        <Link
+          href={href}
+          className={joinClasses(
+            "flex min-w-0 flex-1 items-center gap-6 sm:gap-8",
+            acFocus.ring,
+            acMotion.transition,
+          )}
         >
-          →
-        </span>
-      </Link>
+          {index !== undefined ? (
+            <span className={joinClasses(acTypography.caption, "w-8 shrink-0 tabular-nums")}>
+              {index}
+            </span>
+          ) : null}
+
+          {imageSrc ? (
+            <div className="relative h-16 w-16 shrink-0 overflow-hidden sm:h-20 sm:w-20">
+              <Image
+                src={imageSrc}
+                alt={imageAlt}
+                fill
+                sizes="80px"
+                className="object-cover object-center photo-grade-library motion-safe:group-hover:brightness-[1.03]"
+              />
+            </div>
+          ) : null}
+
+          <div className="min-w-0 flex-1">
+            <h3 className={acTypography.folioTitle}>{title}</h3>
+            {meta ? <div className="mt-2">{meta}</div> : null}
+            {description ? (
+              <p className={joinClasses(acTypography.folioMeta, "mt-2 line-clamp-2")}>{description}</p>
+            ) : null}
+          </div>
+
+          <span
+            aria-hidden
+            className="shrink-0 text-ac-copper opacity-0 transition-opacity duration-[400ms] group-hover:opacity-100 motion-reduce:opacity-100"
+          >
+            →
+          </span>
+        </Link>
+        {trailing ? <div className="shrink-0">{trailing}</div> : null}
+      </div>
     </li>
   );
 }

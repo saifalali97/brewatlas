@@ -1,18 +1,11 @@
 {
-  "commit": "014dd3e",
-  "phase": "Phase 1 — Homepage Atlas Journey",
+  "commit": "pending",
+  "phase": "Phase 2 — Recipes Archive",
   "viewport": "1440x900",
-  "url": "http://localhost:3001/",
-  "chapters": [
-    "prologue",
-    "the-map",
-    "six-worlds",
-    "the-cover",
-    "the-route",
-    "the-craft",
-    "the-table",
-    "the-circle"
-  ],
+  "urls": {
+    "recipes": "http://localhost:3003/recipes",
+    "homepage": "http://localhost:3003/"
+  },
   "lint": "pass",
   "build": "pass"
 }

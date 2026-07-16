@@ -24,9 +24,9 @@ export const easing = {
 } as const;
 
 export const sectionPadding = {
-  standard: "px-6 py-32 sm:px-8 md:py-40 lg:px-12 lg:py-48 xl:px-16",
-  compact: "px-6 py-28 sm:px-8 md:py-36 lg:px-12 lg:py-40 xl:px-16",
-  hero: "px-6 pb-24 pt-28 sm:px-8 lg:px-12 lg:pb-32 lg:pt-36 xl:px-16",
+  standard: "px-6 py-28 sm:px-8 md:py-32 lg:px-12 lg:py-40 xl:px-16",
+  compact: "px-6 py-24 sm:px-8 md:py-28 lg:px-12 lg:py-32 xl:px-16",
+  hero: "px-6 pb-20 pt-28 sm:px-8 lg:px-12 lg:pb-28 lg:pt-32 xl:px-16",
 } as const;
 
 export const sectionThemes = dsSectionThemes;
