@@ -1,22 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --background: #150e09;
-  --foreground: #f3ede3;
+  /* BrewAtlas Premium Palette — warm ivory, pearl, sand, espresso */
+  --ba-ivory: #faf7f2;
+  --ba-pearl: #fffcf7;
+  --ba-sand: #ede4d6;
+  --ba-sand-deep: #d9cbb5;
+  --ba-coffee: #4a3728;
+  --ba-espresso: #1c1612;
+  --ba-bronze: #9a7348;
+  --ba-gold: #b8956b;
+  --ba-gold-muted: #a08055;
+  --ba-charcoal: #2a2520;
 
-  /* BrewAtlas DS v2 — semantic tokens */
-  --ds-page-bg: #150e09;
-  --ds-footer-bg: #231710;
-  --ds-surface: rgba(255, 255, 255, 0.03);
-  --ds-surface-raised: rgba(255, 255, 255, 0.06);
-  --ds-border: rgba(255, 255, 255, 0.08);
-  --ds-border-strong: rgba(255, 255, 255, 0.12);
-  --ds-text-primary: #f3ede3;
-  --ds-text-secondary: #a8a29e;
-  --ds-text-muted: #78716c;
-  --ds-accent: #c08a2e;
-  --ds-accent-deep: #8f651c;
-  --ds-focus: rgba(192, 138, 46, 0.85);
+  --background: var(--ba-ivory);
+  --foreground: var(--ba-espresso);
+
+  /* DS semantic tokens */
+  --ds-page-bg: var(--ba-ivory);
+  --ds-footer-bg: var(--ba-espresso);
+  --ds-surface: rgba(28, 22, 18, 0.04);
+  --ds-surface-raised: rgba(28, 22, 18, 0.06);
+  --ds-border: rgba(28, 22, 18, 0.08);
+  --ds-border-strong: rgba(28, 22, 18, 0.12);
+  --ds-text-primary: var(--ba-espresso);
+  --ds-text-secondary: rgba(74, 55, 40, 0.72);
+  --ds-text-muted: rgba(74, 55, 40, 0.52);
+  --ds-accent: var(--ba-gold);
+  --ds-accent-deep: var(--ba-bronze);
+  --ds-focus: rgba(154, 115, 72, 0.85);
+
+  /* Dark section tokens (hero, premium, footer) */
+  --ds-dark-bg: var(--ba-espresso);
+  --ds-dark-text: var(--ba-pearl);
+  --ds-dark-muted: rgba(237, 228, 214, 0.62);
 
   /* Spacing (8px base) */
   --ds-space-1: 0.5rem;
@@ -33,7 +50,7 @@
   --ds-radius-md: 0.75rem;
   --ds-radius-lg: 1rem;
   --ds-radius-xl: 1.5rem;
-  --ds-radius-card: 1.5rem;
+  --ds-radius-card: 1.25rem;
 
   /* Motion */
   --ds-easing-premium: cubic-bezier(0.22, 1, 0.36, 1);
@@ -41,7 +58,6 @@
   --ds-duration-normal: 300ms;
   --ds-duration-slow: 500ms;
 
-  /* Header */
   --ds-header-height: 4.5rem;
 }
 
@@ -51,47 +67,33 @@
   --font-sans: var(--font-geist-sans);
   --font-serif: var(--font-instrument-serif);
 
-  --color-ds-page: var(--ds-page-bg);
-  --color-ds-footer: var(--ds-footer-bg);
-  --color-ds-accent: var(--ds-accent);
-  --color-ds-accent-deep: var(--ds-accent-deep);
-  --color-ds-text-primary: var(--ds-text-primary);
-  --color-ds-text-secondary: var(--ds-text-secondary);
-}
+  --color-ba-ivory: var(--ba-ivory);
+  --color-ba-pearl: var(--ba-pearl);
+  --color-ba-sand: var(--ba-sand);
+  --color-ba-sand-deep: var(--ba-sand-deep);
+  --color-ba-coffee: var(--ba-coffee);
+  --color-ba-espresso: var(--ba-espresso);
+  --color-ba-bronze: var(--ba-bronze);
+  --color-ba-gold: var(--ba-gold);
+  --color-ba-gold-muted: var(--ba-gold-muted);
+  --color-ba-charcoal: var(--ba-charcoal);
 
-/*
- * UAE Brand Theme — Sand, Palm, Dark Coffee, Warm Gold, Pearl.
- * See lib/branding/uae-theme.ts and lib/design-system/tokens.ts.
- */
-:root {
-  --uae-sand: #c9a876;
-  --uae-sand-deep: #a9835a;
-  --uae-palm: #3f5c3f;
-  --uae-palm-deep: #2b4030;
-  --uae-dark-coffee: #231710;
-  --uae-dark-coffee-deep: #150e09;
-  --uae-warm-gold: #c08a2e;
-  --uae-warm-gold-deep: #8f651c;
-  --uae-pearl: #f3ede3;
-  --uae-pearl-deep: #e4d9c4;
-}
-
-@theme inline {
-  --color-uae-sand: var(--uae-sand);
-  --color-uae-sand-deep: var(--uae-sand-deep);
-  --color-uae-palm: var(--uae-palm);
-  --color-uae-palm-deep: var(--uae-palm-deep);
-  --color-uae-dark-coffee: var(--uae-dark-coffee);
-  --color-uae-dark-coffee-deep: var(--uae-dark-coffee-deep);
-  --color-uae-warm-gold: var(--uae-warm-gold);
-  --color-uae-warm-gold-deep: var(--uae-warm-gold-deep);
-  --color-uae-pearl: var(--uae-pearl);
-  --color-uae-pearl-deep: var(--uae-pearl-deep);
+  /* Legacy UAE aliases — mapped to premium palette */
+  --color-uae-sand: var(--ba-sand-deep);
+  --color-uae-sand-deep: #c4b49a;
+  --color-uae-palm: #4a5c48;
+  --color-uae-palm-deep: #3a4a38;
+  --color-uae-dark-coffee: var(--ba-charcoal);
+  --color-uae-dark-coffee-deep: var(--ba-espresso);
+  --color-uae-warm-gold: var(--ba-gold);
+  --color-uae-warm-gold-deep: var(--ba-bronze);
+  --color-uae-pearl: var(--ba-pearl);
+  --color-uae-pearl-deep: var(--ba-sand);
 }
 
 body {
-  background: var(--ds-page-bg);
-  color: var(--ds-text-primary);
+  background: var(--ba-ivory);
+  color: var(--ba-espresso);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -99,8 +101,8 @@ body {
 }
 
 ::selection {
-  background: rgba(192, 138, 46, 0.28);
-  color: var(--uae-pearl);
+  background: rgba(184, 149, 107, 0.28);
+  color: var(--ba-espresso);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -121,6 +123,50 @@ html {
 :focus-visible {
   outline: 2px solid var(--ds-focus);
   outline-offset: 2px;
+}
+
+/* Section theme utilities */
+.section-light {
+  background: var(--ba-ivory);
+  color: var(--ba-espresso);
+}
+
+.section-sand {
+  background: linear-gradient(180deg, var(--ba-sand) 0%, var(--ba-ivory) 100%);
+  color: var(--ba-espresso);
+}
+
+.section-pearl {
+  background: var(--ba-pearl);
+  color: var(--ba-espresso);
+}
+
+.section-dark {
+  background: var(--ba-espresso);
+  color: var(--ba-pearl);
+}
+
+.section-espresso-gradient {
+  background: linear-gradient(165deg, #2a2119 0%, var(--ba-espresso) 45%, #14100d 100%);
+  color: var(--ba-pearl);
+}
+
+.pearl-texture {
+  position: relative;
+}
+
+.pearl-texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: radial-gradient(ellipse at 20% 0%, rgba(255, 252, 247, 0.9) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(237, 228, 214, 0.35) 0%, transparent 45%);
+}
+
+.desert-curve {
+  border-radius: 2rem 2rem 0.5rem 0.5rem;
 }
 
 @keyframes ripple {
@@ -173,6 +219,36 @@ html {
   }
 }
 
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animate-ripple {
   animation: ripple 650ms ease-out forwards;
 }
@@ -193,35 +269,16 @@ html {
   animation: drawer-backdrop var(--ds-duration-normal) ease-out forwards;
 }
 
-@keyframes hero-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
 .animate-hero-float {
   animation: hero-float 7s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
 }
 
 .animate-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.03) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(28, 22, 18, 0.03) 0%,
+    rgba(28, 22, 18, 0.07) 50%,
+    rgba(28, 22, 18, 0.03) 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
@@ -237,13 +294,21 @@ html {
   content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.035;
+  opacity: 0.025;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 180px 180px;
 }
 
-/* feTurbulence filters break painting on iOS Safari — disable grain overlay there. */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1023px) {
     .site-header-mobile {
@@ -266,7 +331,6 @@ html {
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* rounded-full uses a circular hit region on iOS — corners miss the button */
   @media (max-width: 1023px) {
     #site-header [data-mobile-nav-trigger]::before {
       content: "";
