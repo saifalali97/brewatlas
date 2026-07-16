@@ -7,7 +7,7 @@ import { RecipeCard } from "@/app/components/cards/recipe-card";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
 import { EmptyState } from "@/app/components/ui/empty-state";
 import { RippleLink } from "@/app/components/ui/ripple-link";
-import { buttons } from "@/lib/constants/styles";
+import { buttons, filterChips, forms } from "@/lib/constants/styles";
 import { GUEST_RECIPE_LIMIT } from "@/lib/membership/premium";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { useTranslations } from "@/lib/i18n/translation-context";
@@ -102,7 +102,7 @@ export function RecipesExplorer({
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder={t("recipesPage.searchPlaceholder")}
-            className="w-full rounded-full border border-white/[0.1] bg-white/[0.04] py-3 ps-11 pe-5 text-sm text-stone-100 outline-none backdrop-blur-xl transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
+            className={`${forms.input} mt-0 min-h-11 rounded-full py-3 ps-11 pe-5 backdrop-blur-xl`}
           />
         </div>
       </div>
@@ -118,11 +118,7 @@ export function RecipesExplorer({
               aria-label={t("homeFilters.filterByAria", { filter: filterLabel })}
               aria-pressed={isActive}
               onClick={() => setActiveFilter(filter)}
-              className={`rounded-full border px-4 py-2.5 text-sm font-medium backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.98] ${
-                isActive
-                  ? "border-amber-600/45 bg-amber-950/50 text-amber-100 shadow-[0_0_32px_rgba(217,119,6,0.14)]"
-                  : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-amber-600/25 hover:bg-white/[0.06] hover:text-stone-200 hover:shadow-[0_0_24px_rgba(217,119,6,0.08)]"
-              }`}
+              className={`${filterChips.base} ${isActive ? filterChips.active : filterChips.inactive}`}
             >
               {filterLabel}
             </button>
@@ -166,16 +162,16 @@ export function RecipesExplorer({
       </div>
 
       {!isAuthenticated && !isPremium && guestLimitBannerCount > 0 && (
-        <div className="relative mt-12 overflow-hidden rounded-[1.5rem] border border-amber-600/25 bg-gradient-to-b from-amber-950/35 via-[#0a0705]/90 to-[#0a0705] p-8 text-center shadow-[0_24px_64px_-24px_rgba(180,120,60,0.35)] sm:p-10">
+        <div className="relative mt-12 overflow-hidden rounded-[1.5rem] border border-uae-warm-gold/25 bg-gradient-to-b from-uae-warm-gold-deep/35 via-[#0a0705]/90 to-[#0a0705] p-8 text-center shadow-[0_24px_64px_-24px_rgba(192,138,46,0.35)] sm:p-10">
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-amber-600/10 blur-3xl"
+            className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-uae-warm-gold/10 blur-3xl"
           />
           <div className="relative mx-auto max-w-lg">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-amber-600/30 bg-amber-950/50 text-amber-400/90">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-uae-warm-gold/30 bg-uae-warm-gold/10 text-uae-warm-gold/90">
               <Lock className="h-5 w-5" aria-hidden />
             </div>
-            <h2 className="mt-5 text-xl font-semibold tracking-tight text-stone-50 sm:text-2xl">
+            <h2 className="font-display mt-5 text-xl tracking-[-0.02em] text-stone-50 sm:text-2xl">
               {t("recipesPage.guestLimitTitle")}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-stone-400 sm:text-base">

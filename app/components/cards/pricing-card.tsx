@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { RippleLink } from "@/app/components/ui/ripple-link";
-import { cards } from "@/lib/constants/styles";
+import { buttons, cards } from "@/lib/constants/styles";
 import type { PricingPlan } from "@/types/homepage";
 
 export type PricingCardLabels = {
@@ -40,7 +40,7 @@ const defaultPricingCardLabels: PricingCardLabels = {
 
 function FeatureValue({ enabled }: { enabled: boolean }) {
   return enabled ? (
-    <Check className="h-3.5 w-3.5 text-amber-500/90" aria-hidden />
+    <Check className="h-3.5 w-3.5 text-uae-warm-gold/90" aria-hidden />
   ) : (
     <X className="h-3.5 w-3.5 text-stone-600" aria-hidden />
   );
@@ -60,7 +60,7 @@ function PlanFeature({
   return (
     <div className="flex items-center justify-between gap-3 border-b border-white/[0.05] py-2.5 last:border-b-0">
       <div className="flex items-center gap-2 min-w-0">
-        <Icon className="h-3.5 w-3.5 shrink-0 text-amber-500/75" aria-hidden />
+        <Icon className="h-3.5 w-3.5 shrink-0 text-uae-warm-gold/75" aria-hidden />
         <span className="text-[0.8125rem] text-stone-400">{label}</span>
       </div>
       {value !== undefined ? (
@@ -85,8 +85,8 @@ function PricingButton({
 }) {
   const className = `group/btn relative isolate inline-flex h-11 w-full items-center justify-center gap-2 overflow-hidden rounded-full px-5 text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.98] motion-reduce:hover:translate-y-0 ${
     highlighted
-      ? "bg-amber-600 text-white shadow-[0_0_32px_rgba(217,119,6,0.3)] hover:-translate-y-1 hover:bg-amber-500 hover:shadow-[0_0_44px_rgba(217,119,6,0.45)]"
-      : "border border-white/[0.12] bg-white/[0.06] text-stone-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-2xl hover:-translate-y-1 hover:border-amber-500/45 hover:bg-white/[0.1] hover:shadow-[0_0_36px_rgba(217,119,6,0.18),inset_0_1px_0_rgba(255,255,255,0.14)]"
+      ? `${buttons.primary} h-11 min-w-0 hover:-translate-y-1`
+      : "border border-white/[0.12] bg-white/[0.06] text-stone-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-2xl hover:-translate-y-1 hover:border-uae-warm-gold/45 hover:bg-white/[0.1] hover:shadow-[0_0_36px_rgba(192,138,46,0.18),inset_0_1px_0_rgba(255,255,255,0.14)]"
   }`;
 
   if (asSubmit) {
@@ -136,8 +136,8 @@ export function PricingCard({ plan, ctaHref = "#pricing", ctaAsSubmit = false, l
     <article
       className={`group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
         highlighted
-          ? "z-10 border-amber-600/35 bg-gradient-to-b from-amber-950/45 via-white/[0.04] to-[#0a0705]/85 shadow-[0_28px_64px_-20px_rgba(180,120,60,0.28),0_0_0_1px_rgba(217,119,6,0.12)] hover:border-amber-500/45 hover:shadow-[0_36px_72px_-18px_rgba(180,120,60,0.34),0_0_48px_rgba(217,119,6,0.12)] lg:scale-[1.04] lg:-my-3"
-          : "border-white/[0.11] bg-gradient-to-br from-white/[0.08] via-white/[0.035] to-white/[0.01] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] hover:border-amber-500/28 hover:shadow-[0_24px_56px_-18px_rgba(180,120,60,0.2),0_0_0_1px_rgba(217,119,6,0.06)]"
+          ? "z-10 border-uae-warm-gold/35 bg-gradient-to-b from-uae-warm-gold-deep/45 via-white/[0.04] to-[#0a0705]/85 shadow-[0_28px_64px_-20px_rgba(192,138,46,0.28),0_0_0_1px_rgba(192,138,46,0.12)] hover:border-uae-warm-gold/45 hover:shadow-[0_36px_72px_-18px_rgba(192,138,46,0.34),0_0_48px_rgba(192,138,46,0.12)] lg:scale-[1.04] lg:-my-3"
+          : "border-white/[0.11] bg-gradient-to-br from-white/[0.08] via-white/[0.035] to-white/[0.01] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] hover:border-uae-warm-gold/28 hover:shadow-[0_24px_56px_-18px_rgba(192,138,46,0.2),0_0_0_1px_rgba(192,138,46,0.06)]"
       }`}
     >
       <div aria-hidden className={cards.premiumSheen} />
@@ -145,23 +145,23 @@ export function PricingCard({ plan, ctaHref = "#pricing", ctaAsSubmit = false, l
         <>
           <div
             aria-hidden
-            className="pointer-events-none absolute -inset-px rounded-[1.5rem] bg-gradient-to-b from-amber-500/20 via-transparent to-transparent opacity-70"
+            className="pointer-events-none absolute -inset-px rounded-[1.5rem] bg-gradient-to-b from-uae-warm-gold/20 via-transparent to-transparent opacity-70"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-amber-600/12 blur-3xl"
+            className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-uae-warm-gold/12 blur-3xl"
           />
         </>
       )}
 
       {highlighted && (
-        <div className="absolute -top-3.5 left-1/2 z-20 -translate-x-1/2 rounded-full border border-amber-500/40 bg-amber-600 px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white shadow-[0_0_28px_rgba(217,119,6,0.4)]">
+        <div className="absolute -top-3.5 left-1/2 z-20 -translate-x-1/2 rounded-full border border-uae-warm-gold/40 bg-uae-warm-gold px-4 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-uae-dark-coffee-deep shadow-[0_0_28px_rgba(192,138,46,0.4)]">
           {l.mostPopular}
         </div>
       )}
 
       <div className={`relative flex flex-1 flex-col ${highlighted ? "p-6 lg:p-8" : "p-5 lg:p-6"}`}>
-        <h3 className="text-[1.15rem] font-semibold tracking-tight text-stone-50 lg:text-[1.2rem]">
+        <h3 className="font-display text-[1.15rem] tracking-[-0.02em] text-stone-50 lg:text-[1.2rem]">
           {plan.name}
         </h3>
 
@@ -213,7 +213,7 @@ export function PricingCard({ plan, ctaHref = "#pricing", ctaAsSubmit = false, l
               key={feature}
               className="flex items-start gap-2.5 text-[0.8125rem] leading-relaxed text-stone-400"
             >
-              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500/85" aria-hidden />
+              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-uae-warm-gold/85" aria-hidden />
               {feature}
             </li>
           ))}

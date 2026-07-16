@@ -36,7 +36,7 @@ import { createClient } from "@/lib/supabase/server";
 import { roleIsAdmin } from "@/lib/auth/is-admin";
 import { ensureProfile } from "@/lib/supabase/profile";
 import { signOutAction } from "@/lib/supabase/actions";
-import { buttons } from "@/lib/constants/styles";
+import { buttons, panels, typography } from "@/lib/constants/styles";
 import type { FeaturedRecipe } from "@/types/homepage";
 
 /** Builds `RecipeCard`'s translated chrome labels for a given recipe, matching the pattern used on `/recipes`. */
@@ -143,22 +143,19 @@ export default async function DashboardPage() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         {stats.map(({ icon: Icon, label, value }) => (
-          <div
-            key={label}
-            className="flex items-center gap-4 rounded-2xl border border-white/[0.09] bg-white/[0.035] px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl"
-          >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-700/20 bg-amber-950/25 text-amber-500/80">
+          <div key={label} className={`flex items-center gap-4 ${panels.stat}`}>
+            <div className={panels.statIcon}>
               <Icon className="h-[18px] w-[18px]" aria-hidden />
             </div>
             <div>
-              <p className="text-2xl font-semibold tracking-tight text-stone-50">{value}</p>
+              <p className="font-display text-2xl tracking-[-0.02em] text-stone-50">{value}</p>
               <p className="mt-1 text-sm text-stone-500">{label}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-10 flex flex-col gap-6 rounded-2xl border border-white/[0.09] bg-white/[0.035] p-6 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:flex-row sm:items-center sm:justify-between">
+      <div className={`mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between ${panels.profile}`}>
         <div className="flex items-center gap-4">
           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/[0.12] bg-white/[0.04]">
             {profile?.avatar_url ? (
@@ -192,15 +189,11 @@ export default async function DashboardPage() {
       <AccountSubscriptionSummary membership={membership} dictionary={dictionary} locale={locale} />
 
       <div className="mt-16">
-        <h2 className="text-xl font-semibold tracking-tight text-stone-50">{d.quickLinksTitle}</h2>
+        <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>{d.quickLinksTitle}</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {quickLinks.map(({ icon: Icon, label, description, href }) => (
-            <Link
-              key={label}
-              href={href}
-              className="flex items-center gap-4 rounded-2xl border border-white/[0.09] bg-white/[0.035] px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-500/30 hover:bg-white/[0.05]"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-700/20 bg-amber-950/25 text-amber-500/80">
+            <Link key={label} href={href} className={`flex items-center gap-4 ${panels.link}`}>
+              <div className={panels.statIcon}>
                 <Icon className="h-[18px] w-[18px]" aria-hidden />
               </div>
               <div>
@@ -214,10 +207,10 @@ export default async function DashboardPage() {
 
       <div className="mt-16">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold tracking-tight text-stone-50">{dictionary.dashboard.myRecipes}</h2>
+          <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>{dictionary.dashboard.myRecipes}</h2>
           <div className="flex items-center gap-5">
             {ownRecipes.length > 0 && (
-              <Link href="/account/recipes" className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline">
+              <Link href="/account/recipes" className="text-sm font-medium text-uae-warm-gold/90 underline-offset-4 hover:underline">
                 {d.manageAll}
               </Link>
             )}
@@ -249,9 +242,9 @@ export default async function DashboardPage() {
 
       <div className="mt-16">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold tracking-tight text-stone-50">{d.favoriteRecipesTitle}</h2>
+          <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>{d.favoriteRecipesTitle}</h2>
           {favoriteRecipes.length > 0 && (
-            <Link href="/recipes" className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline">
+            <Link href="/recipes" className="text-sm font-medium text-uae-warm-gold/90 underline-offset-4 hover:underline">
               {d.browseMore}
             </Link>
           )}
@@ -260,7 +253,7 @@ export default async function DashboardPage() {
         {favoriteRecipes.length === 0 ? (
           <p className="mt-6 rounded-2xl border border-white/[0.09] bg-white/[0.03] px-6 py-8 text-sm text-stone-500">
             {d.noFavoritesYetPrefix}{" "}
-            <Link href="/recipes" className="text-amber-400/90 underline-offset-4 hover:underline">
+            <Link href="/recipes" className="text-uae-warm-gold/90 underline-offset-4 hover:underline">
               {d.recipeLibraryLink}
             </Link>{" "}
             {d.noFavoritesYetSuffix}
@@ -281,7 +274,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="mt-16">
-        <h2 className="text-xl font-semibold tracking-tight text-stone-50">
+        <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>
           {d.continueBrewing}
         </h2>
         <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">

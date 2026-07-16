@@ -47,7 +47,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         <p className="mt-6 text-center text-sm text-stone-500">
           {dictionary.auth.newToBrewAtlas}{" "}
-          <Link href="/signup" className="text-amber-400/90 underline-offset-4 hover:underline">
+          <Link href="/signup" className="text-uae-warm-gold/90 underline-offset-4 hover:underline">
             {dictionary.auth.createAnAccount}
           </Link>
         </p>

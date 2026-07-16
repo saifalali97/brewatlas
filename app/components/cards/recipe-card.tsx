@@ -2,6 +2,7 @@ import Link from "next/link";
 import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
+import { badges } from "@/lib/constants/styles";
 import { interpolate } from "@/lib/i18n/format";
 import { imageAlt } from "@/lib/seo/image-alt";
 import type { FeaturedRecipe } from "@/types/homepage";
@@ -75,26 +76,22 @@ function RecipeCardBody({
           className="object-cover brightness-[0.88] contrast-[1.04] saturate-[0.92] transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] motion-reduce:transform-none"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0705] via-[#0a0705]/15 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-950/8 via-transparent to-[#0a0705]/25" />
+        <div className="absolute inset-0 bg-gradient-to-br from-uae-warm-gold-deep/8 via-transparent to-[#0a0705]/25" />
 
         <div className="absolute start-5 top-5 flex flex-wrap gap-2">
-          <span className="rounded-full border border-white/[0.14] bg-[#0a0705]/50 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-stone-200 backdrop-blur-xl">
-            {brewMethodLabel}
-          </span>
-          <span className="rounded-full border border-amber-700/25 bg-amber-950/50 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-amber-300/90 backdrop-blur-xl">
-            {recipe.roastLevel}
-          </span>
+          <span className={badges.tag}>{brewMethodLabel}</span>
+          <span className={badges.accent}>{recipe.roastLevel}</span>
         </div>
 
         {recipe.premium && (
-          <div className="absolute end-5 top-5 rounded-full border border-amber-700/35 bg-amber-950/65 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-200/90 backdrop-blur-xl">
+          <div className={`absolute end-5 top-5 ${badges.premium}`}>
             {labels.premium}
           </div>
         )}
 
         {recipe.featured && (
-          <div className="absolute bottom-5 start-5 flex items-center gap-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-amber-950/70 to-[#0a0705]/60 px-4 py-1.5 text-[11px] font-medium text-amber-100/95 shadow-[0_0_28px_rgba(217,119,6,0.15)] backdrop-blur-xl">
-            <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-amber-400" aria-hidden>
+          <div className={`absolute bottom-5 start-5 ${badges.editorsChoice}`}>
+            <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-uae-warm-gold" aria-hidden>
               <path d="M8 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4L2.2 6.2l4-.6L8 2z" stroke="currentColor" strokeWidth="1.1" strokeLinejoin="round" />
             </svg>
             {labels.editorsChoice}
@@ -104,11 +101,11 @@ function RecipeCardBody({
 
       <div className={`relative flex flex-1 flex-col ${featured ? "p-8 lg:p-10" : "p-7 lg:p-8"}`}>
         <div className="flex-1">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-600/70">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-uae-warm-gold/70">
             {recipe.country}
           </p>
           <h3
-            className={`mt-2 font-medium leading-snug tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-100 ${
+            className={`font-display mt-2 leading-snug tracking-[-0.02em] text-stone-50 transition-colors duration-300 group-hover:text-uae-pearl ${
               featured ? "text-xl lg:text-2xl" : "text-lg"
             }`}
           >
@@ -145,10 +142,10 @@ function RecipeCardBody({
 
 export function RecipeCard({ recipe, featured, href, labels }: RecipeCardProps) {
   const resolvedLabels: RecipeCardLabels = { ...defaultRecipeCardLabels, ...labels };
-  const className = `group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border bg-gradient-to-br from-white/[0.08] via-white/[0.035] to-white/[0.01] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 hover:shadow-[0_32px_68px_-20px_rgba(180,120,60,0.2)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
+  const className = `group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border bg-gradient-to-br from-white/[0.08] via-white/[0.035] to-white/[0.01] shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-2 hover:shadow-[0_32px_68px_-20px_rgba(192,138,46,0.2)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${
     featured
-      ? "lg:col-span-2 border-amber-600/25 ring-1 ring-amber-500/20 shadow-[0_20px_56px_-20px_rgba(180,120,60,0.18)] hover:border-amber-500/35"
-      : "border-white/[0.11] hover:border-amber-600/28"
+      ? "lg:col-span-2 border-uae-warm-gold/25 ring-1 ring-uae-warm-gold/20 shadow-[0_20px_56px_-20px_rgba(192,138,46,0.18)] hover:border-uae-warm-gold/35"
+      : "border-white/[0.11] hover:border-uae-warm-gold/28"
   }`;
 
   if (href) {

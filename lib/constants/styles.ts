@@ -108,5 +108,29 @@ export const surfaces = {
   emptyState: `${dsRadius.card} border border-white/[0.08] bg-white/[0.02] px-6 py-16 text-center backdrop-blur-sm`,
 } as const;
 
+/** Premium chip and badge patterns for cards and detail pages. */
+export const badges = {
+  premium: `rounded-full border border-uae-warm-gold/35 bg-uae-warm-gold-deep/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-uae-warm-gold/95 backdrop-blur-xl`,
+  premiumCompact: `rounded-full border border-uae-warm-gold/35 bg-uae-warm-gold-deep/40 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-uae-warm-gold/95 backdrop-blur-xl`,
+  tag: `rounded-full border border-white/[0.14] bg-uae-dark-coffee-deep/50 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-stone-200 backdrop-blur-xl`,
+  accent: `rounded-full border border-uae-warm-gold/30 bg-uae-warm-gold-deep/50 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-uae-warm-gold/90 backdrop-blur-xl`,
+  editorsChoice: `flex items-center gap-2 rounded-full border border-uae-warm-gold/40 bg-gradient-to-r from-uae-warm-gold-deep/70 to-uae-dark-coffee-deep/60 px-4 py-1.5 text-[11px] font-medium text-uae-pearl shadow-[0_0_28px_rgba(192,138,46,0.15)] backdrop-blur-xl`,
+} as const;
+
+/** Dashboard and account panel surfaces. */
+export const panels = {
+  stat: `${dsRadius.lg} border border-white/[0.09] bg-white/[0.035] px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl`,
+  statIcon: `flex h-10 w-10 shrink-0 items-center justify-center ${dsRadius.md} border border-uae-warm-gold/20 bg-uae-warm-gold/8 text-uae-warm-gold/90`,
+  link: `${dsRadius.lg} border border-white/[0.09] bg-white/[0.035] px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl ${dsMotion.transition} hover:-translate-y-0.5 hover:border-uae-warm-gold/30 hover:bg-white/[0.05] motion-reduce:hover:translate-y-0`,
+  profile: `${dsRadius.lg} border border-white/[0.09] bg-white/[0.035] p-6 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl`,
+} as const;
+
+/** Active/inactive filter chip styles for explorers. */
+export const filterChips = {
+  base: `min-h-11 rounded-full border px-4 py-2.5 text-sm font-medium backdrop-blur-xl ${dsMotion.transition} hover:-translate-y-0.5 active:scale-[0.98] motion-reduce:hover:translate-y-0 ${dsFocus.ring}`,
+  active: "border-uae-warm-gold/40 bg-uae-warm-gold/10 text-uae-pearl shadow-[0_0_32px_rgba(192,138,46,0.12)]",
+  inactive: "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-uae-warm-gold/25 hover:bg-white/[0.06] hover:text-stone-200",
+} as const;
+
 /** Re-export DS v2 tokens for new components. */
 export { dsColors, dsElevation, dsFocus, dsLayout, dsMotion, dsRadius, dsShadow, dsTypography };
