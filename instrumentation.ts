@@ -5,5 +5,8 @@ export async function register() {
     if (!result.ok) {
       console.warn("[env] missing required variables:", result.missing.join(", "));
     }
+
+    const { ensureInitialAdminFromEnv } = await import("./lib/auth/seed-initial-admin");
+    await ensureInitialAdminFromEnv();
   }
 }
