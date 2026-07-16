@@ -24,8 +24,8 @@ export function EmptyState({
     <div
       className={`rounded-[1.5rem] border border-white/[0.08] bg-white/[0.02] px-6 py-16 text-center ${className}`}
     >
-      {icon ? <div className="mx-auto mb-4 flex justify-center text-amber-500/80">{icon}</div> : null}
-      <p className="text-base font-medium text-stone-200">{title}</p>
+      {icon ? <div className="mx-auto mb-4 flex justify-center text-uae-warm-gold/80">{icon}</div> : null}
+      <h2 className="text-base font-medium text-stone-200">{title}</h2>
       {description ? <p className="mx-auto mt-2 max-w-md text-sm text-stone-500">{description}</p> : null}
       {actionLabel && actionHref ? (
         <Link href={actionHref} className={`${buttons.secondary} mt-6 inline-flex h-10 min-w-0 px-5 text-xs`}>
