@@ -61,7 +61,7 @@ function FiltersForm({
           <button
             type="button"
             onClick={onClear}
-            className="text-xs font-medium text-amber-500/90 transition-colors hover:text-amber-400"
+            className="text-xs font-medium text-uae-warm-gold/90 transition-colors hover:text-uae-warm-gold"
           >
             {t("searchPage.clearFilters")}
           </button>
@@ -375,14 +375,14 @@ export function SearchFiltersPanel({
       <button
         type="button"
         onClick={() => onOpenChange?.(true)}
-        className={`${buttons.secondary} relative flex w-full items-center justify-center gap-2 lg:hidden`}
+        className={`${buttons.secondary} relative flex min-h-11 w-full items-center justify-center gap-2 lg:hidden`}
         aria-expanded={open}
         aria-controls="search-filters-sheet"
       >
         <SlidersHorizontal className="h-4 w-4" aria-hidden />
         {t("searchPage.filtersTitle")}
         {activeCount > 0 && (
-          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-600/80 px-1.5 text-[10px] font-semibold text-stone-950">
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-uae-warm-gold/90 px-1.5 text-[10px] font-semibold text-uae-dark-coffee-deep">
             {activeCount}
           </span>
         )}
@@ -401,14 +401,14 @@ export function SearchFiltersPanel({
             role="dialog"
             aria-modal="true"
             aria-label={t("searchPage.filtersTitle")}
-            className="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-[1.5rem] border border-white/[0.12] bg-[#0f0b08] p-5 pb-8 shadow-[0_-24px_64px_rgba(0,0,0,0.55)]"
+            className="absolute inset-x-0 bottom-0 max-h-[88vh] overflow-y-auto rounded-t-[1.5rem] border border-white/[0.12] bg-[#0f0b08] p-5 pb-[max(2rem,env(safe-area-inset-bottom))] shadow-[0_-24px_64px_rgba(0,0,0,0.55)]"
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-base font-semibold text-stone-50">{t("searchPage.filtersTitle")}</h2>
               <button
                 type="button"
                 onClick={() => onOpenChange?.(false)}
-                className="rounded-full border border-white/[0.12] p-2 text-stone-400 transition-colors hover:text-stone-200"
+                className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-white/[0.12] text-stone-400 transition-colors hover:text-stone-200"
                 aria-label={t("searchPage.closeFilters")}
               >
                 <X className="h-4 w-4" aria-hidden />

@@ -68,7 +68,7 @@ export default async function SiteLayout({
         notificationsSlot={notificationsSlot}
       />
 
-      <main id="main-content">{children}</main>
+      <main id="main-content" className="pb-[env(safe-area-inset-bottom,0px)]">{children}</main>
 
       <FloatingActions />
       <SiteFooter
