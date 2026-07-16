@@ -1,59 +1,73 @@
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { RevealOnScroll } from "@/app/components/ui/reveal-on-scroll";
-import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons, dsTypography } from "@/lib/constants/styles";
 import type { Dictionary } from "@/lib/i18n/types";
 
 type WhyBrewAtlasSectionProps = {
   about: Dictionary["aboutPage"];
-  hero: Dictionary["homeHero"];
   stats: Array<{ value: string; label: string }>;
 };
 
-/** Editorial “Why BrewAtlas” — platform purpose with calm stat rhythm. */
-export function WhyBrewAtlasSection({ about, hero, stats }: WhyBrewAtlasSectionProps) {
+/** Editorial manifesto — typography-first, no card boxes. */
+export function WhyBrewAtlasSection({ about, stats }: WhyBrewAtlasSectionProps) {
   return (
-    <SectionFrame id="why-brewatlas" ariaLabelledBy="why-brewatlas-heading" theme="pearl" padding="compact">
-      <div className="grid gap-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-20">
+    <section
+      id="why-brewatlas"
+      aria-labelledby="why-brewatlas-heading"
+      className="relative overflow-hidden bg-ba-pearl px-6 py-32 sm:px-8 md:py-40 lg:px-12 lg:py-48 xl:px-16"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-32 top-0 h-[28rem] w-[28rem] rounded-full bg-ba-gold/8 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-ba-sand/60 blur-3xl"
+      />
+
+      <div className="relative mx-auto max-w-6xl">
         <RevealOnScroll>
           <p className={dsTypography.eyebrow}>{about.eyebrow}</p>
-          <h2 id="why-brewatlas-heading" className={`mt-5 ${dsTypography.h1}`}>
+          <h2
+            id="why-brewatlas-heading"
+            className="font-display mt-8 max-w-4xl text-[2.5rem] leading-[1.04] tracking-[-0.035em] text-ba-espresso sm:text-5xl lg:text-[4.25rem]"
+          >
             {about.title}
           </h2>
-          <p className={`mt-8 max-w-xl ${dsTypography.body}`}>{about.body}</p>
-          <div className="mt-10">
+        </RevealOnScroll>
+
+        <RevealOnScroll delay={80}>
+          <p className={`mt-12 max-w-2xl text-xl leading-[1.75] text-ba-coffee/80 lg:text-[1.375rem] lg:leading-[1.8]`}>
+            {about.body}
+          </p>
+        </RevealOnScroll>
+
+        <RevealOnScroll delay={120}>
+          <div className="mt-16 grid gap-10 border-t border-ba-espresso/[0.08] pt-16 sm:grid-cols-3 lg:gap-16">
+            {stats.map(({ value, label }) => (
+              <div key={label} className="text-center sm:text-left">
+                <p className="font-display text-4xl tracking-[-0.03em] text-ba-espresso tabular-nums lg:text-5xl">
+                  {value}
+                </p>
+                <p className="mt-3 text-sm uppercase tracking-[0.14em] text-ba-coffee/55">{label}</p>
+              </div>
+            ))}
+          </div>
+        </RevealOnScroll>
+
+        <RevealOnScroll delay={160}>
+          <div className="mt-16">
             <RippleLink href="/recipes" className={buttons.primary}>
               {about.exploreRecipesCta}
             </RippleLink>
           </div>
         </RevealOnScroll>
-
-        <RevealOnScroll delay={100}>
-          <div className="relative overflow-hidden rounded-[1.25rem] border border-ba-espresso/[0.06] bg-ba-sand/40 p-8 sm:p-10">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-ba-gold/15 blur-3xl"
-            />
-            <p className="text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-ba-bronze">
-              {hero.eyebrow}
-            </p>
-            <p className="font-display mt-4 text-2xl leading-[1.15] tracking-[-0.02em] text-ba-espresso sm:text-3xl">
-              {hero.headline}
-            </p>
-            <p className="mt-4 text-sm leading-relaxed text-ba-coffee/75">{hero.subtitle}</p>
-            <dl className="mt-10 grid grid-cols-3 gap-6 border-t border-ba-espresso/[0.08] pt-8">
-              {stats.map(({ value, label }) => (
-                <div key={label}>
-                  <dt className="text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-ba-coffee/55">
-                    {label}
-                  </dt>
-                  <dd className="font-display mt-2 text-lg tracking-[-0.02em] text-ba-espresso">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </RevealOnScroll>
       </div>
-    </SectionFrame>
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-ba-sand/80"
+      />
+    </section>
   );
 }

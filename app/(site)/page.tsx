@@ -3,12 +3,10 @@ import { HeroSection } from "@/app/components/sections/hero-section";
 import { WhyBrewAtlasSection } from "@/app/components/sections/why-brewatlas-section";
 import { DiscoverSection } from "@/app/components/sections/discover-section";
 import { CoffeeJourneySection } from "@/app/components/sections/coffee-journey-section";
+import { OriginsAtlasSection } from "@/app/components/sections/origins-atlas-section";
 import { PremiumExperienceSection } from "@/app/components/sections/premium-experience-section";
-import {
-  BrewingMethodsSection,
-  CoffeeOriginsSection,
-  FeaturedRecipesSection,
-} from "@/lib/dynamic-sections";
+import { SectionCurve } from "@/app/components/ui/section-curve";
+import { FeaturedRecipesSection } from "@/lib/dynamic-sections";
 import { buttons } from "@/lib/constants/styles";
 import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getRecipeSlug } from "@/lib/data/recipes";
@@ -49,9 +47,9 @@ export default async function Home() {
   return (
     <>
       <HeroSection heroImage={heroImage} />
+      <SectionCurve />
       <WhyBrewAtlasSection
         about={dictionary.aboutPage}
-        hero={dictionary.homeHero}
         stats={[
           { value: dictionary.homePremiumExperience.statRecipesValue, label: dictionary.homeHero.statRecipesLabel },
           { value: "180+", label: dictionary.homeHero.statRoastersLabel },
@@ -66,29 +64,7 @@ export default async function Home() {
         title={methods.title}
         description={methods.description}
       />
-      <BrewingMethodsSection
-        methods={brewMethods.slice(0, 4)}
-        eyebrow={methods.eyebrow}
-        title={methods.title}
-        description={methods.description}
-        cardLabels={{
-          brewTime: methods.brewTimeLabel,
-          difficulty: methods.difficultyLabel,
-          cupProfile: methods.cupProfileLabel,
-          body: methods.bodyLabel,
-          acidity: methods.acidityLabel,
-          sweetness: methods.sweetnessLabel,
-          bestWith: methods.bestWithPrefix,
-          learnMethod: methods.learnMethod,
-          imageAltTemplate: methods.imageAltTemplate,
-          difficultyLabels: {
-            Beginner: dictionary.homeDifficulty.beginner,
-            Intermediate: dictionary.homeDifficulty.intermediate,
-            Advanced: dictionary.homeDifficulty.advanced,
-          },
-        }}
-      />
-      <CoffeeOriginsSection
+      <OriginsAtlasSection
         origins={coffeeOrigins.slice(0, 6)}
         eyebrow={origins.eyebrow}
         title={origins.title}
