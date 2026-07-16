@@ -75,6 +75,9 @@ export function SiteNav({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  const isHome = pathname === "/";
+  const onHero = isHome && !scrolled;
+
   const discoverLinks = useMemo(
     () => [
       { href: "/devices", label: nav.devices },
@@ -88,7 +91,7 @@ export function SiteNav({
   );
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 48);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -97,6 +100,11 @@ export function SiteNav({
   const recipesActive = isActivePath(pathname, "/recipes");
   const premiumActive = isActivePath(pathname, "/premium");
   const adminActive = isActivePath(pathname, "/admin");
+
+  const linkBase = onHero ? "text-ba-sand-deep/85 hover:text-ba-pearl" : "text-ba-coffee/70 hover:text-ba-espresso";
+  const linkActive = onHero ? "text-ba-pearl" : "text-ba-espresso";
+  const premiumLink = onHero ? "text-ba-gold hover:text-ba-pearl" : "text-ba-bronze hover:text-ba-espresso";
+  const wordmark = onHero ? "text-ba-pearl" : "text-ba-espresso";
 
   return (
     <>
@@ -107,19 +115,19 @@ export function SiteNav({
           "max-lg:fixed max-lg:inset-x-0 max-lg:top-0 lg:sticky lg:top-0 z-[100]",
           "max-lg:pt-[env(safe-area-inset-top,0px)]",
           dsMotion.transitionSlow,
-          "lg:backdrop-blur-2xl lg:backdrop-saturate-150",
-          scrolled
-            ? joinClasses(
-                "border-white/[0.06] bg-uae-dark-coffee-deep max-lg:bg-uae-dark-coffee-deep lg:bg-uae-dark-coffee-deep/92",
-                dsShadow.header,
-              )
-            : "border-white/[0.04] bg-uae-dark-coffee-deep max-lg:bg-uae-dark-coffee-deep lg:bg-uae-dark-coffee-deep/70",
+          "backdrop-blur-2xl backdrop-saturate-150",
+          onHero
+            ? "border-transparent bg-transparent"
+            : joinClasses(
+                "border-ba-espresso/[0.06] bg-ba-pearl/90",
+                scrolled ? dsShadow.header : "",
+              ),
         )}
       >
         <nav
           aria-label={nav.mainNavigationAriaLabel}
           className={joinClasses(
-            dsLayout.container,
+            dsLayout.containerWide,
             dsLayout.pagePx,
             "relative flex items-center justify-between",
             dsLayout.headerHeight,
@@ -130,10 +138,11 @@ export function SiteNav({
               href="/"
               aria-label={nav.homeAriaLabel}
               className={joinClasses(
-                "text-lg font-semibold tracking-tight text-uae-pearl",
+                "font-display text-xl tracking-[-0.02em]",
+                wordmark,
                 dsMotion.transition,
                 "hover:opacity-80",
-                dsFocus.ring,
+                onHero ? dsFocus.ringDark : dsFocus.ring,
               )}
             >
               BrewAtlas
@@ -144,6 +153,7 @@ export function SiteNav({
                 label={nav.discover}
                 menuAriaLabel={nav.discoverMenuAriaLabel}
                 links={discoverLinks}
+                onDark={onHero}
               />
 
               <Link
@@ -152,14 +162,14 @@ export function SiteNav({
                 className={joinClasses(
                   "group relative px-0.5 py-1.5 text-sm font-medium",
                   dsMotion.transition,
-                  recipesActive ? "text-uae-pearl" : "text-stone-400 hover:text-uae-pearl",
-                  dsFocus.ring,
+                  recipesActive ? linkActive : linkBase,
+                  onHero ? dsFocus.ringDark : dsFocus.ring,
                 )}
               >
                 {nav.recipes}
                 <span
                   className={joinClasses(
-                    "absolute -bottom-0.5 left-1/2 h-px -translate-x-1/2 bg-uae-warm-gold/90 transition-all duration-500",
+                    "absolute -bottom-0.5 left-1/2 h-px -translate-x-1/2 bg-ba-gold transition-all duration-500",
                     dsMotion.easing,
                     recipesActive
                       ? "w-full opacity-100"
@@ -175,21 +185,11 @@ export function SiteNav({
                 className={joinClasses(
                   "group relative px-0.5 py-1.5 text-sm font-medium",
                   dsMotion.transition,
-                  premiumActive ? "text-uae-warm-gold" : "text-stone-400 hover:text-uae-warm-gold/90",
-                  dsFocus.ring,
+                  premiumActive ? (onHero ? "text-ba-gold" : "text-ba-bronze") : premiumLink,
+                  onHero ? dsFocus.ringDark : dsFocus.ring,
                 )}
               >
                 {nav.pricing}
-                <span
-                  className={joinClasses(
-                    "absolute -bottom-0.5 left-1/2 h-px -translate-x-1/2 bg-uae-warm-gold/90 transition-all duration-500",
-                    dsMotion.easing,
-                    premiumActive
-                      ? "w-full opacity-100"
-                      : "w-0 opacity-0 group-hover:w-full group-hover:opacity-60",
-                  )}
-                  aria-hidden
-                />
               </Link>
 
               {isAdmin ? (
@@ -199,21 +199,11 @@ export function SiteNav({
                   className={joinClasses(
                     "group relative px-0.5 py-1.5 text-sm font-medium",
                     dsMotion.transition,
-                    adminActive ? "text-uae-pearl" : "text-stone-400 hover:text-uae-pearl",
-                    dsFocus.ring,
+                    adminActive ? linkActive : linkBase,
+                    onHero ? dsFocus.ringDark : dsFocus.ring,
                   )}
                 >
                   {nav.admin}
-                  <span
-                    className={joinClasses(
-                      "absolute -bottom-0.5 left-1/2 h-px -translate-x-1/2 bg-uae-warm-gold/90 transition-all duration-500",
-                      dsMotion.easing,
-                      adminActive
-                        ? "w-full opacity-100"
-                        : "w-0 opacity-0 group-hover:w-full group-hover:opacity-60",
-                    )}
-                    aria-hidden
-                  />
                 </Link>
               ) : null}
             </div>
@@ -226,10 +216,11 @@ export function SiteNav({
                 currentLocale={locale}
                 switchLanguageAria={nav.switchLanguageAria}
                 languageAriaLabel={nav.languageAriaLabel}
+                onDark={onHero}
               />
               <TextLink
                 href={isAuthenticated ? "/account" : "/login"}
-                variant={isAuthenticated ? "navActive" : "nav"}
+                variant={isAuthenticated ? (onHero ? "navActiveOnDark" : "navActive") : onHero ? "navOnDark" : "nav"}
                 className="min-h-11 items-center px-2"
               >
                 {isAuthenticated ? nav.account : nav.login}
@@ -244,11 +235,14 @@ export function SiteNav({
               aria-expanded={open}
               onClick={() => setOpen(true)}
               className={joinClasses(
-                "pointer-events-auto flex h-11 w-11 min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full border border-white/[0.1] bg-uae-dark-coffee-deep text-stone-300 touch-manipulation lg:hidden",
+                "pointer-events-auto flex h-11 w-11 min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full border touch-manipulation lg:hidden",
                 "[-webkit-tap-highlight-color:transparent] [touch-action:manipulation]",
                 dsMotion.transition,
-                "hover:border-uae-warm-gold/35 hover:text-uae-pearl active:scale-[0.98]",
-                dsFocus.ring,
+                "active:scale-[0.98]",
+                onHero
+                  ? "border-white/[0.15] bg-white/[0.06] text-ba-pearl hover:border-ba-gold/35"
+                  : "border-ba-espresso/10 bg-ba-pearl text-ba-coffee hover:border-ba-bronze/30",
+                onHero ? dsFocus.ringDark : dsFocus.ring,
               )}
             >
               <Menu className="pointer-events-none h-5 w-5" aria-hidden />

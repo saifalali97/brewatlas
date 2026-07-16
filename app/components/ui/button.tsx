@@ -4,12 +4,9 @@ import { buttons, dsFocus, dsMotion, dsRadius } from "@/lib/constants/styles";
 const variantClasses = {
   primary: buttons.primary,
   secondary: buttons.secondary,
-  ghost:
-    `inline-flex h-10 items-center justify-center gap-2 ${dsRadius.full} border border-white/[0.12] bg-white/[0.04] px-5 text-sm font-medium text-uae-pearl ${dsMotion.transition} hover:border-uae-warm-gold/40 hover:bg-white/[0.08] active:scale-[0.98] ${dsFocus.ring}`,
-  gold:
-    `inline-flex h-10 items-center justify-center ${dsRadius.full} bg-uae-warm-gold/90 px-5 text-sm font-medium text-uae-dark-coffee-deep ${dsMotion.transition} hover:bg-uae-warm-gold hover:shadow-[0_0_36px_rgba(192,138,46,0.42)] active:scale-[0.97] ${dsFocus.ring}`,
-  text:
-    `inline-flex items-center text-sm font-medium text-stone-400 ${dsMotion.transition} hover:text-uae-pearl ${dsFocus.ring}`,
+  ghost: `inline-flex h-10 items-center justify-center gap-2 ${dsRadius.full} border border-ba-espresso/12 bg-ba-pearl px-5 text-sm font-medium text-ba-espresso ${dsMotion.transition} hover:border-ba-bronze/35 hover:bg-ba-sand/50 active:scale-[0.98] ${dsFocus.ring}`,
+  gold: `inline-flex h-10 items-center justify-center ${dsRadius.full} bg-ba-gold px-5 text-sm font-medium text-ba-espresso ${dsMotion.transition} hover:bg-ba-gold-muted hover:shadow-[0_0_36px_rgba(184,149,107,0.32)] active:scale-[0.97] ${dsFocus.ring}`,
+  text: `inline-flex items-center text-sm font-medium text-ba-coffee/70 ${dsMotion.transition} hover:text-ba-espresso ${dsFocus.ring}`,
 } as const;
 
 const sizeClasses = {

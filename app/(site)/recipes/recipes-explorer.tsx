@@ -1,33 +1,26 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { Lock, Search } from "lucide-react";
-import { RecipeCard } from "@/app/components/cards/recipe-card";
-import { FavoriteButton } from "@/app/components/recipes/favorite-button";
+import { Search } from "lucide-react";
+import { Cover } from "@/app/components/atlas/cover";
+import { Folio, FolioItem } from "@/app/components/atlas/folio";
+import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { EmptyState } from "@/app/components/ui/empty-state";
-import { RippleLink } from "@/app/components/ui/ripple-link";
-import { buttons, filterChips, forms } from "@/lib/constants/styles";
+import { ArchiveMasthead } from "@/app/components/recipes/archive-masthead";
+import { GuestArchiveInvitation } from "@/app/components/recipes/guest-archive-invitation";
+import {
+  MethodIndex,
+  type MethodFilter,
+} from "@/app/components/recipes/method-index";
+import { FavoriteButton } from "@/app/components/recipes/favorite-button";
+import { acTypography } from "@/lib/design-system/atlas-canon";
+import { MotionReveal } from "@/lib/design-system/motion";
 import { GUEST_RECIPE_LIMIT } from "@/lib/membership/premium";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
+import { interpolate } from "@/lib/i18n/format";
 import { useTranslations } from "@/lib/i18n/translation-context";
+import type { DictionaryKey } from "@/lib/i18n/types";
 import type { RecipeListItem } from "@/types/recipe";
-
-const filters = ["All", "V60", "Espresso", "Chemex", "Aeropress", "Cold Brew"] as const;
-
-type Filter = (typeof filters)[number];
-
-const filterLabelKeys: Record<
-  Filter,
-  "homeFilters.all" | "homeFilters.v60" | "homeFilters.espresso" | "homeFilters.chemex" | "homeFilters.aeropress" | "homeFilters.coldBrew"
-> = {
-  All: "homeFilters.all",
-  V60: "homeFilters.v60",
-  Espresso: "homeFilters.espresso",
-  Chemex: "homeFilters.chemex",
-  Aeropress: "homeFilters.aeropress",
-  "Cold Brew": "homeFilters.coldBrew",
-};
 
 type RecipesExplorerProps = {
   recipes: RecipeListItem[];
@@ -39,6 +32,58 @@ type RecipesExplorerProps = {
   initialQuery?: string;
 };
 
+function groupRecipesByLetter(recipes: RecipeListItem[]) {
+  const groups = new Map<string, RecipeListItem[]>();
+
+  for (const recipe of recipes) {
+    const first = recipe.name.trim().charAt(0).toUpperCase();
+    const letter = /[A-Z]/i.test(first) ? first.toUpperCase() : "#";
+    const bucket = groups.get(letter) ?? [];
+    bucket.push(recipe);
+    groups.set(letter, bucket);
+  }
+
+  return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
+}
+
+function buildFolioEntries(folioRecipes: RecipeListItem[], useLetterGroups: boolean) {
+  const groups: Array<[string, RecipeListItem[]]> = useLetterGroups
+    ? groupRecipesByLetter(folioRecipes)
+    : [["", folioRecipes]];
+
+  return groups.map(([letter, groupRecipes], groupIndex) => {
+    const priorCount = groups
+      .slice(0, groupIndex)
+      .reduce((sum, [, recipes]) => sum + recipes.length, 0);
+
+    return {
+      letter,
+      items: groupRecipes.map((recipe, index) => ({
+        recipe,
+        indexLabel: String(priorCount + index + 1).padStart(2, "0"),
+      })),
+    };
+  });
+}
+
+function recipeLabels(
+  recipe: RecipeListItem,
+  t: (key: DictionaryKey, params?: Record<string, string | number>) => string,
+) {
+  const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
+  return {
+    difficultyLabel: t(difficultyLabelKey(recipe.difficulty)),
+    brewMethodLabel: brewMethodKey ? t(brewMethodKey) : recipe.brewMethod,
+    imageAlt: interpolate(t("homeFeaturedRecipes.imageAltTemplate"), {
+      name: recipe.name,
+      country: recipe.country,
+      brewMethod: recipe.brewMethod,
+      roastLevel: recipe.roastLevel,
+    }),
+  };
+}
+
+/** The Archive — cover feature, folio index, method navigation, invitation paywall. */
 export function RecipesExplorer({
   recipes,
   favoritedRecipeIds = [],
@@ -49,7 +94,7 @@ export function RecipesExplorer({
   initialQuery = "",
 }: RecipesExplorerProps) {
   const { t } = useTranslations();
-  const [activeFilter, setActiveFilter] = useState<Filter>("All");
+  const [activeFilter, setActiveFilter] = useState<MethodFilter>("All");
   const [search, setSearch] = useState(initialQuery);
   const favoritedSet = useMemo(() => new Set(favoritedRecipeIds), [favoritedRecipeIds]);
   const normalizedSearch = search.trim().toLowerCase();
@@ -85,108 +130,142 @@ export function RecipesExplorer({
   const lockedCount = isPremium || isAuthenticated ? 0 : Math.max(0, filteredRecipes.length - GUEST_RECIPE_LIMIT);
   const guestLimitBannerCount = hiddenRecipeCount > 0 ? hiddenRecipeCount : lockedCount;
 
+  const showCover = activeFilter === "All" && !normalizedSearch && visibleRecipes.length > 0;
+  const coverRecipe = showCover
+    ? visibleRecipes.find((recipe) => recipe.featured) ?? visibleRecipes[0]
+    : null;
+
+  const folioRecipes = coverRecipe
+    ? visibleRecipes.filter((recipe) => recipe.slug !== coverRecipe.slug)
+    : visibleRecipes;
+
+  const useLetterGroups = activeFilter === "All" && !normalizedSearch;
+  const folioEntries = buildFolioEntries(folioRecipes, useLetterGroups);
+
   return (
     <div>
-      <div className="mb-8">
-        <label htmlFor="recipe-search" className="sr-only">
-          {t("recipesPage.searchAriaLabel")}
-        </label>
-        <div className="relative max-w-md">
-          <Search
-            className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-500"
-            aria-hidden
-          />
-          <input
-            id="recipe-search"
-            type="search"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder={t("recipesPage.searchPlaceholder")}
-            className={`${forms.input} mt-0 min-h-11 rounded-full py-3 ps-11 pe-5 backdrop-blur-xl`}
-          />
-        </div>
-      </div>
+      <ArchiveMasthead
+        headingId="recipes-archive-heading"
+        issueLabel={`${t("recipesPage.eyebrow")} · Vol. I`}
+        title={t("recipesPage.title")}
+        description={t("recipesPage.description")}
+        searchLabel={t("recipesPage.searchAriaLabel")}
+        searchPlaceholder={t("recipesPage.searchPlaceholder")}
+        searchValue={search}
+        onSearchChange={setSearch}
+      />
 
-      <div className="mb-10 flex flex-wrap gap-2.5 md:mb-12">
-        {filters.map((filter) => {
-          const isActive = activeFilter === filter;
-          const filterLabel = t(filterLabelKeys[filter]);
-          return (
-            <button
-              key={filter}
-              type="button"
-              aria-label={t("homeFilters.filterByAria", { filter: filterLabel })}
-              aria-pressed={isActive}
-              onClick={() => setActiveFilter(filter)}
-              className={`${filterChips.base} ${isActive ? filterChips.active : filterChips.inactive}`}
-            >
-              {filterLabel}
-            </button>
-          );
-        })}
-      </div>
+      <MethodIndex
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+        getLabel={(key) => t(key)}
+        filterByAria={(filter) => t("homeFilters.filterByAria", { filter })}
+      />
 
-      <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
-        {visibleRecipes.map((recipe) => {
-          const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
-          return (
-            <div key={`${recipe.source}-${recipe.slug}`} className="relative h-full">
-              <RecipeCard
-                recipe={recipe}
-                featured={Boolean(recipe.featured) && activeFilter === "All" && !normalizedSearch}
-                href={`/recipes/${recipe.slug}`}
-                labels={{
-                  premium: t("common.premiumBadge"),
-                  editorsChoice: t("homeFeaturedRecipes.editorsChoice"),
-                  ratio: t("homeFeaturedRecipes.ratioLabel"),
-                  time: t("homeFeaturedRecipes.timeLabel"),
-                  difficultyLabel: t(difficultyLabelKey(recipe.difficulty)),
-                  brewMethodLabel: brewMethodKey ? t(brewMethodKey) : recipe.brewMethod,
-                  imageAltTemplate: t("homeFeaturedRecipes.imageAltTemplate"),
-                }}
-              />
-              {isAuthenticated && recipe.source === "db" && recipe.id && (
-                <div className="pointer-events-none absolute inset-0">
-                  <div className="pointer-events-auto absolute bottom-6 end-6 z-10">
-                    <FavoriteButton
-                      recipeId={recipe.id}
-                      isFavorited={favoritedSet.has(recipe.id)}
-                      currentPath={currentPath}
-                    />
+      {coverRecipe && (
+        <MotionReveal className="mt-16">
+          {(() => {
+            const labels = recipeLabels(coverRecipe, t);
+            return (
+              <Cover
+                href={`/recipes/${coverRecipe.slug}`}
+                title={coverRecipe.name}
+                eyebrow={
+                  coverRecipe.featured
+                    ? t("homeFeaturedRecipes.editorsChoice")
+                    : `${coverRecipe.country} · ${labels.brewMethodLabel}`
+                }
+                imageSrc={coverRecipe.image}
+                imageAlt={labels.imageAlt}
+                ctaLabel={t("homeDiscover.enterLabel")}
+                grade="library"
+                priority
+                meta={
+                  <div className="space-y-4">
+                    <p className={acTypography.body}>{coverRecipe.notes}</p>
+                    <div className="flex flex-wrap items-center gap-6 text-sm text-ac-walnut/70">
+                      <DifficultyIndicator
+                        level={coverRecipe.difficulty}
+                        label={labels.difficultyLabel}
+                        labelClassName="text-sm text-ac-walnut/65"
+                      />
+                      <span>
+                        {t("homeFeaturedRecipes.ratioLabel")}{" "}
+                        <strong className="text-ac-espresso">{coverRecipe.ratio}</strong>
+                      </span>
+                      <span>
+                        {t("homeFeaturedRecipes.timeLabel")}{" "}
+                        <strong className="text-ac-espresso">{coverRecipe.time}</strong>
+                      </span>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                }
+              />
+            );
+          })()}
+        </MotionReveal>
+      )}
+
+      {folioRecipes.length > 0 && (
+        <div className="mt-20">
+          {folioEntries.map(({ letter, items }) => (
+            <section key={letter || "all"} className={letter ? "mt-12 first:mt-0" : undefined}>
+              {letter ? (
+                <p className={acTypography.eyebrow} aria-hidden>
+                  {letter}
+                </p>
+              ) : null}
+              <Folio
+                ariaLabel={t("recipesPage.title")}
+                className={letter ? "mt-4" : undefined}
+              >
+                {items.map(({ recipe, indexLabel }) => {
+                  const labels = recipeLabels(recipe, t);
+
+                  return (
+                    <FolioItem
+                      key={`${recipe.source}-${recipe.slug}`}
+                      href={`/recipes/${recipe.slug}`}
+                      title={recipe.name}
+                      index={indexLabel}
+                      imageSrc={recipe.image}
+                      imageAlt={labels.imageAlt}
+                      description={recipe.notes}
+                      meta={
+                        <p className={acTypography.folioMeta}>
+                          {recipe.country} · {labels.brewMethodLabel}
+                          {recipe.ratio ? ` · ${recipe.ratio}` : ""}
+                        </p>
+                      }
+                      trailing={
+                        isAuthenticated && recipe.source === "db" && recipe.id ? (
+                          <FavoriteButton
+                            recipeId={recipe.id}
+                            isFavorited={favoritedSet.has(recipe.id)}
+                            currentPath={currentPath}
+                          />
+                        ) : undefined
+                      }
+                    />
+                  );
+                })}
+              </Folio>
+            </section>
+          ))}
+        </div>
+      )}
 
       {!isAuthenticated && !isPremium && guestLimitBannerCount > 0 && (
-        <div className="relative mt-12 overflow-hidden rounded-[1.5rem] border border-uae-warm-gold/25 bg-gradient-to-b from-uae-warm-gold-deep/35 via-[#0a0705]/90 to-[#0a0705] p-8 text-center shadow-[0_24px_64px_-24px_rgba(192,138,46,0.35)] sm:p-10">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-uae-warm-gold/10 blur-3xl"
-          />
-          <div className="relative mx-auto max-w-lg">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-uae-warm-gold/30 bg-uae-warm-gold/10 text-uae-warm-gold/90">
-              <Lock className="h-5 w-5" aria-hidden />
-            </div>
-            <h2 className="font-display mt-5 text-xl tracking-[-0.02em] text-stone-50 sm:text-2xl">
-              {t("recipesPage.guestLimitTitle")}
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-stone-400 sm:text-base">
-              {t("recipesPage.guestLimitDescription", { count: String(guestLimitBannerCount) })}
-            </p>
-            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <RippleLink href={`/login?redirectTo=${encodeURIComponent(currentPath)}`} className={`${buttons.primary} w-full sm:w-auto`}>
-                {t("recipesPage.guestLimitSignInCta")}
-              </RippleLink>
-              <Link href="/premium" className={`${buttons.secondary} w-full sm:w-auto`}>
-                {t("recipesPage.guestLimitPremiumCta")}
-              </Link>
-            </div>
-          </div>
-        </div>
+        <GuestArchiveInvitation
+          title={t("recipesPage.guestLimitTitle")}
+          description={t("recipesPage.guestLimitDescription", {
+            count: String(guestLimitBannerCount),
+          })}
+          signInHref={`/login?redirectTo=${encodeURIComponent(currentPath)}`}
+          signInLabel={t("recipesPage.guestLimitSignInCta")}
+          premiumHref="/premium"
+          premiumLabel={t("recipesPage.guestLimitPremiumCta")}
+        />
       )}
 
       {visibleRecipes.length === 0 && (
@@ -196,6 +275,7 @@ export function RecipesExplorer({
           description={t("emptyStates.noResultsHint")}
           actionLabel={t("emptyStates.startExploring")}
           actionHref="/recipes"
+          className="mt-16"
         />
       )}
     </div>

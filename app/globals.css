@@ -1,48 +1,98 @@
 @import "tailwindcss";
 
 :root {
-  --background: #150e09;
-  --foreground: #f3ede3;
+  /* ── Atlas Canon — canonical palette (Phase 0) ── */
+  --ac-limestone: #f7f3ec;
+  --ac-pearl: #fdfbf7;
+  --ac-sand: #e8dcc8;
+  --ac-dune: #d4c4a8;
+  --ac-espresso: #1a1410;
+  --ac-walnut: #3d2e24;
+  --ac-copper: #a67b4a;
+  --ac-gold: #c4a574;
+  --ac-palm: #4a5d52;
+  --ac-mist: #e5e0d8;
+  --ac-charcoal: #2a2520;
 
-  /* BrewAtlas DS v2 — semantic tokens */
-  --ds-page-bg: #150e09;
-  --ds-footer-bg: #231710;
-  --ds-surface: rgba(255, 255, 255, 0.03);
-  --ds-surface-raised: rgba(255, 255, 255, 0.06);
-  --ds-border: rgba(255, 255, 255, 0.08);
-  --ds-border-strong: rgba(255, 255, 255, 0.12);
-  --ds-text-primary: #f3ede3;
-  --ds-text-secondary: #a8a29e;
-  --ds-text-muted: #78716c;
-  --ds-accent: #c08a2e;
-  --ds-accent-deep: #8f651c;
-  --ds-focus: rgba(192, 138, 46, 0.85);
+  /* Legacy ba-* aliases → Atlas Canon (backward compatibility) */
+  --ba-ivory: var(--ac-limestone);
+  --ba-pearl: var(--ac-pearl);
+  --ba-sand: var(--ac-sand);
+  --ba-sand-deep: var(--ac-dune);
+  --ba-coffee: var(--ac-walnut);
+  --ba-espresso: var(--ac-espresso);
+  --ba-bronze: var(--ac-copper);
+  --ba-gold: var(--ac-gold);
+  --ba-gold-muted: #b08f62;
+  --ba-charcoal: var(--ac-charcoal);
+
+  --background: var(--ac-limestone);
+  --foreground: var(--ac-espresso);
+
+  /* DS semantic tokens (legacy names, canonical values) */
+  --ds-page-bg: var(--ac-limestone);
+  --ds-footer-bg: var(--ac-espresso);
+  --ds-surface: rgba(26, 20, 16, 0.04);
+  --ds-surface-raised: rgba(26, 20, 16, 0.06);
+  --ds-border: rgba(26, 20, 16, 0.08);
+  --ds-border-strong: rgba(26, 20, 16, 0.12);
+  --ds-text-primary: var(--ac-espresso);
+  --ds-text-secondary: rgba(61, 46, 36, 0.72);
+  --ds-text-muted: rgba(61, 46, 36, 0.48);
+  --ds-accent: var(--ac-gold);
+  --ds-accent-deep: var(--ac-copper);
+  --ds-focus: rgba(166, 123, 74, 0.85);
+
+  --ds-dark-bg: var(--ac-espresso);
+  --ds-dark-text: var(--ac-pearl);
+  --ds-dark-muted: rgba(232, 220, 200, 0.62);
 
   /* Spacing (8px base) */
-  --ds-space-1: 0.5rem;
-  --ds-space-2: 1rem;
-  --ds-space-3: 1.5rem;
+  --ac-space-xs: 0.5rem;
+  --ac-space-sm: 1rem;
+  --ac-space-md: 1.5rem;
+  --ac-space-lg: 3rem;
+  --ac-space-xl: 5rem;
+  --ac-space-2xl: 8rem;
+  --ac-space-3xl: 12rem;
+
+  --ds-space-1: var(--ac-space-xs);
+  --ds-space-2: var(--ac-space-sm);
+  --ds-space-3: var(--ac-space-md);
   --ds-space-4: 2rem;
-  --ds-space-5: 3rem;
+  --ds-space-5: var(--ac-space-lg);
   --ds-space-6: 4rem;
   --ds-space-7: 6rem;
-  --ds-space-8: 8rem;
+  --ds-space-8: var(--ac-space-2xl);
 
   /* Radius */
-  --ds-radius-sm: 0.5rem;
+  --ac-radius-none: 0;
+  --ac-radius-sm: 0.25rem;
+  --ac-radius-md: 0.5rem;
+  --ac-radius-lg: 0.75rem;
+  --ac-radius-arch: 2px 2px 1.5rem 1.5rem;
+
+  --ds-radius-sm: var(--ac-radius-md);
   --ds-radius-md: 0.75rem;
   --ds-radius-lg: 1rem;
   --ds-radius-xl: 1.5rem;
-  --ds-radius-card: 1.5rem;
+  --ds-radius-card: 1.25rem;
 
-  /* Motion */
-  --ds-easing-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Motion — Atlas Canon */
+  --ac-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --ac-duration-instant: 120ms;
+  --ac-duration-calm: 400ms;
+  --ac-duration-reveal: 900ms;
+  --ac-duration-passage: 1200ms;
+  --ac-duration-atlas: 1600ms;
+
+  --ds-easing-premium: var(--ac-easing);
   --ds-duration-fast: 200ms;
   --ds-duration-normal: 300ms;
   --ds-duration-slow: 500ms;
 
-  /* Header */
-  --ds-header-height: 4.5rem;
+  --ac-header-height: 4.5rem;
+  --ds-header-height: var(--ac-header-height);
 }
 
 @theme inline {
@@ -51,47 +101,47 @@
   --font-sans: var(--font-geist-sans);
   --font-serif: var(--font-instrument-serif);
 
-  --color-ds-page: var(--ds-page-bg);
-  --color-ds-footer: var(--ds-footer-bg);
-  --color-ds-accent: var(--ds-accent);
-  --color-ds-accent-deep: var(--ds-accent-deep);
-  --color-ds-text-primary: var(--ds-text-primary);
-  --color-ds-text-secondary: var(--ds-text-secondary);
-}
+  /* Atlas Canon colors */
+  --color-ac-limestone: var(--ac-limestone);
+  --color-ac-pearl: var(--ac-pearl);
+  --color-ac-sand: var(--ac-sand);
+  --color-ac-dune: var(--ac-dune);
+  --color-ac-espresso: var(--ac-espresso);
+  --color-ac-walnut: var(--ac-walnut);
+  --color-ac-copper: var(--ac-copper);
+  --color-ac-gold: var(--ac-gold);
+  --color-ac-palm: var(--ac-palm);
+  --color-ac-mist: var(--ac-mist);
+  --color-ac-charcoal: var(--ac-charcoal);
 
-/*
- * UAE Brand Theme — Sand, Palm, Dark Coffee, Warm Gold, Pearl.
- * See lib/branding/uae-theme.ts and lib/design-system/tokens.ts.
- */
-:root {
-  --uae-sand: #c9a876;
-  --uae-sand-deep: #a9835a;
-  --uae-palm: #3f5c3f;
-  --uae-palm-deep: #2b4030;
-  --uae-dark-coffee: #231710;
-  --uae-dark-coffee-deep: #150e09;
-  --uae-warm-gold: #c08a2e;
-  --uae-warm-gold-deep: #8f651c;
-  --uae-pearl: #f3ede3;
-  --uae-pearl-deep: #e4d9c4;
-}
+  /* Legacy ba-* → Atlas Canon aliases */
+  --color-ba-ivory: var(--ac-limestone);
+  --color-ba-pearl: var(--ac-pearl);
+  --color-ba-sand: var(--ac-sand);
+  --color-ba-sand-deep: var(--ac-dune);
+  --color-ba-coffee: var(--ac-walnut);
+  --color-ba-espresso: var(--ac-espresso);
+  --color-ba-bronze: var(--ac-copper);
+  --color-ba-gold: var(--ac-gold);
+  --color-ba-gold-muted: var(--ba-gold-muted);
+  --color-ba-charcoal: var(--ac-charcoal);
 
-@theme inline {
-  --color-uae-sand: var(--uae-sand);
-  --color-uae-sand-deep: var(--uae-sand-deep);
-  --color-uae-palm: var(--uae-palm);
-  --color-uae-palm-deep: var(--uae-palm-deep);
-  --color-uae-dark-coffee: var(--uae-dark-coffee);
-  --color-uae-dark-coffee-deep: var(--uae-dark-coffee-deep);
-  --color-uae-warm-gold: var(--uae-warm-gold);
-  --color-uae-warm-gold-deep: var(--uae-warm-gold-deep);
-  --color-uae-pearl: var(--uae-pearl);
-  --color-uae-pearl-deep: var(--uae-pearl-deep);
+  /* Legacy UAE aliases → Atlas Canon */
+  --color-uae-sand: var(--ac-dune);
+  --color-uae-sand-deep: var(--ac-copper);
+  --color-uae-palm: var(--ac-palm);
+  --color-uae-palm-deep: #3a4a38;
+  --color-uae-dark-coffee: var(--ac-charcoal);
+  --color-uae-dark-coffee-deep: var(--ac-espresso);
+  --color-uae-warm-gold: var(--ac-gold);
+  --color-uae-warm-gold-deep: var(--ac-copper);
+  --color-uae-pearl: var(--ac-pearl);
+  --color-uae-pearl-deep: var(--ac-sand);
 }
 
 body {
-  background: var(--ds-page-bg);
-  color: var(--ds-text-primary);
+  background: var(--ac-limestone);
+  color: var(--ac-espresso);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -99,8 +149,8 @@ body {
 }
 
 ::selection {
-  background: rgba(192, 138, 46, 0.28);
-  color: var(--uae-pearl);
+  background: rgba(196, 165, 116, 0.28);
+  color: var(--ac-espresso);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -111,7 +161,7 @@ body {
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: var(--ds-header-height);
+  scroll-padding-top: var(--ac-header-height);
 }
 
 :focus {
@@ -121,6 +171,76 @@ html {
 :focus-visible {
   outline: 2px solid var(--ds-focus);
   outline-offset: 2px;
+}
+
+/* ── Section rhythm — Atlas Canon tonal modes ── */
+.ac-section-night {
+  background: var(--ac-espresso);
+  color: var(--ac-pearl);
+}
+
+.ac-section-dawn {
+  background: var(--ac-limestone);
+  color: var(--ac-espresso);
+}
+
+.ac-section-sand {
+  background: linear-gradient(180deg, var(--ac-sand) 0%, var(--ac-limestone) 100%);
+  color: var(--ac-espresso);
+}
+
+.ac-section-day {
+  background: var(--ac-pearl);
+  color: var(--ac-espresso);
+}
+
+.ac-section-dusk {
+  background: linear-gradient(165deg, #3d2e24 0%, var(--ac-espresso) 55%, #14100d 100%);
+  color: var(--ac-pearl);
+}
+
+/* Legacy section themes — aliases to Atlas Canon rhythm */
+.section-light {
+  background: var(--ac-limestone);
+  color: var(--ac-espresso);
+}
+
+.section-sand {
+  background: linear-gradient(180deg, var(--ac-sand) 0%, var(--ac-limestone) 100%);
+  color: var(--ac-espresso);
+}
+
+.section-pearl {
+  background: var(--ac-pearl);
+  color: var(--ac-espresso);
+}
+
+.section-dark {
+  background: var(--ac-espresso);
+  color: var(--ac-pearl);
+}
+
+.section-espresso-gradient {
+  background: linear-gradient(165deg, #3d2e24 0%, var(--ac-espresso) 45%, #14100d 100%);
+  color: var(--ac-pearl);
+}
+
+.pearl-texture {
+  position: relative;
+}
+
+.pearl-texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: radial-gradient(ellipse at 20% 0%, rgba(255, 252, 247, 0.9) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(237, 228, 214, 0.35) 0%, transparent 45%);
+}
+
+.desert-curve {
+  border-radius: 2rem 2rem 0.5rem 0.5rem;
 }
 
 @keyframes ripple {
@@ -173,6 +293,47 @@ html {
   }
 }
 
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ac-reveal-up {
+  from {
+    opacity: 0.92;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animate-ripple {
   animation: ripple 650ms ease-out forwards;
 }
@@ -193,35 +354,16 @@ html {
   animation: drawer-backdrop var(--ds-duration-normal) ease-out forwards;
 }
 
-@keyframes hero-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
 .animate-hero-float {
   animation: hero-float 7s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
 }
 
 .animate-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.03) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(28, 22, 18, 0.03) 0%,
+    rgba(28, 22, 18, 0.07) 50%,
+    rgba(28, 22, 18, 0.03) 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
@@ -237,13 +379,77 @@ html {
   content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.035;
+  opacity: 0.025;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 180px 180px;
 }
 
-/* feTurbulence filters break painting on iOS Safari — disable grain overlay there. */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Photography grade profiles (Atlas Canon) ── */
+.photo-grade-night {
+  filter: brightness(0.82) saturate(0.95) sepia(0.08);
+}
+
+.photo-grade-dawn {
+  filter: brightness(1.02) saturate(0.92) sepia(0.04);
+}
+
+.photo-grade-library {
+  filter: brightness(0.98) saturate(0.88) contrast(0.96);
+}
+
+.photo-grade-earth {
+  filter: brightness(0.96) saturate(0.85) hue-rotate(-4deg);
+}
+
+.photo-grade-workshop {
+  filter: brightness(0.94) saturate(0.82) contrast(1.06);
+}
+
+.photo-grade-directory {
+  filter: brightness(1) saturate(0.9) contrast(1);
+}
+
+.photo-grade-gallery {
+  filter: brightness(0.78) saturate(0.75) contrast(1.08);
+}
+
+/* ── Composition utilities ── */
+.ac-folio-divider {
+  border-bottom: 1px solid rgba(26, 20, 16, 0.08);
+}
+
+.ac-folio-divider-dark {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ac-brass-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(166, 123, 74, 0.35) 50%,
+    transparent 100%
+  );
+}
+
+.ac-portal-arch {
+  border-radius: var(--ac-radius-arch);
+}
+
+.ac-prose-width {
+  max-width: 28em;
+}
+
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1023px) {
     .site-header-mobile {
@@ -266,7 +472,6 @@ html {
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* rounded-full uses a circular hit region on iOS — corners miss the button */
   @media (max-width: 1023px) {
     #site-header [data-mobile-nav-trigger]::before {
       content: "";

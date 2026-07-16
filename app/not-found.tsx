@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { buttons } from "@/lib/constants/styles";
+import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
@@ -25,20 +25,15 @@ export default async function NotFound() {
   return (
     <main
       id="main-content"
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-uae-dark-coffee-deep px-6 py-24 text-center"
+      className="flex min-h-[70svh] flex-col items-center justify-center bg-ac-limestone px-6 py-24 text-center"
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(192,138,46,0.14),transparent)]"
-      />
-      <p className="text-[0.8125rem] font-medium uppercase tracking-[0.16em] text-uae-warm-gold/90">
-        404
-      </p>
-      <h1 className="font-display mt-5 max-w-lg text-3xl leading-[1.06] tracking-[-0.03em] text-uae-pearl sm:text-4xl">
-        {e.notFoundTitle}
-      </h1>
-      <p className="mt-5 max-w-md text-base leading-relaxed text-stone-400">{e.notFoundDescription}</p>
-      <Link href="/" className={`${buttons.primary} mt-10 min-w-[200px]`}>
+      <p className={acTypography.eyebrow}>404</p>
+      <h1 className={`${acTypography.displayLg} mt-6 max-w-lg`}>{e.notFoundTitle}</h1>
+      <p className={`${acTypography.body} mx-auto mt-6 max-w-md`}>{e.notFoundDescription}</p>
+      <Link
+        href="/"
+        className={`${acTypography.nav} mt-10 inline-flex h-12 items-center rounded-full border border-ac-copper/40 px-8 text-ac-espresso hover:border-ac-copper/60 hover:bg-ac-espresso/[0.04] ${acFocus.ring}`}
+      >
         {e.notFoundCta}
       </Link>
     </main>

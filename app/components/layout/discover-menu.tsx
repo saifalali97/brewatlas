@@ -11,6 +11,7 @@ type DiscoverMenuProps = {
   label: string;
   menuAriaLabel: string;
   links: DiscoverLink[];
+  onDark?: boolean;
 };
 
 function joinClasses(...parts: Array<string | false | undefined>) {
@@ -18,7 +19,7 @@ function joinClasses(...parts: Array<string | false | undefined>) {
 }
 
 /** Desktop Discover dropdown — keyboard accessible. */
-export function DiscoverMenu({ label, menuAriaLabel, links }: DiscoverMenuProps) {
+export function DiscoverMenu({ label, menuAriaLabel, links, onDark = false }: DiscoverMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -47,6 +48,14 @@ export function DiscoverMenu({ label, menuAriaLabel, links }: DiscoverMenuProps)
     };
   }, [open]);
 
+  const triggerClass = onDark
+    ? open
+      ? "text-ba-pearl"
+      : "text-ba-sand-deep/85 hover:text-ba-pearl"
+    : open
+      ? "text-ba-espresso"
+      : "text-ba-coffee/70 hover:text-ba-espresso";
+
   return (
     <div ref={containerRef} className="relative">
       <button
@@ -60,21 +69,18 @@ export function DiscoverMenu({ label, menuAriaLabel, links }: DiscoverMenuProps)
         className={joinClasses(
           "group relative inline-flex items-center gap-1 px-0.5 py-1.5 text-sm font-medium",
           dsMotion.transition,
-          open ? "text-uae-pearl" : "text-stone-400 hover:text-uae-pearl",
-          dsFocus.ring,
+          triggerClass,
+          onDark ? dsFocus.ringDark : dsFocus.ring,
         )}
       >
         {label}
         <ChevronDown
-          className={joinClasses(
-            "h-4 w-4 transition-transform duration-300",
-            open && "rotate-180",
-          )}
+          className={joinClasses("h-4 w-4 transition-transform duration-300", open && "rotate-180")}
           aria-hidden
         />
         <span
           className={joinClasses(
-            "absolute -bottom-0.5 left-1/2 h-px -translate-x-1/2 bg-uae-warm-gold/90 transition-all duration-500",
+            "absolute -bottom-0.5 left-1/2 h-px -translate-x-1/2 bg-ba-gold transition-all duration-500",
             dsMotion.easing,
             open ? "w-full opacity-100" : "w-0 opacity-0 group-hover:w-full group-hover:opacity-60",
           )}
@@ -90,7 +96,7 @@ export function DiscoverMenu({ label, menuAriaLabel, links }: DiscoverMenuProps)
           className={joinClasses(
             "absolute start-0 top-[calc(100%+0.75rem)] z-50 min-w-[14rem]",
             dsRadius.lg,
-            "border border-white/[0.1] bg-uae-dark-coffee/95 p-2 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.55)] backdrop-blur-2xl",
+            "border border-ba-espresso/[0.08] bg-ba-pearl/95 p-2 shadow-[0_24px_48px_-12px_rgba(28,22,18,0.14)] backdrop-blur-2xl",
           )}
         >
           {links.map((link) => (
@@ -100,9 +106,9 @@ export function DiscoverMenu({ label, menuAriaLabel, links }: DiscoverMenuProps)
               role="menuitem"
               onClick={() => setOpen(false)}
               className={joinClasses(
-                "flex min-h-10 items-center rounded-lg px-3 py-2 text-sm text-stone-300",
+                "flex min-h-10 items-center rounded-lg px-3 py-2 text-sm text-ba-coffee",
                 dsMotion.transition,
-                "hover:bg-white/[0.06] hover:text-uae-pearl",
+                "hover:bg-ba-sand/50 hover:text-ba-espresso",
                 dsFocus.ring,
               )}
             >

@@ -1,5 +1,18 @@
 import dynamic from "next/dynamic";
 
+export const FeaturedCoverSection = dynamic(() =>
+  import("@/app/components/sections/featured-recipes-section").then(
+    (mod) => mod.FeaturedCoverSection,
+  ),
+);
+
+export const FeaturedTableSection = dynamic(() =>
+  import("@/app/components/sections/featured-recipes-section").then(
+    (mod) => mod.FeaturedTableSection,
+  ),
+);
+
+/** @deprecated Use FeaturedCoverSection + FeaturedTableSection */
 export const FeaturedRecipesSection = dynamic(() =>
   import("@/app/components/sections/featured-recipes-section").then(
     (mod) => mod.FeaturedRecipesSection,

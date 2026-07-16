@@ -1,7 +1,7 @@
-import { SectionFrame } from "@/app/components/ui/section-frame";
-import { SectionIntro } from "@/app/components/ui/section-intro";
-import { WorldPortal } from "@/app/components/ui/world-portal";
-import { RevealOnScroll } from "@/app/components/ui/reveal-on-scroll";
+import { Chapter } from "@/app/components/atlas/chapter";
+import { Portal } from "@/app/components/atlas/portal";
+import { acTypography } from "@/lib/design-system/atlas-canon";
+import { MotionReveal } from "@/lib/design-system/motion";
 import type { Dictionary } from "@/lib/i18n/types";
 
 const WORLD_IMAGES = {
@@ -17,28 +17,30 @@ type DiscoverSectionProps = {
   copy: Dictionary["homeDiscover"];
 };
 
-/** Editorial Discover section — six immersive world portals. */
+/** Chapter 2 — Six Worlds. Asymmetric portal composition, not equal bento. */
 export function DiscoverSection({ copy }: DiscoverSectionProps) {
   const { worlds } = copy;
   const enter = copy.enterLabel;
 
   return (
-    <SectionFrame
-      id="discover"
+    <Chapter
+      id="six-worlds"
+      rhythm="sand"
+      padding="chapter"
+      wide
       ariaLabelledBy="discover-heading"
-      padding="compact"
-      className="border-t border-white/[0.04]"
     >
-      <SectionIntro
-        headingId="discover-heading"
-        eyebrow={copy.eyebrow}
-        title={copy.title}
-        description={copy.description}
-      />
+      <MotionReveal>
+        <p className={acTypography.eyebrow}>{copy.eyebrow}</p>
+        <h2 id="discover-heading" className={`mt-6 max-w-3xl ${acTypography.h1}`}>
+          {copy.title}
+        </h2>
+        <p className={`mt-8 max-w-xl ${acTypography.body}`}>{copy.description}</p>
+      </MotionReveal>
 
-      <div className="grid gap-5 lg:grid-cols-12 lg:gap-6">
-        <RevealOnScroll className="lg:col-span-8">
-          <WorldPortal
+      <div className="mt-20 grid gap-5 lg:grid-cols-12 lg:gap-6">
+        <MotionReveal className="lg:col-span-8">
+          <Portal
             href="/recipes"
             eyebrow={worlds.recipes.eyebrow}
             title={worlds.recipes.title}
@@ -50,10 +52,39 @@ export function DiscoverSection({ copy }: DiscoverSectionProps) {
             size="large"
             priority
           />
-        </RevealOnScroll>
+        </MotionReveal>
 
-        <RevealOnScroll className="lg:col-span-4" delay={80}>
-          <WorldPortal
+        <div className="grid gap-5 lg:col-span-4 lg:grid-rows-2 lg:gap-6">
+          <MotionReveal delay={60}>
+            <Portal
+              href="/origins"
+              eyebrow={worlds.origins.eyebrow}
+              title={worlds.origins.title}
+              tagline={worlds.origins.tagline}
+              enterLabel={enter}
+              imageSrc={WORLD_IMAGES.origins}
+              imageAlt={worlds.origins.imageAlt}
+              tone="earth"
+              size="small"
+            />
+          </MotionReveal>
+          <MotionReveal delay={120}>
+            <Portal
+              href="/culture"
+              eyebrow={worlds.culture.eyebrow}
+              title={worlds.culture.title}
+              tagline={worlds.culture.tagline}
+              enterLabel={enter}
+              imageSrc={WORLD_IMAGES.culture}
+              imageAlt={worlds.culture.imageAlt}
+              tone="sand"
+              size="small"
+            />
+          </MotionReveal>
+        </div>
+
+        <MotionReveal className="lg:col-span-5" delay={160}>
+          <Portal
             href="/devices"
             eyebrow={worlds.devices.eyebrow}
             title={worlds.devices.title}
@@ -62,26 +93,12 @@ export function DiscoverSection({ copy }: DiscoverSectionProps) {
             imageSrc={WORLD_IMAGES.devices}
             imageAlt={worlds.devices.imageAlt}
             tone="neutral"
-            size="small"
+            size="tall"
           />
-        </RevealOnScroll>
+        </MotionReveal>
 
-        <RevealOnScroll className="lg:col-span-4" delay={120}>
-          <WorldPortal
-            href="/origins"
-            eyebrow={worlds.origins.eyebrow}
-            title={worlds.origins.title}
-            tagline={worlds.origins.tagline}
-            enterLabel={enter}
-            imageSrc={WORLD_IMAGES.origins}
-            imageAlt={worlds.origins.imageAlt}
-            tone="palm"
-            size="small"
-          />
-        </RevealOnScroll>
-
-        <RevealOnScroll className="lg:col-span-8" delay={160}>
-          <WorldPortal
+        <MotionReveal className="lg:col-span-7" delay={200}>
+          <Portal
             href="/roasters"
             eyebrow={worlds.roasters.eyebrow}
             title={worlds.roasters.title}
@@ -92,36 +109,8 @@ export function DiscoverSection({ copy }: DiscoverSectionProps) {
             tone="sand"
             size="large"
           />
-        </RevealOnScroll>
-
-        <RevealOnScroll className="lg:col-span-8" delay={200}>
-          <WorldPortal
-            href="/culture"
-            eyebrow={worlds.culture.eyebrow}
-            title={worlds.culture.title}
-            tagline={worlds.culture.tagline}
-            enterLabel={enter}
-            imageSrc={WORLD_IMAGES.culture}
-            imageAlt={worlds.culture.imageAlt}
-            tone="culture"
-            size="large"
-          />
-        </RevealOnScroll>
-
-        <RevealOnScroll className="lg:col-span-4" delay={240}>
-          <WorldPortal
-            href="/premium"
-            eyebrow={worlds.premium.eyebrow}
-            title={worlds.premium.title}
-            tagline={worlds.premium.tagline}
-            enterLabel={enter}
-            imageSrc={WORLD_IMAGES.premium}
-            imageAlt={worlds.premium.imageAlt}
-            tone="gold"
-            size="small"
-          />
-        </RevealOnScroll>
+        </MotionReveal>
       </div>
-    </SectionFrame>
+    </Chapter>
   );
 }

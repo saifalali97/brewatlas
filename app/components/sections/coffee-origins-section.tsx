@@ -19,7 +19,7 @@ export function CoffeeOriginsSection({
   cardLabels,
 }: CoffeeOriginsSectionProps) {
   return (
-    <SectionFrame id="origins" ariaLabelledBy="origins-heading">
+    <SectionFrame id="origins" ariaLabelledBy="origins-heading" theme="light" padding="compact">
       <SectionIntro
         headingId="origins-heading"
         eyebrow={eyebrow}

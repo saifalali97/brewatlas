@@ -1,4 +1,4 @@
-import { layout, typography } from "@/lib/constants/styles";
+import { acTypography } from "@/lib/design-system/atlas-canon";
 
 type PageHeaderProps = {
   eyebrow: string;
@@ -9,6 +9,10 @@ type PageHeaderProps = {
   headingId?: string;
 };
 
+function joinClasses(...parts: Array<string | false | undefined>) {
+  return parts.filter(Boolean).join(" ");
+}
+
 /** Consistent standalone-page header with accessible h1 id support. */
 export function PageHeader({
   eyebrow,
@@ -18,13 +22,13 @@ export function PageHeader({
   headingId,
 }: PageHeaderProps) {
   return (
-    <div className={centered ? layout.introBlockCentered : layout.introBlock}>
-      <p className={typography.eyebrow}>{eyebrow}</p>
-      <h1 id={headingId} className={typography.sectionTitleModern}>
+    <div className={joinClasses(centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl", "mb-14 md:mb-16")}>
+      <p className={acTypography.eyebrow}>{eyebrow}</p>
+      <h1 id={headingId} className={joinClasses(acTypography.displayLg, "mt-6")}>
         {title}
       </h1>
       {description ? (
-        <p className={centered ? typography.sectionLeadCentered : typography.sectionLead}>
+        <p className={joinClasses(acTypography.body, "mt-6", centered && "mx-auto max-w-2xl")}>
           {description}
         </p>
       ) : null}

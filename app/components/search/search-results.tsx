@@ -1,14 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Cpu, Leaf, MapPin, Sparkles } from "lucide-react";
-import { OriginCard } from "@/app/components/cards/origin-card";
-import { RecipeCard } from "@/app/components/cards/recipe-card";
-import { RoasterCard } from "@/app/components/cards/roaster-card";
+import { Folio, FolioItem } from "@/app/components/atlas/folio";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
-import { RippleLink } from "@/app/components/ui/ripple-link";
-import { cards } from "@/lib/constants/styles";
+import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
+import { interpolate } from "@/lib/i18n/format";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import type { SearchResults } from "@/types/search";
 
@@ -33,16 +30,16 @@ function SectionHeading({
   const { t } = useTranslations();
 
   return (
-    <div className="mb-5 flex items-end justify-between gap-4">
-      <h2 id={id} className="text-lg font-semibold tracking-tight text-stone-50">
+    <div className="mb-8 flex items-end justify-between gap-4">
+      <h2 id={id} className={acTypography.h2}>
         {title}
-        <span className="ms-2 text-sm font-normal text-stone-500">({count})</span>
+        <span className={`${acTypography.caption} ms-2 font-normal`}>({count})</span>
       </h2>
-      {href && count > 0 && (
-        <RippleLink href={href} className="text-sm font-medium text-amber-500/90 hover:text-amber-400">
-          {t("searchPage.viewAll")}
-        </RippleLink>
-      )}
+      {href && count > 0 ? (
+        <Link href={href} className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}>
+          {t("searchPage.viewAll")} →
+        </Link>
+      ) : null}
     </div>
   );
 }
@@ -66,19 +63,22 @@ export function SearchResultsView({
 
   if (!hasAnyResults) {
     return (
-      <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.02] px-6 py-16 text-center">
-        <p className="text-base font-medium text-stone-300">{t("emptyStates.noResults")}</p>
-        <p className="mx-auto mt-2 max-w-md text-sm text-stone-500">{t("emptyStates.noResultsHint")}</p>
-        <RippleLink href="/recipes" className="mt-6 inline-flex text-sm font-medium text-amber-500/90 hover:text-amber-400">
-          {t("emptyStates.startExploring")}
-        </RippleLink>
+      <div className="border-b border-ac-espresso/[0.08] py-16 text-center">
+        <p className={acTypography.body}>{t("emptyStates.noResults")}</p>
+        <p className={`${acTypography.folioMeta} mx-auto mt-3 max-w-md`}>{t("emptyStates.noResultsHint")}</p>
+        <Link
+          href="/recipes"
+          className={`${acTypography.nav} mt-8 inline-flex text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+        >
+          {t("emptyStates.startExploring")} →
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="space-y-12">
-      {(showAllSections || results.recipes.length > 0) && results.recipes.length > 0 && (
+    <div className="space-y-14">
+      {(showAllSections || results.recipes.length > 0) && results.recipes.length > 0 ? (
         <section aria-labelledby="search-recipes-heading">
           <SectionHeading
             id="search-recipes-heading"
@@ -86,44 +86,46 @@ export function SearchResultsView({
             count={results.totalRecipes}
             href={showAllSections ? "/search?cat=recipes" : undefined}
           />
-          <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {results.recipes.map((recipe) => {
+          <Folio ariaLabel={t("searchPage.sectionRecipes")}>
+            {results.recipes.map((recipe, index) => {
               const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
+              const brewMethodLabel = brewMethodKey ? t(brewMethodKey) : recipe.brewMethod;
+
               return (
-                <div key={`${recipe.source}-${recipe.slug}`} className="relative h-full">
-                  <RecipeCard
-                    recipe={recipe}
-                    featured={Boolean(recipe.featured)}
-                    href={`/recipes/${recipe.slug}`}
-                    labels={{
-                      premium: t("common.premiumBadge"),
-                      editorsChoice: t("homeFeaturedRecipes.editorsChoice"),
-                      ratio: t("homeFeaturedRecipes.ratioLabel"),
-                      time: t("homeFeaturedRecipes.timeLabel"),
-                      difficultyLabel: t(difficultyLabelKey(recipe.difficulty)),
-                      brewMethodLabel: brewMethodKey ? t(brewMethodKey) : recipe.brewMethod,
-                      imageAltTemplate: t("homeFeaturedRecipes.imageAltTemplate"),
-                    }}
-                  />
-                  {isAuthenticated && recipe.source === "db" && recipe.id && (
-                    <div className="pointer-events-none absolute inset-0">
-                      <div className="pointer-events-auto absolute bottom-6 end-6 z-10">
-                        <FavoriteButton
-                          recipeId={recipe.id}
-                          isFavorited={favoritedSet.has(recipe.id)}
-                          currentPath="/search"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <FolioItem
+                  key={`${recipe.source}-${recipe.slug}`}
+                  href={`/recipes/${recipe.slug}`}
+                  index={String(index + 1).padStart(2, "0")}
+                  title={recipe.name}
+                  imageSrc={recipe.image}
+                  imageAlt={interpolate(t("homeFeaturedRecipes.imageAltTemplate"), {
+                    name: recipe.name,
+                    country: recipe.country,
+                    brewMethod: recipe.brewMethod,
+                  })}
+                  imageGrade="library"
+                  meta={
+                    <p className={acTypography.folioMeta}>
+                      {recipe.country} · {brewMethodLabel} · {t(difficultyLabelKey(recipe.difficulty))}
+                    </p>
+                  }
+                  trailing={
+                    isAuthenticated && recipe.source === "db" && recipe.id ? (
+                      <FavoriteButton
+                        recipeId={recipe.id}
+                        isFavorited={favoritedSet.has(recipe.id)}
+                        currentPath="/search"
+                      />
+                    ) : undefined
+                  }
+                />
               );
             })}
-          </div>
+          </Folio>
         </section>
-      )}
+      ) : null}
 
-      {(showAllSections || results.roasters.length > 0) && results.roasters.length > 0 && (
+      {(showAllSections || results.roasters.length > 0) && results.roasters.length > 0 ? (
         <section aria-labelledby="search-roasters-heading">
           <SectionHeading
             id="search-roasters-heading"
@@ -131,28 +133,33 @@ export function SearchResultsView({
             count={results.roasters.length}
             href={showAllSections ? "/search?cat=roasters" : undefined}
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {results.roasters.map((roaster) => (
-              <RoasterCard
+          <Folio ariaLabel={t("searchPage.sectionRoasters")}>
+            {results.roasters.map((roaster, index) => (
+              <FolioItem
                 key={roaster.name}
-                roaster={roaster}
-                ctaHref={`/search?cat=recipes&q=${encodeURIComponent(roaster.name)}`}
-                labels={{
-                  premium: t("common.premiumBadge"),
-                  country: t("homeTopRoasters.countryLabel"),
-                  founded: t("homeTopRoasters.foundedLabel"),
-                  recipes: t("homeTopRoasters.recipesCountLabel"),
-                  rating: t("homeTopRoasters.ratingLabel"),
-                  viewRoaster: t("homeTopRoasters.viewRoaster"),
-                  imageAltTemplate: t("homeTopRoasters.imageAltTemplate"),
-                }}
+                href={`/search?cat=recipes&q=${encodeURIComponent(roaster.name)}`}
+                index={String(index + 1).padStart(2, "0")}
+                title={roaster.name}
+                imageSrc={roaster.image}
+                imageAlt={interpolate(t("homeTopRoasters.imageAltTemplate"), {
+                  name: roaster.name,
+                  country: roaster.country,
+                  founded: roaster.founded,
+                })}
+                imageGrade="directory"
+                description={roaster.description}
+                meta={
+                  <p className={acTypography.folioMeta}>
+                    {roaster.country} · {roaster.recipes} {t("homeTopRoasters.recipesCountLabel")}
+                  </p>
+                }
               />
             ))}
-          </div>
+          </Folio>
         </section>
-      )}
+      ) : null}
 
-      {(showAllSections || results.origins.length > 0) && results.origins.length > 0 && (
+      {(showAllSections || results.origins.length > 0) && results.origins.length > 0 ? (
         <section aria-labelledby="search-origins-heading">
           <SectionHeading
             id="search-origins-heading"
@@ -160,28 +167,33 @@ export function SearchResultsView({
             count={results.origins.length}
             href={showAllSections ? "/search?cat=origins" : undefined}
           />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {results.origins.map((origin) => (
-              <OriginCard
+          <Folio ariaLabel={t("searchPage.sectionOrigins")}>
+            {results.origins.map((origin, index) => (
+              <FolioItem
                 key={`${origin.country}-${origin.region}`}
-                origin={origin}
-                ctaHref={`/search?cat=recipes&q=${encodeURIComponent(origin.country)}`}
-                labels={{
-                  premium: t("common.premiumBadge"),
-                  altitude: t("homeCoffeeOrigins.altitudeLabel"),
-                  process: t("homeCoffeeOrigins.processLabel"),
-                  roast: t("homeCoffeeOrigins.roastLabel"),
-                  brewMethod: t("homeCoffeeOrigins.brewMethodLabel"),
-                  exploreOrigin: t("homeCoffeeOrigins.exploreOrigin"),
-                  imageAltTemplate: t("homeCoffeeOrigins.imageAltTemplate"),
-                }}
+                href={`/search?cat=recipes&q=${encodeURIComponent(origin.country)}`}
+                index={String(index + 1).padStart(2, "0")}
+                title={origin.country}
+                imageSrc={origin.image}
+                imageAlt={interpolate(t("homeCoffeeOrigins.imageAltTemplate"), {
+                  country: origin.country,
+                  region: origin.region,
+                  process: origin.process,
+                })}
+                imageGrade="earth"
+                description={origin.tastingProfile}
+                meta={
+                  <p className={acTypography.folioMeta}>
+                    {origin.region} · {origin.process}
+                  </p>
+                }
               />
             ))}
-          </div>
+          </Folio>
         </section>
-      )}
+      ) : null}
 
-      {(showAllSections || results.devices.length > 0) && results.devices.length > 0 && (
+      {(showAllSections || results.devices.length > 0) && results.devices.length > 0 ? (
         <section aria-labelledby="search-devices-heading">
           <SectionHeading
             id="search-devices-heading"
@@ -189,28 +201,28 @@ export function SearchResultsView({
             count={results.devices.length}
             href={showAllSections ? "/search?cat=devices" : undefined}
           />
-          <div className="grid gap-4 sm:grid-cols-2">
-            {results.devices.map((device) => (
-              <Link
+          <Folio ariaLabel={t("searchPage.sectionDevices")}>
+            {results.devices.map((device, index) => (
+              <FolioItem
                 key={`${device.source}-${device.id}`}
                 href={`/search?cat=recipes&q=${encodeURIComponent(device.name)}`}
-                className={`${cards.premiumShell} flex items-start gap-4 p-5 transition-transform hover:-translate-y-0.5`}
-              >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-amber-600/25 bg-amber-950/40">
-                  <Cpu className="h-5 w-5 text-amber-500/85" aria-hidden />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-stone-50">{device.name}</h3>
-                  {device.manufacturer && <p className="mt-1 text-sm text-stone-400">{device.manufacturer}</p>}
-                  {device.description && <p className="mt-2 text-sm text-stone-500">{device.description}</p>}
-                </div>
-              </Link>
+                index={String(index + 1).padStart(2, "0")}
+                title={device.name}
+                imageSrc={device.image ?? undefined}
+                imageGrade="workshop"
+                description={device.description ?? undefined}
+                meta={
+                  device.manufacturer ? (
+                    <p className={acTypography.folioMeta}>{device.manufacturer}</p>
+                  ) : undefined
+                }
+              />
             ))}
-          </div>
+          </Folio>
         </section>
-      )}
+      ) : null}
 
-      {(showAllSections || results.varieties.length > 0) && results.varieties.length > 0 && (
+      {(showAllSections || results.varieties.length > 0) && results.varieties.length > 0 ? (
         <section aria-labelledby="search-varieties-heading">
           <SectionHeading
             id="search-varieties-heading"
@@ -218,41 +230,30 @@ export function SearchResultsView({
             count={results.varieties.length}
             href={showAllSections ? "/search?cat=varieties" : undefined}
           />
-          <div className="grid gap-4 sm:grid-cols-2">
-            {results.varieties.map((variety) => (
-              <Link
+          <Folio ariaLabel={t("searchPage.sectionVarieties")}>
+            {results.varieties.map((variety, index) => (
+              <FolioItem
                 key={variety.id}
                 href={`/search?cat=recipes&q=${encodeURIComponent(variety.name)}`}
-                className={`${cards.premiumShell} p-5 transition-transform hover:-translate-y-0.5`}
-              >
-                <div className="flex items-start gap-3">
-                  <Leaf className="mt-0.5 h-4 w-4 shrink-0 text-amber-500/80" aria-hidden />
-                  <div>
-                    <h3 className="font-semibold text-stone-50">{variety.name}</h3>
-                    {variety.variety && (
-                      <p className="mt-1 text-sm text-stone-400">
-                        {t("searchPage.varietyLabel")}: {variety.variety}
-                      </p>
-                    )}
-                    <div className="mt-2 flex flex-wrap gap-2 text-xs text-stone-500">
-                      {variety.roasterName && <span>{variety.roasterName}</span>}
-                      {variety.country && (
-                        <span className="inline-flex items-center gap-1">
-                          <MapPin className="h-3 w-3" aria-hidden />
-                          {variety.region ? `${variety.region}, ${variety.country}` : variety.country}
-                        </span>
-                      )}
-                      {variety.process && <span>{variety.process}</span>}
-                    </div>
-                  </div>
-                </div>
-              </Link>
+                index={String(index + 1).padStart(2, "0")}
+                title={variety.name}
+                description={
+                  variety.variety ? `${t("searchPage.varietyLabel")}: ${variety.variety}` : undefined
+                }
+                meta={
+                  <p className={acTypography.folioMeta}>
+                    {[variety.roasterName, variety.region ? `${variety.region}, ${variety.country}` : variety.country, variety.process]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                }
+              />
             ))}
-          </div>
+          </Folio>
         </section>
-      )}
+      ) : null}
 
-      {(showAllSections || results.flavors.length > 0) && results.flavors.length > 0 && (
+      {(showAllSections || results.flavors.length > 0) && results.flavors.length > 0 ? (
         <section aria-labelledby="search-flavors-heading">
           <SectionHeading
             id="search-flavors-heading"
@@ -260,37 +261,24 @@ export function SearchResultsView({
             count={results.flavors.length}
             href={showAllSections ? "/search?cat=flavors" : undefined}
           />
-          <div className="grid gap-4 sm:grid-cols-2">
-            {results.flavors.map((flavor) => (
-              <Link
+          <Folio ariaLabel={t("searchPage.sectionFlavors")}>
+            {results.flavors.map((flavor, index) => (
+              <FolioItem
                 key={flavor.id}
                 href={`/recipes/${flavor.recipeSlug}`}
-                className={`${cards.premiumShell} p-5 transition-transform hover:-translate-y-0.5`}
-              >
-                <div className="flex items-start gap-3">
-                  <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-amber-500/80" aria-hidden />
-                  <div>
-                    <h3 className="font-semibold text-stone-50">{flavor.recipeName}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-stone-400">{flavor.flavorText}</p>
-                    {flavor.tags.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {flavor.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full border border-white/[0.1] bg-white/[0.04] px-2.5 py-0.5 text-[11px] text-stone-400"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Link>
+                index={String(index + 1).padStart(2, "0")}
+                title={flavor.recipeName}
+                description={flavor.flavorText}
+                meta={
+                  flavor.tags.length > 0 ? (
+                    <p className={acTypography.folioMeta}>{flavor.tags.join(" · ")}</p>
+                  ) : undefined
+                }
+              />
             ))}
-          </div>
+          </Folio>
         </section>
-      )}
+      ) : null}
     </div>
   );
 }

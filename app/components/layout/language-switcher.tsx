@@ -18,19 +18,28 @@ export function LanguageSwitcher({
   switchLanguageAria = "Switch to {language}",
   languageAriaLabel = "Language",
   size = "default",
+  onDark = false,
 }: {
   currentLocale: Locale;
   switchLanguageAria?: string;
   languageAriaLabel?: string;
   size?: "default" | "large";
+  onDark?: boolean;
 }) {
   const pathname = usePathname();
   const isLarge = size === "large";
 
+  const textMuted = onDark ? "text-ba-sand-deep/55" : "text-ba-coffee/45";
+  const textActive = onDark ? "text-ba-pearl" : "text-ba-espresso";
+  const textInactive = onDark
+    ? "text-ba-sand-deep/70 hover:text-ba-pearl"
+    : "text-ba-coffee/55 hover:text-ba-espresso";
+
   return (
     <div
       className={joinClasses(
-        "flex items-center gap-1 font-medium text-stone-400",
+        "flex items-center gap-1 font-medium",
+        onDark ? "text-ba-sand-deep/70" : "text-ba-coffee/55",
         isLarge ? "text-sm" : "text-xs",
       )}
       role="group"
@@ -39,7 +48,7 @@ export function LanguageSwitcher({
       {SUPPORTED_LOCALES.map((locale, index) => (
         <span key={locale} className="inline-flex items-center">
           {index > 0 ? (
-            <span className="mx-1 text-stone-600" aria-hidden>
+            <span className={joinClasses("mx-1", textMuted)} aria-hidden>
               /
             </span>
           ) : null}
@@ -53,10 +62,8 @@ export function LanguageSwitcher({
               className={joinClasses(
                 "min-h-11 min-w-[2.75rem] rounded-full px-2 uppercase tracking-wide",
                 dsMotion.transition,
-                dsFocus.ring,
-                currentLocale === locale
-                  ? "text-uae-pearl"
-                  : "text-stone-500 hover:text-uae-pearl",
+                onDark ? dsFocus.ringDark : dsFocus.ring,
+                currentLocale === locale ? textActive : textInactive,
               )}
             >
               {locale}

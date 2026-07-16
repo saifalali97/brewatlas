@@ -93,6 +93,17 @@ export type Dictionary = {
     statCountriesLabel: string;
     heroImageAlt: string;
   };
+  homeGateway: {
+    sectionAriaLabel: string;
+    title: string;
+    subtitle: string;
+    enterLabel: string;
+    destinations: {
+      coffee: { title: string; imageAlt: string };
+      arabicCoffee: { title: string; imageAlt: string };
+      karakTea: { title: string; imageAlt: string };
+    };
+  };
   homeDiscover: {
     sectionAriaLabel: string;
     eyebrow: string;

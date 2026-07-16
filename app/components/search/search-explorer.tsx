@@ -6,7 +6,8 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { SearchFiltersPanel } from "@/app/components/search/search-filters";
 import { SearchResultsView } from "@/app/components/search/search-results";
 import { SearchSkeleton } from "@/app/components/search/search-skeleton";
-import { filterChips, forms, dsFocus } from "@/lib/constants/styles";
+import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
+import { forms, dsFocus } from "@/lib/constants/styles";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { countActiveFilters, serializeSearchFilters } from "@/lib/search/params";
@@ -132,7 +133,7 @@ export function SearchExplorer({
         </label>
         <div className="relative">
           <Search
-            className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-stone-500"
+            className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ba-coffee/55"
             aria-hidden
           />
           <input
@@ -145,34 +146,44 @@ export function SearchExplorer({
             autoComplete="off"
           />
           {(isPending || query !== debouncedQuery) && (
-            <span className="absolute end-4 top-1/2 -translate-y-1/2 text-xs text-stone-500" aria-live="polite">
+            <span className="absolute end-4 top-1/2 -translate-y-1/2 text-xs text-ba-coffee/55" aria-live="polite">
               {t("searchPage.searching")}
             </span>
           )}
         </div>
       </div>
 
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap gap-2">
+      <nav aria-label={t("searchPage.categoryAll")} className="mb-6 border-b border-ac-espresso/[0.08] pb-4">
+        <ul className="flex flex-wrap gap-x-6 gap-y-3">
           {SEARCH_CATEGORIES.map((category) => {
             const isActive = initialFilters.category === category;
             return (
-              <button
-                key={category}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => patchFilters({ category, page: 1 })}
-                className={`${filterChips.base} ${isActive ? filterChips.active : filterChips.inactive}`}
-              >
-                {t(categoryLabelKeys[category])}
-              </button>
+              <li key={category}>
+                <button
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => patchFilters({ category, page: 1 })}
+                  className={[
+                    acTypography.nav,
+                    "relative pb-1 transition-colors duration-300",
+                    isActive
+                      ? "text-ac-espresso after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-ac-copper"
+                      : "text-ac-walnut/55 hover:text-ac-espresso",
+                    acFocus.ring,
+                  ].join(" ")}
+                >
+                  {t(categoryLabelKeys[category])}
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
+      </nav>
 
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-end">
         {(initialFilters.category === "all" || initialFilters.category === "recipes") && (
           <div className="flex items-center gap-2">
-            <label htmlFor="search-sort" className="text-sm text-stone-400">
+            <label htmlFor="search-sort" className="text-sm text-ba-coffee/70">
               {t("searchPage.sortLabel")}
             </label>
             <select
@@ -213,14 +224,14 @@ export function SearchExplorer({
         <div className="min-w-0">
           {(initialFilters.category === "all" || initialFilters.category === "recipes") &&
             (initialFilters.q || countActiveFilters(initialFilters) > 0) && (
-              <p className="mb-4 text-sm text-stone-400" aria-live="polite">
+              <p className="mb-4 text-sm text-ba-coffee/70" aria-live="polite">
                 {t("searchPage.resultsCount", { count: results.totalRecipes })}
               </p>
             )}
 
           {countActiveFilters(initialFilters) === 0 && !initialFilters.q && initialFilters.category === "all" ? (
-            <div className="mb-8 rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] px-6 py-10 text-center">
-              <p className="text-base text-stone-300">{t("searchPage.emptyPrompt")}</p>
+            <div className="mb-8 border-b border-ac-espresso/[0.08] pb-10 text-center">
+              <p className={acTypography.body}>{t("searchPage.emptyPrompt")}</p>
             </div>
           ) : null}
 
@@ -241,18 +252,18 @@ export function SearchExplorer({
                 type="button"
                 disabled={initialFilters.page <= 1}
                 onClick={() => patchFilters({ page: Math.max(1, initialFilters.page - 1) })}
-                className={`min-h-11 rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-uae-warm-gold/30 enabled:hover:text-stone-100 disabled:opacity-40 ${dsFocus.ring}`}
+                className={`min-h-11 rounded-full border border-ba-espresso/[0.12] px-4 py-2 text-sm text-ba-coffee/75 transition-colors enabled:hover:border-ba-gold/30 enabled:hover:text-ba-espresso disabled:opacity-40 ${dsFocus.ring}`}
               >
                 {t("searchPage.previousPage")}
               </button>
-              <span className="text-sm text-stone-500">
+              <span className="text-sm text-ba-coffee/55">
                 {t("searchPage.pageIndicator", { page: initialFilters.page, total: totalPages })}
               </span>
               <button
                 type="button"
                 disabled={initialFilters.page >= totalPages}
                 onClick={() => patchFilters({ page: Math.min(totalPages, initialFilters.page + 1) })}
-                className={`min-h-11 rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-uae-warm-gold/30 enabled:hover:text-stone-100 disabled:opacity-40 ${dsFocus.ring}`}
+                className={`min-h-11 rounded-full border border-ba-espresso/[0.12] px-4 py-2 text-sm text-ba-coffee/75 transition-colors enabled:hover:border-ba-gold/30 enabled:hover:text-ba-espresso disabled:opacity-40 ${dsFocus.ring}`}
               >
                 {t("searchPage.nextPage")}
               </button>

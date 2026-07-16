@@ -17,9 +17,10 @@ import {
   Users,
   Wrench,
 } from "lucide-react";
-import { RecipeCard } from "@/app/components/cards/recipe-card";
+import { Folio, FolioItem } from "@/app/components/atlas/folio";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { acFocus, acSurface, acTypography } from "@/lib/design-system/atlas-canon";
 import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getRecipeSlug } from "@/lib/data/recipes";
 import { getUserFavoriteRecipes, getUserRecipes } from "@/lib/data/db-recipes";
@@ -36,21 +37,17 @@ import { createClient } from "@/lib/supabase/server";
 import { roleIsAdmin } from "@/lib/auth/is-admin";
 import { ensureProfile } from "@/lib/supabase/profile";
 import { signOutAction } from "@/lib/supabase/actions";
-import { buttons, panels, typography } from "@/lib/constants/styles";
 import type { FeaturedRecipe } from "@/types/homepage";
 
-/** Builds `RecipeCard`'s translated chrome labels for a given recipe, matching the pattern used on `/recipes`. */
-function recipeCardLabels(dictionary: Dictionary, recipe: FeaturedRecipe) {
+function recipeFolioMeta(
+  dictionary: Dictionary,
+  recipe: { brewMethod: string; difficulty: FeaturedRecipe["difficulty"] },
+) {
   const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
-  return {
-    premium: dictionary.common.premiumBadge,
-    editorsChoice: dictionary.homeFeaturedRecipes.editorsChoice,
-    ratio: dictionary.homeFeaturedRecipes.ratioLabel,
-    time: dictionary.homeFeaturedRecipes.timeLabel,
-    difficultyLabel: translate(dictionary, difficultyLabelKey(recipe.difficulty)),
-    brewMethodLabel: brewMethodKey ? translate(dictionary, brewMethodKey) : recipe.brewMethod,
-    imageAltTemplate: dictionary.homeFeaturedRecipes.imageAltTemplate,
-  };
+  return [
+    brewMethodKey ? translate(dictionary, brewMethodKey) : recipe.brewMethod,
+    translate(dictionary, difficultyLabelKey(recipe.difficulty)),
+  ].join(" · ");
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -135,40 +132,41 @@ export default async function DashboardPage() {
         />
 
         <form action={signOutAction}>
-          <button type="submit" className={`${buttons.secondary} h-10 min-w-0 px-6 text-xs`}>
+          <button
+            type="submit"
+            className={`${acTypography.nav} h-10 rounded-full border border-ac-espresso/12 px-6 text-ac-walnut/70 hover:border-ac-copper/35 hover:text-ac-espresso ${acFocus.ring}`}
+          >
             {d.signOut}
           </button>
         </form>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <dl className="grid gap-8 border-b border-ac-espresso/[0.08] pb-10 sm:grid-cols-3">
         {stats.map(({ icon: Icon, label, value }) => (
-          <div key={label} className={`flex items-center gap-4 ${panels.stat}`}>
-            <div className={panels.statIcon}>
-              <Icon className="h-[18px] w-[18px]" aria-hidden />
-            </div>
-            <div>
-              <p className="font-display text-2xl tracking-[-0.02em] text-stone-50">{value}</p>
-              <p className="mt-1 text-sm text-stone-500">{label}</p>
-            </div>
+          <div key={label}>
+            <dt className={acTypography.eyebrow}>{label}</dt>
+            <dd className="mt-3 flex items-center gap-3">
+              <Icon className="h-4 w-4 text-ac-copper" aria-hidden />
+              <span className="font-display text-3xl tracking-[-0.03em] text-ac-espresso">{value}</span>
+            </dd>
           </div>
         ))}
-      </div>
+      </dl>
 
-      <div className={`mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between ${panels.profile}`}>
+      <div className={`${acSurface.plate} mt-10 flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8`}>
         <div className="flex items-center gap-4">
-          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/[0.12] bg-white/[0.04]">
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-ba-espresso/10 bg-ba-sand/30">
             {profile?.avatar_url ? (
               <Image src={profile.avatar_url} alt="" fill sizes="56px" className="object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-lg font-medium text-stone-500">
+              <div className="flex h-full w-full items-center justify-center text-lg font-medium text-ba-coffee/55">
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
           <div>
-            <p className="font-medium text-stone-100">{displayName}</p>
-            <p className="mt-0.5 text-sm text-stone-500">
+            <p className={acTypography.h3}>{displayName}</p>
+            <p className={`${acTypography.folioMeta} mt-1`}>
               {profile?.country || d.countryNotSet}
               {profile?.bio ? ` · ${profile.bio}` : ""}
             </p>
@@ -176,12 +174,18 @@ export default async function DashboardPage() {
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {isAdmin ? (
-            <Link href="/admin" className={`${buttons.primary} h-10 min-w-0 shrink-0 px-6 text-xs`}>
+            <Link
+              href="/admin"
+              className={`inline-flex h-10 items-center rounded-full border border-ac-copper/40 px-6 text-sm font-medium text-ac-espresso hover:border-ac-copper/60 ${acFocus.ring}`}
+            >
               {d.adminDashboard}
             </Link>
           ) : null}
-          <Link href="/account/profile" className={`${buttons.secondary} h-10 min-w-0 shrink-0 px-6 text-xs`}>
-            {d.editProfile}
+          <Link
+            href="/account/profile"
+            className={`${acTypography.nav} inline-flex h-10 items-center px-4 text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+          >
+            {d.editProfile} →
           </Link>
         </div>
       </div>
@@ -189,32 +193,33 @@ export default async function DashboardPage() {
       <AccountSubscriptionSummary membership={membership} dictionary={dictionary} locale={locale} />
 
       <div className="mt-16">
-        <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>{d.quickLinksTitle}</h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {quickLinks.map(({ icon: Icon, label, description, href }) => (
-            <Link key={label} href={href} className={`flex items-center gap-4 ${panels.link}`}>
-              <div className={panels.statIcon}>
-                <Icon className="h-[18px] w-[18px]" aria-hidden />
-              </div>
-              <div>
-                <p className="font-medium text-stone-100">{label}</p>
-                <p className="mt-0.5 text-sm text-stone-500">{description}</p>
-              </div>
-            </Link>
+        <h2 className={acTypography.h2}>{d.quickLinksTitle}</h2>
+        <Folio ariaLabel={d.quickLinksTitle} className="mt-8">
+          {quickLinks.map(({ label, description, href }, index) => (
+            <FolioItem
+              key={label}
+              href={href}
+              index={String(index + 1).padStart(2, "0")}
+              title={label}
+              description={description}
+            />
           ))}
-        </div>
+        </Folio>
       </div>
 
       <div className="mt-16">
         <div className="flex items-center justify-between gap-4">
-          <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>{dictionary.dashboard.myRecipes}</h2>
+          <h2 className={acTypography.h2}>{dictionary.dashboard.myRecipes}</h2>
           <div className="flex items-center gap-5">
-            {ownRecipes.length > 0 && (
-              <Link href="/account/recipes" className="text-sm font-medium text-uae-warm-gold/90 underline-offset-4 hover:underline">
+            {ownRecipes.length > 0 ? (
+              <Link href="/account/recipes" className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}>
                 {d.manageAll}
               </Link>
-            )}
-            <Link href="/account/recipes/new" className={`${buttons.secondary} h-10 min-w-0 gap-2 px-5 text-xs`}>
+            ) : null}
+            <Link
+              href="/account/recipes/new"
+              className={`inline-flex h-10 items-center gap-2 rounded-full border border-ac-copper/35 px-5 text-sm font-medium text-ac-espresso hover:border-ac-copper/55 ${acFocus.ring}`}
+            >
               <Plus className="h-3.5 w-3.5" aria-hidden />
               {d.newRecipeCta}
             </Link>
@@ -222,72 +227,74 @@ export default async function DashboardPage() {
         </div>
 
         {ownRecipes.length === 0 ? (
-          <p className="mt-6 rounded-2xl border border-white/[0.09] bg-white/[0.03] px-6 py-8 text-sm text-stone-500">
-            {d.noOwnRecipesYet}
-          </p>
+          <p className={`${acTypography.body} mt-6 ${acSurface.plate} px-6 py-8`}>{d.noOwnRecipesYet}</p>
         ) : (
-          <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
-            {ownRecipes.slice(0, 3).map((recipe) => (
-              <RecipeCard
+          <Folio ariaLabel={dictionary.dashboard.myRecipes} className="mt-6">
+            {ownRecipes.slice(0, 3).map((recipe, index) => (
+              <FolioItem
                 key={recipe.id}
-                recipe={recipe}
-                featured={false}
                 href={`/recipes/${recipe.slug}`}
-                labels={recipeCardLabels(dictionary, recipe)}
+                index={String(index + 1).padStart(2, "0")}
+                title={recipe.name}
+                imageSrc={recipe.image ?? undefined}
+                imageGrade="library"
+                meta={<p className={acTypography.folioMeta}>{recipeFolioMeta(dictionary, recipe)}</p>}
               />
             ))}
-          </div>
+          </Folio>
         )}
       </div>
 
       <div className="mt-16">
         <div className="flex items-center justify-between gap-4">
-          <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>{d.favoriteRecipesTitle}</h2>
-          {favoriteRecipes.length > 0 && (
-            <Link href="/recipes" className="text-sm font-medium text-uae-warm-gold/90 underline-offset-4 hover:underline">
+          <h2 className={acTypography.h2}>{d.favoriteRecipesTitle}</h2>
+          {favoriteRecipes.length > 0 ? (
+            <Link href="/recipes" className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}>
               {d.browseMore}
             </Link>
-          )}
+          ) : null}
         </div>
 
         {favoriteRecipes.length === 0 ? (
-          <p className="mt-6 rounded-2xl border border-white/[0.09] bg-white/[0.03] px-6 py-8 text-sm text-stone-500">
+          <p className={`${acTypography.body} mt-6 ${acSurface.plate} px-6 py-8`}>
             {d.noFavoritesYetPrefix}{" "}
-            <Link href="/recipes" className="text-uae-warm-gold/90 underline-offset-4 hover:underline">
+            <Link href="/recipes" className={`text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}>
               {d.recipeLibraryLink}
             </Link>{" "}
             {d.noFavoritesYetSuffix}
           </p>
         ) : (
-          <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
-            {favoriteRecipes.slice(0, 3).map((recipe) => (
-              <RecipeCard
+          <Folio ariaLabel={d.favoriteRecipesTitle} className="mt-6">
+            {favoriteRecipes.slice(0, 3).map((recipe, index) => (
+              <FolioItem
                 key={recipe.id}
-                recipe={recipe}
-                featured={false}
                 href={`/recipes/${recipe.slug}`}
-                labels={recipeCardLabels(dictionary, recipe)}
+                index={String(index + 1).padStart(2, "0")}
+                title={recipe.name}
+                imageSrc={recipe.image ?? undefined}
+                imageGrade="library"
+                meta={<p className={acTypography.folioMeta}>{recipeFolioMeta(dictionary, recipe)}</p>}
               />
             ))}
-          </div>
+          </Folio>
         )}
       </div>
 
       <div className="mt-16">
-        <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>
-          {d.continueBrewing}
-        </h2>
-        <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
-          {recentRecipes.map(({ recipe, slug }) => (
-            <RecipeCard
+        <h2 className={acTypography.h2}>{d.continueBrewing}</h2>
+        <Folio ariaLabel={d.continueBrewing} className="mt-6">
+          {recentRecipes.map(({ recipe, slug }, index) => (
+            <FolioItem
               key={slug}
-              recipe={recipe}
-              featured={false}
               href={`/recipes/${slug}`}
-              labels={recipeCardLabels(dictionary, recipe)}
+              index={String(index + 1).padStart(2, "0")}
+              title={recipe.name}
+              imageSrc={recipe.image}
+              imageGrade="library"
+              meta={<p className={acTypography.folioMeta}>{recipeFolioMeta(dictionary, recipe)}</p>}
             />
           ))}
-        </div>
+        </Folio>
       </div>
     </SectionFrame>
   );

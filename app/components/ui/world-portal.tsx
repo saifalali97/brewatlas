@@ -3,17 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { dsFocus, dsMotion, dsRadius } from "@/lib/constants/styles";
+import { dsFocus, dsMotion, dsTypography } from "@/lib/constants/styles";
 
 export type WorldPortalTone = "warm" | "neutral" | "palm" | "sand" | "culture" | "gold";
 
 const toneOverlays: Record<WorldPortalTone, string> = {
-  warm: "from-uae-dark-coffee-deep/90 via-uae-dark-coffee-deep/25 to-uae-warm-gold/10",
-  neutral: "from-uae-dark-coffee-deep/92 via-uae-dark-coffee-deep/30 to-transparent",
-  palm: "from-uae-dark-coffee-deep/90 via-uae-palm-deep/20 to-transparent",
-  sand: "from-uae-dark-coffee-deep/88 via-uae-sand-deep/15 to-transparent",
-  culture: "from-uae-dark-coffee-deep/90 via-uae-dark-coffee/20 to-uae-sand/10",
-  gold: "from-uae-dark-coffee-deep/92 via-uae-warm-gold-deep/18 to-uae-warm-gold/8",
+  warm: "from-ba-espresso/92 via-ba-espresso/35 to-ba-gold/12",
+  neutral: "from-ba-espresso/94 via-ba-espresso/40 to-transparent",
+  palm: "from-ba-espresso/90 via-ba-charcoal/50 to-ba-bronze/8",
+  sand: "from-ba-espresso/88 via-ba-coffee/40 to-ba-sand-deep/15",
+  culture: "from-ba-espresso/92 via-ba-charcoal/45 to-ba-sand/12",
+  gold: "from-ba-espresso/94 via-ba-bronze/25 to-ba-gold/15",
 };
 
 type WorldPortalProps = {
@@ -25,7 +25,7 @@ type WorldPortalProps = {
   imageSrc: string;
   imageAlt: string;
   tone?: WorldPortalTone;
-  size?: "large" | "small";
+  size?: "large" | "small" | "tall";
   priority?: boolean;
 };
 
@@ -33,7 +33,7 @@ function joinClasses(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
 }
 
-/** Immersive editorial portal tile for the Discover section. */
+/** Immersive editorial portal — full-bleed photography, no card chrome. */
 export function WorldPortal({
   href,
   eyebrow,
@@ -48,18 +48,18 @@ export function WorldPortal({
 }: WorldPortalProps) {
   const heightClass =
     size === "large"
-      ? "min-h-[28rem] sm:min-h-[26rem] lg:min-h-[26.25rem]"
-      : "min-h-[22rem] sm:min-h-[20rem] lg:min-h-[26.25rem]";
+      ? "min-h-[32rem] lg:min-h-[36rem]"
+      : size === "tall"
+        ? "min-h-[32rem] lg:min-h-[36rem]"
+        : "min-h-[18rem] lg:min-h-[17rem]";
 
   return (
     <Link
       href={href}
       className={joinClasses(
-        "group relative block overflow-hidden",
-        dsRadius.card,
-        "border border-white/[0.08]",
+        "group relative block overflow-hidden rounded-[1.75rem]",
         dsMotion.transitionSlow,
-        "hover:border-uae-warm-gold/25",
+        "motion-safe:hover:shadow-[0_32px_80px_-24px_rgba(28,22,18,0.28)]",
         dsFocus.ring,
         heightClass,
       )}
@@ -77,42 +77,42 @@ export function WorldPortal({
         className={joinClasses(
           "object-cover object-center",
           dsMotion.transitionSlow,
-          "motion-safe:group-hover:scale-[1.02]",
-          "brightness-[0.88] contrast-[1.04] saturate-[0.92]",
+          "motion-safe:group-hover:scale-[1.04]",
+          "brightness-[0.82] contrast-[1.05] saturate-[0.9]",
         )}
       />
 
       <div
         aria-hidden
-        className={joinClasses(
-          "absolute inset-0 bg-gradient-to-t",
-          toneOverlays[tone],
-        )}
+        className={joinClasses("absolute inset-0 bg-gradient-to-t", toneOverlays[tone])}
       />
       <div
         aria-hidden
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_80%,rgba(192,138,46,0.08),transparent_55%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_100%,rgba(184,149,107,0.18),transparent_60%)]"
       />
 
-      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-9">
-        <p className="text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-uae-warm-gold/85">
+      <div className="absolute inset-x-0 bottom-0 p-8 sm:p-10 lg:p-12">
+        <p className="text-[0.6875rem] font-medium uppercase tracking-[0.2em] text-ba-gold/90">
           {eyebrow}
         </p>
-        <h3 className="mt-3 max-w-md text-2xl font-semibold leading-[1.15] tracking-[-0.02em] text-uae-pearl sm:text-[1.75rem]">
+        <h3 className={`mt-4 max-w-lg ${dsTypography.h2Dark} text-3xl sm:text-4xl lg:text-[2.75rem]`}>
           {title}
         </h3>
-        <p className="mt-3 max-w-sm text-sm leading-relaxed text-stone-400/95 sm:text-[0.9375rem]">
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-ba-sand-deep/85 sm:text-base">
           {tagline}
         </p>
         <span
           className={joinClasses(
-            "mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-uae-warm-gold",
+            "mt-6 inline-flex items-center gap-2 text-sm font-medium text-ba-pearl",
             dsMotion.transition,
-            "group-hover:gap-2.5",
+            "group-hover:gap-3",
           )}
         >
           {enterLabel}
-          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" aria-hidden />
+          <ArrowRight
+            className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1"
+            aria-hidden
+          />
         </span>
       </div>
     </Link>

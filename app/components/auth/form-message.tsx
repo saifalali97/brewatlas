@@ -3,14 +3,14 @@ type FormMessageProps = {
   success?: string;
 };
 
-/** Inline status text shown beneath auth forms, styled to match the existing card aesthetic. */
+/** Inline status text beneath auth forms — light Atlas surfaces. */
 export function FormMessage({ error, success }: FormMessageProps) {
   if (!error && !success) return null;
 
   return (
     <p
       role="status"
-      className={`text-sm leading-relaxed ${error ? "text-red-400/90" : "text-emerald-400/90"}`}
+      className={`text-sm leading-relaxed ${error ? "text-red-700" : "text-emerald-800"}`}
     >
       {error ?? success}
     </p>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { buttons } from "@/lib/constants/styles";
+import { acSurface, acTypography } from "@/lib/design-system/atlas-canon";
+import { buttons, forms } from "@/lib/constants/styles";
 import { submitContactFormAction } from "@/lib/supabase/contact-actions";
 import { useTranslations } from "@/lib/i18n/translation-context";
 
@@ -11,32 +12,25 @@ export function ContactForm() {
 
   if (state?.success) {
     return (
-      <div className="rounded-[1.5rem] border border-amber-500/25 bg-amber-950/20 p-8 text-center">
-        <p className="text-lg font-medium text-stone-50">{t("contactPage.messageSentTitle")}</p>
-        <p className="mt-2 text-sm leading-relaxed text-stone-400">{t("contactPage.messageSentBody")}</p>
+      <div className={`${acSurface.plate} p-8 text-center`}>
+        <p className={acTypography.h3}>{t("contactPage.messageSentTitle")}</p>
+        <p className={`${acTypography.body} mt-3`}>{t("contactPage.messageSentBody")}</p>
       </div>
     );
   }
 
   return (
     <form action={formAction} className="space-y-5">
-      <input
-        type="text"
-        name="company"
-        tabIndex={-1}
-        autoComplete="off"
-        className="hidden"
-        aria-hidden
-      />
+      <input type="text" name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
 
       {state?.error ? (
-        <p className="rounded-xl border border-red-500/30 bg-red-950/20 px-4 py-3 text-sm text-red-200">
+        <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
           {t("contactPage.messageSendFailed")}
         </p>
       ) : null}
 
       <div>
-        <label htmlFor="name" className="text-sm font-medium text-stone-300">
+        <label htmlFor="name" className={forms.label}>
           {t("contactPage.nameLabel")}
         </label>
         <input
@@ -46,13 +40,13 @@ export function ContactForm() {
           required
           autoComplete="name"
           maxLength={120}
-          className="mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
+          className={forms.input}
           placeholder={t("contactPage.namePlaceholder")}
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="text-sm font-medium text-stone-300">
+        <label htmlFor="email" className={forms.label}>
           {t("auth.email")}
         </label>
         <input
@@ -61,13 +55,13 @@ export function ContactForm() {
           type="email"
           required
           autoComplete="email"
-          className="mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
+          className={forms.input}
           placeholder={t("auth.emailPlaceholder")}
         />
       </div>
 
       <div>
-        <label htmlFor="message" className="text-sm font-medium text-stone-300">
+        <label htmlFor="message" className={forms.label}>
           {t("contactPage.messageLabel")}
         </label>
         <textarea
@@ -76,7 +70,7 @@ export function ContactForm() {
           required
           rows={5}
           maxLength={4000}
-          className="mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
+          className={forms.input}
           placeholder={t("contactPage.messagePlaceholder")}
         />
       </div>

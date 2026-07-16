@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { buttons, surfaces } from "@/lib/constants/styles";
+import { acFocus, acSurface, acTypography } from "@/lib/design-system/atlas-canon";
 
 type EmptyStateProps = {
   title: string;
@@ -11,7 +11,7 @@ type EmptyStateProps = {
   className?: string;
 };
 
-/** Shared empty-state card used across list and explorer views. */
+/** Shared empty-state — editorial plate, not a dashboard card. */
 export function EmptyState({
   title,
   description,
@@ -21,16 +21,19 @@ export function EmptyState({
   className = "",
 }: EmptyStateProps) {
   return (
-    <div className={`${surfaces.emptyState} ${className}`.trim()}>
+    <div className={`${acSurface.plate} px-8 py-16 text-center ${className}`.trim()}>
       {icon ? (
-        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-uae-warm-gold/20 bg-uae-warm-gold/8 text-uae-warm-gold">
-          {icon}
-        </div>
+        <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center text-ac-copper">{icon}</div>
       ) : null}
-      <h2 className="font-display text-lg text-uae-pearl">{title}</h2>
-      {description ? <p className="mx-auto mt-2 max-w-md text-sm text-stone-500">{description}</p> : null}
+      <h2 className={acTypography.h3}>{title}</h2>
+      {description ? (
+        <p className={`${acTypography.body} mx-auto mt-3 max-w-md`}>{description}</p>
+      ) : null}
       {actionLabel && actionHref ? (
-        <Link href={actionHref} className={`${buttons.secondary} mt-6 inline-flex h-10 min-w-0 px-5 text-xs`}>
+        <Link
+          href={actionHref}
+          className={`${acTypography.nav} mt-8 inline-flex h-11 items-center rounded-full border border-ac-copper/35 px-6 text-ac-espresso hover:border-ac-copper/55 hover:bg-ac-espresso/[0.03] ${acFocus.ring}`}
+        >
           {actionLabel}
         </Link>
       ) : null}
