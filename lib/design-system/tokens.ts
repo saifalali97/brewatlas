@@ -80,17 +80,17 @@ export const dsFocus = {
 
 export const dsTypography = {
   eyebrow:
-    "text-[0.8125rem] font-medium uppercase tracking-[0.14em] text-uae-warm-gold/90",
+    "text-[0.8125rem] font-medium uppercase tracking-[0.16em] text-uae-warm-gold/90",
   display:
-    "text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.03em] text-uae-pearl sm:text-5xl lg:text-[4rem]",
-  h1: "text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-uae-pearl sm:text-4xl lg:text-[3.25rem]",
-  h2: "text-2xl font-semibold leading-[1.15] tracking-[-0.02em] text-uae-pearl sm:text-3xl",
+    "font-display text-[2.75rem] leading-[1.02] tracking-[-0.03em] text-uae-pearl sm:text-6xl lg:text-[4.25rem]",
+  h1: "font-display text-3xl leading-[1.06] tracking-[-0.03em] text-uae-pearl sm:text-4xl lg:text-[3.25rem]",
+  h2: "font-display text-2xl leading-[1.12] tracking-[-0.025em] text-uae-pearl sm:text-3xl",
   h3: "text-xl font-medium leading-[1.3] text-uae-pearl sm:text-2xl",
-  body: "text-base leading-[1.65] text-stone-400 md:text-lg md:leading-[1.72]",
-  bodyCentered: "mx-auto text-base leading-[1.65] text-stone-400 md:text-lg md:leading-[1.72]",
+  body: "text-base leading-[1.7] text-stone-400 md:text-lg md:leading-[1.75]",
+  bodyCentered: "mx-auto text-base leading-[1.7] text-stone-400 md:text-lg md:leading-[1.75]",
   label: "text-sm font-medium text-stone-300",
-  caption: "text-xs text-stone-500",
-  nav: "text-sm font-medium",
+  caption: "text-xs leading-relaxed text-stone-500",
+  nav: "text-sm font-medium tracking-[-0.01em]",
 } as const;
 
 export const dsLayout = {

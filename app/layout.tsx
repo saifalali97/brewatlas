@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Instrument_Serif } from "next/font/google";
 import { ClientPageLoader } from "@/app/components/layout/client-chrome";
 import { ServiceWorkerRegistration } from "@/app/components/pwa/service-worker-registration";
 import { JsonLd } from "@/app/components/seo/json-ld";
@@ -16,6 +16,13 @@ const geistSans = Geist({
   subsets: ["latin"],
   display: "swap",
   preload: true,
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
 });
 
 export const metadata: Metadata = createSiteMetadata();
@@ -40,7 +47,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={direction}
-      className={`${geistSans.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <a
