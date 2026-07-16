@@ -148,8 +148,8 @@ export default async function DashboardPage() {
               <Icon className="h-[18px] w-[18px]" aria-hidden />
             </div>
             <div>
-              <p className="font-display text-2xl tracking-[-0.02em] text-stone-50">{value}</p>
-              <p className="mt-1 text-sm text-stone-500">{label}</p>
+              <p className="font-display text-2xl tracking-[-0.02em] text-ba-espresso">{value}</p>
+              <p className="mt-1 text-sm text-ba-coffee/55">{label}</p>
             </div>
           </div>
         ))}
@@ -157,18 +157,18 @@ export default async function DashboardPage() {
 
       <div className={`mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between ${panels.profile}`}>
         <div className="flex items-center gap-4">
-          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-white/[0.12] bg-white/[0.04]">
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-ba-espresso/10 bg-ba-sand/30">
             {profile?.avatar_url ? (
               <Image src={profile.avatar_url} alt="" fill sizes="56px" className="object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-lg font-medium text-stone-500">
+              <div className="flex h-full w-full items-center justify-center text-lg font-medium text-ba-coffee/55">
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
           <div>
-            <p className="font-medium text-stone-100">{displayName}</p>
-            <p className="mt-0.5 text-sm text-stone-500">
+            <p className="font-medium text-ba-espresso">{displayName}</p>
+            <p className="mt-0.5 text-sm text-ba-coffee/55">
               {profile?.country || d.countryNotSet}
               {profile?.bio ? ` · ${profile.bio}` : ""}
             </p>
@@ -197,8 +197,8 @@ export default async function DashboardPage() {
                 <Icon className="h-[18px] w-[18px]" aria-hidden />
               </div>
               <div>
-                <p className="font-medium text-stone-100">{label}</p>
-                <p className="mt-0.5 text-sm text-stone-500">{description}</p>
+                <p className="font-medium text-ba-espresso">{label}</p>
+                <p className="mt-0.5 text-sm text-ba-coffee/55">{description}</p>
               </div>
             </Link>
           ))}
@@ -210,7 +210,7 @@ export default async function DashboardPage() {
           <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>{dictionary.dashboard.myRecipes}</h2>
           <div className="flex items-center gap-5">
             {ownRecipes.length > 0 && (
-              <Link href="/account/recipes" className="text-sm font-medium text-uae-warm-gold/90 underline-offset-4 hover:underline">
+              <Link href="/account/recipes" className="text-sm font-medium text-ba-bronze underline-offset-4 hover:underline">
                 {d.manageAll}
               </Link>
             )}
@@ -222,7 +222,7 @@ export default async function DashboardPage() {
         </div>
 
         {ownRecipes.length === 0 ? (
-          <p className="mt-6 rounded-2xl border border-white/[0.09] bg-white/[0.03] px-6 py-8 text-sm text-stone-500">
+          <p className="mt-6 rounded-2xl border border-ba-espresso/[0.08] bg-ba-sand/25 px-6 py-8 text-sm text-ba-coffee/55">
             {d.noOwnRecipesYet}
           </p>
         ) : (
@@ -244,16 +244,16 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between gap-4">
           <h2 className={`${typography.sectionTitleModern} text-start text-2xl sm:text-3xl`}>{d.favoriteRecipesTitle}</h2>
           {favoriteRecipes.length > 0 && (
-            <Link href="/recipes" className="text-sm font-medium text-uae-warm-gold/90 underline-offset-4 hover:underline">
+            <Link href="/recipes" className="text-sm font-medium text-ba-bronze underline-offset-4 hover:underline">
               {d.browseMore}
             </Link>
           )}
         </div>
 
         {favoriteRecipes.length === 0 ? (
-          <p className="mt-6 rounded-2xl border border-white/[0.09] bg-white/[0.03] px-6 py-8 text-sm text-stone-500">
+          <p className="mt-6 rounded-2xl border border-ba-espresso/[0.08] bg-ba-sand/25 px-6 py-8 text-sm text-ba-coffee/55">
             {d.noFavoritesYetPrefix}{" "}
-            <Link href="/recipes" className="text-uae-warm-gold/90 underline-offset-4 hover:underline">
+            <Link href="/recipes" className="text-ba-bronze underline-offset-4 hover:underline">
               {d.recipeLibraryLink}
             </Link>{" "}
             {d.noFavoritesYetSuffix}
