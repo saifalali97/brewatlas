@@ -217,12 +217,6 @@ function runBlockerReport(button: HTMLButtonElement): BlockerReport {
 }
 
 /** @deprecated Stale bundles may still call this name — keep until debug session ends. */
-function logHamburgerHitTest(button: HTMLButtonElement, label: string) {
-  const report = runBlockerReport(button);
-  console.log(`[HamburgerDebug] ${label}`, report);
-  return report;
-}
-
 export function SiteNav({
   nav = defaultNavLabels,
   locale = DEFAULT_LOCALE,
