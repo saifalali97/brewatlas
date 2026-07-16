@@ -63,6 +63,7 @@ export default async function RoastersPage() {
               founded: roaster.founded,
             })}
             imageGrade="directory"
+            imageSize="large"
             description={roaster.description}
             meta={
               <p className={acTypography.folioMeta}>

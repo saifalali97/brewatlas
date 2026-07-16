@@ -2,15 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Plus } from "lucide-react";
+import { EmptyState } from "@/app/components/ui/empty-state";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { DeleteRecipeButton } from "@/app/components/recipes/delete-recipe-button";
+import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import { getUserRecipes } from "@/lib/data/db-recipes";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
-import { buttons } from "@/lib/constants/styles";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -39,64 +40,75 @@ export default async function DashboardRecipesPage() {
 
   return (
     <SectionFrame id="dashboard-recipes-page" ariaLabelledBy="dashboard-recipes-page-heading" padding="compact">
-      
-<div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-        <PageHeader headingId="dashboard-recipes-page-heading" eyebrow={r.eyebrow} title={r.title} description={r.description} centered={false} />
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <PageHeader
+          headingId="dashboard-recipes-page-heading"
+          eyebrow={r.eyebrow}
+          title={r.title}
+          description={r.description}
+          centered={false}
+        />
 
-        <Link href="/account/recipes/new" className={`${buttons.primary} shrink-0 gap-2`}>
+        <Link
+          href="/account/recipes/new"
+          className={`inline-flex h-11 shrink-0 items-center gap-2 rounded-full border border-ac-copper/40 px-6 text-sm font-medium text-ac-espresso hover:border-ac-copper/60 ${acFocus.ring}`}
+        >
           <Plus className="h-4 w-4" aria-hidden />
           {r.newRecipeCta}
         </Link>
       </div>
 
       {recipes.length === 0 ? (
-        <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
-          <p className="text-lg font-medium text-stone-100">{r.noRecipesYetTitle}</p>
-          <p className="mt-2 text-sm text-stone-500">{r.noRecipesYetDescription}</p>
-        </div>
+        <EmptyState
+          title={r.noRecipesYetTitle}
+          description={r.noRecipesYetDescription}
+          actionLabel={r.newRecipeCta}
+          actionHref="/account/recipes/new"
+        />
       ) : (
-        <div className="overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
-          <ul className="divide-y divide-white/[0.07]">
-            {recipes.map((recipe) => (
-              <li key={recipe.id} className="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
+        <ol className="mt-2 list-none space-y-0 p-0">
+          {recipes.map((recipe, index) => (
+            <li key={recipe.id} className="ac-folio-divider py-6 sm:py-7">
+              <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-2.5">
-                    <p className="font-medium text-stone-100">{recipe.name}</p>
+                  <p className={acTypography.caption}>{String(index + 1).padStart(2, "0")}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-3">
+                    <p className={acTypography.folioTitle}>{recipe.name}</p>
                     <span
                       className={`rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
                         recipe.published
-                          ? "border-emerald-600/35 bg-emerald-950/40 text-emerald-300/90"
-                          : "border-stone-600/35 bg-stone-800/40 text-stone-400"
+                          ? "border-ac-palm/30 text-ac-palm"
+                          : "border-ac-espresso/15 text-ac-walnut/55"
                       }`}
                     >
                       {recipe.published ? r.publishedBadge : r.draftBadge}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-stone-500">
+                  <p className={`${acTypography.folioMeta} mt-2`}>
                     {recipe.brewMethod} · {recipe.origin}
                   </p>
                 </div>
-                <div className="flex items-center gap-5">
-                  {recipe.published && (
+                <div className="flex flex-wrap items-center gap-4">
+                  {recipe.published ? (
                     <Link
                       href={`/recipes/${recipe.slug}`}
-                      className="text-xs font-medium text-stone-400 underline-offset-4 hover:text-amber-400/90 hover:underline"
+                      className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
                     >
                       {r.viewLink}
                     </Link>
-                  )}
+                  ) : null}
                   <Link
                     href={`/account/recipes/${recipe.id}/edit`}
-                    className="text-xs font-medium text-amber-400/90 underline-offset-4 hover:underline"
+                    className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
                   >
                     {r.editLink}
                   </Link>
                   <DeleteRecipeButton recipeId={recipe.id!} recipeTitle={recipe.name} />
                 </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+              </div>
+            </li>
+          ))}
+        </ol>
       )}
     </SectionFrame>
   );

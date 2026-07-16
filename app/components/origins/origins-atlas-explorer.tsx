@@ -117,8 +117,8 @@ export function OriginsAtlasExplorer({
           </ul>
         </nav>
 
-        <div className="lg:col-span-9">
-          <div className="snap-y snap-mandatory space-y-0">
+        <div className="lg:col-span-9 scroll-smooth">
+          <div className="snap-y snap-mandatory space-y-0 scroll-smooth">
             {sections.map(({ origin, id, indexLabel }) => (
               <DestinationChapter
                 key={origin.country}

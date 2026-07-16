@@ -87,6 +87,26 @@ const ar: Dictionary = {
     statCountriesLabel: "الدول",
     heroImageAlt: "قهوة pour-over بإضاءة دافئة — تصوير تحريري من بريو أطلس",
   },
+  homeGateway: {
+    sectionAriaLabel: "اختر عالم التحضير",
+    title: "بريو أطلس",
+    subtitle: "اختر عالم التحضير.",
+    enterLabel: "ادخل",
+    destinations: {
+      coffee: {
+        title: "القهوة",
+        imageAlt: "قهوة متخصصة pour-over بإضاءة تحريرية دافئة",
+      },
+      arabicCoffee: {
+        title: "القهوة العربية",
+        imageAlt: "دلة قهوة عربية وفنجان في مجلس تقليدي",
+      },
+      karakTea: {
+        title: "الكرك والشاي",
+        imageAlt: "كرك وشاي يُقدّمان على الطريقة الخليجية",
+      },
+    },
+  },
   homeDiscover: {
     sectionAriaLabel: "اكتشف بريو أطلس",
     eyebrow: "اكتشف بريو أطلس",

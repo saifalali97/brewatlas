@@ -1,32 +1,18 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { RecipeCard } from "@/app/components/cards/recipe-card";
+import { Folio, FolioItem } from "@/app/components/atlas/folio";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
+import { EmptyState } from "@/app/components/ui/empty-state";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { acTypography } from "@/lib/design-system/atlas-canon";
 import { getUserFavoriteRecipes } from "@/lib/data/db-recipes";
 import { translate } from "@/lib/i18n/format";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { getLocale } from "@/lib/i18n/locale";
-import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
-import type { FeaturedRecipe } from "@/types/homepage";
-
-/** Builds `RecipeCard`'s translated chrome labels for a given recipe, matching the pattern used on `/recipes`. */
-function recipeCardLabels(dictionary: Dictionary, recipe: FeaturedRecipe) {
-  const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
-  return {
-    premium: dictionary.common.premiumBadge,
-    editorsChoice: dictionary.homeFeaturedRecipes.editorsChoice,
-    ratio: dictionary.homeFeaturedRecipes.ratioLabel,
-    time: dictionary.homeFeaturedRecipes.timeLabel,
-    difficultyLabel: translate(dictionary, difficultyLabelKey(recipe.difficulty)),
-    brewMethodLabel: brewMethodKey ? translate(dictionary, brewMethodKey) : recipe.brewMethod,
-    imageAltTemplate: dictionary.homeFeaturedRecipes.imageAltTemplate,
-  };
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -55,37 +41,49 @@ export default async function DashboardFavoritesPage() {
 
   return (
     <SectionFrame id="dashboard-favorites-page" ariaLabelledBy="dashboard-favorites-page-heading" padding="compact">
-<PageHeader headingId="dashboard-favorites-page-heading" eyebrow={f.eyebrow} title={f.title} description={f.description} centered={false} />
+      <PageHeader
+        headingId="dashboard-favorites-page-heading"
+        eyebrow={f.eyebrow}
+        title={f.title}
+        description={f.description}
+        centered={false}
+      />
 
       {favoriteRecipes.length === 0 ? (
-        <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
-          <p className="text-lg font-medium text-stone-100">{f.noFavoritesTitle}</p>
-          <p className="mt-2 text-sm text-stone-500">{f.noFavoritesDescription}</p>
-        </div>
+        <EmptyState
+          title={f.noFavoritesTitle}
+          description={f.noFavoritesDescription}
+          actionLabel={dictionary.homeFooter.browseRecipes}
+          actionHref="/recipes"
+        />
       ) : (
-        <div className="mt-6 grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-9">
-          {favoriteRecipes.map((recipe) => (
-            <div key={recipe.id} className="relative">
-              <RecipeCard
-                recipe={recipe}
-                featured={false}
+        <Folio ariaLabel={f.title}>
+          {favoriteRecipes.map((recipe, index) => {
+            const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
+            return (
+              <FolioItem
+                key={recipe.id}
                 href={`/recipes/${recipe.slug}`}
-                labels={recipeCardLabels(dictionary, recipe)}
+                index={String(index + 1).padStart(2, "0")}
+                title={recipe.name}
+                imageSrc={recipe.image}
+                imageGrade="library"
+                meta={
+                  <p className={acTypography.folioMeta}>
+                    {recipe.origin} ·{" "}
+                    {brewMethodKey ? translate(dictionary, brewMethodKey) : recipe.brewMethod} ·{" "}
+                    {translate(dictionary, difficultyLabelKey(recipe.difficulty))}
+                  </p>
+                }
+                trailing={
+                  recipe.id ? (
+                    <FavoriteButton recipeId={recipe.id} isFavorited currentPath="/account/favorites" />
+                  ) : undefined
+                }
               />
-              {recipe.id && (
-                <div className="pointer-events-none absolute inset-0">
-                  <div className="pointer-events-auto absolute bottom-6 end-6 z-10">
-                    <FavoriteButton
-                      recipeId={recipe.id}
-                      isFavorited
-                      currentPath="/account/favorites"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+            );
+          })}
+        </Folio>
       )}
     </SectionFrame>
   );

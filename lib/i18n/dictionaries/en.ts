@@ -87,6 +87,26 @@ const en: Dictionary = {
     statCountriesLabel: "Countries",
     heroImageAlt: "Pour-over coffee in warm light — BrewAtlas editorial photography",
   },
+  homeGateway: {
+    sectionAriaLabel: "Choose your brewing world",
+    title: "BrewAtlas",
+    subtitle: "Choose your brewing world.",
+    enterLabel: "Enter",
+    destinations: {
+      coffee: {
+        title: "Coffee",
+        imageAlt: "Specialty coffee pour-over in warm editorial light",
+      },
+      arabicCoffee: {
+        title: "Arabic Coffee",
+        imageAlt: "Traditional Arabic coffee dallah and finjan in a majlis setting",
+      },
+      karakTea: {
+        title: "Karak & Tea",
+        imageAlt: "Karak chai and tea served in the Gulf tradition",
+      },
+    },
+  },
   homeDiscover: {
     sectionAriaLabel: "Discover BrewAtlas",
     eyebrow: "Discover BrewAtlas",

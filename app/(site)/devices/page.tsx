@@ -84,6 +84,7 @@ export default async function DevicesPage() {
                 suitableRoast: method.suitableRoast,
               })}
               imageGrade="workshop"
+              imageSize="large"
               description={translate(dictionary, "devicesPage.usedForTemplate", {
                 method: method.name.toLowerCase(),
                 description: method.description,

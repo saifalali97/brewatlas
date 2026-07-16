@@ -2,12 +2,10 @@
 
 import { useActionState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
-import { buttons } from "@/lib/constants/styles";
+import { acSurface, acTypography } from "@/lib/design-system/atlas-canon";
+import { buttons, forms } from "@/lib/constants/styles";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { signUpAction, type AuthActionState } from "@/lib/supabase/actions";
-
-const inputClass =
-  "mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45";
 
 export function SignupForm() {
   const { t } = useTranslations();
@@ -18,9 +16,9 @@ export function SignupForm() {
 
   if (state?.success) {
     return (
-      <div className="rounded-[1.5rem] border border-amber-500/25 bg-amber-950/20 p-8 text-center">
-        <p className="text-lg font-medium text-stone-50">{t("auth.almostThereTitle")}</p>
-        <p className="mt-2 text-sm leading-relaxed text-stone-400">{state.success}</p>
+      <div className={`${acSurface.plate} p-8 text-center`}>
+        <p className={acTypography.h3}>{t("auth.almostThereTitle")}</p>
+        <p className={`${acTypography.body} mt-3`}>{state.success}</p>
       </div>
     );
   }
@@ -28,7 +26,7 @@ export function SignupForm() {
   return (
     <form action={formAction} className="space-y-5">
       <div>
-        <label htmlFor="fullName" className="text-sm font-medium text-stone-300">
+        <label htmlFor="fullName" className={forms.label}>
           {t("auth.fullName")}
         </label>
         <input
@@ -36,13 +34,13 @@ export function SignupForm() {
           name="fullName"
           type="text"
           autoComplete="name"
-          className={inputClass}
+          className={forms.input}
           placeholder={t("auth.namePlaceholder")}
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="text-sm font-medium text-stone-300">
+        <label htmlFor="email" className={forms.label}>
           {t("auth.email")}
         </label>
         <input
@@ -51,13 +49,13 @@ export function SignupForm() {
           type="email"
           required
           autoComplete="email"
-          className={inputClass}
+          className={forms.input}
           placeholder={t("auth.emailPlaceholder")}
         />
       </div>
 
       <div>
-        <label htmlFor="password" className="text-sm font-medium text-stone-300">
+        <label htmlFor="password" className={forms.label}>
           {t("auth.password")}
         </label>
         <input
@@ -67,13 +65,13 @@ export function SignupForm() {
           required
           minLength={8}
           autoComplete="new-password"
-          className={inputClass}
+          className={forms.input}
           placeholder={t("auth.passwordPlaceholderMin")}
         />
       </div>
 
       <div>
-        <label htmlFor="confirmPassword" className="text-sm font-medium text-stone-300">
+        <label htmlFor="confirmPassword" className={forms.label}>
           {t("forms.confirmPassword")}
         </label>
         <input
@@ -83,7 +81,7 @@ export function SignupForm() {
           required
           minLength={8}
           autoComplete="new-password"
-          className={inputClass}
+          className={forms.input}
           placeholder={t("auth.passwordPlaceholderDots")}
         />
       </div>

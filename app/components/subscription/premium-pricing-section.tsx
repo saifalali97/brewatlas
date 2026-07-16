@@ -189,7 +189,7 @@ export function PremiumPricingSection({
 
   return (
     <>
-      <Chapter id="premium-circle" rhythm="night" padding="chapter" ariaLabelledBy="premium-plans-heading">
+      <Chapter id="premium-circle" rhythm="night" padding="standard" ariaLabelledBy="premium-plans-heading">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(196,165,116,0.12),transparent)]"
@@ -209,14 +209,14 @@ export function PremiumPricingSection({
         </MotionReveal>
       </Chapter>
 
-      <Chapter id="premium-faq" rhythm="dawn" padding="standard" ariaLabelledBy="premium-faq-heading">
+      <Chapter id="premium-faq" rhythm="dawn" padding="compact" ariaLabelledBy="premium-faq-heading">
         <div className="mx-auto max-w-2xl text-center">
           <p className={acTypography.eyebrow}>{dictionary.homeFaq.eyebrow}</p>
-          <h2 id="premium-faq-heading" className={joinClasses(acTypography.displayLg, "mt-6")}>
+          <h2 id="premium-faq-heading" className={joinClasses(acTypography.h1, "mt-5")}>
             {dictionary.homePricing.membershipQuestionsTitle}
           </h2>
         </div>
-        <div className="mx-auto mt-14 max-w-2xl">
+        <div className="mx-auto mt-10 max-w-2xl">
           <EditorialFaq faqs={content.faqs} headingId="premium-faq-heading" />
         </div>
       </Chapter>

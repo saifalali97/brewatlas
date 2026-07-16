@@ -37,9 +37,11 @@ export type PortalProps = {
   imageSrc: string;
   imageAlt: string;
   tone?: PortalTone;
-  size?: "large" | "small" | "tall";
+  size?: "large" | "small" | "tall" | "gateway";
   priority?: boolean;
   className?: string;
+  /** Hide tagline for minimal gateway layouts */
+  minimal?: boolean;
 };
 
 function joinClasses(...parts: Array<string | false | undefined>) {
@@ -62,11 +64,14 @@ export function Portal({
   size = "large",
   priority = false,
   className = "",
+  minimal = false,
 }: PortalProps) {
   const heightClass =
-    size === "large" || size === "tall"
-      ? "min-h-[32rem] lg:min-h-[36rem]"
-      : "min-h-[18rem] lg:min-h-[17rem]";
+    size === "gateway"
+      ? "min-h-[14rem] sm:min-h-[18rem] md:min-h-full"
+      : size === "large" || size === "tall"
+        ? "min-h-[32rem] lg:min-h-[36rem]"
+        : "min-h-[18rem] lg:min-h-[17rem]";
 
   return (
     <Link
@@ -85,9 +90,11 @@ export function Portal({
         fill
         priority={priority}
         sizes={
-          size === "large"
-            ? "(min-width: 1024px) 66vw, 100vw"
-            : "(min-width: 1024px) 33vw, 100vw"
+          size === "gateway"
+            ? "(min-width: 768px) 33vw, 100vw"
+            : size === "large"
+              ? "(min-width: 1024px) 66vw, 100vw"
+              : "(min-width: 1024px) 33vw, 100vw"
         }
         className={joinClasses(
           "object-cover object-center",
@@ -105,8 +112,15 @@ export function Portal({
       />
       <div className="absolute inset-x-0 bottom-0 p-8 sm:p-10 lg:p-12">
         <p className={acTypography.eyebrowDark}>{eyebrow}</p>
-        <h3 className={joinClasses(acTypography.h2Dark, "mt-3 max-w-lg")}>{title}</h3>
-        {tagline ? (
+        <h3
+          className={joinClasses(
+            minimal ? acTypography.displayLgDark : acTypography.h2Dark,
+            "mt-3 max-w-lg",
+          )}
+        >
+          {title}
+        </h3>
+        {!minimal && tagline ? (
           <p className={joinClasses(acTypography.bodyDark, "mt-3 max-w-md")}>{tagline}</p>
         ) : null}
         <span

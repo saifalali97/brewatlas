@@ -16,6 +16,8 @@ const imageGradeClass = {
 
 export type FolioImageGrade = keyof typeof imageGradeClass;
 
+export type FolioImageSize = "standard" | "large";
+
 export type FolioItemProps = {
   href: string;
   title: string;
@@ -26,6 +28,7 @@ export type FolioItemProps = {
   index?: string | number;
   trailing?: ReactNode;
   imageGrade?: FolioImageGrade;
+  imageSize?: FolioImageSize;
   className?: string;
 };
 
@@ -44,11 +47,17 @@ export function FolioItem({
   index,
   trailing,
   imageGrade = "library",
+  imageSize = "standard",
   className = "",
 }: FolioItemProps) {
+  const imageBoxClass =
+    imageSize === "large"
+      ? "relative h-20 w-20 shrink-0 overflow-hidden sm:h-24 sm:w-24"
+      : "relative h-16 w-16 shrink-0 overflow-hidden sm:h-20 sm:w-20";
+  const imageSizes = imageSize === "large" ? "96px" : "80px";
   return (
     <li className={joinClasses("ac-folio-divider", className)}>
-      <div className="group flex items-center gap-6 py-6 sm:gap-8 sm:py-7">
+      <div className="group flex items-center gap-6 py-7 sm:gap-10 sm:py-8">
         <Link
           href={href}
           className={joinClasses(
@@ -64,12 +73,12 @@ export function FolioItem({
           ) : null}
 
           {imageSrc ? (
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden sm:h-20 sm:w-20">
+            <div className={imageBoxClass}>
               <Image
                 src={imageSrc}
                 alt={imageAlt}
                 fill
-                sizes="80px"
+                sizes={imageSizes}
                 className={joinClasses(
                   "object-cover object-center",
                   imageGradeClass[imageGrade],
