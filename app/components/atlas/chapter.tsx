@@ -50,7 +50,6 @@ export function Chapter({
         acSectionPadding[padding],
         acSectionRhythm[rhythm],
         motionPassageClass,
-        "lg:[content-visibility:auto] lg:[contain-intrinsic-size:auto_500px]",
         className,
       )}
     >
