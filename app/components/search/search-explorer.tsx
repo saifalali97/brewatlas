@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { SearchFiltersPanel } from "@/app/components/search/search-filters";
 import { SearchResultsView } from "@/app/components/search/search-results";
 import { SearchSkeleton } from "@/app/components/search/search-skeleton";
-import { buttons, filterChips, forms, dsFocus } from "@/lib/constants/styles";
+import { filterChips, forms, dsFocus } from "@/lib/constants/styles";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { countActiveFilters, serializeSearchFilters } from "@/lib/search/params";
