@@ -5,7 +5,8 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { getLocale } from "@/lib/i18n/locale";
-import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
+import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
+import { buildCollectionPageJsonLd } from "@/lib/seo/json-ld";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -24,7 +25,20 @@ export default async function OriginsPage() {
 
   return (
     <SectionFrame id="origins-listing" ariaLabelledBy="origins-listing-heading" padding="compact">
-<PageHeader headingId="origins-listing-heading"
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            buildCollectionPageJsonLd({
+              url: localizedPathUrl("/origins", locale),
+              name: dictionary.homeCoffeeOrigins.title,
+              description: dictionary.homeCoffeeOrigins.description,
+              itemCount: content.coffeeOrigins.length,
+            }),
+          ),
+        }}
+      />
+      <PageHeader headingId="origins-listing-heading"
         eyebrow={dictionary.homeCoffeeOrigins.eyebrow}
         title={dictionary.homeCoffeeOrigins.title}
         description={dictionary.homeCoffeeOrigins.description}
