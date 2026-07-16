@@ -47,7 +47,7 @@ import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { resolveSitePathname } from "@/lib/seo/path-utils";
 import { buildRecipeReviewJsonLd } from "@/lib/seo/recipe-review-json-ld";
-import { RecipeReviewsPanel } from "@/app/components/reviews/recipe-reviews-panel";
+import { RecipeReviewsPanel } from "@/lib/dynamic-sections";
 import { RecipeRatingBadge } from "@/app/components/reviews/recipe-rating-badge";
 import {
   getRecipeRatingDistribution,

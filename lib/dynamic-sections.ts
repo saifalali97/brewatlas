@@ -47,3 +47,7 @@ export const FaqSection = dynamic(() =>
 export const SiteFooter = dynamic(() =>
   import("@/app/components/layout/site-footer").then((mod) => mod.SiteFooter),
 );
+
+export const RecipeReviewsPanel = dynamic(() =>
+  import("@/app/components/reviews/recipe-reviews-panel").then((mod) => mod.RecipeReviewsPanel),
+);
