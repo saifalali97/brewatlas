@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { MethodCard } from "@/app/components/cards/method-card";
+import { Folio, FolioItem } from "@/app/components/atlas/folio";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
+import { acTypography } from "@/lib/design-system/atlas-canon";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
+import { interpolate } from "@/lib/i18n/format";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
 import { buildCollectionPageJsonLd } from "@/lib/seo/json-ld";
@@ -44,33 +47,44 @@ export default async function MethodsPage() {
           ),
         }}
       />
-      <PageHeader headingId="methods-listing-heading"
+      <PageHeader
+        headingId="methods-listing-heading"
         eyebrow={dictionary.homeBrewingMethods.eyebrow}
         title={dictionary.homeBrewingMethods.title}
         description={dictionary.homeBrewingMethods.description}
       />
 
-      <div className="grid gap-6 sm:gap-7 lg:grid-cols-2 lg:gap-8">
-        {content.brewMethods.map((method) => (
-          <MethodCard
+      <Folio ariaLabel={dictionary.homeBrewingMethods.title}>
+        {content.brewMethods.map((method, index) => (
+          <FolioItem
             key={method.name}
-            method={method}
-            ctaHref="/devices"
-            labels={{
-              brewTime: dictionary.homeBrewingMethods.brewTimeLabel,
-              difficulty: dictionary.homeBrewingMethods.difficultyLabel,
-              cupProfile: dictionary.homeBrewingMethods.cupProfileLabel,
-              body: dictionary.homeBrewingMethods.bodyLabel,
-              acidity: dictionary.homeBrewingMethods.acidityLabel,
-              sweetness: dictionary.homeBrewingMethods.sweetnessLabel,
-              bestWith: dictionary.homeBrewingMethods.bestWithPrefix,
-              learnMethod: dictionary.homeBrewingMethods.learnMethod,
-              imageAltTemplate: dictionary.homeBrewingMethods.imageAltTemplate,
-              difficultyLabel: difficultyLabels[method.difficulty],
-            }}
+            href="/devices"
+            index={String(index + 1).padStart(2, "0")}
+            title={method.name}
+            imageSrc={method.image}
+            imageAlt={interpolate(dictionary.homeBrewingMethods.imageAltTemplate, {
+              name: method.name,
+              suitableRoast: method.suitableRoast,
+            })}
+            imageGrade="library"
+            description={method.description}
+            meta={
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <span className={acTypography.folioMeta}>
+                  {dictionary.homeBrewingMethods.brewTimeLabel}: {method.brewTime}
+                </span>
+                <DifficultyIndicator
+                  level={method.difficulty}
+                  label={difficultyLabels[method.difficulty]}
+                />
+                <span className={acTypography.folioMeta}>
+                  {dictionary.homeBrewingMethods.bodyLabel}: {method.body}
+                </span>
+              </div>
+            }
           />
         ))}
-      </div>
+      </Folio>
     </SectionFrame>
   );
 }

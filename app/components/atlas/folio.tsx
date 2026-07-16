@@ -7,6 +7,15 @@ import {
   acTypography,
 } from "@/lib/design-system/atlas-canon";
 
+const imageGradeClass = {
+  library: "photo-grade-library",
+  workshop: "photo-grade-workshop",
+  directory: "photo-grade-directory",
+  earth: "photo-grade-earth",
+} as const;
+
+export type FolioImageGrade = keyof typeof imageGradeClass;
+
 export type FolioItemProps = {
   href: string;
   title: string;
@@ -16,6 +25,7 @@ export type FolioItemProps = {
   imageAlt?: string;
   index?: string | number;
   trailing?: ReactNode;
+  imageGrade?: FolioImageGrade;
   className?: string;
 };
 
@@ -33,6 +43,7 @@ export function FolioItem({
   imageAlt = "",
   index,
   trailing,
+  imageGrade = "library",
   className = "",
 }: FolioItemProps) {
   return (
@@ -59,7 +70,11 @@ export function FolioItem({
                 alt={imageAlt}
                 fill
                 sizes="80px"
-                className="object-cover object-center photo-grade-library motion-safe:group-hover:brightness-[1.03]"
+                className={joinClasses(
+                  "object-cover object-center",
+                  imageGradeClass[imageGrade],
+                  "motion-safe:group-hover:brightness-[1.03]",
+                )}
               />
             </div>
           ) : null}

@@ -68,7 +68,7 @@ export default async function AccountSubscriptionPage({ searchParams }: PageProp
       
 <Link
         href="/account"
-        className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
+        className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-ac-walnut/70 transition-colors duration-300 hover:text-ac-copper"
       >
         <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
         {dictionary.subscriptionPage.backToAccount}

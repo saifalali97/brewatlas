@@ -10,13 +10,14 @@ export type InvitationProps = {
   eyebrow?: string;
   title: string;
   prose: ReactNode;
-  ctaHref: string;
-  ctaLabel: string;
+  ctaHref?: string;
+  ctaLabel?: string;
   secondaryHref?: string;
   secondaryLabel?: string;
   signature?: string;
   className?: string;
   dark?: boolean;
+  primaryAction?: ReactNode;
 };
 
 function joinClasses(...parts: Array<string | false | undefined>) {
@@ -37,6 +38,7 @@ export function Invitation({
   signature,
   className = "",
   dark = true,
+  primaryAction,
 }: InvitationProps) {
   return (
     <div
@@ -64,19 +66,22 @@ export function Invitation({
       ) : null}
 
       <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:items-center">
-        <Link
-          href={ctaHref}
-          className={joinClasses(
-            "inline-flex h-12 items-center justify-center rounded-full border px-10 text-sm font-medium tracking-[0.08em] uppercase",
-            dark
-              ? "border-ac-gold/40 text-ac-pearl hover:border-ac-gold/60 hover:bg-white/[0.04]"
-              : "border-ac-copper/40 text-ac-espresso hover:border-ac-copper/60 hover:bg-ac-espresso/[0.04]",
-            acMotion.transition,
-            dark ? acFocus.ringDark : acFocus.ring,
-          )}
-        >
-          {ctaLabel}
-        </Link>
+        {primaryAction}
+        {!primaryAction && ctaHref && ctaLabel ? (
+          <Link
+            href={ctaHref}
+            className={joinClasses(
+              "inline-flex h-12 items-center justify-center rounded-full border px-10 text-sm font-medium tracking-[0.08em] uppercase",
+              dark
+                ? "border-ac-gold/40 text-ac-pearl hover:border-ac-gold/60 hover:bg-white/[0.04]"
+                : "border-ac-copper/40 text-ac-espresso hover:border-ac-copper/60 hover:bg-ac-espresso/[0.04]",
+              acMotion.transition,
+              dark ? acFocus.ringDark : acFocus.ring,
+            )}
+          >
+            {ctaLabel}
+          </Link>
+        ) : null}
         {secondaryHref && secondaryLabel ? (
           <Link
             href={secondaryHref}

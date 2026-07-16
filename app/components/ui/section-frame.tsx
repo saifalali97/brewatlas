@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
-import { layout, sectionPadding, sectionThemes } from "@/lib/constants/styles";
+import { Chapter } from "@/app/components/atlas/chapter";
+import { acLegacySectionThemeMap } from "@/lib/design-system/atlas-canon";
 import type { DsSectionTheme } from "@/lib/design-system/tokens";
-import { RevealOnScroll } from "@/app/components/ui/reveal-on-scroll";
 
 type SectionFrameProps = {
   id: string;
   children: ReactNode;
   className?: string;
-  padding?: keyof typeof sectionPadding;
+  padding?: "standard" | "compact" | "hero";
   theme?: DsSectionTheme;
   showDividers?: boolean;
   beforeContent?: ReactNode;
@@ -15,36 +15,36 @@ type SectionFrameProps = {
   wide?: boolean;
 };
 
+const paddingMap = {
+  standard: "chapter",
+  compact: "standard",
+  hero: "hero",
+} as const;
+
+/** Atlas Canon chapter wrapper — backward-compatible alias for legacy SectionFrame usage. */
 export function SectionFrame({
   id,
   children,
   className = "",
   padding = "standard",
   theme = "light",
-  showDividers = false,
   beforeContent,
   ariaLabelledBy,
   wide = false,
 }: SectionFrameProps) {
-  const isDark = theme === "dark" || theme === "espresso";
-  const containerClass = wide ? "relative mx-auto max-w-7xl" : layout.container;
+  const rhythm = acLegacySectionThemeMap[theme] ?? "dawn";
 
   return (
-    <section
+    <Chapter
       id={id}
-      aria-labelledby={ariaLabelledBy}
-      className={`relative ${sectionPadding[padding]} ${sectionThemes[theme]} lg:[content-visibility:auto] lg:[contain-intrinsic-size:auto_500px] ${className}`.trim()}
+      rhythm={rhythm}
+      padding={paddingMap[padding]}
+      wide={wide}
+      ariaLabelledBy={ariaLabelledBy}
+      beforeContent={beforeContent}
+      className={className}
     >
-      {showDividers && (
-        <>
-          <div aria-hidden className={isDark ? layout.sectionDividerTopDark : layout.sectionDividerTop} />
-          {!isDark && <div aria-hidden className={layout.sectionFadeTop} />}
-        </>
-      )}
-      {beforeContent}
-      <RevealOnScroll>
-        <div className={containerClass}>{children}</div>
-      </RevealOnScroll>
-    </section>
+      {children}
+    </Chapter>
   );
 }

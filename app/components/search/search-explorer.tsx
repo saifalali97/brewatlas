@@ -6,7 +6,8 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { SearchFiltersPanel } from "@/app/components/search/search-filters";
 import { SearchResultsView } from "@/app/components/search/search-results";
 import { SearchSkeleton } from "@/app/components/search/search-skeleton";
-import { filterChips, forms, dsFocus } from "@/lib/constants/styles";
+import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
+import { forms, dsFocus } from "@/lib/constants/styles";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { countActiveFilters, serializeSearchFilters } from "@/lib/search/params";
@@ -152,24 +153,34 @@ export function SearchExplorer({
         </div>
       </div>
 
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap gap-2">
+      <nav aria-label={t("searchPage.categoryAll")} className="mb-6 border-b border-ac-espresso/[0.08] pb-4">
+        <ul className="flex flex-wrap gap-x-6 gap-y-3">
           {SEARCH_CATEGORIES.map((category) => {
             const isActive = initialFilters.category === category;
             return (
-              <button
-                key={category}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => patchFilters({ category, page: 1 })}
-                className={`${filterChips.base} ${isActive ? filterChips.active : filterChips.inactive}`}
-              >
-                {t(categoryLabelKeys[category])}
-              </button>
+              <li key={category}>
+                <button
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => patchFilters({ category, page: 1 })}
+                  className={[
+                    acTypography.nav,
+                    "relative pb-1 transition-colors duration-300",
+                    isActive
+                      ? "text-ac-espresso after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-ac-copper"
+                      : "text-ac-walnut/55 hover:text-ac-espresso",
+                    acFocus.ring,
+                  ].join(" ")}
+                >
+                  {t(categoryLabelKeys[category])}
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
+      </nav>
 
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-end">
         {(initialFilters.category === "all" || initialFilters.category === "recipes") && (
           <div className="flex items-center gap-2">
             <label htmlFor="search-sort" className="text-sm text-ba-coffee/70">
@@ -219,8 +230,8 @@ export function SearchExplorer({
             )}
 
           {countActiveFilters(initialFilters) === 0 && !initialFilters.q && initialFilters.category === "all" ? (
-            <div className="mb-8 rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] px-6 py-10 text-center">
-              <p className="text-base text-ba-coffee/75">{t("searchPage.emptyPrompt")}</p>
+            <div className="mb-8 border-b border-ac-espresso/[0.08] pb-10 text-center">
+              <p className={acTypography.body}>{t("searchPage.emptyPrompt")}</p>
             </div>
           ) : null}
 

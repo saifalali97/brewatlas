@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { OriginCard } from "@/app/components/cards/origin-card";
-import { PageHeader } from "@/app/components/ui/page-header";
-import { SectionFrame } from "@/app/components/ui/section-frame";
+import { Chapter } from "@/app/components/atlas/chapter";
+import { OriginsAtlasExplorer } from "@/app/components/origins/origins-atlas-explorer";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { getLocale } from "@/lib/i18n/locale";
@@ -24,7 +23,7 @@ export default async function OriginsPage() {
   const [dictionary, content] = await Promise.all([getDictionary(locale), getHomeContent(locale)]);
 
   return (
-    <SectionFrame id="origins-listing" ariaLabelledBy="origins-listing-heading" padding="compact">
+    <Chapter id="origins-atlas" rhythm="sand" padding="standard" wide ariaLabelledBy="origins-atlas-heading">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -38,30 +37,21 @@ export default async function OriginsPage() {
           ),
         }}
       />
-      <PageHeader headingId="origins-listing-heading"
+      <OriginsAtlasExplorer
+        origins={content.coffeeOrigins}
         eyebrow={dictionary.homeCoffeeOrigins.eyebrow}
         title={dictionary.homeCoffeeOrigins.title}
         description={dictionary.homeCoffeeOrigins.description}
+        labels={{
+          premium: dictionary.common.premiumBadge,
+          altitude: dictionary.homeCoffeeOrigins.altitudeLabel,
+          process: dictionary.homeCoffeeOrigins.processLabel,
+          roast: dictionary.homeCoffeeOrigins.roastLabel,
+          brewMethod: dictionary.homeCoffeeOrigins.brewMethodLabel,
+          exploreOrigin: dictionary.homeCoffeeOrigins.exploreOrigin,
+          imageAltTemplate: dictionary.homeCoffeeOrigins.imageAltTemplate,
+        }}
       />
-
-      <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
-        {content.coffeeOrigins.map((origin) => (
-          <OriginCard
-            key={origin.country}
-            origin={origin}
-            ctaHref="/recipes"
-            labels={{
-              premium: dictionary.common.premiumBadge,
-              altitude: dictionary.homeCoffeeOrigins.altitudeLabel,
-              process: dictionary.homeCoffeeOrigins.processLabel,
-              roast: dictionary.homeCoffeeOrigins.roastLabel,
-              brewMethod: dictionary.homeCoffeeOrigins.brewMethodLabel,
-              exploreOrigin: dictionary.homeCoffeeOrigins.exploreOrigin,
-              imageAltTemplate: dictionary.homeCoffeeOrigins.imageAltTemplate,
-            }}
-          />
-        ))}
-      </div>
-    </SectionFrame>
+    </Chapter>
   );
 }

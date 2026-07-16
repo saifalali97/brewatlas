@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { acSurface } from "@/lib/design-system/atlas-canon";
 import { surfaces } from "@/lib/constants/styles";
 
 type SurfaceCardProps = {
@@ -8,5 +9,7 @@ type SurfaceCardProps = {
 
 /** Premium elevated panel for auth and focused forms. */
 export function SurfaceCard({ children, className = "" }: SurfaceCardProps) {
-  return <div className={`${surfaces.authCard} ${className}`.trim()}>{children}</div>;
+  return (
+    <div className={`${acSurface.plate} ${surfaces.authCard} ${className}`.trim()}>{children}</div>
+  );
 }
