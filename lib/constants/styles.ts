@@ -141,3 +141,21 @@ export const filterChips = {
 } as const;
 
 export { dsColors, dsElevation, dsFocus, dsLayout, dsMotion, dsRadius, dsShadow, dsTypography, dsSectionThemes };
+
+/** Atlas Canon — canonical design system (Phase 0+) */
+export {
+  acBorder,
+  acElevation,
+  acFocus,
+  acGrid,
+  acMotion,
+  acPhotoGrade,
+  acRadius,
+  acSectionPadding,
+  acSectionRhythm,
+  acShadow,
+  acSurface,
+  acText,
+  acTypography,
+  acColorHex,
+} from "@/lib/design-system/atlas-canon";

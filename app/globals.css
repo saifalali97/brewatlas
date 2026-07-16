@@ -1,64 +1,98 @@
 @import "tailwindcss";
 
 :root {
-  /* BrewAtlas Premium Palette — warm ivory, pearl, sand, espresso */
-  --ba-ivory: #faf7f2;
-  --ba-pearl: #fffcf7;
-  --ba-sand: #ede4d6;
-  --ba-sand-deep: #d9cbb5;
-  --ba-coffee: #4a3728;
-  --ba-espresso: #1c1612;
-  --ba-bronze: #9a7348;
-  --ba-gold: #b8956b;
-  --ba-gold-muted: #a08055;
-  --ba-charcoal: #2a2520;
+  /* ── Atlas Canon — canonical palette (Phase 0) ── */
+  --ac-limestone: #f7f3ec;
+  --ac-pearl: #fdfbf7;
+  --ac-sand: #e8dcc8;
+  --ac-dune: #d4c4a8;
+  --ac-espresso: #1a1410;
+  --ac-walnut: #3d2e24;
+  --ac-copper: #a67b4a;
+  --ac-gold: #c4a574;
+  --ac-palm: #4a5d52;
+  --ac-mist: #e5e0d8;
+  --ac-charcoal: #2a2520;
 
-  --background: var(--ba-ivory);
-  --foreground: var(--ba-espresso);
+  /* Legacy ba-* aliases → Atlas Canon (backward compatibility) */
+  --ba-ivory: var(--ac-limestone);
+  --ba-pearl: var(--ac-pearl);
+  --ba-sand: var(--ac-sand);
+  --ba-sand-deep: var(--ac-dune);
+  --ba-coffee: var(--ac-walnut);
+  --ba-espresso: var(--ac-espresso);
+  --ba-bronze: var(--ac-copper);
+  --ba-gold: var(--ac-gold);
+  --ba-gold-muted: #b08f62;
+  --ba-charcoal: var(--ac-charcoal);
 
-  /* DS semantic tokens */
-  --ds-page-bg: var(--ba-ivory);
-  --ds-footer-bg: var(--ba-espresso);
-  --ds-surface: rgba(28, 22, 18, 0.04);
-  --ds-surface-raised: rgba(28, 22, 18, 0.06);
-  --ds-border: rgba(28, 22, 18, 0.08);
-  --ds-border-strong: rgba(28, 22, 18, 0.12);
-  --ds-text-primary: var(--ba-espresso);
-  --ds-text-secondary: rgba(74, 55, 40, 0.72);
-  --ds-text-muted: rgba(74, 55, 40, 0.52);
-  --ds-accent: var(--ba-gold);
-  --ds-accent-deep: var(--ba-bronze);
-  --ds-focus: rgba(154, 115, 72, 0.85);
+  --background: var(--ac-limestone);
+  --foreground: var(--ac-espresso);
 
-  /* Dark section tokens (hero, premium, footer) */
-  --ds-dark-bg: var(--ba-espresso);
-  --ds-dark-text: var(--ba-pearl);
-  --ds-dark-muted: rgba(237, 228, 214, 0.62);
+  /* DS semantic tokens (legacy names, canonical values) */
+  --ds-page-bg: var(--ac-limestone);
+  --ds-footer-bg: var(--ac-espresso);
+  --ds-surface: rgba(26, 20, 16, 0.04);
+  --ds-surface-raised: rgba(26, 20, 16, 0.06);
+  --ds-border: rgba(26, 20, 16, 0.08);
+  --ds-border-strong: rgba(26, 20, 16, 0.12);
+  --ds-text-primary: var(--ac-espresso);
+  --ds-text-secondary: rgba(61, 46, 36, 0.72);
+  --ds-text-muted: rgba(61, 46, 36, 0.48);
+  --ds-accent: var(--ac-gold);
+  --ds-accent-deep: var(--ac-copper);
+  --ds-focus: rgba(166, 123, 74, 0.85);
+
+  --ds-dark-bg: var(--ac-espresso);
+  --ds-dark-text: var(--ac-pearl);
+  --ds-dark-muted: rgba(232, 220, 200, 0.62);
 
   /* Spacing (8px base) */
-  --ds-space-1: 0.5rem;
-  --ds-space-2: 1rem;
-  --ds-space-3: 1.5rem;
+  --ac-space-xs: 0.5rem;
+  --ac-space-sm: 1rem;
+  --ac-space-md: 1.5rem;
+  --ac-space-lg: 3rem;
+  --ac-space-xl: 5rem;
+  --ac-space-2xl: 8rem;
+  --ac-space-3xl: 12rem;
+
+  --ds-space-1: var(--ac-space-xs);
+  --ds-space-2: var(--ac-space-sm);
+  --ds-space-3: var(--ac-space-md);
   --ds-space-4: 2rem;
-  --ds-space-5: 3rem;
+  --ds-space-5: var(--ac-space-lg);
   --ds-space-6: 4rem;
   --ds-space-7: 6rem;
-  --ds-space-8: 8rem;
+  --ds-space-8: var(--ac-space-2xl);
 
   /* Radius */
-  --ds-radius-sm: 0.5rem;
+  --ac-radius-none: 0;
+  --ac-radius-sm: 0.25rem;
+  --ac-radius-md: 0.5rem;
+  --ac-radius-lg: 0.75rem;
+  --ac-radius-arch: 2px 2px 1.5rem 1.5rem;
+
+  --ds-radius-sm: var(--ac-radius-md);
   --ds-radius-md: 0.75rem;
   --ds-radius-lg: 1rem;
   --ds-radius-xl: 1.5rem;
   --ds-radius-card: 1.25rem;
 
-  /* Motion */
-  --ds-easing-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Motion — Atlas Canon */
+  --ac-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --ac-duration-instant: 120ms;
+  --ac-duration-calm: 400ms;
+  --ac-duration-reveal: 900ms;
+  --ac-duration-passage: 1200ms;
+  --ac-duration-atlas: 1600ms;
+
+  --ds-easing-premium: var(--ac-easing);
   --ds-duration-fast: 200ms;
   --ds-duration-normal: 300ms;
   --ds-duration-slow: 500ms;
 
-  --ds-header-height: 4.5rem;
+  --ac-header-height: 4.5rem;
+  --ds-header-height: var(--ac-header-height);
 }
 
 @theme inline {
@@ -67,33 +101,47 @@
   --font-sans: var(--font-geist-sans);
   --font-serif: var(--font-instrument-serif);
 
-  --color-ba-ivory: var(--ba-ivory);
-  --color-ba-pearl: var(--ba-pearl);
-  --color-ba-sand: var(--ba-sand);
-  --color-ba-sand-deep: var(--ba-sand-deep);
-  --color-ba-coffee: var(--ba-coffee);
-  --color-ba-espresso: var(--ba-espresso);
-  --color-ba-bronze: var(--ba-bronze);
-  --color-ba-gold: var(--ba-gold);
-  --color-ba-gold-muted: var(--ba-gold-muted);
-  --color-ba-charcoal: var(--ba-charcoal);
+  /* Atlas Canon colors */
+  --color-ac-limestone: var(--ac-limestone);
+  --color-ac-pearl: var(--ac-pearl);
+  --color-ac-sand: var(--ac-sand);
+  --color-ac-dune: var(--ac-dune);
+  --color-ac-espresso: var(--ac-espresso);
+  --color-ac-walnut: var(--ac-walnut);
+  --color-ac-copper: var(--ac-copper);
+  --color-ac-gold: var(--ac-gold);
+  --color-ac-palm: var(--ac-palm);
+  --color-ac-mist: var(--ac-mist);
+  --color-ac-charcoal: var(--ac-charcoal);
 
-  /* Legacy UAE aliases — mapped to premium palette */
-  --color-uae-sand: var(--ba-sand-deep);
-  --color-uae-sand-deep: #c4b49a;
-  --color-uae-palm: #4a5c48;
+  /* Legacy ba-* → Atlas Canon aliases */
+  --color-ba-ivory: var(--ac-limestone);
+  --color-ba-pearl: var(--ac-pearl);
+  --color-ba-sand: var(--ac-sand);
+  --color-ba-sand-deep: var(--ac-dune);
+  --color-ba-coffee: var(--ac-walnut);
+  --color-ba-espresso: var(--ac-espresso);
+  --color-ba-bronze: var(--ac-copper);
+  --color-ba-gold: var(--ac-gold);
+  --color-ba-gold-muted: var(--ba-gold-muted);
+  --color-ba-charcoal: var(--ac-charcoal);
+
+  /* Legacy UAE aliases → Atlas Canon */
+  --color-uae-sand: var(--ac-dune);
+  --color-uae-sand-deep: var(--ac-copper);
+  --color-uae-palm: var(--ac-palm);
   --color-uae-palm-deep: #3a4a38;
-  --color-uae-dark-coffee: var(--ba-charcoal);
-  --color-uae-dark-coffee-deep: var(--ba-espresso);
-  --color-uae-warm-gold: var(--ba-gold);
-  --color-uae-warm-gold-deep: var(--ba-bronze);
-  --color-uae-pearl: var(--ba-pearl);
-  --color-uae-pearl-deep: var(--ba-sand);
+  --color-uae-dark-coffee: var(--ac-charcoal);
+  --color-uae-dark-coffee-deep: var(--ac-espresso);
+  --color-uae-warm-gold: var(--ac-gold);
+  --color-uae-warm-gold-deep: var(--ac-copper);
+  --color-uae-pearl: var(--ac-pearl);
+  --color-uae-pearl-deep: var(--ac-sand);
 }
 
 body {
-  background: var(--ba-ivory);
-  color: var(--ba-espresso);
+  background: var(--ac-limestone);
+  color: var(--ac-espresso);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -101,8 +149,8 @@ body {
 }
 
 ::selection {
-  background: rgba(184, 149, 107, 0.28);
-  color: var(--ba-espresso);
+  background: rgba(196, 165, 116, 0.28);
+  color: var(--ac-espresso);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -113,7 +161,7 @@ body {
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: var(--ds-header-height);
+  scroll-padding-top: var(--ac-header-height);
 }
 
 :focus {
@@ -125,30 +173,56 @@ html {
   outline-offset: 2px;
 }
 
-/* Section theme utilities */
+/* ── Section rhythm — Atlas Canon tonal modes ── */
+.ac-section-night {
+  background: var(--ac-espresso);
+  color: var(--ac-pearl);
+}
+
+.ac-section-dawn {
+  background: var(--ac-limestone);
+  color: var(--ac-espresso);
+}
+
+.ac-section-sand {
+  background: linear-gradient(180deg, var(--ac-sand) 0%, var(--ac-limestone) 100%);
+  color: var(--ac-espresso);
+}
+
+.ac-section-day {
+  background: var(--ac-pearl);
+  color: var(--ac-espresso);
+}
+
+.ac-section-dusk {
+  background: linear-gradient(165deg, #3d2e24 0%, var(--ac-espresso) 55%, #14100d 100%);
+  color: var(--ac-pearl);
+}
+
+/* Legacy section themes — aliases to Atlas Canon rhythm */
 .section-light {
-  background: var(--ba-ivory);
-  color: var(--ba-espresso);
+  background: var(--ac-limestone);
+  color: var(--ac-espresso);
 }
 
 .section-sand {
-  background: linear-gradient(180deg, var(--ba-sand) 0%, var(--ba-ivory) 100%);
-  color: var(--ba-espresso);
+  background: linear-gradient(180deg, var(--ac-sand) 0%, var(--ac-limestone) 100%);
+  color: var(--ac-espresso);
 }
 
 .section-pearl {
-  background: var(--ba-pearl);
-  color: var(--ba-espresso);
+  background: var(--ac-pearl);
+  color: var(--ac-espresso);
 }
 
 .section-dark {
-  background: var(--ba-espresso);
-  color: var(--ba-pearl);
+  background: var(--ac-espresso);
+  color: var(--ac-pearl);
 }
 
 .section-espresso-gradient {
-  background: linear-gradient(165deg, #2a2119 0%, var(--ba-espresso) 45%, #14100d 100%);
-  color: var(--ba-pearl);
+  background: linear-gradient(165deg, #3d2e24 0%, var(--ac-espresso) 45%, #14100d 100%);
+  color: var(--ac-pearl);
 }
 
 .pearl-texture {
@@ -249,6 +323,17 @@ html {
   }
 }
 
+@keyframes ac-reveal-up {
+  from {
+    opacity: 0.92;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animate-ripple {
   animation: ripple 650ms ease-out forwards;
 }
@@ -307,6 +392,62 @@ html {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ── Photography grade profiles (Atlas Canon) ── */
+.photo-grade-night {
+  filter: brightness(0.82) saturate(0.95) sepia(0.08);
+}
+
+.photo-grade-dawn {
+  filter: brightness(1.02) saturate(0.92) sepia(0.04);
+}
+
+.photo-grade-library {
+  filter: brightness(0.98) saturate(0.88) contrast(0.96);
+}
+
+.photo-grade-earth {
+  filter: brightness(0.96) saturate(0.85) hue-rotate(-4deg);
+}
+
+.photo-grade-workshop {
+  filter: brightness(0.94) saturate(0.82) contrast(1.06);
+}
+
+.photo-grade-directory {
+  filter: brightness(1) saturate(0.9) contrast(1);
+}
+
+.photo-grade-gallery {
+  filter: brightness(0.78) saturate(0.75) contrast(1.08);
+}
+
+/* ── Composition utilities ── */
+.ac-folio-divider {
+  border-bottom: 1px solid rgba(26, 20, 16, 0.08);
+}
+
+.ac-folio-divider-dark {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ac-brass-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(166, 123, 74, 0.35) 50%,
+    transparent 100%
+  );
+}
+
+.ac-portal-arch {
+  border-radius: var(--ac-radius-arch);
+}
+
+.ac-prose-width {
+  max-width: 28em;
 }
 
 @supports (-webkit-touch-callout: none) {
