@@ -32,7 +32,7 @@ import { RippleLink } from "@/app/components/ui/ripple-link";
 import { RecipeConverterButton } from "@/app/components/converter/recipe-converter-button";
 import { DeleteRecipeButton } from "@/app/components/recipes/delete-recipe-button";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
-import { cards, buttons } from "@/lib/constants/styles";
+import { cards, badges, buttons, typography } from "@/lib/constants/styles";
 import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getCachedPublishedDbRecipes } from "@/lib/data/cached-public-data";
 import { getAllRecipeSlugs, getRecipeSlug, getStaticRecipeIndexBySlug } from "@/lib/data/recipes";
@@ -47,7 +47,7 @@ import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { resolveSitePathname } from "@/lib/seo/path-utils";
 import { buildRecipeReviewJsonLd } from "@/lib/seo/recipe-review-json-ld";
-import { RecipeReviewsPanel } from "@/app/components/reviews/recipe-reviews-panel";
+import { RecipeReviewsPanel } from "@/lib/dynamic-sections";
 import { RecipeRatingBadge } from "@/app/components/reviews/recipe-rating-badge";
 import {
   getRecipeRatingDistribution,
@@ -83,8 +83,8 @@ function CompatibleDevices({ hasXBloom, dictionary }: { hasXBloom: boolean; dict
           {dictionary.recipeDetail.manualDevice}
         </span>
         {hasXBloom && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-600/30 bg-amber-950/40 px-3 py-1 text-xs font-medium text-amber-200/90">
-            <Cpu className="h-3 w-3 text-amber-400/90" aria-hidden />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-uae-warm-gold/30 bg-uae-warm-gold-deep/40 px-3 py-1 text-xs font-medium text-uae-warm-gold/90">
+            <Cpu className="h-3 w-3 text-uae-warm-gold/90" aria-hidden />
             {dictionary.recipeDetail.xbloomDevice}
           </span>
         )}
@@ -276,7 +276,7 @@ function StaticRecipeView({
     <SectionFrame id="recipe-detail" ariaLabelledBy="recipe-detail-heading" padding="compact">
       <Link
         href="/recipes"
-        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
+        className="mb-10 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-uae-warm-gold/90"
       >
         <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
         {d.backToAllRecipes}
@@ -295,22 +295,22 @@ function StaticRecipeView({
           <div className={cards.imageAmberWash} />
 
           {recipe.premium && (
-            <div className="absolute end-5 top-5 rounded-full border border-amber-700/35 bg-amber-950/65 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-200/90 backdrop-blur-xl">
+            <div className={`absolute end-5 top-5 ${badges.premium}`}>
               {dictionary.common.premiumBadge}
             </div>
           )}
 
           <div className="absolute bottom-5 start-5 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
-            <MapPin className="h-3 w-3 text-amber-500/80" aria-hidden />
+            <MapPin className="h-3 w-3 text-uae-warm-gold/80" aria-hidden />
             {recipe.origin}
           </div>
         </div>
 
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-600/70">{recipe.country}</p>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-uae-warm-gold/70">{recipe.country}</p>
           <h1
             id="recipe-detail-heading"
-            className="mt-3 text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-stone-50 sm:text-4xl"
+            className={`mt-3 ${typography.sectionTitleModern}`}
           >
             {recipe.name}
           </h1>
@@ -413,7 +413,7 @@ function DbRecipeView({
       />
       <Link
         href="/recipes"
-        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
+        className="mb-10 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-uae-warm-gold/90"
       >
         <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
         {d.backToAllRecipes}
@@ -441,14 +441,14 @@ function DbRecipeView({
           )}
 
           {recipe.premiumOnly && (
-            <div className="absolute end-5 top-5 rounded-full border border-amber-700/35 bg-amber-950/65 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-200/90 backdrop-blur-xl">
+            <div className={`absolute end-5 top-5 ${badges.premium}`}>
               {dictionary.common.premiumBadge}
             </div>
           )}
 
           {recipe.originLabel && (
             <div className="absolute bottom-5 start-5 flex items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#0a0705]/55 px-3 py-1 text-[10px] font-medium text-stone-200 backdrop-blur-xl">
-              <MapPin className="h-3 w-3 text-amber-500/80" aria-hidden />
+              <MapPin className="h-3 w-3 text-uae-warm-gold/80" aria-hidden />
               {recipe.originLabel}
             </div>
           )}
@@ -456,13 +456,13 @@ function DbRecipeView({
 
         <div>
           <div className="flex items-center justify-between gap-4">
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-600/70">
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-uae-warm-gold/70">
               {recipe.roasterName ?? d.communityRecipe}
             </p>
 
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1.5 text-xs text-stone-500">
-                <Heart className="h-3.5 w-3.5 text-amber-500/70" aria-hidden />
+                <Heart className="h-3.5 w-3.5 text-uae-warm-gold/70" aria-hidden />
                 {favoritesCount}
               </span>
               {isAuthenticated && (
@@ -473,7 +473,7 @@ function DbRecipeView({
 
           <h1
             id="recipe-detail-heading"
-            className="mt-3 text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-stone-50 sm:text-4xl"
+            className={`mt-3 ${typography.sectionTitleModern}`}
           >
             {recipe.title}
           </h1>
@@ -618,7 +618,7 @@ function DbRecipeView({
                     key={pour.id}
                     className="flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3"
                   >
-                    <span className="text-sm font-medium text-amber-400/90">
+                    <span className="text-sm font-medium text-uae-warm-gold/90">
                       {d.pourPrefix} {pour.pour_number}
                     </span>
                     {pour.water_amount !== null && <span className="text-sm text-stone-300">{pour.water_amount}g</span>}

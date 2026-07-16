@@ -3,7 +3,7 @@ import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { BookOpen, Calendar, MapPin, Sparkles, Star } from "lucide-react";
 import { GhostCtaLink } from "@/app/components/ui/ghost-cta-link";
 import { MetaTile } from "@/app/components/ui/meta-tile";
-import { cards } from "@/lib/constants/styles";
+import { badges, cards } from "@/lib/constants/styles";
 import type { TopRoaster } from "@/types/homepage";
 import { interpolate } from "@/lib/i18n/format";
 import { imageAlt } from "@/lib/seo/image-alt";
@@ -60,25 +60,25 @@ export function RoasterCard({ roaster, ctaHref = "#roasters", labels }: RoasterC
         <div className={cards.imageRadial} />
 
         {roaster.premium && (
-          <div className="absolute end-4 top-4 rounded-full border border-amber-700/35 bg-amber-950/65 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-amber-200/90 backdrop-blur-xl">
+          <div className={`absolute end-4 top-4 ${badges.premiumCompact}`}>
             {l.premium}
           </div>
         )}
 
-        <div className="absolute bottom-4 start-4 flex items-center gap-1 rounded-full border border-amber-600/30 bg-[#0a0705]/60 px-2.5 py-0.5 backdrop-blur-xl">
-          <Star className="h-3 w-3 fill-amber-500/80 text-amber-500/80" aria-hidden />
-          <span className="text-[10px] font-medium text-amber-200/90">{roaster.rating}</span>
+        <div className="absolute bottom-4 start-4 flex items-center gap-1 rounded-full border border-uae-warm-gold/30 bg-[#0a0705]/60 px-2.5 py-0.5 backdrop-blur-xl">
+          <Star className="h-3 w-3 fill-uae-warm-gold/80 text-uae-warm-gold/80" aria-hidden />
+          <span className="text-[10px] font-medium text-uae-warm-gold/90">{roaster.rating}</span>
         </div>
       </div>
 
       <div className="relative flex flex-1 flex-col p-5 lg:p-6">
-        <h3 className="text-[1.2rem] font-semibold leading-[1.15] tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-50 lg:text-[1.25rem]">
+        <h3 className="font-display text-[1.2rem] leading-[1.15] tracking-[-0.02em] text-stone-50 transition-colors duration-300 group-hover:text-uae-pearl lg:text-[1.25rem]">
           {roaster.name}
         </h3>
 
         <div className="mt-2 flex items-center gap-1.5 text-[10px] text-stone-500">
-          <Sparkles className="h-3 w-3 text-amber-500/75" aria-hidden />
-          <span className="text-amber-600/80">{roaster.specialty}</span>
+          <Sparkles className="h-3 w-3 text-uae-warm-gold/75" aria-hidden />
+          <span className="text-uae-warm-gold/80">{roaster.specialty}</span>
         </div>
 
         <p className="mt-3 line-clamp-2 text-[0.8125rem] leading-[1.65] text-stone-300/90">

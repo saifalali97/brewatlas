@@ -29,7 +29,7 @@ export function DifficultyIndicator({
           <span
             key={dot}
             className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
-              dot <= filled ? "bg-amber-500/80" : "bg-white/15"
+              dot <= filled ? "bg-uae-warm-gold/80" : "bg-white/15"
             }`}
           />
         ))}

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { SearchFiltersPanel } from "@/app/components/search/search-filters";
 import { SearchResultsView } from "@/app/components/search/search-results";
 import { SearchSkeleton } from "@/app/components/search/search-skeleton";
-import { forms } from "@/lib/constants/styles";
+import { filterChips, forms, dsFocus } from "@/lib/constants/styles";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { countActiveFilters, serializeSearchFilters } from "@/lib/search/params";
@@ -141,7 +141,7 @@ export function SearchExplorer({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={t("searchPage.searchPlaceholder")}
-            className="w-full rounded-2xl border border-white/[0.12] bg-white/[0.04] py-4 ps-12 pe-5 text-base text-stone-100 outline-none backdrop-blur-xl transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45"
+            className={`${forms.input} mt-0 min-h-[3.25rem] rounded-2xl py-4 ps-12 pe-5 text-base backdrop-blur-xl`}
             autoComplete="off"
           />
           {(isPending || query !== debouncedQuery) && (
@@ -162,11 +162,7 @@ export function SearchExplorer({
                 type="button"
                 aria-pressed={isActive}
                 onClick={() => patchFilters({ category, page: 1 })}
-                className={`rounded-full border px-3.5 py-2 text-sm font-medium transition-all ${
-                  isActive
-                    ? "border-amber-600/45 bg-amber-950/50 text-amber-100"
-                    : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-amber-600/25 hover:text-stone-200"
-                }`}
+                className={`${filterChips.base} ${isActive ? filterChips.active : filterChips.inactive}`}
               >
                 {t(categoryLabelKeys[category])}
               </button>
@@ -245,7 +241,7 @@ export function SearchExplorer({
                 type="button"
                 disabled={initialFilters.page <= 1}
                 onClick={() => patchFilters({ page: Math.max(1, initialFilters.page - 1) })}
-                className="rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-amber-600/30 enabled:hover:text-stone-100 disabled:opacity-40"
+                className={`min-h-11 rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-uae-warm-gold/30 enabled:hover:text-stone-100 disabled:opacity-40 ${dsFocus.ring}`}
               >
                 {t("searchPage.previousPage")}
               </button>
@@ -256,7 +252,7 @@ export function SearchExplorer({
                 type="button"
                 disabled={initialFilters.page >= totalPages}
                 onClick={() => patchFilters({ page: Math.min(totalPages, initialFilters.page + 1) })}
-                className="rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-amber-600/30 enabled:hover:text-stone-100 disabled:opacity-40"
+                className={`min-h-11 rounded-full border border-white/[0.12] px-4 py-2 text-sm text-stone-300 transition-colors enabled:hover:border-uae-warm-gold/30 enabled:hover:text-stone-100 disabled:opacity-40 ${dsFocus.ring}`}
               >
                 {t("searchPage.nextPage")}
               </button>

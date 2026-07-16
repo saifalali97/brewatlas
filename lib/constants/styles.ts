@@ -35,7 +35,7 @@ export const typography = {
   eyebrow: dsTypography.eyebrow,
   sectionTitleModern: dsTypography.h1,
   sectionTitleLegacy:
-    "mt-5 text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-uae-pearl sm:text-4xl lg:text-[2.875rem]",
+    "font-display mt-5 text-3xl leading-[1.08] tracking-[-0.03em] text-uae-pearl sm:text-4xl lg:text-[2.875rem]",
   sectionLead: `mt-7 max-w-xl ${dsTypography.body}`,
   sectionLeadCentered: `mx-auto mt-7 max-w-xl ${dsTypography.bodyCentered}`,
 } as const;
@@ -66,8 +66,8 @@ export const cards = {
 
 export const buttons = {
   focusRing: dsFocus.ring,
-  primary: `inline-flex h-12 min-w-[180px] items-center justify-center ${dsRadius.full} bg-uae-pearl px-8 text-sm font-medium text-uae-dark-coffee-deep ${dsMotion.transition} hover:scale-[1.04] hover:bg-uae-pearl-deep hover:shadow-[0_14px_44px_rgba(243,237,227,0.16)] active:scale-[0.97] ${dsFocus.ring}`,
-  secondary: `inline-flex h-12 min-w-[180px] items-center justify-center ${dsRadius.full} border border-white/[0.12] bg-white/[0.04] px-8 text-sm font-medium text-uae-pearl backdrop-blur-sm ${dsMotion.transition} hover:scale-[1.04] hover:border-uae-warm-gold/40 hover:bg-white/[0.08] hover:shadow-[0_0_40px_rgba(192,138,46,0.16)] active:scale-[0.97] ${dsFocus.ring}`,
+  primary: `inline-flex h-12 min-w-[180px] items-center justify-center ${dsRadius.full} bg-uae-pearl px-8 text-sm font-medium tracking-[-0.01em] text-uae-dark-coffee-deep ${dsMotion.transition} hover:bg-uae-pearl-deep hover:shadow-[0_14px_44px_rgba(243,237,227,0.14)] active:scale-[0.98] ${dsFocus.ring}`,
+  secondary: `inline-flex h-12 min-w-[180px] items-center justify-center ${dsRadius.full} border border-white/[0.12] bg-white/[0.04] px-8 text-sm font-medium tracking-[-0.01em] text-uae-pearl backdrop-blur-sm ${dsMotion.transition} hover:border-uae-warm-gold/40 hover:bg-white/[0.07] hover:shadow-[0_0_40px_rgba(192,138,46,0.12)] active:scale-[0.98] ${dsFocus.ring}`,
   ghostCta: `group/btn inline-flex h-10 w-full items-center justify-center gap-2 ${dsRadius.full} border border-white/[0.12] bg-white/[0.06] px-5 text-sm font-medium text-uae-pearl shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-2xl ${dsMotion.transition} hover:-translate-y-1 hover:border-uae-warm-gold/45 hover:bg-white/[0.1] hover:shadow-[0_0_36px_rgba(192,138,46,0.22),0_10px_28px_-10px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.14)] active:scale-[0.98] motion-reduce:hover:translate-y-0`,
   ghostCtaAutoWidth: " sm:w-auto",
   ghostArrow:
@@ -100,6 +100,36 @@ export const meta = {
   value: "mt-0.5 text-[0.8125rem] font-medium leading-snug text-stone-200",
   icon: "mt-0.5 h-3.5 w-3.5 shrink-0 text-uae-warm-gold/80",
   iconInline: "h-3.5 w-3.5 shrink-0 text-uae-warm-gold/80",
+} as const;
+
+/** Elevated surface for auth forms and focused panels. */
+export const surfaces = {
+  authCard: `${dsElevation.floating} mx-auto max-w-md p-6 sm:p-8`,
+  emptyState: `${dsRadius.card} border border-white/[0.08] bg-white/[0.02] px-6 py-16 text-center backdrop-blur-sm`,
+} as const;
+
+/** Premium chip and badge patterns for cards and detail pages. */
+export const badges = {
+  premium: `rounded-full border border-uae-warm-gold/35 bg-uae-warm-gold-deep/40 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-uae-warm-gold/95 backdrop-blur-xl`,
+  premiumCompact: `rounded-full border border-uae-warm-gold/35 bg-uae-warm-gold-deep/40 px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-uae-warm-gold/95 backdrop-blur-xl`,
+  tag: `rounded-full border border-white/[0.14] bg-uae-dark-coffee-deep/50 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-stone-200 backdrop-blur-xl`,
+  accent: `rounded-full border border-uae-warm-gold/30 bg-uae-warm-gold-deep/50 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-uae-warm-gold/90 backdrop-blur-xl`,
+  editorsChoice: `flex items-center gap-2 rounded-full border border-uae-warm-gold/40 bg-gradient-to-r from-uae-warm-gold-deep/70 to-uae-dark-coffee-deep/60 px-4 py-1.5 text-[11px] font-medium text-uae-pearl shadow-[0_0_28px_rgba(192,138,46,0.15)] backdrop-blur-xl`,
+} as const;
+
+/** Dashboard and account panel surfaces. */
+export const panels = {
+  stat: `${dsRadius.lg} border border-white/[0.09] bg-white/[0.035] px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl`,
+  statIcon: `flex h-10 w-10 shrink-0 items-center justify-center ${dsRadius.md} border border-uae-warm-gold/20 bg-uae-warm-gold/8 text-uae-warm-gold/90`,
+  link: `${dsRadius.lg} border border-white/[0.09] bg-white/[0.035] px-5 py-4 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl ${dsMotion.transition} hover:-translate-y-0.5 hover:border-uae-warm-gold/30 hover:bg-white/[0.05] motion-reduce:hover:translate-y-0`,
+  profile: `${dsRadius.lg} border border-white/[0.09] bg-white/[0.035] p-6 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl`,
+} as const;
+
+/** Active/inactive filter chip styles for explorers. */
+export const filterChips = {
+  base: `min-h-11 rounded-full border px-4 py-2.5 text-sm font-medium backdrop-blur-xl ${dsMotion.transition} hover:-translate-y-0.5 active:scale-[0.98] motion-reduce:hover:translate-y-0 ${dsFocus.ring}`,
+  active: "border-uae-warm-gold/40 bg-uae-warm-gold/10 text-uae-pearl shadow-[0_0_32px_rgba(192,138,46,0.12)]",
+  inactive: "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-uae-warm-gold/25 hover:bg-white/[0.06] hover:text-stone-200",
 } as const;
 
 /** Re-export DS v2 tokens for new components. */

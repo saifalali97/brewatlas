@@ -1,5 +1,24 @@
 import { getSiteUrl, siteConfig } from "@/lib/seo/site";
 
+export function buildCollectionPageJsonLd(input: {
+  url: string;
+  name: string;
+  description: string;
+  itemCount: number;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    url: input.url,
+    name: input.name,
+    description: input.description,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: input.itemCount,
+    },
+  };
+}
+
 export function getJsonLdGraph() {
   const siteUrl = getSiteUrl();
   const organizationId = `${siteUrl}/#organization`;

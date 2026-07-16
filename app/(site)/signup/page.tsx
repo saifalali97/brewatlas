@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { SurfaceCard } from "@/app/components/ui/surface-card";
 import { OAuthButtons } from "@/app/components/auth/oauth-buttons";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -28,7 +29,7 @@ export default async function SignupPage() {
     <SectionFrame id="signup-page" ariaLabelledBy="signup-page-heading" padding="compact">
 <PageHeader headingId="signup-page-heading" eyebrow={dictionary.auth.joinBrewAtlasEyebrow} title={dictionary.auth.createYourAccountTitle} />
 
-      <div className="mx-auto max-w-md rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
+      <SurfaceCard>
         <SignupForm />
 
         <div className="my-6 flex items-center gap-3">
@@ -41,11 +42,11 @@ export default async function SignupPage() {
 
         <p className="mt-6 text-center text-sm text-stone-500">
           {dictionary.auth.haveAccount}{" "}
-          <Link href="/login" className="text-amber-400/90 underline-offset-4 hover:underline">
+          <Link href="/login" className="text-uae-warm-gold/90 underline-offset-4 hover:underline">
             {dictionary.auth.login}
           </Link>
         </p>
-      </div>
+      </SurfaceCard>
     </SectionFrame>
   );
 }

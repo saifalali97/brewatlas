@@ -5,7 +5,8 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { getLocale } from "@/lib/i18n/locale";
-import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
+import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
+import { buildCollectionPageJsonLd } from "@/lib/seo/json-ld";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -30,7 +31,20 @@ export default async function MethodsPage() {
 
   return (
     <SectionFrame id="methods-listing" ariaLabelledBy="methods-listing-heading" padding="compact">
-<PageHeader headingId="methods-listing-heading"
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            buildCollectionPageJsonLd({
+              url: localizedPathUrl("/methods", locale),
+              name: dictionary.homeBrewingMethods.title,
+              description: dictionary.homeBrewingMethods.description,
+              itemCount: content.brewMethods.length,
+            }),
+          ),
+        }}
+      />
+      <PageHeader headingId="methods-listing-heading"
         eyebrow={dictionary.homeBrewingMethods.eyebrow}
         title={dictionary.homeBrewingMethods.title}
         description={dictionary.homeBrewingMethods.description}

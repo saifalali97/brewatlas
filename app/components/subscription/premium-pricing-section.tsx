@@ -5,7 +5,7 @@ import { PricingCard } from "@/app/components/cards/pricing-card";
 import { FaqAccordion } from "@/app/components/ui/faq-accordion";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
-import { typography } from "@/lib/constants/styles";
+import { typography, dsFocus } from "@/lib/constants/styles";
 import { createCheckoutSessionAction } from "@/lib/supabase/membership-actions";
 import type { Dictionary } from "@/lib/i18n/types";
 import type { HomeContent } from "@/types/homepage";
@@ -86,9 +86,9 @@ export function PremiumPricingSection({
                 type="button"
                 onClick={() => setInterval("month")}
                 aria-pressed={interval === "month"}
-                className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+                className={`min-h-11 rounded-full px-5 py-2 text-sm font-medium transition-colors ${dsFocus.ring} ${
                   interval === "month"
-                    ? "bg-amber-600 text-white shadow-[0_0_24px_rgba(217,119,6,0.35)]"
+                    ? "bg-uae-warm-gold text-uae-dark-coffee-deep shadow-[0_0_24px_rgba(192,138,46,0.35)]"
                     : "text-stone-400 hover:text-stone-200"
                 }`}
               >
@@ -98,9 +98,9 @@ export function PremiumPricingSection({
                 type="button"
                 onClick={() => setInterval("year")}
                 aria-pressed={interval === "year"}
-                className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+                className={`min-h-11 rounded-full px-5 py-2 text-sm font-medium transition-colors ${dsFocus.ring} ${
                   interval === "year"
-                    ? "bg-amber-600 text-white shadow-[0_0_24px_rgba(217,119,6,0.35)]"
+                    ? "bg-uae-warm-gold text-uae-dark-coffee-deep shadow-[0_0_24px_rgba(192,138,46,0.35)]"
                     : "text-stone-400 hover:text-stone-200"
                 }`}
               >
@@ -111,7 +111,7 @@ export function PremiumPricingSection({
         )}
 
         {interval === "year" && stripeEnabled && (
-          <p className="-mt-6 mb-8 text-center text-sm text-amber-300/90">{labels.premiumYearlySavings}</p>
+          <p className="-mt-6 mb-8 text-center text-sm text-uae-warm-gold/90">{labels.premiumYearlySavings}</p>
         )}
 
         {trialNote && <p className="mb-8 text-center text-sm text-stone-400">{trialNote}</p>}

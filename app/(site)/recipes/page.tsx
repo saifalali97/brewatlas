@@ -10,7 +10,8 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { getLocale } from "@/lib/i18n/locale";
 import { getHiddenRecipeCount, isPremium } from "@/lib/membership/premium";
-import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
+import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
+import { buildCollectionPageJsonLd } from "@/lib/seo/json-ld";
 import { createClient } from "@/lib/supabase/server";
 import type { RecipeListItem } from "@/types/recipe";
 import { RecipesExplorer } from "./recipes-explorer";
@@ -58,7 +59,20 @@ export default async function RecipesPage({ searchParams }: RecipesPageProps) {
 
   return (
     <SectionFrame id="recipes-listing" ariaLabelledBy="recipes-listing-heading" padding="compact">
-<PageHeader headingId="recipes-listing-heading"
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            buildCollectionPageJsonLd({
+              url: localizedPathUrl("/recipes", locale),
+              name: dictionary.recipesPage.title,
+              description: dictionary.recipesPage.description,
+              itemCount: allRecipes.length,
+            }),
+          ),
+        }}
+      />
+      <PageHeader headingId="recipes-listing-heading"
         eyebrow={dictionary.recipesPage.eyebrow}
         title={dictionary.recipesPage.title}
         description={dictionary.recipesPage.description}
