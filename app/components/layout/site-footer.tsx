@@ -74,7 +74,11 @@ export function SiteFooter({ footer, locale, switchLanguageAria, languageAriaLab
   const copyright = `© ${year} BrewAtlas. ${footer.allRightsReserved}`;
 
   return (
-    <footer className="border-t border-white/[0.06] bg-uae-dark-coffee px-6 pb-10 pt-16 sm:px-8 lg:px-12 lg:pt-20">
+    <footer className="relative border-t border-white/[0.06] bg-uae-dark-coffee px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom,0px))] pt-16 sm:px-8 lg:px-12 lg:pt-20">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-uae-warm-gold/20 to-transparent"
+      />
       <div className={dsLayout.container}>
         <nav aria-label={footer.footerNavAriaLabel} className="grid gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-4">
