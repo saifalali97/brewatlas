@@ -25,7 +25,7 @@ export default async function ForgotPasswordPage() {
 
   return (
     <SectionFrame id="forgot-password-page" ariaLabelledBy="forgot-password-page-heading" padding="compact">
-      <PageHeader
+<PageHeader headingId="forgot-password-page-heading"
         eyebrow={dictionary.auth.accountRecoveryEyebrow}
         title={dictionary.auth.forgotPasswordTitle}
         description={dictionary.auth.forgotPasswordDescription}

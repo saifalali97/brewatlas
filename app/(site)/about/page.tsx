@@ -33,7 +33,7 @@ export default async function AboutPage() {
 
   return (
     <SectionFrame id="about-page" ariaLabelledBy="about-page-heading" padding="compact">
-      <PageHeader eyebrow={a.eyebrow} title={a.title} description={siteConfig.description} />
+<PageHeader headingId="about-page-heading" eyebrow={a.eyebrow} title={a.title} description={siteConfig.description} />
 
       <div className="mx-auto max-w-3xl text-center">
         <p className="text-base leading-[1.8] text-stone-400">{a.body}</p>

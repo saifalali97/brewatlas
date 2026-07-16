@@ -26,7 +26,7 @@ export default async function SignupPage() {
 
   return (
     <SectionFrame id="signup-page" ariaLabelledBy="signup-page-heading" padding="compact">
-      <PageHeader eyebrow={dictionary.auth.joinBrewAtlasEyebrow} title={dictionary.auth.createYourAccountTitle} />
+<PageHeader headingId="signup-page-heading" eyebrow={dictionary.auth.joinBrewAtlasEyebrow} title={dictionary.auth.createYourAccountTitle} />
 
       <div className="mx-auto max-w-md rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
         <SignupForm />

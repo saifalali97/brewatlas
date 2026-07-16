@@ -39,7 +39,7 @@ export default async function DashboardXBloomPage() {
 
   return (
     <SectionFrame id="dashboard-xbloom-page" ariaLabelledBy="dashboard-xbloom-page-heading" padding="compact">
-      <PageHeader eyebrow={x.eyebrow} title={x.title} description={x.description} centered={false} />
+<PageHeader headingId="dashboard-xbloom-page-heading" eyebrow={x.eyebrow} title={x.title} description={x.description} centered={false} />
 
       {profiles.length === 0 ? (
         <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">

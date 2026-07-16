@@ -52,7 +52,8 @@ export default async function CultureSectionPage({ params }: CultureSectionPageP
 
   return (
     <SectionFrame id="culture-section" ariaLabelledBy="culture-section-heading" padding="compact">
-      <Link
+      
+<Link
         href="/culture"
         className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90 rtl:flex-row-reverse"
       >
@@ -60,7 +61,7 @@ export default async function CultureSectionPage({ params }: CultureSectionPageP
         {c.backToHub}
       </Link>
 
-      <PageHeader eyebrow={section.eyebrow ?? c.defaultSectionEyebrow} title={section.name} description={section.description} />
+      <PageHeader headingId="culture-section-heading" eyebrow={section.eyebrow ?? c.defaultSectionEyebrow} title={section.name} description={section.description} />
 
       <div className="grid gap-6 sm:gap-7 lg:grid-cols-3 lg:gap-8">
         {section.topics.map((topic) => (

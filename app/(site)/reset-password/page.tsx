@@ -35,7 +35,7 @@ export default async function ResetPasswordPage() {
 
   return (
     <SectionFrame id="reset-password-page" ariaLabelledBy="reset-password-page-heading" padding="compact">
-      <PageHeader
+<PageHeader headingId="reset-password-page-heading"
         eyebrow={dictionary.auth.accountRecoveryEyebrow}
         title={dictionary.auth.resetPasswordTitle}
         description={dictionary.auth.resetPasswordDescription}

@@ -39,8 +39,9 @@ export default async function DashboardRecipesPage() {
 
   return (
     <SectionFrame id="dashboard-recipes-page" ariaLabelledBy="dashboard-recipes-page-heading" padding="compact">
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-        <PageHeader eyebrow={r.eyebrow} title={r.title} description={r.description} centered={false} />
+      
+<div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <PageHeader headingId="dashboard-recipes-page-heading" eyebrow={r.eyebrow} title={r.title} description={r.description} centered={false} />
 
         <Link href="/account/recipes/new" className={`${buttons.primary} shrink-0 gap-2`}>
           <Plus className="h-4 w-4" aria-hidden />

@@ -57,7 +57,7 @@ export default async function NewRecipePage() {
 
   return (
     <SectionFrame id="new-recipe-page" ariaLabelledBy="new-recipe-page-heading" padding="compact">
-      <PageHeader eyebrow={n.eyebrow} title={n.title} description={n.description} centered={false} />
+<PageHeader headingId="new-recipe-page-heading" eyebrow={n.eyebrow} title={n.title} description={n.description} centered={false} />
 
       <div className="max-w-3xl rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
         <RecipeForm

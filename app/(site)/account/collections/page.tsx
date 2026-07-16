@@ -46,7 +46,7 @@ export default async function DashboardCollectionsPage() {
 
   return (
     <SectionFrame id="dashboard-collections-page" ariaLabelledBy="dashboard-collections-page-heading" padding="compact">
-      <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.description} centered={false} />
+<PageHeader headingId="dashboard-collections-page-heading" eyebrow={c.eyebrow} title={c.title} description={c.description} centered={false} />
 
       <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
         <div className="rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">

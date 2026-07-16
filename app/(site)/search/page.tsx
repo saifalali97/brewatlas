@@ -145,6 +145,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildSearchJsonLd(filters.q, totalResultCount)) }}
       />
       <PageHeader
+        headingId="search-heading"
         eyebrow={dictionary.searchPage.eyebrow}
         title={dictionary.searchPage.title}
         description={dictionary.searchPage.description}

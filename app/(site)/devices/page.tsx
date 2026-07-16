@@ -46,7 +46,7 @@ export default async function DevicesPage() {
 
   return (
     <SectionFrame id="devices-listing" ariaLabelledBy="devices-listing-heading" padding="compact">
-      <PageHeader eyebrow={p.eyebrow} title={p.title} description={p.description} />
+<PageHeader headingId="devices-listing-heading" eyebrow={p.eyebrow} title={p.title} description={p.description} />
 
       <div className={`relative mb-10 flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between lg:p-7 ${cards.premiumShell}`}>
         <div aria-hidden className={cards.premiumSheen} />

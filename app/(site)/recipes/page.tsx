@@ -58,7 +58,7 @@ export default async function RecipesPage({ searchParams }: RecipesPageProps) {
 
   return (
     <SectionFrame id="recipes-listing" ariaLabelledBy="recipes-listing-heading" padding="compact">
-      <PageHeader
+<PageHeader headingId="recipes-listing-heading"
         eyebrow={dictionary.recipesPage.eyebrow}
         title={dictionary.recipesPage.title}
         description={dictionary.recipesPage.description}

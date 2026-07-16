@@ -68,7 +68,8 @@ export default async function XBloomPage() {
 
   return (
     <SectionFrame id="xbloom-listing" ariaLabelledBy="xbloom-listing-heading" padding="compact">
-      <Link
+      
+<Link
         href="/devices"
         className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
       >
@@ -76,7 +77,7 @@ export default async function XBloomPage() {
         {p.backToDevices}
       </Link>
 
-      <PageHeader eyebrow={p.eyebrow} title={p.title} description={p.description} />
+      <PageHeader headingId="xbloom-listing-heading" eyebrow={p.eyebrow} title={p.title} description={p.description} />
 
       <div className="grid gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-4 lg:gap-6">
         {XBLOOM_DEVICE_MODELS.map((model) => (

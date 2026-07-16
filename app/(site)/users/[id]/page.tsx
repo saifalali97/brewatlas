@@ -154,7 +154,13 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
 
   return (
     <SectionFrame id="public-profile" ariaLabelledBy="public-profile-heading" padding="compact">
-      <PageHeader eyebrow={labels.eyebrow} title={displayName} description={profile.bio ?? labels.noBio} centered={false} />
+      <PageHeader
+        headingId="public-profile-heading"
+        eyebrow={labels.eyebrow}
+        title={displayName}
+        description={profile.bio ?? labels.noBio}
+        centered={false}
+      />
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:gap-10">
         <aside className="space-y-6">
@@ -162,17 +168,13 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
             <div className="flex flex-col items-center text-center">
               <div className="relative h-24 w-24 overflow-hidden rounded-full border border-white/[0.12] bg-white/[0.04]">
                 {profile.avatarUrl ? (
-                  <Image src={profile.avatarUrl} alt={displayName} fill sizes="96px" className="object-cover" />
+                  <Image src={profile.avatarUrl} alt="" fill sizes="96px" className="object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-3xl font-medium text-stone-500">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
-
-              <h1 id="public-profile-heading" className="sr-only">
-                {displayName}
-              </h1>
 
               {isPremiumMember && (
                 <div className="mt-3">

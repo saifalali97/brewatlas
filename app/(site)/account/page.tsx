@@ -123,8 +123,9 @@ export default async function DashboardPage() {
 
   return (
     <SectionFrame id="dashboard-page" ariaLabelledBy="dashboard-page-heading" padding="compact">
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-        <PageHeader
+      
+<div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <PageHeader headingId="dashboard-page-heading"
           eyebrow={dictionary.profilePage.eyebrow}
           title={translate(dictionary, "dashboard.welcomeBack", { name: displayName })}
           description={d.snapshotDescription}

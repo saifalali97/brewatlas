@@ -65,7 +65,8 @@ export default async function AccountSubscriptionPage({ searchParams }: PageProp
 
   return (
     <SectionFrame id="account-subscription" ariaLabelledBy="account-subscription-heading" padding="compact">
-      <Link
+      
+<Link
         href="/account"
         className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
       >
@@ -73,7 +74,7 @@ export default async function AccountSubscriptionPage({ searchParams }: PageProp
         {dictionary.subscriptionPage.backToAccount}
       </Link>
 
-      <PageHeader
+      <PageHeader headingId="account-subscription-heading"
         eyebrow={dictionary.subscriptionPage.eyebrow}
         title={dictionary.subscriptionPage.title}
         description={dictionary.subscriptionPage.description}

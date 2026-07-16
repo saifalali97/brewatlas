@@ -45,7 +45,8 @@ export default async function TermsPage() {
 
   return (
     <SectionFrame id="terms-page" ariaLabelledBy="terms-page-heading" padding="compact">
-      <LegalDocument
+      
+<LegalDocument
         eyebrow={t.eyebrow}
         title={t.title}
         description={t.description}
@@ -55,6 +56,7 @@ export default async function TermsPage() {
         contactPrefix={legal.contactPrefix}
         contactLinkLabel={legal.contactLinkLabel}
         contactSuffix={legal.contactSuffix}
+        headingId="terms-page-heading"
       />
     </SectionFrame>
   );

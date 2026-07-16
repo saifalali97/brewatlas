@@ -27,7 +27,7 @@ export default async function CulturePage() {
 
   return (
     <SectionFrame id="culture-hub" ariaLabelledBy="culture-hub-heading" padding="compact">
-      <PageHeader eyebrow={c.eyebrow} title={c.title} description={c.description} />
+<PageHeader headingId="culture-hub-heading" eyebrow={c.eyebrow} title={c.title} description={c.description} />
 
       <div className="grid gap-6 sm:gap-7 lg:grid-cols-3 lg:gap-8">
         {sections.map((section) => (

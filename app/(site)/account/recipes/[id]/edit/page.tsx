@@ -76,7 +76,7 @@ export default async function EditRecipePage({ params }: EditRecipePageProps) {
 
   return (
     <SectionFrame id="edit-recipe-page" ariaLabelledBy="edit-recipe-page-heading" padding="compact">
-      <PageHeader
+<PageHeader headingId="edit-recipe-page-heading"
         eyebrow={e.eyebrow}
         title={e.title}
         description={translate(dictionary, "editRecipePage.descriptionTemplate", { title: recipe.title })}

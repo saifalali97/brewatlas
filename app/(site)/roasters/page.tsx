@@ -24,7 +24,7 @@ export default async function RoastersPage() {
 
   return (
     <SectionFrame id="roasters-listing" ariaLabelledBy="roasters-listing-heading" padding="compact">
-      <PageHeader
+<PageHeader headingId="roasters-listing-heading"
         eyebrow={dictionary.homeTopRoasters.eyebrow}
         title={dictionary.homeTopRoasters.title}
         description={dictionary.homeTopRoasters.description}
