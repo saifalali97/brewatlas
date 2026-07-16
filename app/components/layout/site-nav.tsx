@@ -216,13 +216,6 @@ function runBlockerReport(button: HTMLButtonElement): BlockerReport {
   return report;
 }
 
-/** @deprecated Stale bundles may still call this name — keep until debug session ends. */
-function logHamburgerHitTest(button: HTMLButtonElement, label: string) {
-  const report = runBlockerReport(button);
-  console.log(`[HamburgerDebug] ${label}`, report);
-  return report;
-}
-
 export function SiteNav({
   nav = defaultNavLabels,
   locale = DEFAULT_LOCALE,
@@ -490,12 +483,12 @@ export function SiteNav({
             onMouseDown={() => console.log("[Hamburger] react mousedown")}
             onClick={() => {
               console.log("React onClick");
-            
+
               setOpen((prev) => {
                 console.log("previous state =", prev);
                 return !prev;
               });
-            }}            }}
+            }}
             style={{
               position: "relative",
               zIndex: 999999,
