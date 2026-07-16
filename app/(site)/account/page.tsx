@@ -33,6 +33,7 @@ import { translate } from "@/lib/i18n/format";
 import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { createClient } from "@/lib/supabase/server";
+import { roleIsAdmin } from "@/lib/auth/is-admin";
 import { ensureProfile } from "@/lib/supabase/profile";
 import { signOutAction } from "@/lib/supabase/actions";
 import { buttons } from "@/lib/constants/styles";
@@ -82,7 +83,7 @@ export default async function DashboardPage() {
   const [{ data: profile }, favoriteRecipes, ownRecipes, membership] = await Promise.all([
     supabase
       .from("profiles")
-      .select("full_name, avatar_url, country, bio, brewing_methods(name), devices(name)")
+      .select("full_name, avatar_url, country, bio, role, brewing_methods(name), devices(name)")
       .eq("id", data.user.id)
       .maybeSingle(),
     getUserFavoriteRecipes(supabase, data.user.id),
@@ -91,6 +92,7 @@ export default async function DashboardPage() {
   ]);
 
   const displayName = profile?.full_name || data.user.email || dictionary.communityPage.anonymousBrewer;
+  const isAdmin = roleIsAdmin(profile?.role);
   const favoriteMethodName =
     (profile as { brewing_methods?: { name: string } | null } | null)?.brewing_methods?.name ?? d.notSet;
   // Display uses the locale's translated copy, but the slug is always
@@ -175,9 +177,16 @@ export default async function DashboardPage() {
             </p>
           </div>
         </div>
-        <Link href="/account/profile" className={`${buttons.secondary} shrink-0`}>
-          {d.editProfile}
-        </Link>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          {isAdmin ? (
+            <Link href="/admin" className={`${buttons.primary} h-10 min-w-0 shrink-0 px-6 text-xs`}>
+              {d.adminDashboard}
+            </Link>
+          ) : null}
+          <Link href="/account/profile" className={`${buttons.secondary} h-10 min-w-0 shrink-0 px-6 text-xs`}>
+            {d.editProfile}
+          </Link>
+        </div>
       </div>
 
       <AccountSubscriptionSummary membership={membership} dictionary={dictionary} locale={locale} />

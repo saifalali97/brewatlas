@@ -19,6 +19,7 @@ type MobileNavDrawerProps = {
   locale: Locale;
   discoverLinks: DiscoverLink[];
   isAuthenticated: boolean;
+  isAdmin?: boolean;
   notificationsSlot?: ReactNode;
 };
 
@@ -34,6 +35,7 @@ export function MobileNavDrawer({
   locale,
   discoverLinks,
   isAuthenticated,
+  isAdmin = false,
   notificationsSlot = null,
 }: MobileNavDrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -206,6 +208,20 @@ export function MobileNavDrawer({
                 {nav.pricing}
               </Link>
             </li>
+            {isAdmin ? (
+              <li>
+                <Link
+                  href="/admin"
+                  onClick={onClose}
+                  className={joinClasses(
+                    "flex min-h-11 items-center py-2 text-lg font-medium text-uae-pearl touch-manipulation",
+                    dsFocus.ring,
+                  )}
+                >
+                  {nav.admin}
+                </Link>
+              </li>
+            ) : null}
           </ul>
         </nav>
 

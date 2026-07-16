@@ -28,6 +28,7 @@ const defaultNavLabels: Dictionary["nav"] = {
   pricing: "Premium",
   faq: "FAQ",
   dashboard: "Dashboard",
+  admin: "Admin",
   community: "Community",
   profile: "Profile",
   settings: "Settings",
@@ -61,11 +62,13 @@ export function SiteNav({
   nav = defaultNavLabels,
   locale = DEFAULT_LOCALE,
   isAuthenticated = false,
+  isAdmin = false,
   notificationsSlot = null,
 }: {
   nav?: Dictionary["nav"];
   locale?: Locale;
   isAuthenticated?: boolean;
+  isAdmin?: boolean;
   notificationsSlot?: ReactNode;
 }) {
   const pathname = usePathname();
@@ -93,6 +96,7 @@ export function SiteNav({
 
   const recipesActive = isActivePath(pathname, "/recipes");
   const premiumActive = isActivePath(pathname, "/premium");
+  const adminActive = isActivePath(pathname, "/admin");
 
   return (
     <>
@@ -187,6 +191,31 @@ export function SiteNav({
                   aria-hidden
                 />
               </Link>
+
+              {isAdmin ? (
+                <Link
+                  href="/admin"
+                  aria-current={adminActive ? "page" : undefined}
+                  className={joinClasses(
+                    "group relative px-0.5 py-1.5 text-sm font-medium",
+                    dsMotion.transition,
+                    adminActive ? "text-uae-pearl" : "text-stone-400 hover:text-uae-pearl",
+                    dsFocus.ring,
+                  )}
+                >
+                  {nav.admin}
+                  <span
+                    className={joinClasses(
+                      "absolute -bottom-0.5 left-1/2 h-px -translate-x-1/2 bg-uae-warm-gold/90 transition-all duration-500",
+                      dsMotion.easing,
+                      adminActive
+                        ? "w-full opacity-100"
+                        : "w-0 opacity-0 group-hover:w-full group-hover:opacity-60",
+                    )}
+                    aria-hidden
+                  />
+                </Link>
+              ) : null}
             </div>
           </div>
 
@@ -235,6 +264,7 @@ export function SiteNav({
         locale={locale}
         discoverLinks={discoverLinks}
         isAuthenticated={isAuthenticated}
+        isAdmin={isAdmin}
         notificationsSlot={notificationsSlot}
       />
     </>

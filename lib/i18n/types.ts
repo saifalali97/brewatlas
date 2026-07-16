@@ -26,6 +26,7 @@ export type Dictionary = {
     pricing: string;
     faq: string;
     dashboard: string;
+    admin: string;
     community: string;
     profile: string;
     settings: string;
@@ -395,6 +396,7 @@ export type Dictionary = {
     notSet: string;
     countryNotSet: string;
     editProfile: string;
+    adminDashboard: string;
     quickLinksTitle: string;
     aiCoachLabel: string;
     aiCoachDescription: string;

@@ -7,6 +7,7 @@ import { getNotifications, getUnreadNotificationCount } from "@/lib/data/communi
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { createClient } from "@/lib/supabase/server";
+import { resolveIsAdmin } from "@/lib/auth/is-admin";
 
 /**
  * Shared chrome (background, nav, footer) for every public marketing/app
@@ -28,11 +29,14 @@ export default async function SiteLayout({
   const { data: authData } = await supabase.auth.getUser();
 
   let notificationsSlot: ReactNode = null;
+  let isAdmin = false;
   if (authData.user) {
-    const [unreadCount, notifications] = await Promise.all([
+    const [unreadCount, notifications, adminAccess] = await Promise.all([
       getUnreadNotificationCount(supabase, authData.user.id),
       getNotifications(supabase, authData.user.id, { limit: 8 }),
+      resolveIsAdmin(supabase, authData.user.id),
     ]);
+    isAdmin = adminAccess;
 
     notificationsSlot = (
       <NotificationsBell
@@ -60,6 +64,7 @@ export default async function SiteLayout({
         nav={dictionary.nav}
         locale={locale}
         isAuthenticated={Boolean(authData.user)}
+        isAdmin={isAdmin}
         notificationsSlot={notificationsSlot}
       />
 
