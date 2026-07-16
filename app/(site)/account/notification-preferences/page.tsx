@@ -42,7 +42,7 @@ export default async function NotificationPreferencesPage() {
       ariaLabelledBy="notification-preferences-page-heading"
       padding="compact"
     >
-      <PageHeader eyebrow={labels.eyebrow} title={labels.title} description={labels.description} centered={false} />
+<PageHeader headingId="notification-preferences-page-heading" eyebrow={labels.eyebrow} title={labels.title} description={labels.description} centered={false} />
 
       <div className="mt-6">
         <Link href="/account/notifications" className={`${buttons.secondary} text-sm`}>

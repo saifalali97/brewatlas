@@ -26,7 +26,7 @@ export default async function CoachPage() {
 
   return (
     <SectionFrame id="ai-coach" ariaLabelledBy="ai-coach-heading" padding="compact">
-      <PageHeader eyebrow={p.eyebrow} title={p.title} description={p.description} />
+<PageHeader headingId="ai-coach-heading" eyebrow={p.eyebrow} title={p.title} description={p.description} />
 
       <div className="mb-10 grid gap-4 sm:grid-cols-3">
         <MetaTile icon={Gauge} label={p.brewScoreLabel} value={p.brewScoreValue} />

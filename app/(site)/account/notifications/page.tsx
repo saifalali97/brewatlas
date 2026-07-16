@@ -48,7 +48,7 @@ export default async function DashboardNotificationsPage({ searchParams }: PageP
       ariaLabelledBy="dashboard-notifications-page-heading"
       padding="compact"
     >
-      <PageHeader eyebrow={labels.eyebrow} title={labels.title} description={labels.description} centered={false} />
+<PageHeader headingId="dashboard-notifications-page-heading" eyebrow={labels.eyebrow} title={labels.title} description={labels.description} centered={false} />
 
       <NotificationsPanel
         result={result}

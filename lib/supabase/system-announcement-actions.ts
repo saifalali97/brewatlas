@@ -15,7 +15,7 @@ function readCurrentPath(formData: FormData): string {
   const value = formData.get("currentPath");
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//")
     ? value
-    : "/dashboard/notifications";
+    : "/admin/notifications";
 }
 
 function readText(formData: FormData, key: string): string {

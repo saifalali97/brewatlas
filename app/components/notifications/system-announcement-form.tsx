@@ -23,7 +23,7 @@ export function SystemAnnouncementForm() {
 
   return (
     <form action={formAction} className="mb-10 space-y-5 rounded-[1.5rem] border border-amber-600/20 bg-amber-950/15 p-6">
-      <input type="hidden" name="currentPath" value="/dashboard/notifications" />
+      <input type="hidden" name="currentPath" value="/admin/notifications" />
       <div>
         <h2 className="text-base font-semibold text-stone-100">{t("notificationPreferencesPage.broadcastTitle")}</h2>
         <p className="mt-1 text-sm text-stone-500">{t("notificationPreferencesPage.broadcastDescription")}</p>

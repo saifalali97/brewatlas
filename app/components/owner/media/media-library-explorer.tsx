@@ -352,7 +352,7 @@ export function MediaLibraryExplorer({ result, folders, labels, dictionary, filt
                       {selectedUsages.map((usage) => (
                         <li key={usage.id}>
                           <Link
-                            href={`/dashboard/recipes/${usage.entityId}/edit`}
+                            href={`/admin/recipes/${usage.entityId}/edit`}
                             className="text-amber-200/90 underline-offset-2 hover:underline"
                           >
                             {usage.entityTitle ?? usage.entityId}

@@ -30,7 +30,7 @@ export const siteConfig = {
   applicationName: "BrewAtlas",
   category: "food and drink",
   locale: "en_US",
-  themeColor: "#0a0705",
+  themeColor: "#150e09",
   ogImage: {
     url: "/images/recipes/ethiopian-pour-over.png",
     width: 1536,

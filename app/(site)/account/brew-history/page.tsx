@@ -49,8 +49,9 @@ export default async function DashboardBrewHistoryPage() {
 
   return (
     <SectionFrame id="dashboard-brew-history-page" ariaLabelledBy="dashboard-brew-history-page-heading" padding="compact">
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-        <PageHeader eyebrow={b.eyebrow} title={b.title} description={b.description} centered={false} />
+      
+<div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <PageHeader headingId="dashboard-brew-history-page-heading" eyebrow={b.eyebrow} title={b.title} description={b.description} centered={false} />
 
         <Link href="/account/brew-history/new" className={`${buttons.primary} h-10 min-w-0 gap-2 px-6 text-xs`}>
           <Plus className="h-3.5 w-3.5" aria-hidden />

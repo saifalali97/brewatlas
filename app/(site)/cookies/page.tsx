@@ -42,7 +42,8 @@ export default async function CookiesPage() {
 
   return (
     <SectionFrame id="cookies-page" ariaLabelledBy="cookies-page-heading" padding="compact">
-      <LegalDocument
+      
+<LegalDocument
         eyebrow={c.eyebrow}
         title={c.title}
         description={c.description}
@@ -52,6 +53,7 @@ export default async function CookiesPage() {
         contactPrefix={legal.contactPrefix}
         contactLinkLabel={legal.contactLinkLabel}
         contactSuffix={legal.contactSuffix}
+        headingId="cookies-page-heading"
       />
     </SectionFrame>
   );

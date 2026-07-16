@@ -69,7 +69,7 @@ export function PremiumPricingSection({
   return (
     <>
       <SectionFrame id="premium-plans" ariaLabelledBy="premium-plans-heading" padding="compact">
-        <PageHeader
+<PageHeader headingId="premium-plans-heading"
           eyebrow={dictionary.homePricing.eyebrow}
           title={dictionary.homePricing.title}
           description={dictionary.homePricing.description}

@@ -30,7 +30,7 @@ export default async function MethodsPage() {
 
   return (
     <SectionFrame id="methods-listing" ariaLabelledBy="methods-listing-heading" padding="compact">
-      <PageHeader
+<PageHeader headingId="methods-listing-heading"
         eyebrow={dictionary.homeBrewingMethods.eyebrow}
         title={dictionary.homeBrewingMethods.title}
         description={dictionary.homeBrewingMethods.description}

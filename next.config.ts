@@ -48,7 +48,9 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/:path*",
+        // HTML/app routes only — never attach CSP to hashed build assets.
+        source:
+          "/((?!_next/static|_next/image|favicon.ico|sw.js|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2|js|css)$).*)",
         headers: securityHeaders,
       },
       {

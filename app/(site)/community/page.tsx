@@ -37,7 +37,7 @@ export default async function CommunityPage() {
 
   return (
     <SectionFrame id="community" ariaLabelledBy="community-heading" padding="compact">
-      <PageHeader eyebrow={p.eyebrow} title={dictionary.community.title} description={p.description} />
+<PageHeader headingId="community-heading" eyebrow={p.eyebrow} title={dictionary.community.title} description={p.description} />
 
       <div className="grid gap-10 lg:grid-cols-2">
         <div>

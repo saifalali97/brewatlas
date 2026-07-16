@@ -18,6 +18,7 @@ type LegalDocumentProps = {
   contactPrefix: string;
   contactLinkLabel: string;
   contactSuffix: string;
+  headingId?: string;
 };
 
 /** Shared long-form layout for `/privacy`, `/terms` and `/cookies` — reuses `PageHeader` and existing card/typography tokens. */
@@ -31,10 +32,11 @@ export function LegalDocument({
   contactPrefix,
   contactLinkLabel,
   contactSuffix,
+  headingId,
 }: LegalDocumentProps) {
   return (
     <div className="mx-auto max-w-3xl">
-      <PageHeader eyebrow={eyebrow} title={title} description={description} />
+      <PageHeader eyebrow={eyebrow} title={title} description={description} headingId={headingId} />
 
       <div className="mb-12 inline-flex items-center gap-2 rounded-full border border-white/[0.09] bg-white/[0.035] px-4 py-2 text-[0.8125rem] text-stone-400">
         <FileText className="h-3.5 w-3.5 text-amber-500/80" aria-hidden />

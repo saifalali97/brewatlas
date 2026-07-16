@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireOwner } from "@/lib/auth/require-owner";
+import { requireAdmin } from "@/lib/auth/is-admin";
 import { buildRecipeVersionSnapshot } from "@/lib/data/owner-recipes";
 import { buildVersionMetadata } from "@/lib/data/recipe-versions";
 import { evaluateAndAwardBadges, refreshCommunityStats } from "@/lib/data/community";
@@ -39,13 +39,13 @@ export type OwnerRecipeActionState = RecipeActionState;
 const OWNER_PARSE_OPTIONS = { includeSeo: true, includeSlug: true } as const;
 
 function revalidateOwnerRecipePaths(slug?: string, recipeId?: string) {
-  revalidatePath("/dashboard/recipes");
+  revalidatePath("/admin/recipes");
   revalidatePath("/recipes");
   revalidatePath("/account/recipes");
   revalidatePath("/account");
   if (recipeId) {
-    revalidatePath(`/dashboard/recipes/${recipeId}/edit`);
-    revalidatePath(`/dashboard/recipes/${recipeId}/versions`);
+    revalidatePath(`/admin/recipes/${recipeId}/edit`);
+    revalidatePath(`/admin/recipes/${recipeId}/versions`);
   }
   if (slug) {
     revalidatePath(`/recipes/${slug}`);
@@ -61,7 +61,7 @@ function parseScheduledPublishAt(formData: FormData): string | null {
 }
 
 async function captureRecipeVersion(
-  supabase: Awaited<ReturnType<typeof requireOwner>>["supabase"],
+  supabase: Awaited<ReturnType<typeof requireAdmin>>["supabase"],
   recipeId: string,
   editorId: string,
   snapshot: Record<string, unknown>,
@@ -95,7 +95,7 @@ async function persistOwnerRecipe(
   formData: FormData,
   options: { recipeId?: string; autosave?: boolean; redirectTo?: string },
 ): Promise<OwnerRecipeActionState> {
-  const { supabase, user } = await requireOwner();
+  const { supabase, user } = await requireAdmin();
   const dictionary = await getDictionary(await getLocale());
   const parsed = parseRecipeForm(formData, dictionary, OWNER_PARSE_OPTIONS);
   if ("error" in parsed) {
@@ -269,7 +269,7 @@ async function persistOwnerRecipe(
       };
     }
 
-    redirect(options.redirectTo ?? "/dashboard/recipes");
+    redirect(options.redirectTo ?? "/admin/recipes");
   }
 
   const snapshot = await buildRecipeVersionSnapshot(supabase, recipeId);
@@ -332,7 +332,7 @@ async function persistOwnerRecipe(
     };
   }
 
-  redirect(options.redirectTo ?? "/dashboard/recipes");
+  redirect(options.redirectTo ?? "/admin/recipes");
 }
 
 export async function createOwnerRecipeAction(
@@ -367,25 +367,25 @@ export async function autosaveOwnerRecipeAction(
 }
 
 export async function deleteOwnerRecipeAction(formData: FormData): Promise<void> {
-  const { supabase } = await requireOwner();
+  const { supabase } = await requireAdmin();
   const recipeId = optionalString(formData, "recipeId");
   if (!recipeId) {
-    redirect("/dashboard/recipes");
+    redirect("/admin/recipes");
   }
 
   const { data } = await supabase.from("recipes").select("slug").eq("id", recipeId).maybeSingle();
   await supabase.from("recipes").delete().eq("id", recipeId);
   revalidateOwnerRecipePaths(data?.slug as string | undefined, recipeId);
-  redirect("/dashboard/recipes");
+  redirect("/admin/recipes");
 }
 
 export async function quickOwnerRecipeWorkflowAction(formData: FormData): Promise<void> {
-  const { supabase, user } = await requireOwner();
+  const { supabase, user } = await requireAdmin();
   const recipeId = optionalString(formData, "recipeId");
   const intent = parsePublishIntent(formData.get("publishIntent"));
 
   if (!recipeId) {
-    redirect("/dashboard/recipes");
+    redirect("/admin/recipes");
   }
 
   const { data: existing, error } = await supabase
@@ -395,7 +395,7 @@ export async function quickOwnerRecipeWorkflowAction(formData: FormData): Promis
     .maybeSingle();
 
   if (error || !existing) {
-    redirect("/dashboard/recipes");
+    redirect("/admin/recipes");
   }
 
   const snapshot = await buildRecipeVersionSnapshot(supabase, recipeId);
@@ -416,7 +416,7 @@ export async function quickOwnerRecipeWorkflowAction(formData: FormData): Promis
     .eq("id", recipeId);
 
   if (updateError) {
-    redirect("/dashboard/recipes");
+    redirect("/admin/recipes");
   }
 
   await captureRecipeVersion(supabase, recipeId, user.id, snapshot, {
@@ -437,17 +437,17 @@ export async function quickOwnerRecipeWorkflowAction(formData: FormData): Promis
   }
 
   revalidateOwnerRecipePaths(existing.slug as string, recipeId);
-  redirect("/dashboard/recipes");
+  redirect("/admin/recipes");
 }
 
 export async function restoreOwnerRecipeVersionAction(formData: FormData): Promise<void> {
-  const { supabase, user } = await requireOwner();
+  const { supabase, user } = await requireAdmin();
   const dictionary = await getDictionary(await getLocale());
   const recipeId = optionalString(formData, "recipeId");
   const versionId = optionalString(formData, "versionId");
 
   if (!recipeId || !versionId) {
-    redirect("/dashboard/recipes");
+    redirect("/admin/recipes");
   }
 
   const { data: version, error } = await supabase
@@ -458,13 +458,13 @@ export async function restoreOwnerRecipeVersionAction(formData: FormData): Promi
     .maybeSingle();
 
   if (error || !version) {
-    redirect(`/dashboard/recipes/${recipeId}/versions`);
+    redirect(`/admin/recipes/${recipeId}/versions`);
   }
 
   const snapshot = version.snapshot as { recipe?: Record<string, unknown> };
   const recipeData = snapshot.recipe;
   if (!recipeData) {
-    redirect(`/dashboard/recipes/${recipeId}/versions`);
+    redirect(`/admin/recipes/${recipeId}/versions`);
   }
 
   const preRestoreSnapshot = await buildRecipeVersionSnapshot(supabase, recipeId);
@@ -480,7 +480,7 @@ export async function restoreOwnerRecipeVersionAction(formData: FormData): Promi
 
   const { error: updateError } = await supabase.from("recipes").update(restorePayload).eq("id", recipeId);
   if (updateError) {
-    redirect(`/dashboard/recipes/${recipeId}/versions`);
+    redirect(`/admin/recipes/${recipeId}/versions`);
   }
 
   const metadata = (version.metadata as Record<string, unknown> | null) ?? {};
@@ -520,5 +520,5 @@ export async function restoreOwnerRecipeVersionAction(formData: FormData): Promi
   });
 
   revalidateOwnerRecipePaths(recipeData.slug as string | undefined, recipeId);
-  redirect(`/dashboard/recipes/${recipeId}/edit`);
+  redirect(`/admin/recipes/${recipeId}/edit`);
 }

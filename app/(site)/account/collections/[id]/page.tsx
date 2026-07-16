@@ -86,7 +86,8 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
 
   return (
     <SectionFrame id="collection-detail-page" ariaLabelledBy="collection-detail-page-heading" padding="compact">
-      <Link
+      
+<Link
         href="/account/collections"
         className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90 rtl:flex-row-reverse"
       >
@@ -94,7 +95,7 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
         {c.backToCollections}
       </Link>
 
-      <PageHeader eyebrow={c.eyebrow} title={collection.name} description={c.description} centered={false} />
+      <PageHeader headingId="collection-detail-page-heading" eyebrow={c.eyebrow} title={collection.name} description={c.description} centered={false} />
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-start">
         <div>

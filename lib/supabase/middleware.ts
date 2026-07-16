@@ -1,9 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { dashboardToAdminPath } from "@/lib/admin/cms-paths";
 import {
   ACCOUNT_PATH_PREFIX,
-  canAccessOwnerDashboard,
+  canAccessAdminArea,
   isAccountPath,
+  isAdminApiPath,
+  isAdminPath,
   isOwnerDashboardPath,
 } from "@/lib/auth/permission-middleware";
 
@@ -47,15 +50,29 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // Legacy owner CMS — permanently redirect to `/admin`.
   if (isOwnerDashboardPath(pathname)) {
+    const adminPath = dashboardToAdminPath(pathname);
+    return NextResponse.redirect(new URL(adminPath, request.url));
+  }
+
+  if (isAdminPath(pathname) || isAdminApiPath(pathname)) {
     if (!user) {
+      if (isAdminApiPath(pathname)) {
+        return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+      }
+
       const redirectUrl = new URL("/login", request.url);
       redirectUrl.searchParams.set("redirectTo", pathname);
       return NextResponse.redirect(redirectUrl);
     }
 
-    const allowed = await canAccessOwnerDashboard(supabase, user);
+    const allowed = await canAccessAdminArea(supabase, user.id);
     if (!allowed) {
+      if (isAdminApiPath(pathname)) {
+        return NextResponse.json({ error: "Forbidden." }, { status: 403 });
+      }
+
       return NextResponse.redirect(new URL("/", request.url));
     }
   }

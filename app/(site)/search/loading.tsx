@@ -10,7 +10,7 @@ export default async function SearchLoading() {
 
   return (
     <SectionFrame id="search" ariaLabelledBy="search-heading" padding="compact">
-      <PageHeader
+<PageHeader headingId="search-heading"
         eyebrow={dictionary.searchPage.eyebrow}
         title={dictionary.searchPage.title}
         description={dictionary.searchPage.description}

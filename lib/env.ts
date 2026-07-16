@@ -53,6 +53,12 @@ export function validateEnvironment(options: { strict?: boolean } = {}): EnvVali
     } else if (process.env.NEXT_PUBLIC_SITE_URL.startsWith("http://")) {
       warnings.push("NEXT_PUBLIC_SITE_URL should use HTTPS in production.");
     }
+    if (!isNonEmpty(process.env.BREWATLAS_INITIAL_ADMIN_EMAIL)) {
+      warnings.push("BREWATLAS_INITIAL_ADMIN_EMAIL should be set in production to bootstrap your admin account.");
+    }
+    if (!isNonEmpty(process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+      warnings.push("SUPABASE_SERVICE_ROLE_KEY is required for admin bootstrap and billing webhooks.");
+    }
   }
 
   if (missing.length > 0) {

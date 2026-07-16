@@ -31,7 +31,7 @@ export function OwnerRecipeVersionsPanel({ recipeId, recipeTitle, versions }: Ow
   return (
     <div className="mt-8 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <Link href={`/dashboard/recipes/${recipeId}/edit`} className={`${buttons.secondary} h-10 px-4 text-xs`}>
+        <Link href={`/admin/recipes/${recipeId}/edit`} className={`${buttons.secondary} h-10 px-4 text-xs`}>
           {t("ownerRecipePublishing.backToEditCta")}
         </Link>
       </div>

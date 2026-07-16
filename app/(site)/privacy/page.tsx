@@ -44,7 +44,8 @@ export default async function PrivacyPage() {
 
   return (
     <SectionFrame id="privacy-page" ariaLabelledBy="privacy-page-heading" padding="compact">
-      <LegalDocument
+      
+<LegalDocument
         eyebrow={p.eyebrow}
         title={p.title}
         description={p.description}
@@ -54,6 +55,7 @@ export default async function PrivacyPage() {
         contactPrefix={legal.contactPrefix}
         contactLinkLabel={legal.contactLinkLabel}
         contactSuffix={legal.contactSuffix}
+        headingId="privacy-page-heading"
       />
     </SectionFrame>
   );

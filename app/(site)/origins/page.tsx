@@ -24,7 +24,7 @@ export default async function OriginsPage() {
 
   return (
     <SectionFrame id="origins-listing" ariaLabelledBy="origins-listing-heading" padding="compact">
-      <PageHeader
+<PageHeader headingId="origins-listing-heading"
         eyebrow={dictionary.homeCoffeeOrigins.eyebrow}
         title={dictionary.homeCoffeeOrigins.title}
         description={dictionary.homeCoffeeOrigins.description}

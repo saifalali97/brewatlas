@@ -18,12 +18,7 @@ const geistSans = Geist({
   preload: true,
 });
 
-export const metadata: Metadata = {
-  ...createSiteMetadata(),
-  other: {
-    "x-build-stamp": "server-html-15-jul-2026",
-  },
-};
+export const metadata: Metadata = createSiteMetadata();
 
 export const viewport: Viewport = {
   themeColor: siteConfig.themeColor,

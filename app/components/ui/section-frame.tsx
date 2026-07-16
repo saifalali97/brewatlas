@@ -25,7 +25,7 @@ export function SectionFrame({
     <section
       id={id}
       aria-labelledby={ariaLabelledBy}
-      className={`relative ${sectionPadding[padding]} [content-visibility:auto] [contain-intrinsic-size:auto_500px] ${className}`.trim()}
+      className={`relative ${sectionPadding[padding]} lg:[content-visibility:auto] lg:[contain-intrinsic-size:auto_500px] ${className}`.trim()}
     >
       {showDividers && (
         <>

@@ -32,13 +32,14 @@ export default function OfflinePage() {
 
   return (
     <SectionFrame id="offline-page" ariaLabelledBy="offline-page-heading" padding="compact">
-      <div className="mx-auto flex max-w-lg flex-col items-center text-center">
+      
+<div className="mx-auto flex max-w-lg flex-col items-center text-center">
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-amber-600/25 bg-amber-950/40">
           <WifiOff className="h-6 w-6 text-amber-500/85" aria-hidden />
         </div>
 
         <div className="mt-6">
-          <PageHeader eyebrow={o.eyebrow} title={o.title} description={o.description} />
+          <PageHeader headingId="offline-page-heading" eyebrow={o.eyebrow} title={o.title} description={o.description} />
         </div>
 
         <RippleLink href="/" className={`${buttons.primary} w-full sm:w-auto`}>

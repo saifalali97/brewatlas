@@ -37,7 +37,7 @@ export default async function EmiratiCoffeeGuidePage() {
 
   return (
     <SectionFrame id="emirati-coffee-guide" ariaLabelledBy="emirati-coffee-guide-heading" padding="compact">
-      <PageHeader eyebrow={g.eyebrow} title={g.title} description={g.description} />
+<PageHeader headingId="emirati-coffee-guide-heading" eyebrow={g.eyebrow} title={g.title} description={g.description} />
 
       <UaePatternDivider className="mx-auto mb-10 max-w-xs opacity-60" />
 

@@ -83,8 +83,9 @@ export default async function ProfilePage() {
 
   return (
     <SectionFrame id="profile-page" ariaLabelledBy="profile-page-heading" padding="compact">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <PageHeader eyebrow={p.eyebrow} title={p.title} description={p.description} centered={false} />
+      
+<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <PageHeader headingId="profile-page-heading" eyebrow={p.eyebrow} title={p.title} description={p.description} centered={false} />
         <Link href={`/users/${authData.user.id}`} className={`${buttons.secondary} shrink-0 text-sm`}>
           {p.viewPublicProfileCta}
         </Link>

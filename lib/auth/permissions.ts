@@ -7,20 +7,20 @@ import { DASHBOARD_ROLES } from "@/types/auth";
  * for future phased rollouts without refactoring this map.
  */
 export const ROLE_PERMISSIONS: Record<Permission, readonly DashboardRole[]> = {
-  "cms.access": ["owner"],
-  "cms.manage_all": ["owner"],
-  "cms.recipes": ["owner"],
-  "cms.origins": ["owner"],
-  "cms.roasters": ["owner"],
-  "cms.brewers": ["owner"],
-  "cms.devices": ["owner"],
-  "cms.collections": ["owner"],
-  "cms.reviews": ["owner"],
-  "cms.users": ["owner"],
-  "cms.subscriptions": ["owner"],
-  "cms.analytics": ["owner"],
-  "cms.notifications": ["owner"],
-  "cms.settings": ["owner"],
+  "cms.access": ["owner", "admin"],
+  "cms.manage_all": ["owner", "admin"],
+  "cms.recipes": ["owner", "admin"],
+  "cms.origins": ["owner", "admin"],
+  "cms.roasters": ["owner", "admin"],
+  "cms.brewers": ["owner", "admin"],
+  "cms.devices": ["owner", "admin"],
+  "cms.collections": ["owner", "admin"],
+  "cms.reviews": ["owner", "admin"],
+  "cms.users": ["owner", "admin"],
+  "cms.subscriptions": ["owner", "admin"],
+  "cms.analytics": ["owner", "admin"],
+  "cms.notifications": ["owner", "admin"],
+  "cms.settings": ["owner", "admin"],
 };
 
 export function isDashboardRole(role: string | null | undefined): role is DashboardRole {

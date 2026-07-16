@@ -5,7 +5,6 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { LanguageSwitcher } from "@/app/components/layout/language-switcher";
-import { logMobileNav } from "@/app/components/layout/mobile-nav-debug";
 import { TextLink } from "@/app/components/ui/text-link";
 import { dsFocus, dsMotion } from "@/lib/constants/styles";
 import type { Dictionary } from "@/lib/i18n/types";
@@ -41,40 +40,17 @@ export function MobileNavDrawer({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const backdropTouchRef = useRef(false);
   const openedAtRef = useRef(0);
-  const prevOpenRef = useRef(false);
-
-  // Set grace-period timestamp synchronously when open flips false→true.
-  // useLayoutEffect runs too late: iOS ghost-click on the backdrop can fire
-  // before openedAtRef is set, and `Date.now() - 0` fails the grace check.
-  if (open && !prevOpenRef.current) {
-    openedAtRef.current = Date.now();
-    console.log("MobileNavDrawer open transition false→true, openedAt set", openedAtRef.current);
-  }
-  if (!open && prevOpenRef.current) {
-    openedAtRef.current = 0;
-    console.log("MobileNavDrawer open transition true→false, openedAt reset");
-  }
-  prevOpenRef.current = open;
-
-  console.log("drawer prop", open);
 
   useLayoutEffect(() => {
     if (open) {
       openedAtRef.current = Date.now();
+    } else {
+      openedAtRef.current = 0;
     }
   }, [open]);
 
   useEffect(() => {
-    logMobileNav("MobileNavDrawer render cycle", {
-      open,
-      hasDocument: typeof document !== "undefined",
-    });
-  }, [open]);
-
-  useEffect(() => {
     if (!open) return;
-
-    logMobileNav("MobileNavDrawer mounted in DOM (portal)");
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -113,23 +89,15 @@ export function MobileNavDrawer({
   }, [open, onClose]);
 
   const isWithinOpenGracePeriod = () => {
-    const elapsed = Date.now() - openedAtRef.current;
-    const within = openedAtRef.current > 0 && elapsed < 500;
-    console.log("isWithinOpenGracePeriod", { openedAt: openedAtRef.current, elapsed, within });
-    return within;
+    if (openedAtRef.current <= 0) return true;
+    return Date.now() - openedAtRef.current < 500;
   };
 
   const handleBackdropTouchEnd = (event: TouchEvent<HTMLButtonElement>) => {
-    console.log("handleBackdropTouchEnd", { open, openedAt: openedAtRef.current });
-    if (isWithinOpenGracePeriod()) {
-      console.log("handleBackdropTouchEnd blocked by grace period");
-      return;
-    }
+    if (isWithinOpenGracePeriod()) return;
 
     event.stopPropagation();
     backdropTouchRef.current = true;
-    logMobileNav("drawer backdrop touchend");
-    console.log("handleBackdropTouchEnd calling onClose");
     onClose();
     window.setTimeout(() => {
       backdropTouchRef.current = false;
@@ -137,17 +105,8 @@ export function MobileNavDrawer({
   };
 
   const handleBackdropClick = () => {
-    console.log("handleBackdropClick", { open, openedAt: openedAtRef.current, backdropTouch: backdropTouchRef.current });
-    if (isWithinOpenGracePeriod()) {
-      console.log("handleBackdropClick blocked by grace period");
-      return;
-    }
-    if (backdropTouchRef.current) {
-      console.log("handleBackdropClick blocked by backdropTouchRef");
-      return;
-    }
-    logMobileNav("drawer backdrop click");
-    console.log("handleBackdropClick calling onClose");
+    if (isWithinOpenGracePeriod()) return;
+    if (backdropTouchRef.current) return;
     onClose();
   };
 
@@ -183,10 +142,7 @@ export function MobileNavDrawer({
           <button
             ref={closeButtonRef}
             type="button"
-            onClick={() => {
-              logMobileNav("drawer close button click");
-              onClose();
-            }}
+            onClick={onClose}
             aria-label={nav.closeMenu}
             className={joinClasses(
               "flex h-11 w-11 min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full border border-white/[0.1] bg-white/[0.03] text-stone-400 touch-manipulation",
