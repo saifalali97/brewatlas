@@ -1,5 +1,22 @@
-/** Soft desert dune transition between homepage chapters. */
-export function SectionCurve({ flip = false, className = "" }: { flip?: boolean; className?: string }) {
+type SectionCurveFill = "limestone" | "pearl" | "sand" | "espresso";
+
+const fillClass: Record<SectionCurveFill, string> = {
+  limestone: "fill-ac-limestone",
+  pearl: "fill-ac-pearl",
+  sand: "fill-ac-sand",
+  espresso: "fill-ac-espresso",
+};
+
+/** Dune transition between homepage chapters. */
+export function SectionCurve({
+  flip = false,
+  fill = "pearl",
+  className = "",
+}: {
+  flip?: boolean;
+  fill?: SectionCurveFill;
+  className?: string;
+}) {
   return (
     <div
       aria-hidden
@@ -12,7 +29,7 @@ export function SectionCurve({ flip = false, className = "" }: { flip?: boolean;
       >
         <path
           d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z"
-          className="fill-ba-pearl"
+          className={fillClass[fill]}
         />
       </svg>
     </div>

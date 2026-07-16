@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BrewAtlas Visual Proof — Phase 1 Homepage</title>
+  <style>
+    body { margin: 0; background: #1a1410; color: #fdfbf7; font-family: system-ui, sans-serif; }
+    header { padding: 24px 32px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    h1 { font-weight: 500; margin: 0 0 8px; }
+    p { margin: 0; color: rgba(232,220,200,.7); font-size: 14px; }
+    section { padding: 24px 32px 48px; }
+    h2 { font-size: 18px; font-weight: 500; margin: 0 0 16px; }
+    .grid { display: grid; gap: 32px; grid-template-columns: 1fr; }
+    @media (min-width: 1200px) { .grid { grid-template-columns: 1fr 1fr; } }
+    img { width: 100%; display: block; border: 1px solid rgba(255,255,255,.08); border-radius: 4px; }
+    figcaption { margin-top: 8px; font-size: 13px; color: rgba(232,220,200,.55); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>BrewAtlas Phase 1 — Homepage</h1>
+    <p>1440×900 viewport · full-page captures · Atlas Canon 8-chapter journey</p>
+  </header>
+  <section>
+    <h2>Before / After</h2>
+    <div class="grid">
+      <figure>
+        <img src="01-homepage-before-phase1.png" alt="Homepage before Phase 1" />
+        <figcaption>Before — pre Phase 1 (commit c40b969)</figcaption>
+      </figure>
+      <figure>
+        <img src="01-homepage-phase1-after.png" alt="Homepage after Phase 1" />
+        <figcaption>After — Phase 1 Atlas Journey</figcaption>
+      </figure>
+    </div>
+  </section>
+  <section>
+    <h2>Full page — After</h2>
+    <img src="01-homepage-phase1-after.png" alt="Homepage full page after Phase 1" />
+  </section>
+</body>
+</html>

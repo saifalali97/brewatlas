@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { HeroSection } from "@/app/components/sections/hero-section";
 import { WhyBrewAtlasSection } from "@/app/components/sections/why-brewatlas-section";
 import { DiscoverSection } from "@/app/components/sections/discover-section";
-import { CoffeeJourneySection } from "@/app/components/sections/coffee-journey-section";
+import { CoffeeCraftSection } from "@/app/components/sections/coffee-journey-section";
 import { OriginsAtlasSection } from "@/app/components/sections/origins-atlas-section";
 import { PremiumExperienceSection } from "@/app/components/sections/premium-experience-section";
 import { SectionCurve } from "@/app/components/ui/section-curve";
-import { FeaturedRecipesSection } from "@/lib/dynamic-sections";
+import { FeaturedCoverSection, FeaturedTableSection } from "@/lib/dynamic-sections";
 import { buttons } from "@/lib/constants/styles";
 import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getRecipeSlug } from "@/lib/data/recipes";
@@ -46,8 +46,11 @@ export default async function Home() {
 
   return (
     <>
+      {/* Ch 0 — Prologue */}
       <HeroSection heroImage={heroImage} />
-      <SectionCurve />
+      <SectionCurve fill="limestone" />
+
+      {/* Ch 1 — The Map */}
       <WhyBrewAtlasSection
         about={dictionary.aboutPage}
         stats={[
@@ -56,14 +59,17 @@ export default async function Home() {
           { value: "40+", label: dictionary.homeHero.statCountriesLabel },
         ]}
       />
+      <SectionCurve fill="sand" />
+
+      {/* Ch 2 — Six Worlds */}
       <DiscoverSection copy={dictionary.homeDiscover} />
-      <FeaturedRecipesSection items={featuredItems} btnSecondary={buttons.secondary} />
-      <CoffeeJourneySection
-        methods={brewMethods.slice(0, 4)}
-        eyebrow={methods.eyebrow}
-        title={methods.title}
-        description={methods.description}
-      />
+      <SectionCurve fill="pearl" />
+
+      {/* Ch 3 — The Cover */}
+      <FeaturedCoverSection items={featuredItems} />
+      <SectionCurve fill="sand" />
+
+      {/* Ch 4 — The Route */}
       <OriginsAtlasSection
         origins={coffeeOrigins.slice(0, 6)}
         eyebrow={origins.eyebrow}
@@ -79,6 +85,22 @@ export default async function Home() {
           imageAltTemplate: origins.imageAltTemplate,
         }}
       />
+      <SectionCurve fill="espresso" />
+
+      {/* Ch 5 — The Craft */}
+      <CoffeeCraftSection
+        method={brewMethods[0]}
+        eyebrow={methods.eyebrow}
+        title={methods.title}
+        description={methods.description}
+      />
+      <SectionCurve fill="limestone" />
+
+      {/* Ch 6 — The Table */}
+      <FeaturedTableSection items={featuredItems} btnSecondary={buttons.secondary} />
+      <SectionCurve fill="espresso" flip />
+
+      {/* Ch 7 — The Circle */}
       <PremiumExperienceSection copy={dictionary.homePremiumExperience} testimonials={testimonials} />
     </>
   );
