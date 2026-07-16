@@ -1019,7 +1019,7 @@ export function RecipeForm({
       <div className="flex flex-wrap items-center gap-4">
         {isOwner ? (
           <Link
-            href="/dashboard/recipes"
+            href="/admin/recipes"
             className={`${buttons.secondary} w-full sm:w-auto`}
             onClick={(event) => {
               if (dirty && !window.confirm(t("ownerRecipesPage.unsavedChangesWarning"))) {

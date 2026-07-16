@@ -58,7 +58,7 @@ export function OwnerDashboardShell({
   const sidebar = (
     <div className="flex h-full flex-col">
       <div className="border-b border-white/[0.08] px-5 py-5">
-        <Link href="/dashboard" className="block">
+        <Link href="/admin" className="block">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-amber-500/85">{labels.cmsEyebrow}</p>
           <p className="mt-1 text-lg font-semibold tracking-tight text-stone-50">BrewAtlas</p>
         </Link>

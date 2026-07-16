@@ -228,7 +228,7 @@ export function OwnerAnalyticsDashboard({ overview, auditLog, labels, locale }: 
 
         <MetricPanel title={labels.flaggedReviewsTitle} description={labels.flaggedReviewsDescription}>
           <p className="text-3xl font-semibold text-stone-50">{kpis.flaggedReviews}</p>
-          <Link href="/dashboard/reviews?status=flagged" className="mt-4 inline-flex text-sm font-medium text-amber-400/90 hover:underline">
+          <Link href="/admin/reviews?status=flagged" className="mt-4 inline-flex text-sm font-medium text-amber-400/90 hover:underline">
             {labels.reviewReportsCta}
           </Link>
         </MetricPanel>

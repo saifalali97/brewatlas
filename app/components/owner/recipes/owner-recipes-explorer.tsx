@@ -198,13 +198,13 @@ export function OwnerRecipesExplorer({
                     </Link>
                   ) : null}
                   <Link
-                    href={`/dashboard/recipes/${recipe.id}/versions`}
+                    href={`/admin/recipes/${recipe.id}/versions`}
                     className="text-xs font-medium text-stone-400 underline-offset-4 hover:text-amber-400/90 hover:underline"
                   >
                     {labels.versionHistoryLink}
                   </Link>
                   <Link
-                    href={`/dashboard/recipes/${recipe.id}/edit`}
+                    href={`/admin/recipes/${recipe.id}/edit`}
                     className="text-xs font-medium text-amber-400/90 underline-offset-4 hover:underline"
                   >
                     {labels.editLink}

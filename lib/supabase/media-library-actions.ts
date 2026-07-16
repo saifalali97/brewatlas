@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireOwner } from "@/lib/auth/require-owner";
+import { requireAdmin } from "@/lib/auth/is-admin";
 import { getMediaAssetById, getMediaAssetUsageCount } from "@/lib/data/media-library";
 import { MEDIA_ALLOWED_MIME_TYPES, MEDIA_LIBRARY_BUCKET, MEDIA_MAX_BYTES } from "@/lib/media/constants";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -31,12 +31,12 @@ function parseTags(formData: FormData): string[] {
 }
 
 function revalidateMediaPaths() {
-  revalidatePath("/dashboard/media");
-  revalidatePath("/dashboard/recipes");
+  revalidatePath("/admin/media");
+  revalidatePath("/admin/recipes");
 }
 
 export async function uploadMediaAssetAction(formData: FormData): Promise<MediaUploadResult> {
-  const { supabase, user } = await requireOwner();
+  const { supabase, user } = await requireAdmin();
   const dictionary = await getDictionary(await getLocale());
   const labels = dictionary.ownerMediaPage;
 
@@ -148,7 +148,7 @@ export async function uploadMediaAssetAction(formData: FormData): Promise<MediaU
 }
 
 export async function updateMediaAssetAction(formData: FormData): Promise<void> {
-  const { supabase } = await requireOwner();
+  const { supabase } = await requireAdmin();
   const assetId = optionalString(formData, "assetId");
   if (!assetId) return;
 
@@ -166,7 +166,7 @@ export async function updateMediaAssetAction(formData: FormData): Promise<void> 
 }
 
 export async function deleteMediaAssetAction(formData: FormData): Promise<void> {
-  const { supabase } = await requireOwner();
+  const { supabase } = await requireAdmin();
   const assetId = optionalString(formData, "assetId");
   if (!assetId) return;
 
@@ -191,7 +191,7 @@ export async function deleteMediaAssetAction(formData: FormData): Promise<void> 
 }
 
 export async function replaceMediaAssetFileAction(formData: FormData): Promise<MediaUploadResult> {
-  const { supabase } = await requireOwner();
+  const { supabase } = await requireAdmin();
   const dictionary = await getDictionary(await getLocale());
   const labels = dictionary.ownerMediaPage;
   const assetId = optionalString(formData, "assetId");

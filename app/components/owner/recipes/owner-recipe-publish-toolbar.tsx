@@ -38,7 +38,7 @@ export function OwnerRecipePublishToolbar({
         </div>
         {recipeId ? (
           <Link
-            href={`/dashboard/recipes/${recipeId}/versions`}
+            href={`/admin/recipes/${recipeId}/versions`}
             className="text-xs font-medium text-amber-400/90 underline-offset-4 hover:underline"
           >
             {t("ownerRecipePublishing.versionHistoryCta")}

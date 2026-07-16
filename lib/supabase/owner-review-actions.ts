@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { userHasPermission } from "@/lib/auth/permission-middleware";
-import { requireOwner } from "@/lib/auth/require-owner";
+import { requireAdmin } from "@/lib/auth/is-admin";
 import { recordAdminAudit } from "@/lib/data/admin-audit";
 import { createNotification } from "@/lib/data/community";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -15,15 +15,15 @@ function readReviewId(formData: FormData): string | null {
 }
 
 async function requireReviewsPermission() {
-  const session = await requireOwner("/dashboard/reviews");
+  const session = await requireAdmin("/admin/reviews");
   const allowed = await userHasPermission(session.supabase, session.user.id, "cms.reviews");
   if (!allowed) {
-    redirect("/dashboard");
+    redirect("/admin");
   }
   return session;
 }
 
-async function loadReviewContext(supabase: Awaited<ReturnType<typeof requireOwner>>["supabase"], reviewId: string) {
+async function loadReviewContext(supabase: Awaited<ReturnType<typeof requireAdmin>>["supabase"], reviewId: string) {
   const { data } = await supabase
     .from("recipe_reviews")
     .select("id, user_id, recipe_id, recipes ( slug )")
@@ -41,7 +41,7 @@ async function loadReviewContext(supabase: Awaited<ReturnType<typeof requireOwne
 }
 
 async function notifyModeration(
-  supabase: Awaited<ReturnType<typeof requireOwner>>["supabase"],
+  supabase: Awaited<ReturnType<typeof requireAdmin>>["supabase"],
   authorId: string,
   recipeId: string,
   action: "hidden" | "restored" | "deleted",
@@ -60,13 +60,13 @@ export async function hideOwnerReviewAction(formData: FormData): Promise<void> {
   const { supabase, user } = await requireReviewsPermission();
   const reviewId = readReviewId(formData);
   if (!reviewId) {
-    revalidatePath("/dashboard/reviews");
+    revalidatePath("/admin/reviews");
     return;
   }
 
   const context = await loadReviewContext(supabase, reviewId);
   if (!context) {
-    revalidatePath("/dashboard/reviews");
+    revalidatePath("/admin/reviews");
     return;
   }
 
@@ -88,7 +88,7 @@ export async function hideOwnerReviewAction(formData: FormData): Promise<void> {
     }
   }
 
-  revalidatePath("/dashboard/reviews");
+  revalidatePath("/admin/reviews");
 }
 
 /** Restores a hidden or flagged review to visible status. */
@@ -96,13 +96,13 @@ export async function restoreOwnerReviewAction(formData: FormData): Promise<void
   const { supabase, user } = await requireReviewsPermission();
   const reviewId = readReviewId(formData);
   if (!reviewId) {
-    revalidatePath("/dashboard/reviews");
+    revalidatePath("/admin/reviews");
     return;
   }
 
   const context = await loadReviewContext(supabase, reviewId);
   if (!context) {
-    revalidatePath("/dashboard/reviews");
+    revalidatePath("/admin/reviews");
     return;
   }
 
@@ -124,7 +124,7 @@ export async function restoreOwnerReviewAction(formData: FormData): Promise<void
     }
   }
 
-  revalidatePath("/dashboard/reviews");
+  revalidatePath("/admin/reviews");
 }
 
 /** Permanently deletes a review (owner moderation). */
@@ -134,13 +134,13 @@ export async function deleteOwnerReviewAction(formData: FormData): Promise<void>
   const { supabase, user } = await requireReviewsPermission();
   const reviewId = readReviewId(formData);
   if (!reviewId) {
-    revalidatePath("/dashboard/reviews");
+    revalidatePath("/admin/reviews");
     return;
   }
 
   const context = await loadReviewContext(supabase, reviewId);
   if (!context) {
-    revalidatePath("/dashboard/reviews");
+    revalidatePath("/admin/reviews");
     return;
   }
 
@@ -161,5 +161,5 @@ export async function deleteOwnerReviewAction(formData: FormData): Promise<void>
     console.error("deleteOwnerReviewAction failed", error, dictionary.ownerReviewsPage.deleteFailed);
   }
 
-  revalidatePath("/dashboard/reviews");
+  revalidatePath("/admin/reviews");
 }
