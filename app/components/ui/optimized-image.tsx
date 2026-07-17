@@ -35,7 +35,7 @@ export function OptimizedImage({
   priority = false,
   loading,
   sizes = IMAGE_SIZE_PRESETS.fullWidth,
-  className = "ac-editorial-photo object-cover",
+  className = "object-cover",
   preload = false,
   fallbackSrc = RECIPE_IMAGE_PLACEHOLDER,
 }: OptimizedImageProps) {

@@ -65,7 +65,7 @@ function RecipeCardBody({ recipe, featured, labels }: RecipeCardBodyProps) {
           height={recipe.imageHeight ?? undefined}
           sizes={featured ? IMAGE_SIZE_PRESETS.recipeCardFeatured : IMAGE_SIZE_PRESETS.recipeCard}
           loading="lazy"
-          className="object-cover brightness-[0.94] contrast-[1.02] saturate-[0.96] transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] motion-reduce:transform-none"
+          className={`${cards.cardPhoto} saturate-[0.96] transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] motion-reduce:transform-none`}
         />
         <div className={cards.imageOverlay} />
         <div className={cards.imageAmberWash} />

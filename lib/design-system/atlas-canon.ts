@@ -11,9 +11,9 @@
 
 export const acColorHex = {
   limestone: "#F3EEE6",
-  pearl: "#F6F2EB",
-  secondary: "#6E675E",
-  muted: "#787068",
+  pearl: "#FCF8F2",
+  secondary: "#5E564D",
+  muted: "#736B61",
   sand: "#E8DCC8",
   dune: "#D4C4A8",
   espresso: "#1A1410",
@@ -210,8 +210,9 @@ export const acRadius = {
 
 export const acShadow = {
   none: "",
-  plate: "shadow-[0_8px_40px_-12px_rgba(26,20,16,0.08)]",
-  sm: "shadow-[0_2px_16px_-4px_rgba(26,20,16,0.08)]",
+  card: "shadow-[0_8px_24px_rgba(0,0,0,0.04)]",
+  plate: "shadow-[0_8px_24px_rgba(0,0,0,0.04)]",
+  sm: "shadow-[0_8px_24px_rgba(0,0,0,0.04)]",
   md: "shadow-[0_8px_32px_-12px_rgba(26,20,16,0.12)]",
   lg: "shadow-[0_20px_48px_-16px_rgba(26,20,16,0.16)]",
   header: "shadow-[0_4px_24px_-8px_rgba(26,20,16,0.10)]",
