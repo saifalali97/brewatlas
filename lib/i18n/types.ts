@@ -383,6 +383,8 @@ export type Dictionary = {
     passwordResetLinkSent: string;
     googleSignInUnavailable: string;
     appleSignInNotConfigured: string;
+    showPassword: string;
+    hidePassword: string;
   };
   dashboard: {
     title: string;

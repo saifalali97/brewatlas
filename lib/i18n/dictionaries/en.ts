@@ -441,6 +441,8 @@ const en: Dictionary = {
     passwordResetLinkSent: "If an account exists for that email, a password reset link is on its way.",
     googleSignInUnavailable: "Google sign-in is unavailable.",
     appleSignInNotConfigured: "Apple sign-in is not configured yet.",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
   },
   dashboard: {
     title: "Dashboard",
