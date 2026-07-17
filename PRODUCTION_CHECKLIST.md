@@ -6,7 +6,7 @@ Use this checklist before every production deployment.
 
 - [ ] `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
 - [ ] `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — anon/publishable key
-- [ ] `NEXT_PUBLIC_SITE_URL` — canonical HTTPS URL (e.g. `https://www.brewatlas.app`)
+- [ ] `NEXT_PUBLIC_SITE_URL` — canonical HTTPS URL (e.g. `https://brewatlas.app`)
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` — required for admin ops, Stripe webhooks, owner moderation
 - [ ] `BILLING_PROVIDER` — `manual` (default) or `stripe`
 - [ ] When `BILLING_PROVIDER=stripe`:

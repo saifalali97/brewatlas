@@ -441,6 +441,8 @@ const ar: Dictionary = {
     passwordResetLinkSent: "إذا كان هناك حساب مرتبط بهذا البريد الإلكتروني، فسيصلك رابط إعادة تعيين كلمة المرور.",
     googleSignInUnavailable: "تسجيل الدخول باستخدام جوجل غير متاح حاليًا.",
     appleSignInNotConfigured: "تسجيل الدخول باستخدام Apple غير مُفعّل بعد.",
+    showPassword: "إظهار كلمة المرور",
+    hidePassword: "إخفاء كلمة المرور",
   },
   dashboard: {
     title: "لوحة التحكم",

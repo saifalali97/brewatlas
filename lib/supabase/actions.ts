@@ -1,20 +1,13 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { ensureProfile } from "@/lib/supabase/profile";
+import { buildAuthCallbackUrl } from "@/lib/auth/redirect-url";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
-import { getSiteUrl } from "@/lib/seo/site";
+import { ensureProfile } from "@/lib/supabase/profile";
+import { createClient } from "@/lib/supabase/server";
 
 export type AuthActionState = { error?: string; success?: string } | undefined;
-
-/** Resolves the current request's origin for building auth redirect URLs. */
-async function resolveOrigin(): Promise<string> {
-  const headerList = await headers();
-  return headerList.get("origin") ?? getSiteUrl();
-}
 
 /** Only ever redirect to a same-site path, never to an attacker-supplied URL. */
 function readRedirectTarget(formData: FormData): string {
@@ -72,14 +65,13 @@ export async function signUpAction(
     return { error: dictionary.forms.passwordsDoNotMatch };
   }
 
-  const origin = await resolveOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: fullName ? { full_name: fullName } : undefined,
-      emailRedirectTo: `${origin}/auth/callback?next=/account`,
+      emailRedirectTo: buildAuthCallbackUrl("/account"),
     },
   });
 
@@ -119,10 +111,9 @@ export async function requestPasswordResetAction(
     return { error: dictionary.auth.enterEmailAddress };
   }
 
-  const origin = await resolveOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?next=/reset-password`,
+    redirectTo: buildAuthCallbackUrl("/reset-password"),
   });
 
   if (error) {
@@ -160,13 +151,13 @@ export async function updatePasswordAction(
 }
 
 export async function signInWithGoogleAction(): Promise<void> {
-  const origin = await resolveOrigin();
+  const redirectTo = buildAuthCallbackUrl("/account");
   const supabase = await createClient();
   const dictionary = await getDictionary(await getLocale());
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${origin}/auth/callback?next=/account`,
+      redirectTo,
     },
   });
 
@@ -188,13 +179,13 @@ export async function signInWithGoogleAction(): Promise<void> {
  * moment the provider is configured.
  */
 export async function signInWithAppleAction(): Promise<void> {
-  const origin = await resolveOrigin();
+  const redirectTo = buildAuthCallbackUrl("/account");
   const supabase = await createClient();
   const dictionary = await getDictionary(await getLocale());
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "apple",
     options: {
-      redirectTo: `${origin}/auth/callback?next=/account`,
+      redirectTo,
     },
   });
 
