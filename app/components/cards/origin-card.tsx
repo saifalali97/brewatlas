@@ -51,7 +51,7 @@ export function OriginCard({ origin, ctaHref = "#origins", labels }: OriginCardP
           })}
           sizes={IMAGE_SIZE_PRESETS.card}
           loading="lazy"
-          className="object-cover brightness-[0.94] contrast-[1.02] saturate-[0.96] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
+          className={`${cards.cardPhoto} saturate-[0.96] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transform-none`}
         />
         <div className={cards.imageOverlay} />
         <div className={cards.imageAmberWash} />

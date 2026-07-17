@@ -57,9 +57,10 @@ export const layout = {
 } as const;
 
 export const cards = {
-  testimonial: `${dsRadius.card} border border-ba-espresso/[0.06] bg-ba-pearl ${dsShadow.sm} ${dsMotion.transition} hover:-translate-y-1 hover:border-ba-gold/25 hover:shadow-[0_24px_48px_-16px_rgba(28,22,18,0.12)] ${dsMotion.reduce}`,
+  cardPhoto: "ac-card-photo object-cover",
+  testimonial: `${dsRadius.card} border border-ba-espresso/[0.08] bg-ba-pearl shadow-[0_8px_24px_rgba(0,0,0,0.04)] ${dsMotion.transition} hover:-translate-y-1 hover:border-ba-gold/25 hover:shadow-[0_24px_48px_-16px_rgba(28,22,18,0.12)] ${dsMotion.reduce}`,
   testimonialDark: `${dsRadius.card} border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl ${dsShadow.md} ${dsMotion.transition} hover:-translate-y-1 hover:border-ba-gold/25 ${dsMotion.reduce}`,
-  premiumShell: `group relative flex h-full flex-col overflow-hidden ${dsRadius.card} border border-ba-espresso/[0.08] bg-ba-pearl ${dsShadow.md} ${dsMotion.transition} hover:-translate-y-1 hover:border-ba-gold/30 hover:shadow-[0_24px_56px_-18px_rgba(28,22,18,0.12)] motion-reduce:transition-none motion-reduce:hover:translate-y-0`,
+  premiumShell: `group relative flex h-full flex-col overflow-hidden ${dsRadius.card} border border-ba-espresso/[0.08] bg-ba-pearl shadow-[0_8px_24px_rgba(0,0,0,0.04)] ${dsMotion.transition} hover:-translate-y-1 hover:border-ba-gold/30 hover:shadow-[0_24px_56px_-18px_rgba(28,22,18,0.12)] motion-reduce:transition-none motion-reduce:hover:translate-y-0`,
   premiumShellDark: `group relative flex h-full flex-col overflow-hidden ${dsRadius.card} border border-white/[0.1] bg-white/[0.04] backdrop-blur-2xl ${dsShadow.md} ${dsMotion.transition} hover:-translate-y-1 hover:border-ba-gold/30 motion-reduce:transition-none motion-reduce:hover:translate-y-0`,
   premiumSheen: `pointer-events-none absolute inset-0 ${dsRadius.card} bg-gradient-to-b from-ba-pearl via-transparent to-transparent`,
   premiumGlow:
@@ -77,9 +78,9 @@ export const buttons = {
   focusRingDark: dsFocus.ringDark,
   primary: `inline-flex h-12 min-w-[180px] items-center justify-center ${dsRadius.full} bg-ba-espresso px-8 text-sm font-medium tracking-[-0.01em] text-ba-pearl ${dsMotion.transition} hover:bg-ba-charcoal hover:shadow-[0_12px_40px_-12px_rgba(28,22,18,0.35)] active:scale-[0.98] ${dsFocus.ring}`,
   primaryLight: `inline-flex h-12 min-w-[180px] items-center justify-center ${dsRadius.full} bg-ba-pearl px-8 text-sm font-medium tracking-[-0.01em] text-ba-espresso ${dsMotion.transition} hover:bg-ba-sand hover:shadow-[0_12px_40px_-12px_rgba(255,252,247,0.2)] active:scale-[0.98] ${dsFocus.ringDark}`,
-  secondary: `inline-flex h-12 min-w-[180px] items-center justify-center ${dsRadius.full} border border-ba-espresso/15 bg-transparent px-8 text-sm font-medium tracking-[-0.01em] text-ba-espresso backdrop-blur-sm ${dsMotion.transition} hover:border-ba-bronze/40 hover:bg-ba-espresso/[0.04] active:scale-[0.98] ${dsFocus.ring}`,
+  secondary: `inline-flex h-12 min-w-[180px] items-center justify-center ${dsRadius.full} border border-ba-espresso/18 bg-transparent px-8 text-sm font-medium tracking-[-0.01em] text-ba-espresso backdrop-blur-sm ${dsMotion.transition} hover:border-ba-bronze/40 hover:bg-ba-espresso/[0.04] active:scale-[0.98] ${dsFocus.ring}`,
   secondaryDark: `inline-flex h-12 min-w-[180px] items-center justify-center ${dsRadius.full} border border-white/[0.18] bg-white/[0.04] px-8 text-sm font-medium tracking-[-0.01em] text-ba-pearl backdrop-blur-sm ${dsMotion.transition} hover:border-ba-gold/40 hover:bg-white/[0.08] active:scale-[0.98] ${dsFocus.ringDark}`,
-  ghostCta: `group/btn inline-flex h-10 w-full items-center justify-center gap-2 ${dsRadius.full} border border-ba-espresso/12 bg-ba-pearl px-5 text-sm font-medium text-ba-espresso ${dsMotion.transition} hover:-translate-y-0.5 hover:border-ba-bronze/35 hover:shadow-[0_8px_24px_-8px_rgba(28,22,18,0.1)] active:scale-[0.98] motion-reduce:hover:translate-y-0`,
+  ghostCta: `group/btn inline-flex h-10 w-full items-center justify-center gap-2 ${dsRadius.full} border border-ba-espresso/15 bg-ba-pearl px-5 text-sm font-medium text-ba-espresso ${dsMotion.transition} hover:-translate-y-0.5 hover:border-ba-bronze/35 hover:shadow-[0_8px_24px_-8px_rgba(28,22,18,0.1)] active:scale-[0.98] motion-reduce:hover:translate-y-0`,
   ghostCtaAutoWidth: " sm:w-auto",
   ghostArrow:
     "h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/btn:-translate-x-0.5 motion-reduce:transform-none",
@@ -115,7 +116,7 @@ export const meta = {
 
 export const surfaces = {
   authCard: `${dsElevation.floating} mx-auto max-w-md p-6 sm:p-8`,
-  emptyState: `${dsRadius.card} border border-ba-espresso/08 bg-ba-pearl px-6 py-16 text-center ${dsShadow.sm}`,
+  emptyState: `${dsRadius.card} border border-ba-espresso/[0.08] bg-ba-pearl px-6 py-16 text-center shadow-[0_8px_24px_rgba(0,0,0,0.04)]`,
 } as const;
 
 export const badges = {
@@ -128,10 +129,10 @@ export const badges = {
 } as const;
 
 export const panels = {
-  stat: `${dsRadius.lg} border border-ba-espresso/08 bg-ba-pearl px-5 py-4 ${dsShadow.sm}`,
+  stat: `${dsRadius.lg} border border-ba-espresso/[0.08] bg-ba-pearl px-5 py-4 shadow-[0_8px_24px_rgba(0,0,0,0.04)]`,
   statIcon: `flex h-10 w-10 shrink-0 items-center justify-center ${dsRadius.md} border border-ba-gold/20 bg-ba-gold/10 text-ba-bronze`,
-  link: `${dsRadius.lg} border border-ba-espresso/08 bg-ba-pearl px-5 py-4 ${dsShadow.sm} ${dsMotion.transition} hover:-translate-y-0.5 hover:border-ba-gold/25 hover:shadow-[0_16px_40px_-16px_rgba(28,22,18,0.1)] motion-reduce:hover:translate-y-0`,
-  profile: `${dsRadius.lg} border border-ba-espresso/08 bg-ba-pearl p-6 ${dsShadow.sm}`,
+  link: `${dsRadius.lg} border border-ba-espresso/[0.08] bg-ba-pearl px-5 py-4 shadow-[0_8px_24px_rgba(0,0,0,0.04)] ${dsMotion.transition} hover:-translate-y-0.5 hover:border-ba-gold/25 hover:shadow-[0_16px_40px_-16px_rgba(28,22,18,0.1)] motion-reduce:hover:translate-y-0`,
+  profile: `${dsRadius.lg} border border-ba-espresso/[0.08] bg-ba-pearl p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)]`,
 } as const;
 
 export const filterChips = {

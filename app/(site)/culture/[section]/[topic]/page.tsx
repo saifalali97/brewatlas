@@ -74,7 +74,7 @@ export default async function CultureTopicPage({ params }: CultureTopicPageProps
             sizes="(min-width: 1024px) 50vw, 100vw"
             priority
             unoptimized={heroImage.endsWith(".svg")}
-            className="object-cover brightness-[0.9] contrast-[1.04] saturate-[0.94]"
+            className={`${cards.cardPhoto} saturate-[0.94]`}
           />
           <div className={cards.imageOverlay} />
           <div className={cards.imageAmberWash} />
