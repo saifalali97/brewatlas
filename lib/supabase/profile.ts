@@ -12,6 +12,16 @@ export async function ensureProfile(
   supabase: SupabaseClient,
   user: User,
 ): Promise<void> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  // Email sign-up with confirmation enabled returns a user but no session;
+  // PostgREST would run as anon and the profiles INSERT policy would reject.
+  if (!session) {
+    return;
+  }
+
   const fullName =
     (user.user_metadata?.full_name as string | undefined) ??
     (user.user_metadata?.name as string | undefined) ??
@@ -24,7 +34,9 @@ export async function ensureProfile(
       full_name: fullName,
       avatar_url: avatarUrl,
     },
-    { onConflict: "id", ignoreDuplicates: true },
+    // Upsert defaults to treating omitted columns as NULL; the INSERT RLS
+    // policy requires role = 'user', so request DB defaults instead.
+    { onConflict: "id", ignoreDuplicates: true, defaultToNull: false },
   );
 
   if (error) {
