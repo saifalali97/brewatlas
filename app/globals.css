@@ -2,8 +2,10 @@
 
 :root {
   /* ── Atlas Canon — canonical palette (Phase 0) ── */
-  --ac-limestone: #f7f3ec;
-  --ac-pearl: #fdfbf7;
+  --ac-limestone: #F3EEE6;
+  --ac-pearl: #F6F2EB;
+  --ac-secondary: #6E675E;
+  --ac-muted: #787068;
   --ac-sand: #e8dcc8;
   --ac-dune: #d4c4a8;
   --ac-espresso: #1a1410;
@@ -19,7 +21,7 @@
   --ba-pearl: var(--ac-pearl);
   --ba-sand: var(--ac-sand);
   --ba-sand-deep: var(--ac-dune);
-  --ba-coffee: var(--ac-walnut);
+  --ba-coffee: var(--ac-secondary);
   --ba-espresso: var(--ac-espresso);
   --ba-bronze: var(--ac-copper);
   --ba-gold: var(--ac-gold);
@@ -37,8 +39,8 @@
   --ds-border: rgba(26, 20, 16, 0.08);
   --ds-border-strong: rgba(26, 20, 16, 0.12);
   --ds-text-primary: var(--ac-espresso);
-  --ds-text-secondary: rgba(61, 46, 36, 0.72);
-  --ds-text-muted: rgba(61, 46, 36, 0.48);
+  --ds-text-secondary: #6E675E;
+  --ds-text-muted: #787068;
   --ds-accent: var(--ac-gold);
   --ds-accent-deep: var(--ac-copper);
   --ds-focus: rgba(166, 123, 74, 0.85);
@@ -113,13 +115,15 @@
   --color-ac-palm: var(--ac-palm);
   --color-ac-mist: var(--ac-mist);
   --color-ac-charcoal: var(--ac-charcoal);
+  --color-ac-secondary: var(--ac-secondary);
+  --color-ac-muted: var(--ac-muted);
 
   /* Legacy ba-* → Atlas Canon aliases */
   --color-ba-ivory: var(--ac-limestone);
   --color-ba-pearl: var(--ac-pearl);
   --color-ba-sand: var(--ac-sand);
   --color-ba-sand-deep: var(--ac-dune);
-  --color-ba-coffee: var(--ac-walnut);
+  --color-ba-coffee: var(--ac-secondary);
   --color-ba-espresso: var(--ac-espresso);
   --color-ba-bronze: var(--ac-copper);
   --color-ba-gold: var(--ac-gold);
@@ -235,8 +239,8 @@ html {
   inset: 0;
   pointer-events: none;
   opacity: 0.4;
-  background-image: radial-gradient(ellipse at 20% 0%, rgba(255, 252, 247, 0.9) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 100%, rgba(237, 228, 214, 0.35) 0%, transparent 45%);
+  background-image: radial-gradient(ellipse at 20% 0%, rgba(246, 242, 235, 0.9) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(232, 220, 204, 0.35) 0%, transparent 45%);
 }
 
 .desert-curve {
@@ -395,28 +399,38 @@ html {
 }
 
 /* ── Photography grade profiles (Atlas Canon) ── */
+.ac-editorial-photo {
+  filter: brightness(0.96) contrast(1.04);
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.06);
+}
+
 .photo-grade-night {
   filter: brightness(0.82) saturate(0.95) sepia(0.08);
 }
 
 .photo-grade-dawn {
-  filter: brightness(1.02) saturate(0.92) sepia(0.04);
+  filter: brightness(0.96) contrast(1.04) saturate(0.92) sepia(0.04);
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.06);
 }
 
 .photo-grade-library {
-  filter: brightness(0.98) saturate(0.88) contrast(0.96);
+  filter: brightness(0.94) contrast(1.04) saturate(0.88);
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.06);
 }
 
 .photo-grade-earth {
-  filter: brightness(0.96) saturate(0.85) hue-rotate(-4deg);
+  filter: brightness(0.94) contrast(1.04) saturate(0.85) hue-rotate(-4deg);
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.06);
 }
 
 .photo-grade-workshop {
-  filter: brightness(0.94) saturate(0.82) contrast(1.06);
+  filter: brightness(0.92) contrast(1.06) saturate(0.82);
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.06);
 }
 
 .photo-grade-directory {
-  filter: brightness(1) saturate(0.9) contrast(1);
+  filter: brightness(0.96) contrast(1.04) saturate(0.9);
+  box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.06);
 }
 
 .photo-grade-gallery {

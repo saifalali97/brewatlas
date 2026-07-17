@@ -10,8 +10,10 @@
 // ---------------------------------------------------------------------------
 
 export const acColorHex = {
-  limestone: "#F7F3EC",
-  pearl: "#FDFBF7",
+  limestone: "#F3EEE6",
+  pearl: "#F6F2EB",
+  secondary: "#6E675E",
+  muted: "#787068",
   sand: "#E8DCC8",
   dune: "#D4C4A8",
   espresso: "#1A1410",
@@ -29,6 +31,8 @@ export type AcColorToken = keyof typeof acColorHex;
 export const acColor = {
   limestone: "ac-limestone",
   pearl: "ac-pearl",
+  secondary: "ac-secondary",
+  muted: "ac-muted",
   sand: "ac-sand",
   dune: "ac-dune",
   espresso: "ac-espresso",
@@ -55,8 +59,8 @@ export const acSurface = {
 /** Semantic text roles. */
 export const acText = {
   primary: "text-ac-espresso",
-  secondary: "text-ac-walnut/72",
-  muted: "text-ac-walnut/48",
+  secondary: "text-ac-secondary",
+  muted: "text-ac-muted",
   onDark: "text-ac-pearl",
   secondaryOnDark: "text-ac-sand/90",
   mutedOnDark: "text-ac-sand/65",
@@ -120,16 +124,16 @@ export const acTypography = {
   h2Dark: "font-display text-2xl leading-[1.10] tracking-[-0.025em] text-ac-pearl sm:text-3xl lg:text-[2.25rem]",
   h3: "text-xl font-medium leading-[1.20] text-ac-espresso sm:text-2xl",
   h3Dark: "text-xl font-medium leading-[1.20] text-ac-pearl sm:text-2xl",
-  bodyLg: "text-lg leading-[1.75] text-ac-walnut/80 md:text-xl md:leading-[1.75]",
-  body: "text-base leading-[1.70] text-ac-walnut/80 md:text-[1.0625rem] md:leading-[1.70]",
+  bodyLg: "text-lg leading-[1.75] text-ac-secondary md:text-xl md:leading-[1.75]",
+  body: "text-base leading-[1.70] text-ac-secondary md:text-[1.0625rem] md:leading-[1.70]",
   bodyDark: "text-base leading-[1.70] text-ac-sand/90 md:text-[1.0625rem] md:leading-[1.70]",
-  bodyCentered: "mx-auto text-base leading-[1.70] text-ac-walnut/80 md:text-[1.0625rem]",
+  bodyCentered: "mx-auto text-base leading-[1.70] text-ac-secondary md:text-[1.0625rem]",
   label: "text-sm font-medium text-ac-walnut",
-  caption: "text-[0.8125rem] leading-[1.50] text-ac-walnut/55",
+  caption: "text-[0.8125rem] leading-[1.50] text-ac-muted",
   captionDark: "text-[0.8125rem] leading-[1.50] text-ac-sand/60",
   nav: "text-sm font-medium tracking-[-0.01em]",
   folioTitle: "font-display text-xl leading-[1.15] tracking-[-0.02em] text-ac-espresso sm:text-2xl",
-  folioMeta: "text-[0.8125rem] leading-[1.50] text-ac-walnut/55",
+  folioMeta: "text-[0.8125rem] leading-[1.50] text-ac-muted",
 } as const;
 
 // ---------------------------------------------------------------------------
