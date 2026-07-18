@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
-import type { EmailOtpType } from "@supabase/supabase-js";
+import type { EmailOtpType, Session, User } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSiteUrl } from "@/lib/seo/site";
 import { ensureProfile } from "@/lib/supabase/profile";
@@ -32,7 +33,11 @@ function loginErrorRedirect(redirectBase: string, message: string, cause?: unkno
   );
 }
 
-function createSupabaseForCallback(request: NextRequest, response: NextResponse) {
+function createSupabaseForCallback(
+  request: NextRequest,
+  response: NextResponse,
+  cookieStore: Awaited<ReturnType<typeof cookies>>,
+) {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
@@ -41,34 +46,42 @@ function createSupabaseForCallback(request: NextRequest, response: NextResponse)
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet, headers) {
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set(name, value);
+          });
           cookiesToSet.forEach(({ name, value, options }) => {
+            try {
+              cookieStore.set(name, value, options);
+            } catch {
+              // Route handlers allow cookie writes; ignore if unavailable.
+            }
             response.cookies.set(name, value, options);
           });
+          if (headers) {
+            Object.entries(headers).forEach(([key, value]) => {
+              response.headers.set(key, value);
+            });
+          }
         },
       },
     },
   );
 }
 
-async function completeSession(
+async function finalizeAuthenticatedRedirect(
   supabase: ReturnType<typeof createSupabaseForCallback>,
+  response: NextResponse,
+  session: Session | null,
+  user: User | null,
   redirectBase: string,
 ) {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  if (!session) {
+  if (!session?.access_token) {
     return loginErrorRedirect(
       redirectBase,
       "Authentication did not establish a session.",
     );
   }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   if (user) {
     try {
@@ -78,7 +91,7 @@ async function completeSession(
     }
   }
 
-  return null;
+  return response;
 }
 
 export async function GET(request: NextRequest) {
@@ -105,9 +118,10 @@ export async function GET(request: NextRequest) {
 
   const successRedirect = `${redirectBase}${safeNext}`;
   const response = NextResponse.redirect(successRedirect);
+  const cookieStore = await cookies();
 
   try {
-    const supabase = createSupabaseForCallback(request, response);
+    const supabase = createSupabaseForCallback(request, response, cookieStore);
 
     // Email confirm / password reset — verifyOtp (SSR-safe, no PKCE verifier).
     if (tokenHash && otpType) {
@@ -125,18 +139,19 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      const { error } = verifyResult;
+      const { data, error } = verifyResult;
 
       if (error) {
         return loginErrorRedirect(redirectBase, error.message, error);
       }
 
-      const sessionError = await completeSession(supabase, redirectBase);
-      if (sessionError) {
-        return sessionError;
-      }
-
-      return response;
+      return finalizeAuthenticatedRedirect(
+        supabase,
+        response,
+        data.session,
+        data.user,
+        redirectBase,
+      );
     }
 
     // OAuth — PKCE code exchange (verifier must exist in request cookies).
@@ -154,18 +169,19 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      const { error } = exchangeResult;
+      const { data, error } = exchangeResult;
 
       if (error) {
         return loginErrorRedirect(redirectBase, error.message, error);
       }
 
-      const sessionError = await completeSession(supabase, redirectBase);
-      if (sessionError) {
-        return sessionError;
-      }
-
-      return response;
+      return finalizeAuthenticatedRedirect(
+        supabase,
+        response,
+        data.session,
+        data.user,
+        redirectBase,
+      );
     }
 
     return loginErrorRedirect(redirectBase, "Missing confirmation type.");
