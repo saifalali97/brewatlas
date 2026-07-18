@@ -14,7 +14,7 @@ export const SAFARI_CRASH_DEBUG = {
   logMounts: true,
 
   /** Step 3: pass null instead of NotificationsBell when signed in. */
-  stripNotificationsBell: true,
+  stripNotificationsBell: false,
 
   /** Step 4: replace SiteNav with a placeholder div. */
   stripSiteNav: false,
