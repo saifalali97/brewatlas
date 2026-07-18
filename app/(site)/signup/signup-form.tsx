@@ -3,78 +3,78 @@
 import { useState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { PasswordInput } from "@/app/components/auth/password-input";
-import { buildAuthCallbackUrl } from "@/lib/auth/redirect-url";
 import { acSurface, acTypography } from "@/lib/design-system/atlas-canon";
 import { buttons, forms } from "@/lib/constants/styles";
 import { useTranslations } from "@/lib/i18n/translation-context";
-import { createClient } from "@/lib/supabase/client";
+import { signUpWithEmail, validateSignUpInput } from "@/lib/supabase/browser-auth";
+
+type SignupFormStatus = "idle" | "submitting" | "success";
 
 export function SignupForm() {
   const { t } = useTranslations();
+  const [status, setStatus] = useState<SignupFormStatus>("idle");
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(null);
-    setSuccess(null);
-    setPending(true);
 
     const formData = new FormData(event.currentTarget);
-    const fullName = String(formData.get("fullName") ?? "").trim();
-    const email = String(formData.get("email") ?? "").trim();
-    const password = String(formData.get("password") ?? "");
-    const confirmPassword = String(formData.get("confirmPassword") ?? "");
+    const input = {
+      fullName: String(formData.get("fullName") ?? "").trim(),
+      email: String(formData.get("email") ?? "").trim(),
+      password: String(formData.get("password") ?? ""),
+      confirmPassword: String(formData.get("confirmPassword") ?? ""),
+    };
 
-    if (!email || !password) {
-      setError(t("auth.enterEmailAndPassword"));
-      setPending(false);
+    const validationError = validateSignUpInput(input, {
+      enterEmailAndPassword: t("auth.enterEmailAndPassword"),
+      passwordTooShort: t("forms.passwordTooShort"),
+      passwordsDoNotMatch: t("forms.passwordsDoNotMatch"),
+    });
+
+    if (validationError) {
+      setError(validationError);
+      setSuccessMessage(null);
       return;
     }
-    if (password.length < 8) {
-      setError(t("forms.passwordTooShort"));
-      setPending(false);
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError(t("forms.passwordsDoNotMatch"));
-      setPending(false);
-      return;
-    }
+
+    setStatus("submitting");
+    setError(null);
+    setSuccessMessage(null);
 
     try {
-      const supabase = createClient();
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: fullName ? { full_name: fullName } : undefined,
-          emailRedirectTo: buildAuthCallbackUrl("/account"),
-        },
-      });
+      const result = await signUpWithEmail(input);
 
-      if (signUpError) {
-        setError(signUpError.message);
+      if (!result.ok) {
+        setStatus("idle");
+        setError(result.error);
         return;
       }
 
-      setSuccess(t("auth.checkInboxToConfirm"));
+      if (!result.needsEmailConfirmation) {
+        window.location.assign(result.redirectTo);
+        return;
+      }
+
+      setStatus("success");
+      setSuccessMessage(t("auth.checkInboxToConfirm"));
     } catch (caught) {
+      setStatus("idle");
       setError(caught instanceof Error ? caught.message : t("errors.generic"));
-    } finally {
-      setPending(false);
     }
   }
 
-  if (success) {
+  if (status === "success" && successMessage) {
     return (
       <div className={`${acSurface.plate} p-8 text-center`}>
         <p className={acTypography.h3}>{t("auth.almostThereTitle")}</p>
-        <p className={`${acTypography.body} mt-3`}>{success}</p>
+        <p className={`${acTypography.body} mt-3`}>{successMessage}</p>
       </div>
     );
   }
+
+  const isSubmitting = status === "submitting";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -89,6 +89,7 @@ export function SignupForm() {
           autoComplete="name"
           className={forms.input}
           placeholder={t("auth.namePlaceholder")}
+          disabled={isSubmitting}
         />
       </div>
 
@@ -104,6 +105,7 @@ export function SignupForm() {
           autoComplete="email"
           className={forms.input}
           placeholder={t("auth.emailPlaceholder")}
+          disabled={isSubmitting}
         />
       </div>
 
@@ -129,8 +131,12 @@ export function SignupForm() {
 
       <FormMessage error={error ?? undefined} />
 
-      <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70`}>
-        {pending ? t("auth.creatingAccount") : t("auth.createAccountCta")}
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className={`${buttons.primary} w-full disabled:opacity-70`}
+      >
+        {isSubmitting ? t("auth.creatingAccount") : t("auth.createAccountCta")}
       </button>
     </form>
   );
