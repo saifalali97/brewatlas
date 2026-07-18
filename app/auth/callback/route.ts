@@ -5,16 +5,14 @@ import { getSiteUrl } from "@/lib/seo/site";
 import { ensureProfile } from "@/lib/supabase/profile";
 
 /**
- * Exchanges the PKCE `code` param Supabase appends to email confirmation,
- * password reset, and OAuth redirect links for a real session, then
- * forwards the user to `next` (defaults to /account). Required by the
- * official Supabase SSR pattern - Server Components can't set cookies, so
- * the session cookie exchange has to happen in a Route Handler like this.
+ * Completes Supabase auth redirects:
  *
- * Session cookies must be written onto the redirect `NextResponse` itself.
- * Using `cookies().set()` via the shared server client can fail silently
- * in Route Handlers, leaving auth succeeded server-side but no session in
- * the browser on the next navigation.
+ * - Email confirm / password reset: `token_hash` + `type` → verifyOtp()
+ *   (official SSR pattern — no PKCE verifier cookie required).
+ * - OAuth: `code` → exchangeCodeForSession() (PKCE verifier must be in cookies
+ *   from the browser that started the flow via createBrowserClient).
+ *
+ * Session cookies must be written onto the redirect NextResponse itself.
  */
 function resolveRedirectBase(request: NextRequest): string {
   return process.env.NODE_ENV === "production"
@@ -53,6 +51,36 @@ function createSupabaseForCallback(request: NextRequest, response: NextResponse)
   );
 }
 
+async function completeSession(
+  supabase: ReturnType<typeof createSupabaseForCallback>,
+  redirectBase: string,
+) {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    return loginErrorRedirect(
+      redirectBase,
+      "Authentication did not establish a session.",
+    );
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    try {
+      await ensureProfile(supabase, user);
+    } catch (profileError) {
+      console.error("[auth/callback] ensureProfile threw", profileError);
+    }
+  }
+
+  return null;
+}
+
 export async function GET(request: NextRequest) {
   const redirectBase = resolveRedirectBase(request);
   const safeNext = resolveSafeNext(request.nextUrl.searchParams.get("next"));
@@ -67,11 +95,11 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const code = request.nextUrl.searchParams.get("code");
   const tokenHash = request.nextUrl.searchParams.get("token_hash");
   const otpType = request.nextUrl.searchParams.get("type");
+  const code = request.nextUrl.searchParams.get("code");
 
-  if (!code && !tokenHash) {
+  if (!tokenHash && !code) {
     return loginErrorRedirect(redirectBase, "Missing or invalid confirmation code.");
   }
 
@@ -81,6 +109,37 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createSupabaseForCallback(request, response);
 
+    // Email confirm / password reset — verifyOtp (SSR-safe, no PKCE verifier).
+    if (tokenHash && otpType) {
+      let verifyResult;
+      try {
+        verifyResult = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: otpType as EmailOtpType,
+        });
+      } catch (verifyThrown) {
+        return loginErrorRedirect(
+          redirectBase,
+          verifyThrown instanceof Error ? verifyThrown.message : "Email confirmation failed.",
+          verifyThrown,
+        );
+      }
+
+      const { error } = verifyResult;
+
+      if (error) {
+        return loginErrorRedirect(redirectBase, error.message, error);
+      }
+
+      const sessionError = await completeSession(supabase, redirectBase);
+      if (sessionError) {
+        return sessionError;
+      }
+
+      return response;
+    }
+
+    // OAuth — PKCE code exchange (verifier must exist in request cookies).
     if (code) {
       let exchangeResult;
       try {
@@ -95,72 +154,21 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      const { data, error } = exchangeResult;
+      const { error } = exchangeResult;
 
       if (error) {
         return loginErrorRedirect(redirectBase, error.message, error);
       }
 
-      if (!data?.session) {
-        return loginErrorRedirect(
-          redirectBase,
-          "Email confirmation did not establish a session.",
-          { hasUser: Boolean(data?.user) },
-        );
-      }
-
-      if (data.user) {
-        try {
-          await ensureProfile(supabase, data.user);
-        } catch (profileError) {
-          console.error("[auth/callback] ensureProfile threw", profileError);
-        }
+      const sessionError = await completeSession(supabase, redirectBase);
+      if (sessionError) {
+        return sessionError;
       }
 
       return response;
     }
 
-    if (!otpType) {
-      return loginErrorRedirect(redirectBase, "Missing confirmation type.");
-    }
-
-    let verifyResult;
-    try {
-      verifyResult = await supabase.auth.verifyOtp({
-        token_hash: tokenHash!,
-        type: otpType as EmailOtpType,
-      });
-    } catch (verifyThrown) {
-      return loginErrorRedirect(
-        redirectBase,
-        verifyThrown instanceof Error ? verifyThrown.message : "Email confirmation failed.",
-        verifyThrown,
-      );
-    }
-
-    const { data, error } = verifyResult;
-
-    if (error) {
-      return loginErrorRedirect(redirectBase, error.message, error);
-    }
-
-    if (!data?.session) {
-      return loginErrorRedirect(
-        redirectBase,
-        "Email confirmation did not establish a session.",
-        { hasUser: Boolean(data?.user) },
-      );
-    }
-
-    if (data.user) {
-      try {
-        await ensureProfile(supabase, data.user);
-      } catch (profileError) {
-        console.error("[auth/callback] ensureProfile threw", profileError);
-      }
-    }
-
-    return response;
+    return loginErrorRedirect(redirectBase, "Missing confirmation type.");
   } catch (unexpected) {
     return loginErrorRedirect(
       redirectBase,

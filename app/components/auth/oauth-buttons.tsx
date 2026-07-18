@@ -1,9 +1,11 @@
+"use client";
+
 import { Apple } from "lucide-react";
+import { useState } from "react";
 import { isAppleOAuthEnabled } from "@/lib/auth/oauth-providers";
 import { buttons } from "@/lib/constants/styles";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { getLocale } from "@/lib/i18n/locale";
-import { signInWithAppleAction, signInWithGoogleAction } from "@/lib/supabase/actions";
+import { useTranslations } from "@/lib/i18n/translation-context";
+import { startOAuthSignIn, type OAuthProvider } from "@/lib/supabase/browser-auth";
 
 const oauthButtonClass = `${buttons.secondary} h-12 w-full min-w-0 gap-2.5 rounded-xl touch-manipulation [-webkit-tap-highlight-color:transparent]`;
 
@@ -18,32 +20,65 @@ function GoogleIcon() {
   );
 }
 
-/**
- * Shared Google / Apple sign-in buttons rendered on both /login and
- * /signup. Server-rendered forms bound directly to Server Actions - no
- * client JavaScript required to kick off the OAuth redirect.
- */
-export async function OAuthButtons() {
-  const locale = await getLocale();
-  const dictionary = await getDictionary(locale);
+export function OAuthButtons() {
+  const { t } = useTranslations();
+  const [error, setError] = useState<string | null>(null);
+  const [pendingProvider, setPendingProvider] = useState<OAuthProvider | null>(null);
   const showApple = isAppleOAuthEnabled();
+
+  async function handleOAuthClick(provider: OAuthProvider) {
+    setError(null);
+    setPendingProvider(provider);
+
+    try {
+      const result = await startOAuthSignIn(provider);
+
+      if (!result.ok) {
+        setError(
+          result.error ??
+            (provider === "google"
+              ? t("auth.googleSignInUnavailable")
+              : t("auth.appleSignInNotConfigured")),
+        );
+        return;
+      }
+
+      window.location.assign(result.url);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : t("errors.generic"));
+    } finally {
+      setPendingProvider(null);
+    }
+  }
 
   return (
     <div className="space-y-3">
-      <form action={signInWithGoogleAction}>
-        <button type="submit" className={oauthButtonClass}>
-          <GoogleIcon />
-          {dictionary.auth.signInWithGoogle}
-        </button>
-      </form>
+      {error ? (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          {error}
+        </p>
+      ) : null}
+
+      <button
+        type="button"
+        disabled={pendingProvider !== null}
+        onClick={() => handleOAuthClick("google")}
+        className={oauthButtonClass}
+      >
+        <GoogleIcon />
+        {pendingProvider === "google" ? t("auth.signingIn") : t("auth.signInWithGoogle")}
+      </button>
 
       {showApple ? (
-        <form action={signInWithAppleAction}>
-          <button type="submit" className={oauthButtonClass}>
-            <Apple className="h-4 w-4 shrink-0 text-ba-espresso" aria-hidden />
-            {dictionary.auth.continueWithApple}
-          </button>
-        </form>
+        <button
+          type="button"
+          disabled={pendingProvider !== null}
+          onClick={() => handleOAuthClick("apple")}
+          className={oauthButtonClass}
+        >
+          <Apple className="h-4 w-4 shrink-0 text-ba-espresso" aria-hidden />
+          {pendingProvider === "apple" ? t("auth.signingIn") : t("auth.continueWithApple")}
+        </button>
       ) : null}
     </div>
   );

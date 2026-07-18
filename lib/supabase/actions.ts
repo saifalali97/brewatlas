@@ -45,55 +45,6 @@ export async function signInWithPasswordAction(
   redirect(redirectTo);
 }
 
-export async function signUpAction(
-  _prevState: AuthActionState,
-  formData: FormData,
-): Promise<AuthActionState> {
-  const fullName = String(formData.get("fullName") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-  const confirmPassword = String(formData.get("confirmPassword") ?? "");
-  const dictionary = await getDictionary(await getLocale());
-
-  if (!email || !password) {
-    return { error: dictionary.auth.enterEmailAndPassword };
-  }
-  if (password.length < 8) {
-    return { error: dictionary.forms.passwordTooShort };
-  }
-  if (password !== confirmPassword) {
-    return { error: dictionary.forms.passwordsDoNotMatch };
-  }
-
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: fullName ? { full_name: fullName } : undefined,
-      emailRedirectTo: buildAuthCallbackUrl("/account"),
-    },
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  if (data.user) {
-    await ensureProfile(supabase, data.user);
-  }
-
-  // If email confirmation is disabled for this project, signUp() already
-  // returns an active session and the user is signed in immediately.
-  if (data.session) {
-    redirect("/account");
-  }
-
-  return {
-    success: dictionary.auth.checkInboxToConfirm,
-  };
-}
-
 export async function signOutAction(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
@@ -148,52 +99,4 @@ export async function updatePasswordAction(
   }
 
   redirect("/account");
-}
-
-export async function signInWithGoogleAction(): Promise<void> {
-  const redirectTo = buildAuthCallbackUrl("/account");
-  const supabase = await createClient();
-  const dictionary = await getDictionary(await getLocale());
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo,
-    },
-  });
-
-  if (error || !data.url) {
-    redirect(
-      `/login?error=${encodeURIComponent(error?.message ?? dictionary.auth.googleSignInUnavailable)}`,
-    );
-  }
-
-  redirect(data.url);
-}
-
-/**
- * Apple Sign In requires a Services ID, Team ID, Key ID, and private key
- * configured under Authentication > Providers > Apple in the Supabase
- * dashboard. Until that's set up, Supabase responds with an error (e.g.
- * "Unsupported provider") and the user is bounced back to /login with a
- * message - the code path itself is fully wired and ready to go live the
- * moment the provider is configured.
- */
-export async function signInWithAppleAction(): Promise<void> {
-  const redirectTo = buildAuthCallbackUrl("/account");
-  const supabase = await createClient();
-  const dictionary = await getDictionary(await getLocale());
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "apple",
-    options: {
-      redirectTo,
-    },
-  });
-
-  if (error || !data.url) {
-    redirect(
-      `/login?error=${encodeURIComponent(error?.message ?? dictionary.auth.appleSignInNotConfigured)}`,
-    );
-  }
-
-  redirect(data.url);
 }
