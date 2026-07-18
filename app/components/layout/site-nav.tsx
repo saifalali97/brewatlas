@@ -5,6 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Menu } from "lucide-react";
+import { DebugErrorBoundary } from "@/app/components/debug/debug-error-boundary";
+import { DebugMountLogger } from "@/app/components/debug/debug-mount-logger";
 import { DiscoverMenu } from "@/app/components/layout/discover-menu";
 import { LanguageSwitcher } from "@/app/components/layout/language-switcher";
 import { MobileNavDrawer } from "@/app/components/layout/mobile-nav-drawer";
@@ -251,16 +253,20 @@ export function SiteNav({
         </nav>
       </header>
 
-      <MobileNavDrawer
-        open={open}
-        onClose={() => setOpen(false)}
-        nav={nav}
-        locale={locale}
-        discoverLinks={discoverLinks}
-        isAuthenticated={isAuthenticated}
-        isAdmin={isAdmin}
-        notificationsSlot={notificationsSlot}
-      />
+      <DebugErrorBoundary name="MobileNavDrawer">
+        <DebugMountLogger name="MobileNavDrawer">
+          <MobileNavDrawer
+            open={open}
+            onClose={() => setOpen(false)}
+            nav={nav}
+            locale={locale}
+            discoverLinks={discoverLinks}
+            isAuthenticated={isAuthenticated}
+            isAdmin={isAdmin}
+            notificationsSlot={notificationsSlot}
+          />
+        </DebugMountLogger>
+      </DebugErrorBoundary>
     </>
   );
 }

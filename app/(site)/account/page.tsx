@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { DebugAccountShell } from "@/app/components/debug/debug-account-shell";
+import { logSafariDebug } from "@/lib/debug/safari-crash-debug";
 import {
   BookOpen,
   Bell,
@@ -77,6 +79,8 @@ export default async function DashboardPage() {
 
   await ensureProfile(supabase, data.user);
 
+  logSafariDebug("AccountPage", "server render start", { userId: data.user.id });
+
   const [{ data: profile }, favoriteRecipes, ownRecipes, membership] = await Promise.all([
     supabase
       .from("profiles")
@@ -120,7 +124,16 @@ export default async function DashboardPage() {
     { icon: FolderOpen, label: d.collectionsLabel, description: d.collectionsDescription, href: "/account/collections" },
   ];
 
+  logSafariDebug("AccountPage", "server render data loaded", {
+    userId: data.user.id,
+    hasAvatar: Boolean(profile?.avatar_url),
+    favoriteCount: favoriteRecipes.length,
+    ownRecipeCount: ownRecipes.length,
+    isAdmin,
+  });
+
   return (
+    <DebugAccountShell>
     <SectionFrame id="dashboard-page" ariaLabelledBy="dashboard-page-heading" padding="compact">
       
 <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
@@ -297,5 +310,6 @@ export default async function DashboardPage() {
         </Folio>
       </div>
     </SectionFrame>
+    </DebugAccountShell>
   );
 }

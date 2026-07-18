@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Bell } from "lucide-react";
+import { DebugErrorBoundary } from "@/app/components/debug/debug-error-boundary";
+import { DebugMountLogger } from "@/app/components/debug/debug-mount-logger";
 import { NotificationItemRow } from "@/app/components/notifications/notification-item-row";
 import { useNotificationRealtime } from "@/lib/notifications/realtime";
 import { markAllNotificationsReadAction } from "@/lib/supabase/notification-actions";
@@ -128,15 +130,18 @@ export function NotificationsBell({
           ) : (
             <ul className="max-h-80 divide-y divide-white/[0.06] overflow-y-auto">
               {notifications.map((item) => (
-                <NotificationItemRow
-                  key={item.id}
-                  item={item}
-                  labels={labels}
-                  dictionary={dictionary}
-                  locale={locale}
-                  currentPath={notificationsPath}
-                  compact
-                />
+                <DebugErrorBoundary key={item.id} name={`NotificationItemRow:${item.id}`}>
+                  <DebugMountLogger name={`NotificationItemRow:${item.id}`}>
+                    <NotificationItemRow
+                      item={item}
+                      labels={labels}
+                      dictionary={dictionary}
+                      locale={locale}
+                      currentPath={notificationsPath}
+                      compact
+                    />
+                  </DebugMountLogger>
+                </DebugErrorBoundary>
               ))}
             </ul>
           )}
