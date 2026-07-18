@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { cookies, headers } from "next/headers";
 import {
   BookOpen,
   Bell,
@@ -30,6 +31,7 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { getLocale } from "@/lib/i18n/locale";
+import type { Locale } from "@/types/i18n";
 import { translate } from "@/lib/i18n/format";
 import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
@@ -38,6 +40,19 @@ import { roleIsAdmin } from "@/lib/auth/is-admin";
 import { ensureProfile } from "@/lib/supabase/profile";
 import { signOutAction } from "@/lib/supabase/actions";
 import type { FeaturedRecipe } from "@/types/homepage";
+import type { MembershipSummary } from "@/types/membership";
+import {
+  CSP_CONNECT_SRC,
+  isNextNavigationError,
+  logAndRethrow,
+  logAuthSessionMismatch,
+  logSafariAccountComparison,
+  logServerAuthDebug,
+  logServerAuthException,
+  summarizeAuthCookies,
+  summarizeCookies,
+  summarizeRscRequestHeaders,
+} from "@/lib/debug/server-auth-debug";
 
 function recipeFolioMeta(
   dictionary: Dictionary,
@@ -51,74 +66,179 @@ function recipeFolioMeta(
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocale();
-  const dictionary = await getDictionary(locale);
-  return buildLocalizedMetadata({
-    pathname: "/account",
-    locale,
-    title: dictionary.metadata.dashboardTitle,
-    description: dictionary.metadata.dashboardDescription,
-    noIndex: true,
-  });
+  logServerAuthDebug("AccountPage.generateMetadata", "entry", {});
+
+  try {
+    const locale = await getLocale();
+    const dictionary = await getDictionary(locale);
+    logServerAuthDebug("AccountPage.generateMetadata", "exit", { locale });
+    return buildLocalizedMetadata({
+      pathname: "/account",
+      locale,
+      title: dictionary.metadata.dashboardTitle,
+      description: dictionary.metadata.dashboardDescription,
+      noIndex: true,
+    });
+  } catch (error) {
+    logServerAuthException("AccountPage.generateMetadata", error, { phase: "metadata" });
+    throw error;
+  }
 }
 
 export default async function DashboardPage() {
-  const locale = await getLocale();
-  const [dictionary, content] = await Promise.all([getDictionary(locale), getHomeContent(locale)]);
-  const d = dictionary.dashboardPage;
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
+  const cookieStore = await cookies();
+  const headerStore = await headers();
+  const authCookies = summarizeAuthCookies(cookieStore.getAll());
+  const rscContext = summarizeRscRequestHeaders(headerStore);
 
-  // Proxy already redirects unauthenticated visitors away from /account;
-  // this is the authoritative, non-bypassable check at the data source.
-  if (!data.user) {
-    redirect("/login?redirectTo=/account");
+  logServerAuthDebug("AccountPage", "entry", {
+    cookiesReceived: summarizeCookies(cookieStore.getAll()),
+    ...authCookies,
+    rsc: rscContext,
+    cspConnectSrcAllowsSupabase: CSP_CONNECT_SRC,
+  });
+
+  logSafariAccountComparison("AccountPage", "entry", {
+    ...authCookies,
+    rsc: rscContext,
+    fetchCache: "default (no force-cache on /account)",
+    serverComponent: true,
+    cspConnectSrcAllowsSupabase: CSP_CONNECT_SRC,
+  });
+
+  let locale!: Locale;
+  let dictionary!: Awaited<ReturnType<typeof getDictionary>>;
+  let d!: Awaited<ReturnType<typeof getDictionary>>["dashboardPage"];
+  let profile!: {
+    full_name: string | null;
+    avatar_url: string | null;
+    country: string | null;
+    bio: string | null;
+    role: string | null;
+    brewing_methods?: { name: string } | null;
+    devices?: { name: string } | null;
+  } | null;
+  let favoriteRecipes!: Awaited<ReturnType<typeof getUserFavoriteRecipes>>;
+  let ownRecipes!: Awaited<ReturnType<typeof getUserRecipes>>;
+  let membership!: MembershipSummary;
+  let displayName!: string;
+  let isAdmin!: boolean;
+  let favoriteMethodName!: string;
+  let recentRecipes!: Array<{ recipe: FeaturedRecipe; slug: string }>;
+  let stats!: Array<{ icon: typeof Heart; label: string; value: string }>;
+  let quickLinks!: Array<{
+    icon: typeof Heart;
+    label: string;
+    description: string;
+    href: string;
+  }>;
+
+  try {
+    locale = await getLocale();
+    const [loadedDictionary, content] = await Promise.all([
+      getDictionary(locale),
+      getHomeContent(locale),
+    ]);
+    dictionary = loadedDictionary;
+    d = dictionary.dashboardPage;
+    const supabase = await createClient();
+    const { data } = await supabase.auth.getUser();
+
+    logServerAuthDebug("AccountPage", "step", {
+      step: "getUser",
+      userId: data.user?.id ?? null,
+      ...authCookies,
+      rsc: rscContext,
+    });
+
+    logSafariAccountComparison("AccountPage", "step", {
+      step: "getUser",
+      userId: data.user?.id ?? null,
+      ...authCookies,
+      authCookiePresentButNoUser: authCookies.hasAuthCookies && !data.user,
+      rsc: rscContext,
+    });
+
+    logAuthSessionMismatch("AccountPage", {
+      pathname: "/account",
+      browser: rscContext.browser,
+      serverComponentUserId: data.user?.id ?? null,
+      authCookies,
+    });
+
+    if (!data.user) {
+      logServerAuthDebug("AccountPage", "redirect", {
+        target: "/login?redirectTo=/account",
+        userId: null,
+        reason: "unauthenticated",
+      });
+      redirect("/login?redirectTo=/account");
+    }
+
+    logServerAuthDebug("AccountPage", "step", { step: "ensureProfile", userId: data.user.id });
+    await ensureProfile(supabase, data.user);
+
+    logServerAuthDebug("AccountPage", "step", { step: "loadDashboardData", userId: data.user.id });
+    const [profileResult, loadedFavorites, loadedOwnRecipes, loadedMembership] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("full_name, avatar_url, country, bio, role, brewing_methods(name), devices(name)")
+        .eq("id", data.user.id)
+        .maybeSingle(),
+      getUserFavoriteRecipes(supabase, data.user.id),
+      getUserRecipes(supabase, data.user.id),
+      getMembershipSummary(supabase, data.user.id),
+    ]);
+
+    profile = profileResult.data as typeof profile;
+    favoriteRecipes = loadedFavorites;
+    ownRecipes = loadedOwnRecipes;
+    membership = loadedMembership;
+
+    logServerAuthDebug("AccountPage", "step", {
+      step: "dashboardDataLoaded",
+      userId: data.user.id,
+      favoriteCount: favoriteRecipes.length,
+      ownRecipeCount: ownRecipes.length,
+      membershipPlan: membership.plan,
+    });
+
+    displayName = profile?.full_name || data.user.email || dictionary.communityPage.anonymousBrewer;
+    isAdmin = roleIsAdmin(profile?.role);
+    favoriteMethodName =
+      (profile as { brewing_methods?: { name: string } | null } | null)?.brewing_methods?.name ?? d.notSet;
+    recentRecipes = content.featuredRecipes.slice(0, 3).map((recipe, index) => ({
+      recipe,
+      slug: getRecipeSlug(staticRecipesEn[index]),
+    }));
+
+    stats = [
+      { icon: Heart, label: d.savedRecipesLabel, value: String(favoriteRecipes.length) },
+      { icon: Coffee, label: d.recipesCreatedLabel, value: String(ownRecipes.length) },
+      { icon: BookOpen, label: d.favoriteMethodLabel, value: favoriteMethodName },
+    ];
+
+    quickLinks = [
+      { icon: Sparkles, label: d.aiCoachLabel, description: d.aiCoachDescription, href: "/coach" },
+      { icon: Clock, label: d.brewHistoryLabel, description: d.brewHistoryDescription, href: "/account/brew-history" },
+      { icon: Users, label: d.communityLabel, description: d.communityDescription, href: "/community" },
+      { icon: Coffee, label: d.premiumLabel, description: d.premiumDescription, href: "/premium" },
+      { icon: CreditCard, label: d.subscriptionLabel, description: d.subscriptionDescription, href: "/account/subscription" },
+      { icon: Cpu, label: d.xbloomProfilesLabel, description: d.xbloomProfilesDescription, href: "/account/xbloom" },
+      { icon: Wrench, label: d.coffeeSetupLabel, description: d.coffeeSetupDescription, href: "/account/coffee-setup" },
+      { icon: Bell, label: d.notificationsLabel, description: d.notificationsDescription, href: "/account/notifications" },
+      { icon: Settings2, label: d.notificationPreferencesLabel, description: d.notificationPreferencesDescription, href: "/account/notification-preferences" },
+      { icon: Heart, label: d.savedRecipesLabel, description: d.savedRecipesDescription, href: "/account/favorites" },
+      { icon: FolderOpen, label: d.collectionsLabel, description: d.collectionsDescription, href: "/account/collections" },
+    ];
+
+    logServerAuthDebug("AccountPage", "exit", { userId: data.user.id });
+  } catch (error) {
+    if (!isNextNavigationError(error)) {
+      logServerAuthException("AccountPage", error, { phase: "data-load" });
+    }
+    logAndRethrow("AccountPage", error, { phase: "data-load" });
   }
-
-  await ensureProfile(supabase, data.user);
-
-  const [{ data: profile }, favoriteRecipes, ownRecipes, membership] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("full_name, avatar_url, country, bio, role, brewing_methods(name), devices(name)")
-      .eq("id", data.user.id)
-      .maybeSingle(),
-    getUserFavoriteRecipes(supabase, data.user.id),
-    getUserRecipes(supabase, data.user.id),
-    getMembershipSummary(supabase, data.user.id),
-  ]);
-
-  const displayName = profile?.full_name || data.user.email || dictionary.communityPage.anonymousBrewer;
-  const isAdmin = roleIsAdmin(profile?.role);
-  const favoriteMethodName =
-    (profile as { brewing_methods?: { name: string } | null } | null)?.brewing_methods?.name ?? d.notSet;
-  // Display uses the locale's translated copy, but the slug is always
-  // derived from the English name at the same array index so URLs never
-  // change across locales.
-  const recentRecipes = content.featuredRecipes.slice(0, 3).map((recipe, index) => ({
-    recipe,
-    slug: getRecipeSlug(staticRecipesEn[index]),
-  }));
-
-  const stats = [
-    { icon: Heart, label: d.savedRecipesLabel, value: String(favoriteRecipes.length) },
-    { icon: Coffee, label: d.recipesCreatedLabel, value: String(ownRecipes.length) },
-    { icon: BookOpen, label: d.favoriteMethodLabel, value: favoriteMethodName },
-  ];
-
-  const quickLinks = [
-    { icon: Sparkles, label: d.aiCoachLabel, description: d.aiCoachDescription, href: "/coach" },
-    { icon: Clock, label: d.brewHistoryLabel, description: d.brewHistoryDescription, href: "/account/brew-history" },
-    { icon: Users, label: d.communityLabel, description: d.communityDescription, href: "/community" },
-    { icon: Coffee, label: d.premiumLabel, description: d.premiumDescription, href: "/premium" },
-    { icon: CreditCard, label: d.subscriptionLabel, description: d.subscriptionDescription, href: "/account/subscription" },
-    { icon: Cpu, label: d.xbloomProfilesLabel, description: d.xbloomProfilesDescription, href: "/account/xbloom" },
-    { icon: Wrench, label: d.coffeeSetupLabel, description: d.coffeeSetupDescription, href: "/account/coffee-setup" },
-    { icon: Bell, label: d.notificationsLabel, description: d.notificationsDescription, href: "/account/notifications" },
-    { icon: Settings2, label: d.notificationPreferencesLabel, description: d.notificationPreferencesDescription, href: "/account/notification-preferences" },
-    { icon: Heart, label: d.savedRecipesLabel, description: d.savedRecipesDescription, href: "/account/favorites" },
-    { icon: FolderOpen, label: d.collectionsLabel, description: d.collectionsDescription, href: "/account/collections" },
-  ];
 
   return (
     <SectionFrame id="dashboard-page" ariaLabelledBy="dashboard-page-heading" padding="compact">
