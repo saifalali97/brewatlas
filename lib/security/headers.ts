@@ -12,7 +12,13 @@ function getSupabaseOrigin(): string | null {
 }
 
 const supabaseOrigin = getSupabaseOrigin();
-const connectSrc = ["'self'", "https://api.stripe.com", ...(supabaseOrigin ? [supabaseOrigin] : [])].join(" ");
+const connectSrc = [
+  "'self'",
+  "https://api.stripe.com",
+  "https://*.supabase.co",
+  "wss://*.supabase.co",
+  ...(supabaseOrigin ? [supabaseOrigin] : []),
+].join(" ");
 const imgSrc = ["'self'", "data:", "blob:", UNSPLASH_ORIGIN, ...(supabaseOrigin ? [supabaseOrigin] : [])].join(" ");
 
 // React/Next.js dev mode uses eval() in the browser to reconstruct stack
