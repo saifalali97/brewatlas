@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { logServerAuthDebug, logServerAuthException } from "@/lib/debug/server-auth-debug";
 import { DEFAULT_PLAN_PERMISSIONS, TRIAL_DURATION_DAYS, TRIAL_PLAN, isPlanAtLeast } from "@/lib/membership/plans";
 import { KNOWN_FEATURE_KEYS, PLAN_RANK } from "@/types/membership";
 import type {
@@ -95,37 +96,52 @@ function mapFeatureAccess(row: DbFeatureAccessRow): FeatureAccessEntry {
 
 /** Fetches the caller's subscription, creating a default `free`/`active` row on first access. Every signed-in user has exactly one row after this has been called once. */
 export async function getOrCreateSubscription(supabase: SupabaseClient, userId: string): Promise<Subscription> {
-  const { data: existing, error: selectError } = await supabase
-    .from("subscriptions")
-    .select(SUBSCRIPTION_FIELDS)
-    .eq("user_id", userId)
-    .maybeSingle();
+  logServerAuthDebug("getOrCreateSubscription", "entry", { userId });
 
-  if (selectError) {
-    console.error("getOrCreateSubscription select failed", selectError);
-  }
-  if (existing) return mapSubscription(existing as DbSubscriptionRow);
-
-  const { data: created, error: insertError } = await supabase
-    .from("subscriptions")
-    .insert({ user_id: userId })
-    .select(SUBSCRIPTION_FIELDS)
-    .single();
-
-  if (insertError || !created) {
-    // Most likely a race with a concurrent request creating the same row;
-    // re-select rather than surface a spurious error.
-    const { data: retried } = await supabase
+  try {
+    const { data: existing, error: selectError } = await supabase
       .from("subscriptions")
       .select(SUBSCRIPTION_FIELDS)
       .eq("user_id", userId)
       .maybeSingle();
-    if (retried) return mapSubscription(retried as DbSubscriptionRow);
-    console.error("getOrCreateSubscription insert failed", insertError);
-    throw new Error("Failed to load or create a subscription.");
-  }
 
-  return mapSubscription(created as DbSubscriptionRow);
+    if (selectError) {
+      logServerAuthException("getOrCreateSubscription", selectError, { userId, phase: "select" });
+    }
+    if (existing) {
+      logServerAuthDebug("getOrCreateSubscription", "exit", { userId, source: "existing" });
+      return mapSubscription(existing as DbSubscriptionRow);
+    }
+
+    const { data: created, error: insertError } = await supabase
+      .from("subscriptions")
+      .insert({ user_id: userId })
+      .select(SUBSCRIPTION_FIELDS)
+      .single();
+
+    if (insertError || !created) {
+      const { data: retried } = await supabase
+        .from("subscriptions")
+        .select(SUBSCRIPTION_FIELDS)
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (retried) {
+        logServerAuthDebug("getOrCreateSubscription", "exit", { userId, source: "race_retry" });
+        return mapSubscription(retried as DbSubscriptionRow);
+      }
+      logServerAuthException("getOrCreateSubscription", insertError ?? new Error("insert returned no row"), {
+        userId,
+        phase: "insert",
+      });
+      throw new Error("Failed to load or create a subscription.");
+    }
+
+    logServerAuthDebug("getOrCreateSubscription", "exit", { userId, source: "created" });
+    return mapSubscription(created as DbSubscriptionRow);
+  } catch (error) {
+    logServerAuthException("getOrCreateSubscription", error, { userId });
+    throw error;
+  }
 }
 
 /** All `plan_permissions` rows for one plan, merged with `lib/membership/plans.ts`'s in-code defaults for any known feature key missing from the database. */
@@ -289,68 +305,81 @@ export async function refreshUserMembership(supabase: SupabaseClient, userId: st
  * never sees a stale "trialing" or "canceled-but-still-active" state.
  */
 export async function getMembershipSummary(supabase: SupabaseClient, userId: string): Promise<MembershipSummary> {
-  const subscription = await refreshUserMembership(supabase, userId);
-  const [planPermissions, featureAccess, trialUsage] = await Promise.all([
-    getPlanPermissionMap(supabase, subscription.plan),
-    getFeatureAccessMap(supabase, userId),
-    getTrialUsage(supabase, userId, TRIAL_PLAN),
-  ]);
+  logServerAuthDebug("getMembershipSummary", "entry", { userId });
 
-  const isPremium =
-    isPlanAtLeast(subscription.plan, "premium") &&
-    (subscription.status === "active" ||
-      subscription.status === "trialing" ||
-      subscription.status === "past_due" ||
-      (subscription.cancelAtPeriodEnd && subscription.plan !== "free"));
+  try {
+    const subscription = await refreshUserMembership(supabase, userId);
+    const [planPermissions, featureAccess, trialUsage] = await Promise.all([
+      getPlanPermissionMap(supabase, subscription.plan),
+      getFeatureAccessMap(supabase, userId),
+      getTrialUsage(supabase, userId, TRIAL_PLAN),
+    ]);
 
-  const features: Partial<Record<FeatureKey, boolean>> = {};
-  const usage: Partial<Record<FeatureKey, FeatureUsageSummary>> = {};
-  const featureKeys = new Set<FeatureKey>([...KNOWN_FEATURE_KEYS, ...Object.keys(planPermissions), ...Object.keys(featureAccess)]);
+    const isPremium =
+      isPlanAtLeast(subscription.plan, "premium") &&
+      (subscription.status === "active" ||
+        subscription.status === "trialing" ||
+        subscription.status === "past_due" ||
+        (subscription.cancelAtPeriodEnd && subscription.plan !== "free"));
 
-  for (const featureKey of featureKeys) {
-    const planDefault = planPermissions[featureKey] ?? { isEnabled: false, usageLimit: null };
-    const override = featureAccess[featureKey];
+    const features: Partial<Record<FeatureKey, boolean>> = {};
+    const usage: Partial<Record<FeatureKey, FeatureUsageSummary>> = {};
+    const featureKeys = new Set<FeatureKey>([...KNOWN_FEATURE_KEYS, ...Object.keys(planPermissions), ...Object.keys(featureAccess)]);
 
-    const isEnabled = override ? override.isEnabled : planDefault.isEnabled;
-    const usageLimit = override ? override.usageLimit : planDefault.usageLimit;
-    const used = override?.usageCount ?? 0;
+    for (const featureKey of featureKeys) {
+      const planDefault = planPermissions[featureKey] ?? { isEnabled: false, usageLimit: null };
+      const override = featureAccess[featureKey];
 
-    features[featureKey] = isEnabled;
-    usage[featureKey] = {
-      featureKey,
-      enabled: isEnabled,
-      limit: usageLimit,
-      used,
-      remaining: usageLimit === null ? null : Math.max(0, usageLimit - used),
+      const isEnabled = override ? override.isEnabled : planDefault.isEnabled;
+      const usageLimit = override ? override.usageLimit : planDefault.usageLimit;
+      const used = override?.usageCount ?? 0;
+
+      features[featureKey] = isEnabled;
+      usage[featureKey] = {
+        featureKey,
+        enabled: isEnabled,
+        limit: usageLimit,
+        used,
+        remaining: usageLimit === null ? null : Math.max(0, usageLimit - used),
+      };
+    }
+
+    const trialEligible = !trialUsage && !isPlanAtLeast(subscription.plan, "premium");
+    const trial: TrialSummary = {
+      eligible: trialEligible,
+      isTrialing: subscription.status === "trialing",
+      startedAt: subscription.trialStartedAt,
+      endsAt: subscription.trialEndsAt,
+      daysRemaining: subscription.status === "trialing" ? daysRemaining(subscription.trialEndsAt) : 0,
     };
+
+    const expiresAt = subscription.status === "trialing" ? subscription.trialEndsAt : subscription.currentPeriodEnd;
+
+    logServerAuthDebug("getMembershipSummary", "exit", {
+      userId,
+      plan: subscription.plan,
+      status: subscription.status,
+    });
+
+    return {
+      userId,
+      plan: subscription.plan,
+      status: subscription.status,
+      isPremium,
+      billingProvider: subscription.billingProvider,
+      billingInterval: subscription.billingInterval,
+      stripeCustomerId: subscription.stripeCustomerId,
+      currentPeriodEnd: subscription.currentPeriodEnd,
+      cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+      expiresAt,
+      trial,
+      features,
+      usage,
+    };
+  } catch (error) {
+    logServerAuthException("getMembershipSummary", error, { userId });
+    throw error;
   }
-
-  const trialEligible = !trialUsage && !isPlanAtLeast(subscription.plan, "premium");
-  const trial: TrialSummary = {
-    eligible: trialEligible,
-    isTrialing: subscription.status === "trialing",
-    startedAt: subscription.trialStartedAt,
-    endsAt: subscription.trialEndsAt,
-    daysRemaining: subscription.status === "trialing" ? daysRemaining(subscription.trialEndsAt) : 0,
-  };
-
-  const expiresAt = subscription.status === "trialing" ? subscription.trialEndsAt : subscription.currentPeriodEnd;
-
-  return {
-    userId,
-    plan: subscription.plan,
-    status: subscription.status,
-    isPremium,
-    billingProvider: subscription.billingProvider,
-    billingInterval: subscription.billingInterval,
-    stripeCustomerId: subscription.stripeCustomerId,
-    currentPeriodEnd: subscription.currentPeriodEnd,
-    cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
-    expiresAt,
-    trial,
-    features,
-    usage,
-  };
 }
 
 export type StartTrialResult = { subscription: Subscription } | { error: string };

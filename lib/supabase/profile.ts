@@ -1,4 +1,5 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { logServerAuthDebug, logServerAuthException } from "@/lib/debug/server-auth-debug";
 
 /**
  * Ensures a `profiles` row exists for the given auth user, inserting one if
@@ -12,34 +13,51 @@ export async function ensureProfile(
   supabase: SupabaseClient,
   user: User,
 ): Promise<void> {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  logServerAuthDebug("ensureProfile", "entry", { userId: user.id });
 
-  // Email sign-up with confirmation enabled returns a user but no session;
-  // PostgREST would run as anon and the profiles INSERT policy would reject.
-  if (!session) {
-    return;
-  }
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  const fullName =
-    (user.user_metadata?.full_name as string | undefined) ??
-    (user.user_metadata?.name as string | undefined) ??
-    null;
-  const avatarUrl = (user.user_metadata?.avatar_url as string | undefined) ?? null;
+    // Email sign-up with confirmation enabled returns a user but no session;
+    // PostgREST would run as anon and the profiles INSERT policy would reject.
+    if (!session) {
+      logServerAuthDebug("ensureProfile", "exit", {
+        userId: user.id,
+        reason: "no_session",
+      });
+      return;
+    }
 
-  const { error } = await supabase.from("profiles").upsert(
-    {
-      id: user.id,
-      full_name: fullName,
-      avatar_url: avatarUrl,
-    },
-    // Upsert defaults to treating omitted columns as NULL; the INSERT RLS
-    // policy requires role = 'user', so request DB defaults instead.
-    { onConflict: "id", ignoreDuplicates: true, defaultToNull: false },
-  );
+    const fullName =
+      (user.user_metadata?.full_name as string | undefined) ??
+      (user.user_metadata?.name as string | undefined) ??
+      null;
+    const avatarUrl = (user.user_metadata?.avatar_url as string | undefined) ?? null;
 
-  if (error) {
-    console.error("ensureProfile: failed to provision profile row", error);
+    const { error } = await supabase.from("profiles").upsert(
+      {
+        id: user.id,
+        full_name: fullName,
+        avatar_url: avatarUrl,
+      },
+      // Upsert defaults to treating omitted columns as NULL; the INSERT RLS
+      // policy requires role = 'user', so request DB defaults instead.
+      { onConflict: "id", ignoreDuplicates: true, defaultToNull: false },
+    );
+
+    if (error) {
+      logServerAuthException("ensureProfile", error, {
+        userId: user.id,
+        phase: "upsert",
+      });
+      return;
+    }
+
+    logServerAuthDebug("ensureProfile", "exit", { userId: user.id, reason: "success" });
+  } catch (error) {
+    logServerAuthException("ensureProfile", error, { userId: user.id });
+    throw error;
   }
 }

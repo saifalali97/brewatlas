@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { buttons } from "@/lib/constants/styles";
+import { serializeError } from "@/lib/debug/server-auth-debug";
 import { useTranslations } from "@/lib/i18n/translation-context";
 
 export default function Error({
@@ -15,6 +16,20 @@ export default function Error({
   const { t } = useTranslations();
 
   useEffect(() => {
+    const payload = {
+      ...serializeError(error),
+      digest: error.digest ?? "(no digest)",
+      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+      browserFamily:
+        typeof navigator !== "undefined" && /Safari/.test(navigator.userAgent) && !/Chrome|Chromium|Edg|OPR/.test(navigator.userAgent)
+          ? "safari"
+          : typeof navigator !== "undefined" && /Chrome|CriOS/.test(navigator.userAgent)
+            ? "chrome"
+            : "other",
+      href: typeof window !== "undefined" ? window.location.href : null,
+      note: "If digest appears in Vercel [SERVER DEBUG ...] exception logs, that pinpoints the server throw",
+    };
+    console.error("[SERVER DEBUG SafariCompare error.tsx] boundary activated", payload);
     console.error(error);
   }, [error]);
 

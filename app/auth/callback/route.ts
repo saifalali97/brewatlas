@@ -2,6 +2,15 @@ import { createServerClient } from "@supabase/ssr";
 import type { EmailOtpType, Session, User } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  logSafariAccountComparison,
+  logServerAuthDebug,
+  logServerAuthException,
+  summarizeCookieOptions,
+  summarizeCookies,
+  summarizeNextRequest,
+  summarizeResponseHeaders,
+} from "@/lib/debug/server-auth-debug";
 import { getSiteUrl } from "@/lib/seo/site";
 import { ensureProfile } from "@/lib/supabase/profile";
 
@@ -27,7 +36,11 @@ function resolveSafeNext(raw: string | null): string {
 }
 
 function loginErrorRedirect(redirectBase: string, message: string, cause?: unknown) {
-  console.error("[auth/callback]", message, cause ?? "");
+  logServerAuthException("auth/callback", cause ?? new Error(message), {
+    phase: "loginErrorRedirect",
+    redirectTarget: `${redirectBase}/login?error=…`,
+    message,
+  });
   return NextResponse.redirect(
     `${redirectBase}/login?error=${encodeURIComponent(message)}`,
   );
@@ -53,10 +66,21 @@ function createSupabaseForCallback(
           cookiesToSet.forEach(({ name, value, options }) => {
             try {
               cookieStore.set(name, value, options);
-            } catch {
-              // Route handlers allow cookie writes; ignore if unavailable.
+            } catch (cookieError) {
+              logServerAuthException("auth/callback", cookieError, {
+                phase: "cookieStore.set",
+                cookieName: name,
+              });
             }
             response.cookies.set(name, value, options);
+          });
+          logServerAuthDebug("auth/callback", "cookie-write", {
+            cookiesWritten: summarizeCookieOptions(cookiesToSet),
+          });
+          logSafariAccountComparison("auth/callback", "cookie-write", {
+            cookiesWritten: summarizeCookieOptions(cookiesToSet),
+            supabaseCacheHeaders: headers,
+            note: "Post-login Set-Cookie — verify SameSite/Secure for Safari",
           });
           if (headers) {
             Object.entries(headers).forEach(([key, value]) => {
@@ -75,7 +99,15 @@ async function finalizeAuthenticatedRedirect(
   session: Session | null,
   user: User | null,
   redirectBase: string,
+  successRedirect: string,
 ) {
+  logServerAuthDebug("auth/callback", "step", {
+    step: "finalizeAuthenticatedRedirect",
+    userId: user?.id ?? null,
+    hasSession: Boolean(session?.access_token),
+    redirectTarget: successRedirect,
+  });
+
   if (!session?.access_token) {
     return loginErrorRedirect(
       redirectBase,
@@ -87,9 +119,28 @@ async function finalizeAuthenticatedRedirect(
     try {
       await ensureProfile(supabase, user);
     } catch (profileError) {
-      console.error("[auth/callback] ensureProfile threw", profileError);
+      logServerAuthException("auth/callback", profileError, {
+        phase: "ensureProfile",
+        userId: user.id,
+        redirectTarget: successRedirect,
+      });
     }
   }
+
+  logServerAuthDebug("auth/callback", "redirect", {
+    target: successRedirect,
+    userId: user?.id ?? null,
+    responseCookies: summarizeCookies(response.cookies.getAll()),
+    responseHeaders: summarizeResponseHeaders(response),
+  });
+  logSafariAccountComparison("auth/callback", "redirect", {
+    target: successRedirect,
+    userId: user?.id ?? null,
+    responseCookies: summarizeCookieOptions(
+      response.cookies.getAll().map(({ name, value }) => ({ name, value, options: {} })),
+    ),
+    responseHeaders: summarizeResponseHeaders(response),
+  });
 
   return response;
 }
@@ -97,6 +148,16 @@ async function finalizeAuthenticatedRedirect(
 export async function GET(request: NextRequest) {
   const redirectBase = resolveRedirectBase(request);
   const safeNext = resolveSafeNext(request.nextUrl.searchParams.get("next"));
+  const successRedirect = `${redirectBase}${safeNext}`;
+
+  logServerAuthDebug("auth/callback", "entry", {
+    pathname: request.nextUrl.pathname,
+    safeNext,
+    cookiesReceived: summarizeCookies(request.cookies.getAll()),
+    hasTokenHash: Boolean(request.nextUrl.searchParams.get("token_hash")),
+    hasCode: Boolean(request.nextUrl.searchParams.get("code")),
+  });
+  logSafariAccountComparison("auth/callback", "entry", summarizeNextRequest(request));
 
   const authError = request.nextUrl.searchParams.get("error");
   const authErrorDescription = request.nextUrl.searchParams.get("error_description");
@@ -116,7 +177,6 @@ export async function GET(request: NextRequest) {
     return loginErrorRedirect(redirectBase, "Missing or invalid confirmation code.");
   }
 
-  const successRedirect = `${redirectBase}${safeNext}`;
   const response = NextResponse.redirect(successRedirect);
   const cookieStore = await cookies();
 
@@ -145,12 +205,18 @@ export async function GET(request: NextRequest) {
         return loginErrorRedirect(redirectBase, error.message, error);
       }
 
+      logServerAuthDebug("auth/callback", "step", {
+        step: "verifyOtp success",
+        userId: data.user?.id ?? null,
+      });
+
       return finalizeAuthenticatedRedirect(
         supabase,
         response,
         data.session,
         data.user,
         redirectBase,
+        successRedirect,
       );
     }
 
@@ -175,12 +241,18 @@ export async function GET(request: NextRequest) {
         return loginErrorRedirect(redirectBase, error.message, error);
       }
 
+      logServerAuthDebug("auth/callback", "step", {
+        step: "exchangeCodeForSession success",
+        userId: data.user?.id ?? null,
+      });
+
       return finalizeAuthenticatedRedirect(
         supabase,
         response,
         data.session,
         data.user,
         redirectBase,
+        successRedirect,
       );
     }
 
