@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { isStripeBillingEnabled } from "@/lib/billing/billing-adapter";
 import { DEFAULT_PLAN_PERMISSIONS, TRIAL_DURATION_DAYS, TRIAL_PLAN, isPlanAtLeast } from "@/lib/membership/plans";
+import { createAdminClient, hasAdminClient } from "@/lib/supabase/admin";
 import { KNOWN_FEATURE_KEYS, PLAN_RANK } from "@/types/membership";
 import type {
   BillingProvider,
@@ -35,6 +37,14 @@ const SUBSCRIPTION_FIELDS =
 const PLAN_PERMISSION_FIELDS = "id, plan, feature_key, is_enabled, usage_limit";
 const TRIAL_USAGE_FIELDS = "id, user_id, plan, started_at, ends_at, status";
 const FEATURE_ACCESS_FIELDS = "id, user_id, feature_key, is_enabled, usage_count, usage_limit, granted_reason, expires_at";
+
+/** Service-role client for membership writes after RLS hardening (bypasses user self-update policies). */
+function getMembershipWriteClient(): SupabaseClient {
+  if (!hasAdminClient()) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for membership writes.");
+  }
+  return createAdminClient();
+}
 
 function mapSubscription(row: DbSubscriptionRow): Subscription {
   return {
@@ -106,7 +116,8 @@ export async function getOrCreateSubscription(supabase: SupabaseClient, userId: 
   }
   if (existing) return mapSubscription(existing as DbSubscriptionRow);
 
-  const { data: created, error: insertError } = await supabase
+  const writeClient = getMembershipWriteClient();
+  const { data: created, error: insertError } = await writeClient
     .from("subscriptions")
     .insert({ user_id: userId })
     .select(SUBSCRIPTION_FIELDS)
@@ -193,8 +204,9 @@ type RecordHistoryInput = {
   metadata?: Record<string, unknown>;
 };
 
-async function recordSubscriptionHistory(supabase: SupabaseClient, input: RecordHistoryInput): Promise<void> {
-  const { error } = await supabase.from("subscription_history").insert({
+async function recordSubscriptionHistory(_supabase: SupabaseClient, input: RecordHistoryInput): Promise<void> {
+  const writeClient = getMembershipWriteClient();
+  const { error } = await writeClient.from("subscription_history").insert({
     user_id: input.userId,
     subscription_id: input.subscriptionId,
     event_type: input.eventType,
@@ -225,16 +237,17 @@ function daysRemaining(endsAt: string | null): number {
 export async function refreshUserMembership(supabase: SupabaseClient, userId: string): Promise<Subscription> {
   const subscription = await getOrCreateSubscription(supabase, userId);
   const now = Date.now();
+  const writeClient = getMembershipWriteClient();
 
   if (subscription.status === "trialing" && subscription.trialEndsAt && new Date(subscription.trialEndsAt).getTime() <= now) {
-    const { data: updated, error } = await supabase
+    const { data: updated, error } = await writeClient
       .from("subscriptions")
       .update({ plan: "free", status: "active", cancel_at_period_end: false })
       .eq("id", subscription.id)
       .select(SUBSCRIPTION_FIELDS)
       .single();
 
-    await supabase
+    await writeClient
       .from("trial_usage")
       .update({ status: "expired" })
       .eq("user_id", userId)
@@ -259,7 +272,7 @@ export async function refreshUserMembership(supabase: SupabaseClient, userId: st
     new Date(subscription.currentPeriodEnd).getTime() <= now &&
     subscription.plan !== "free"
   ) {
-    const { data: updated, error } = await supabase
+    const { data: updated, error } = await writeClient
       .from("subscriptions")
       .update({ plan: "free", status: "active", cancel_at_period_end: false })
       .eq("id", subscription.id)
@@ -357,6 +370,10 @@ export type StartTrialResult = { subscription: Subscription } | { error: string 
 
 /** Starts the 7-day Premium trial (requirement 2). Enforces trial eligibility and "prevent duplicate trials" both in application logic and via the `trial_usage` table's `unique (user_id, plan)` constraint. */
 export async function startUserTrial(supabase: SupabaseClient, userId: string): Promise<StartTrialResult> {
+  if (isStripeBillingEnabled()) {
+    return { error: "Start your free trial from the Premium checkout page." };
+  }
+
   const subscription = await refreshUserMembership(supabase, userId);
 
   if (isPlanAtLeast(subscription.plan, TRIAL_PLAN)) {
@@ -370,8 +387,9 @@ export async function startUserTrial(supabase: SupabaseClient, userId: string): 
 
   const startedAt = new Date();
   const endsAt = new Date(startedAt.getTime() + TRIAL_DURATION_DAYS * 24 * 60 * 60 * 1000);
+  const writeClient = getMembershipWriteClient();
 
-  const { error: trialInsertError } = await supabase.from("trial_usage").insert({
+  const { error: trialInsertError } = await writeClient.from("trial_usage").insert({
     user_id: userId,
     plan: TRIAL_PLAN,
     started_at: startedAt.toISOString(),
@@ -385,7 +403,7 @@ export async function startUserTrial(supabase: SupabaseClient, userId: string): 
     return { error: "Failed to start the trial." };
   }
 
-  const { data: updated, error: updateError } = await supabase
+  const { data: updated, error: updateError } = await writeClient
     .from("subscriptions")
     .update({
       plan: TRIAL_PLAN,
@@ -422,12 +440,17 @@ export async function changeUserPlan(
   plan: MembershipPlan,
   billingProvider: BillingProvider = "manual",
 ): Promise<ChangePlanResult> {
+  if (isStripeBillingEnabled() && isPlanAtLeast(plan, "premium")) {
+    return { error: "Premium plans must be activated through Stripe checkout." };
+  }
+
   const subscription = await refreshUserMembership(supabase, userId);
   const wasTrialing = subscription.status === "trialing";
   const periodDays = 30;
   const now = new Date();
+  const writeClient = getMembershipWriteClient();
 
-  const { data: updated, error } = await supabase
+  const { data: updated, error } = await writeClient
     .from("subscriptions")
     .update({
       plan,
@@ -464,7 +487,7 @@ export async function changeUserPlan(
   });
 
   if (wasTrialing) {
-    await supabase.from("trial_usage").update({ status: "converted" }).eq("user_id", userId).eq("plan", TRIAL_PLAN);
+    await writeClient.from("trial_usage").update({ status: "converted" }).eq("user_id", userId).eq("plan", TRIAL_PLAN);
   }
 
   return { subscription: mapSubscription(updated as DbSubscriptionRow) };
@@ -489,8 +512,9 @@ export async function cancelUserSubscription(supabase: SupabaseClient, userId: s
 
   const now = new Date().toISOString();
   const isTrial = subscription.status === "trialing";
+  const writeClient = getMembershipWriteClient();
 
-  const { data: updated, error } = await supabase
+  const { data: updated, error } = await writeClient
     .from("subscriptions")
     .update(
       isTrial
@@ -507,7 +531,7 @@ export async function cancelUserSubscription(supabase: SupabaseClient, userId: s
   }
 
   if (isTrial) {
-    await supabase.from("trial_usage").update({ status: "canceled" }).eq("user_id", userId).eq("plan", TRIAL_PLAN);
+    await writeClient.from("trial_usage").update({ status: "canceled" }).eq("user_id", userId).eq("plan", TRIAL_PLAN);
   }
 
   await recordSubscriptionHistory(supabase, {

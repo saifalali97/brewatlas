@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createStripeCheckoutForUser, StripeApiError } from "@/lib/billing/stripe-sessions";
+import { verifySameOrigin } from "@/lib/security/csrf";
 import type { BillingInterval } from "@/types/billing";
 
 export const runtime = "nodejs";
@@ -9,6 +10,10 @@ function parseInterval(value: unknown): BillingInterval {
 }
 
 export async function POST(request: Request) {
+  if (!verifySameOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
+  }
+
   try {
     const body = await request.json().catch(() => ({}));
     const interval = parseInterval(body?.interval);
