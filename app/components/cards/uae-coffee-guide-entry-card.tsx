@@ -43,23 +43,23 @@ export async function UaeCoffeeGuideEntryCard({ entry }: UaeCoffeeGuideEntryCard
           <Icon className="h-4 w-4 text-uae-warm-gold" aria-hidden />
         </span>
 
-        <h3 className="mt-4 text-[1.1rem] font-semibold leading-[1.2] tracking-tight text-stone-50">
+        <h3 className="mt-4 text-[1.1rem] font-semibold leading-[1.2] tracking-tight text-ac-espresso">
           {c[entry.titleKey]}
         </h3>
 
         {entry.topic ? (
-          <p className="mt-2.5 line-clamp-3 flex-1 text-[0.8125rem] leading-[1.65] text-stone-300/90">
+          <p className="mt-2.5 line-clamp-3 flex-1 text-[0.8125rem] leading-[1.65] text-ac-espresso">
             {entry.topic.excerpt}
           </p>
         ) : (
-          <p className="mt-2.5 flex-1 text-[0.8125rem] leading-[1.65] text-stone-500">{c.comingSoon}</p>
+          <p className="mt-2.5 flex-1 text-[0.8125rem] leading-[1.65] text-ac-espresso">{c.comingSoon}</p>
         )}
 
-        <div className="mt-auto border-t border-white/[0.06] pt-4">
+        <div className="mt-auto border-t border-ba-espresso/06 pt-4">
           {entry.topic ? (
             <GhostCtaLink href={`/culture/${entry.sectionSlug}/${entry.topicSlug}`}>{c.readTheGuide}</GhostCtaLink>
           ) : (
-            <span className="text-[0.75rem] text-stone-500">{c.notYetAvailable}</span>
+            <span className="text-[0.75rem] text-ac-espresso">{c.notYetAvailable}</span>
           )}
         </div>
       </div>

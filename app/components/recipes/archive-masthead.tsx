@@ -42,7 +42,7 @@ export function ArchiveMasthead({
           {searchLabel}
         </label>
         <div className="flex items-center gap-3 border-b border-ac-espresso/[0.12] pb-3 transition-colors duration-300 focus-within:border-ac-copper/50">
-          <Search className="h-4 w-4 shrink-0 text-ac-walnut/55" aria-hidden />
+          <Search className="h-4 w-4 shrink-0 text-ac-espresso" aria-hidden />
           <input
             id="archive-recipe-search"
             type="search"
@@ -50,7 +50,7 @@ export function ArchiveMasthead({
             onChange={(event) => onSearchChange(event.target.value)}
             placeholder={searchPlaceholder}
             className={joinClasses(
-              "w-full bg-transparent py-1 text-sm text-ac-espresso outline-none placeholder:text-ac-walnut/45",
+              "w-full bg-transparent py-1 text-sm text-ac-espresso outline-none placeholder:text-ac-espresso",
               acFocus.ringInset,
             )}
           />

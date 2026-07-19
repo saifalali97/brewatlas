@@ -6,7 +6,7 @@ const variantClasses = {
   secondary: buttons.secondary,
   ghost: `inline-flex h-10 items-center justify-center gap-2 ${dsRadius.full} border border-ba-espresso/15 bg-ba-pearl px-5 text-sm font-medium text-ba-espresso ${dsMotion.transition} hover:border-ba-bronze/35 hover:bg-ba-sand/50 active:scale-[0.98] ${dsFocus.ring}`,
   gold: `inline-flex h-10 items-center justify-center ${dsRadius.full} bg-ba-gold px-5 text-sm font-medium text-ba-espresso ${dsMotion.transition} hover:bg-ba-gold-muted hover:shadow-[0_0_36px_rgba(184,149,107,0.32)] active:scale-[0.97] ${dsFocus.ring}`,
-  text: `inline-flex items-center text-sm font-medium text-ba-coffee/70 ${dsMotion.transition} hover:text-ba-espresso ${dsFocus.ring}`,
+  text: `inline-flex items-center text-sm font-medium text-ac-espresso ${dsMotion.transition} hover:text-ba-bronze ${dsFocus.ring}`,
 } as const;
 
 const sizeClasses = {

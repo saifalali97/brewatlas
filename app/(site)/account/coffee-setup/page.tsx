@@ -68,9 +68,9 @@ export default async function CoffeeSetupPage() {
 <PageHeader headingId="coffee-setup-page-heading" eyebrow={c.eyebrow} title={c.title} description={c.description} centered={false} />
 
       <div className="max-w-2xl space-y-8">
-        <div className="rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
-          <h2 className="text-lg font-semibold text-stone-50">{c.equipmentSectionTitle}</h2>
-          <p className="mt-1.5 text-sm text-stone-500">{c.equipmentSectionDescription}</p>
+        <div className="rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
+          <h2 className="text-lg font-semibold text-ac-espresso">{c.equipmentSectionTitle}</h2>
+          <p className="mt-1.5 text-sm text-ac-espresso">{c.equipmentSectionDescription}</p>
 
           <div className="mt-7">
             <CoffeeSetupForm
@@ -95,9 +95,9 @@ export default async function CoffeeSetupPage() {
           </div>
         </div>
 
-        <div className="rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
-          <h2 className="text-lg font-semibold text-stone-50">{c.preferencesSectionTitle}</h2>
-          <p className="mt-1.5 text-sm text-stone-500">{c.preferencesSectionDescription}</p>
+        <div className="rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
+          <h2 className="text-lg font-semibold text-ac-espresso">{c.preferencesSectionTitle}</h2>
+          <p className="mt-1.5 text-sm text-ac-espresso">{c.preferencesSectionDescription}</p>
 
           <div className="mt-7">
             <DefaultBrewMethodForm

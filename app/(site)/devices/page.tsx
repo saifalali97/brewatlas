@@ -60,7 +60,7 @@ export default async function DevicesPage() {
           <p className={acTypography.body}>{p.xbloomCalloutDescription}</p>
           <Link
             href="/devices/xbloom"
-            className={`${acTypography.nav} mt-8 inline-flex items-center gap-2 text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+            className={`${acTypography.nav} mt-8 inline-flex items-center gap-2 text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
           >
             {p.exploreXbloom} →
           </Link>

@@ -183,11 +183,11 @@ export function RecipesExplorer({
                 meta={
                   <div className="space-y-4">
                     <p className={acTypography.body}>{coverRecipe.notes}</p>
-                    <div className="flex flex-wrap items-center gap-6 text-sm text-ac-walnut/70">
+                    <div className="flex flex-wrap items-center gap-6 text-sm text-ac-espresso">
                       <DifficultyIndicator
                         level={coverRecipe.difficulty}
                         label={labels.difficultyLabel}
-                        labelClassName="text-sm text-ac-walnut/65"
+                        labelClassName="text-sm text-ac-espresso"
                       />
                       <span>
                         {t("homeFeaturedRecipes.ratioLabel")}{" "}

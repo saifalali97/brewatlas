@@ -40,7 +40,7 @@ export function FavoriteButton({
         className={`flex ${dimension} items-center justify-center rounded-full border backdrop-blur-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95 ${
           isFavorited
             ? "border-amber-500/50 bg-amber-950/70 text-amber-400"
-            : "border-white/[0.14] bg-[#0a0705]/55 text-stone-300 hover:border-amber-500/40 hover:text-amber-300"
+            : "border-white/[0.14] bg-[#0a0705]/55 text-stone-200 hover:border-amber-500/40 hover:text-amber-100"
         }`}
       >
         <Heart className={iconSize} fill={isFavorited ? "currentColor" : "none"} aria-hidden />

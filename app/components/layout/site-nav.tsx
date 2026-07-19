@@ -101,10 +101,12 @@ export function SiteNav({
   const premiumActive = isActivePath(pathname, "/premium");
   const adminActive = isActivePath(pathname, "/admin");
 
-  const linkBase = onHero ? "text-ba-sand-deep/85 hover:text-ba-pearl" : "text-ba-coffee/70 hover:text-ba-espresso";
-  const linkActive = onHero ? "text-ba-pearl" : "text-ba-espresso";
-  const premiumLink = onHero ? "text-ba-gold hover:text-ba-pearl" : "text-ba-bronze hover:text-ba-espresso";
-  const wordmark = onHero ? "text-ba-pearl" : "text-ba-espresso";
+  const adminLinkBase = onHero ? "text-ba-sand-deep/85 hover:text-ba-pearl" : "text-ac-espresso hover:text-ba-bronze";
+  const adminLinkActive = onHero ? "text-ba-pearl" : "text-ac-espresso";
+  const linkBase = "text-ac-espresso hover:text-ba-bronze";
+  const linkActive = "text-ac-espresso";
+  const premiumLink = "text-ac-espresso hover:text-ba-bronze";
+  const wordmark = "text-ba-espresso";
 
   return (
     <>
@@ -153,7 +155,6 @@ export function SiteNav({
                 label={nav.discover}
                 menuAriaLabel={nav.discoverMenuAriaLabel}
                 links={discoverLinks}
-                onDark={onHero}
               />
 
               <Link
@@ -185,7 +186,7 @@ export function SiteNav({
                 className={joinClasses(
                   "group relative px-0.5 py-1.5 text-sm font-medium",
                   dsMotion.transition,
-                  premiumActive ? (onHero ? "text-ba-gold" : "text-ba-bronze") : premiumLink,
+                  premiumActive ? linkActive : premiumLink,
                   onHero ? dsFocus.ringDark : dsFocus.ring,
                 )}
               >
@@ -199,7 +200,7 @@ export function SiteNav({
                   className={joinClasses(
                     "group relative px-0.5 py-1.5 text-sm font-medium",
                     dsMotion.transition,
-                    adminActive ? linkActive : linkBase,
+                    adminActive ? adminLinkActive : adminLinkBase,
                     onHero ? dsFocus.ringDark : dsFocus.ring,
                   )}
                 >
@@ -216,11 +217,10 @@ export function SiteNav({
                 currentLocale={locale}
                 switchLanguageAria={nav.switchLanguageAria}
                 languageAriaLabel={nav.languageAriaLabel}
-                onDark={onHero}
               />
               <TextLink
                 href={isAuthenticated ? "/account" : "/login"}
-                variant={isAuthenticated ? (onHero ? "navActiveOnDark" : "navActive") : onHero ? "navOnDark" : "nav"}
+                variant={isAuthenticated ? "navActive" : "nav"}
                 className="min-h-11 items-center px-2"
               >
                 {isAuthenticated ? nav.account : nav.login}
@@ -241,7 +241,7 @@ export function SiteNav({
                 "active:scale-[0.98]",
                 onHero
                   ? "border-white/[0.15] bg-white/[0.06] text-ba-pearl hover:border-ba-gold/35"
-                  : "border-ba-espresso/10 bg-ba-pearl text-ba-coffee hover:border-ba-bronze/30",
+                  : "border-ba-espresso/10 bg-ba-pearl text-ac-espresso hover:border-ba-bronze/30",
                 onHero ? dsFocus.ringDark : dsFocus.ring,
               )}
             >

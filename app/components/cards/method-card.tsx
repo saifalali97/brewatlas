@@ -38,8 +38,8 @@ function TasteBar({ value, label }: { value: number; label: string }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[9px] font-medium uppercase tracking-[0.16em] text-ba-coffee/55">{label}</span>
-        <span className="text-[9px] tabular-nums text-ba-coffee/45">{value}/5</span>
+        <span className="text-[9px] font-medium uppercase tracking-[0.16em] text-ac-espresso">{label}</span>
+        <span className="text-[9px] tabular-nums text-ac-espresso">{value}/5</span>
       </div>
       <div className="flex gap-1.5">
         {[1, 2, 3, 4, 5].map((segment) => (
@@ -88,17 +88,17 @@ export function MethodCard({ method, ctaHref = "#methods", labels }: MethodCardP
       </div>
 
       <div className="relative flex w-full flex-col self-start p-5 lg:min-w-0 lg:flex-1 lg:p-6">
-        <h3 className="font-display text-[1.3rem] leading-[1.15] tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-coffee sm:text-[1.35rem] lg:text-[1.4rem]">
+        <h3 className="font-display text-[1.3rem] leading-[1.15] tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-bronze sm:text-[1.35rem] lg:text-[1.4rem]">
           {method.name}
         </h3>
-        <p className="mt-2 text-[0.8125rem] leading-[1.65] text-ba-coffee/75">{method.description}</p>
+        <p className="mt-2 text-[0.8125rem] leading-[1.65] text-ac-espresso">{method.description}</p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <MetaTile icon={Clock} label={l.brewTime} value={method.brewTime} centered />
           <div className={`flex items-center gap-2.5 ${dsRadius.md} border border-ba-espresso/[0.06] bg-ba-sand/30 px-3 py-2.5`}>
-            <Gauge className="h-3.5 w-3.5 shrink-0 text-ba-bronze/85" aria-hidden />
+            <Gauge className="h-3.5 w-3.5 shrink-0 text-ac-espresso" aria-hidden />
             <div>
-              <p className="text-[9px] font-medium uppercase tracking-[0.14em] text-ba-coffee/55">{l.difficulty}</p>
+              <p className="text-[9px] font-medium uppercase tracking-[0.14em] text-ac-espresso">{l.difficulty}</p>
               <div className="mt-0.5">
                 <DifficultyIndicator level={method.difficulty} label={l.difficultyLabel || undefined} />
               </div>
@@ -107,8 +107,8 @@ export function MethodCard({ method, ctaHref = "#methods", labels }: MethodCardP
         </div>
 
         <div className={`mt-4 space-y-2.5 ${dsRadius.md} border border-ba-espresso/[0.06] bg-ba-sand/20 p-3`}>
-          <div className="flex items-center gap-1.5 text-[9px] font-medium uppercase tracking-[0.14em] text-ba-coffee/55">
-            <Droplets className="h-3 w-3 text-ba-bronze/75" aria-hidden />
+          <div className="flex items-center gap-1.5 text-[9px] font-medium uppercase tracking-[0.14em] text-ac-espresso">
+            <Droplets className="h-3 w-3 text-ac-espresso" aria-hidden />
             {l.cupProfile}
           </div>
           <TasteBar value={method.body} label={l.body} />
@@ -116,8 +116,8 @@ export function MethodCard({ method, ctaHref = "#methods", labels }: MethodCardP
           <TasteBar value={method.sweetness} label={l.sweetness} />
         </div>
 
-        <div className="mt-3 flex items-center gap-1.5 text-[10px] text-ba-coffee/55">
-          <Flame className="h-3 w-3 text-ba-bronze/75" aria-hidden />
+        <div className="mt-3 flex items-center gap-1.5 text-[10px] text-ac-espresso">
+          <Flame className="h-3 w-3 text-ac-espresso" aria-hidden />
           <span>
             {l.bestWith}{" "}
             <strong className="font-medium text-ba-espresso">{method.suitableRoast}</strong>

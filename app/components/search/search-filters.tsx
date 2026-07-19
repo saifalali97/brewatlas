@@ -61,7 +61,7 @@ function FiltersForm({
           <button
             type="button"
             onClick={onClear}
-            className="text-xs font-medium text-ba-bronze transition-colors hover:text-ba-bronze"
+            className="text-xs font-medium text-ac-espresso transition-colors hover:text-ba-bronze"
           >
             {t("searchPage.clearFilters")}
           </button>
@@ -363,7 +363,7 @@ export function SearchFiltersPanel({
   if (variant === "sidebar") {
     return (
       <aside className="hidden lg:block">
-        <div className="sticky top-28 rounded-[1.25rem] border border-ba-espresso/[0.1] bg-white/[0.03] p-5 backdrop-blur-xl">
+        <div className="sticky top-28 rounded-[1.25rem] border border-ba-espresso/10 bg-ba-pearl p-5 shadow-[0_8px_24px_rgba(0,0,0,0.04)]">
           <FiltersForm filters={filters} options={options} onChange={onChange} onClear={onClear} />
         </div>
       </aside>
@@ -408,7 +408,7 @@ export function SearchFiltersPanel({
               <button
                 type="button"
                 onClick={() => onOpenChange?.(false)}
-                className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-ba-espresso/[0.12] text-ba-coffee/70 transition-colors hover:text-ba-espresso"
+                className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-ba-espresso/[0.12] text-ac-espresso transition-colors hover:text-ba-espresso"
                 aria-label={t("searchPage.closeFilters")}
               >
                 <X className="h-4 w-4" aria-hidden />

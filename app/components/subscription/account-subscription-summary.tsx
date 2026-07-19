@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SubscriptionStatusBadge } from "@/app/components/subscription/subscription-status-badge";
-import { buttons } from "@/lib/constants/styles";
+import { buttons, surfaces } from "@/lib/constants/styles";
 import { isStripeBillingEnabled } from "@/lib/billing/billing-adapter";
 import { createBillingPortalAction } from "@/lib/supabase/membership-actions";
 import { interpolate } from "@/lib/i18n/format";
@@ -30,42 +30,42 @@ export function AccountSubscriptionSummary({ membership, dictionary, locale }: A
         : labels.freePlanInterval;
 
   return (
-    <div className="mt-10 rounded-[1.5rem] border border-white/[0.09] bg-white/[0.035] p-6 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:p-8">
+    <div className={`mt-10 p-6 sm:p-8 ${surfaces.lightPanel}`}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">{labels.accountSummaryEyebrow}</p>
-          <h2 className="mt-2 text-xl font-semibold tracking-tight text-stone-50">{labels.accountSummaryTitle}</h2>
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-ac-espresso">{labels.accountSummaryEyebrow}</p>
+          <h2 className="mt-2 text-xl font-semibold tracking-tight text-ac-espresso">{labels.accountSummaryTitle}</h2>
         </div>
-        <Link href="/account/subscription" className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline">
+        <Link href="/account/subscription" className="text-sm font-medium text-ac-espresso underline-offset-4 hover:underline">
           {labels.viewDetailsCta}
         </Link>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-start justify-between gap-4 border-t border-white/[0.06] pt-6">
+      <div className="mt-6 flex flex-wrap items-start justify-between gap-4 border-t border-ba-espresso/06 pt-6">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">{labels.currentPlanLabel}</p>
-          <p className="mt-1 text-lg font-semibold capitalize text-stone-100">{membership.plan}</p>
+          <p className="text-xs font-medium uppercase tracking-[0.12em] text-ac-espresso">{labels.currentPlanLabel}</p>
+          <p className="mt-1 text-lg font-semibold capitalize text-ac-espresso">{membership.plan}</p>
         </div>
         <SubscriptionStatusBadge status={membership.status} isPremium={membership.isPremium} dictionary={dictionary} />
       </div>
 
       <dl className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
-          <dt className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">{labels.billingCycleLabel}</dt>
-          <dd className="mt-1 text-sm text-stone-200">{intervalLabel}</dd>
+          <dt className="text-xs font-medium uppercase tracking-[0.12em] text-ac-espresso">{labels.billingCycleLabel}</dt>
+          <dd className="mt-1 text-sm text-ac-espresso">{intervalLabel}</dd>
         </div>
         {expiresLabel && (
           <div>
-            <dt className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">
+            <dt className="text-xs font-medium uppercase tracking-[0.12em] text-ac-espresso">
               {membership.cancelAtPeriodEnd ? labels.accessUntilLabel : labels.renewsOnLabel}
             </dt>
-            <dd className="mt-1 text-sm text-stone-200">{expiresLabel}</dd>
+            <dd className="mt-1 text-sm text-ac-espresso">{expiresLabel}</dd>
           </div>
         )}
         {membership.trial.isTrialing && (
           <div>
-            <dt className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">{labels.trialRemainingLabel}</dt>
-            <dd className="mt-1 text-sm text-stone-200">
+            <dt className="text-xs font-medium uppercase tracking-[0.12em] text-ac-espresso">{labels.trialRemainingLabel}</dt>
+            <dd className="mt-1 text-sm text-ac-espresso">
               {interpolate(labels.trialDaysRemainingTemplate, { days: membership.trial.daysRemaining })}
             </dd>
           </div>

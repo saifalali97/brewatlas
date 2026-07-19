@@ -69,7 +69,7 @@ export function RecipeReviewsPanel({
 
   return (
     <section id="reviews" aria-labelledby="recipe-reviews-heading" className="mt-14 scroll-mt-28">
-      <h2 id="recipe-reviews-heading" className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">
+      <h2 id="recipe-reviews-heading" className="text-xs font-semibold uppercase tracking-[0.14em] text-ac-espresso">
         {t("recipeReviews.sectionTitle")}
       </h2>
 
@@ -85,9 +85,9 @@ export function RecipeReviewsPanel({
 
         <div>
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h3 className="text-base font-semibold text-stone-100">{t("recipeReviews.allReviews")}</h3>
+            <h3 className="text-base font-semibold text-ac-espresso">{t("recipeReviews.allReviews")}</h3>
             <div className="flex items-center gap-2">
-              <label htmlFor="review-sort" className="text-sm text-stone-400">
+              <label htmlFor="review-sort" className="text-sm text-ac-espresso">
                 {t("recipeReviews.sortLabel")}
               </label>
               <select
@@ -109,13 +109,13 @@ export function RecipeReviewsPanel({
           {isPending ? (
             <div className="space-y-4" aria-live="polite" aria-busy="true">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="h-28 animate-pulse rounded-[1.25rem] bg-white/[0.04]" />
+                <div key={index} className="h-28 animate-pulse rounded-[1.25rem] bg-ba-espresso/06" />
               ))}
             </div>
           ) : reviewsResult.reviews.length === 0 ? (
-            <div className="rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] px-6 py-12 text-center">
-              <p className="text-sm font-medium text-stone-300">{t("recipeReviews.noReviewsTitle")}</p>
-              <p className="mt-2 text-sm text-stone-500">{t("recipeReviews.noReviewsDescription")}</p>
+            <div className="rounded-[1.25rem] border border-ba-espresso/08 bg-ba-sand/30 px-6 py-12 text-center">
+              <p className="text-sm font-medium text-ac-espresso">{t("recipeReviews.noReviewsTitle")}</p>
+              <p className="mt-2 text-sm text-ac-espresso">{t("recipeReviews.noReviewsDescription")}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -140,7 +140,7 @@ export function RecipeReviewsPanel({
               >
                 {t("recipeReviews.previousPage")}
               </button>
-              <span className="text-sm text-stone-500">
+              <span className="text-sm text-ac-espresso">
                 {t("recipeReviews.pageIndicator", { page: reviewsResult.page, total: totalPages })}
               </span>
               <button

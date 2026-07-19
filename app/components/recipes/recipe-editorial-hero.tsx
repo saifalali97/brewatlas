@@ -47,7 +47,7 @@ export function RecipeEditorialHero({
         href={backHref}
         className={joinClasses(
           acTypography.nav,
-          "mb-8 inline-flex min-h-11 items-center gap-2 text-ac-walnut/60 hover:text-ac-copper",
+          "mb-8 inline-flex min-h-11 items-center gap-2 text-ac-espresso hover:text-ba-bronze",
           acFocus.ring,
         )}
       >

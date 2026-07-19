@@ -56,14 +56,14 @@ export function NotificationPreferencesForm({ initialPreferences }: Notification
     <form action={formAction} className="space-y-8">
       <input type="hidden" name="currentPath" value="/account/notification-preferences" />
 
-      <div className="overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
-        <div className="grid grid-cols-[minmax(0,1fr)_5.5rem_5.5rem] gap-3 border-b border-white/[0.08] px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-stone-500">
+      <div className="overflow-hidden rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl">
+        <div className="grid grid-cols-[minmax(0,1fr)_5.5rem_5.5rem] gap-3 border-b border-ba-espresso/08 px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-ac-espresso">
           <span>{t("notificationPreferencesPage.categoryColumn")}</span>
           <span className="text-center">{t("notificationPreferencesPage.inAppColumn")}</span>
           <span className="text-center">{t("notificationPreferencesPage.emailColumn")}</span>
         </div>
 
-        <ul className="divide-y divide-white/[0.07]">
+        <ul className="divide-y divide-ba-espresso/[0.06]">
           {NOTIFICATION_PREFERENCE_CATEGORIES.map((category) => {
             const copy = CATEGORY_LABELS[category];
             return (
@@ -72,8 +72,8 @@ export function NotificationPreferencesForm({ initialPreferences }: Notification
                 className="grid grid-cols-[minmax(0,1fr)_5.5rem_5.5rem] items-center gap-3 px-5 py-4"
               >
                 <div>
-                  <p className="text-sm font-medium text-stone-100">{t(copy.title)}</p>
-                  <p className="mt-1 text-xs text-stone-500">{t(copy.description)}</p>
+                  <p className="text-sm font-medium text-ac-espresso">{t(copy.title)}</p>
+                  <p className="mt-1 text-xs text-ac-espresso">{t(copy.description)}</p>
                 </div>
                 <label className="flex justify-center">
                   <input
@@ -99,7 +99,7 @@ export function NotificationPreferencesForm({ initialPreferences }: Notification
         </ul>
       </div>
 
-      <p className="text-xs text-stone-500">{t("notificationPreferencesPage.emailFutureHint")}</p>
+      <p className="text-xs text-ac-espresso">{t("notificationPreferencesPage.emailFutureHint")}</p>
 
       <FormMessage error={state?.error} success={state?.success} />
       <button type="submit" disabled={pending} className={`${buttons.primary} disabled:opacity-60`}>

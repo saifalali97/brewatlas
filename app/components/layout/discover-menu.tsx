@@ -54,7 +54,7 @@ export function DiscoverMenu({ label, menuAriaLabel, links, onDark = false }: Di
       : "text-ba-sand-deep/85 hover:text-ba-pearl"
     : open
       ? "text-ba-espresso"
-      : "text-ba-coffee/70 hover:text-ba-espresso";
+      : "text-ac-espresso hover:text-ba-bronze";
 
   return (
     <div ref={containerRef} className="relative">
@@ -106,7 +106,7 @@ export function DiscoverMenu({ label, menuAriaLabel, links, onDark = false }: Di
               role="menuitem"
               onClick={() => setOpen(false)}
               className={joinClasses(
-                "flex min-h-10 items-center rounded-lg px-3 py-2 text-sm text-ba-coffee",
+                "flex min-h-10 items-center rounded-lg px-3 py-2 text-sm text-ac-espresso",
                 dsMotion.transition,
                 "hover:bg-ba-sand/50 hover:text-ba-espresso",
                 dsFocus.ring,

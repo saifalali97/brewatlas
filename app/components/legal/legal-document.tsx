@@ -1,4 +1,5 @@
 import { FileText } from "lucide-react";
+import { acTypography } from "@/lib/design-system/atlas-canon";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 
@@ -38,8 +39,8 @@ export function LegalDocument({
     <div className="mx-auto max-w-3xl">
       <PageHeader eyebrow={eyebrow} title={title} description={description} headingId={headingId} />
 
-      <div className="mb-12 inline-flex items-center gap-2 rounded-full border border-white/[0.09] bg-white/[0.035] px-4 py-2 text-[0.8125rem] text-stone-400">
-        <FileText className="h-3.5 w-3.5 text-amber-500/80" aria-hidden />
+      <div className={`mb-12 inline-flex items-center gap-2 rounded-full border border-ac-espresso/10 bg-ac-sand/35 px-4 py-2 ${acTypography.caption}`}>
+        <FileText className="h-3.5 w-3.5 text-ac-espresso" aria-hidden />
         <span>
           {lastUpdatedLabel}
           {": "}
@@ -50,19 +51,19 @@ export function LegalDocument({
       <div className="space-y-10">
         {sections.map((section) => (
           <section key={section.heading}>
-            <h2 className="text-xl font-semibold leading-tight tracking-[-0.01em] text-stone-50 sm:text-2xl">
+            <h2 className={`${acTypography.h3} leading-tight tracking-[-0.01em] sm:text-2xl`}>
               {section.heading}
             </h2>
-            <p className="mt-3 whitespace-pre-line text-base leading-[1.85] text-stone-400">
+            <p className={`mt-3 whitespace-pre-line ${acTypography.body} leading-[1.85]`}>
               {section.body}
             </p>
           </section>
         ))}
       </div>
 
-      <div className="mt-14 rounded-2xl border border-white/[0.09] bg-white/[0.035] px-5 py-6 text-sm leading-[1.8] text-stone-400 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl">
+      <div className={`mt-14 rounded-2xl border border-ac-espresso/10 bg-ac-sand/30 px-5 py-6 ${acTypography.body} leading-[1.8] shadow-[0_8px_24px_rgba(0,0,0,0.04)]`}>
         {contactPrefix}{" "}
-        <RippleLink href="/contact" className="font-medium text-amber-400/90 underline-offset-4 hover:underline">
+        <RippleLink href="/contact" className="font-medium text-ac-espresso underline-offset-4 hover:underline">
           {contactLinkLabel}
         </RippleLink>{" "}
         {contactSuffix}

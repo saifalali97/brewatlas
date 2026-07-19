@@ -76,7 +76,7 @@ export function AnimatedStat({ value, label, variant = "light" }: AnimatedStatPr
         <span className="motion-reduce:hidden">{display}</span>
         <span className="hidden motion-reduce:inline">{value}</span>
       </p>
-      <p className={`mt-2.5 text-sm leading-relaxed ${isDark ? "text-ba-sand-deep/65" : "text-ba-coffee/55"}`}>
+      <p className={`mt-2.5 text-sm leading-relaxed ${isDark ? "text-ba-sand-deep/65" : "text-ac-espresso"}`}>
         {label}
       </p>
     </div>

@@ -59,7 +59,7 @@ export default async function CultureTopicPage({ params }: CultureTopicPageProps
     <SectionFrame id="culture-topic" ariaLabelledBy="culture-topic-heading" padding="compact">
       <Link
         href={`/culture/${sectionSlug}`}
-        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90 rtl:flex-row-reverse"
+        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-ac-espresso transition-colors duration-300 hover:text-ba-bronze rtl:flex-row-reverse"
       >
         <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
         {translate(dictionary, "culturePage.backToSectionTemplate", { name: topic.section.name })}
@@ -86,14 +86,14 @@ export default async function CultureTopicPage({ params }: CultureTopicPageProps
         </div>
 
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-amber-600/70">{topic.section.name}</p>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-ac-espresso">{topic.section.name}</p>
           <h1
             id="culture-topic-heading"
-            className="mt-3 text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-stone-50 sm:text-4xl"
+            className="mt-3 text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-ac-espresso sm:text-4xl"
           >
             {topic.title}
           </h1>
-          <p className="mt-5 text-lg leading-[1.75] text-stone-400">{topic.excerpt}</p>
+          <p className="mt-5 text-lg leading-[1.75] text-ac-espresso">{topic.excerpt}</p>
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
             <RippleLink href={`/culture/${sectionSlug}`} className={`${buttons.secondary} w-full sm:w-auto`}>
@@ -107,7 +107,7 @@ export default async function CultureTopicPage({ params }: CultureTopicPageProps
       </div>
 
       <div className="mt-14 max-w-3xl">
-        <p className="whitespace-pre-line text-base leading-[1.85] text-stone-300">{topic.body}</p>
+        <p className="whitespace-pre-line text-base leading-[1.85] text-ac-espresso">{topic.body}</p>
       </div>
     </SectionFrame>
   );

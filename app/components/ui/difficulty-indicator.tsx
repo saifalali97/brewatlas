@@ -17,7 +17,7 @@ type DifficultyIndicatorProps = {
 export function DifficultyIndicator({
   level,
   label,
-  labelClassName = "text-[10px] text-stone-500",
+  labelClassName = "text-[10px] text-ac-espresso",
   className = "flex items-center gap-1.5",
 }: DifficultyIndicatorProps) {
   const filled = difficultyLevel[level];

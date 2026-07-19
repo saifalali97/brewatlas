@@ -103,7 +103,7 @@ export function OriginsAtlasExplorer({
                     className={joinClasses(
                       acTypography.nav,
                       "flex items-baseline gap-3 py-2 transition-colors duration-300",
-                      isActive ? "text-ac-espresso" : "text-ac-walnut/50 hover:text-ac-espresso",
+                      isActive ? "text-ac-espresso" : "text-ac-espresso hover:text-ac-espresso",
                       acFocus.ring,
                     )}
                     aria-current={isActive ? "location" : undefined}
@@ -172,7 +172,7 @@ export function OriginsAtlasExplorer({
       <div className="mt-16 lg:ml-[calc(25%+2.5rem)]">
         <Link
           href="/recipes"
-          className={joinClasses(acTypography.nav, "text-ac-copper hover:text-ac-espresso", acFocus.ring)}
+          className={joinClasses(acTypography.nav, "text-ac-espresso hover:text-ba-bronze", acFocus.ring)}
         >
           Explore recipes from these origins →
         </Link>

@@ -34,8 +34,8 @@ export function FollowButton({
         type="submit"
         className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
           isFollowing
-            ? "border-white/[0.14] bg-white/[0.04] text-stone-300 hover:border-red-500/30 hover:text-red-300"
-            : "border-amber-600/40 bg-amber-950/40 text-amber-100 hover:border-amber-500/55"
+            ? "border-ba-espresso/15 bg-ba-sand/40 text-ac-espresso hover:border-red-500/30 hover:text-red-700"
+            : "border-ba-bronze/35 bg-ba-gold/12 text-ac-espresso hover:border-ba-bronze/50 hover:bg-ba-gold/18"
         }`}
       >
         {isFollowing ? t("community.unfollow") : t("community.follow")}

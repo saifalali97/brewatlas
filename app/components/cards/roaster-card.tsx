@@ -68,16 +68,16 @@ export function RoasterCard({ roaster, ctaHref = "#roasters", labels }: RoasterC
       </div>
 
       <div className="relative flex flex-1 flex-col p-5 lg:p-6">
-        <h3 className="font-display text-[1.2rem] leading-[1.15] tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-coffee lg:text-[1.25rem]">
+        <h3 className="font-display text-[1.2rem] leading-[1.15] tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-bronze lg:text-[1.25rem]">
           {roaster.name}
         </h3>
 
-        <div className="mt-2 flex items-center gap-1.5 text-[10px] text-ba-coffee/55">
-          <Sparkles className="h-3 w-3 text-ba-bronze/80" aria-hidden />
-          <span className="text-ba-bronze/90">{roaster.specialty}</span>
+        <div className="mt-2 flex items-center gap-1.5 text-[10px] text-ac-espresso">
+          <Sparkles className="h-3 w-3 text-ac-espresso" aria-hidden />
+          <span className="text-ac-espresso">{roaster.specialty}</span>
         </div>
 
-        <p className="mt-3 line-clamp-2 text-[0.8125rem] leading-[1.65] text-ba-coffee/75">{roaster.description}</p>
+        <p className="mt-3 line-clamp-2 text-[0.8125rem] leading-[1.65] text-ac-espresso">{roaster.description}</p>
 
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <MetaTile icon={MapPin} label={l.country} value={roaster.country} compact />

@@ -49,9 +49,9 @@ export default async function DashboardCollectionsPage() {
 <PageHeader headingId="dashboard-collections-page-heading" eyebrow={c.eyebrow} title={c.title} description={c.description} centered={false} />
 
       <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-        <div className="rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
-          <h2 className="text-lg font-semibold text-stone-50">{c.createSectionTitle}</h2>
-          <p className="mt-1.5 text-sm text-stone-500">{c.createSectionDescription}</p>
+        <div className="rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
+          <h2 className="text-lg font-semibold text-ac-espresso">{c.createSectionTitle}</h2>
+          <p className="mt-1.5 text-sm text-ac-espresso">{c.createSectionDescription}</p>
           <div className="mt-7">
             <CreateCollectionForm canCreate={canCreate} />
           </div>
@@ -59,29 +59,29 @@ export default async function DashboardCollectionsPage() {
 
         <div>
           {collections.length === 0 ? (
-            <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
-              <p className="text-lg font-medium text-stone-100">{c.noCollectionsTitle}</p>
-              <p className="mt-2 text-sm text-stone-500">{c.noCollectionsDescription}</p>
+            <div className="rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl px-8 py-16 text-center">
+              <p className="text-lg font-medium text-ac-espresso">{c.noCollectionsTitle}</p>
+              <p className="mt-2 text-sm text-ac-espresso">{c.noCollectionsDescription}</p>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
-              <ul className="divide-y divide-white/[0.07]">
+            <div className="overflow-hidden rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl">
+              <ul className="divide-y divide-ba-espresso/[0.06]">
                 {collections.map((collection) => (
                   <li key={collection.id} className="flex items-center justify-between gap-4 px-6 py-5">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-700/20 bg-amber-950/25 text-amber-500/80">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-ba-gold/30 bg-ba-gold/12 text-ba-bronze">
                         <FolderOpen className="h-[18px] w-[18px]" aria-hidden />
                       </div>
                       <div>
-                        <p className="font-medium text-stone-100">{collection.name}</p>
-                        <p className="mt-0.5 text-sm text-stone-500">
+                        <p className="font-medium text-ac-espresso">{collection.name}</p>
+                        <p className="mt-0.5 text-sm text-ac-espresso">
                           {translate(dictionary, "collectionsPage.recipeCountTemplate", { count: collection.recipeCount })}
                         </p>
                       </div>
                     </div>
                     <Link
                       href={`/account/collections/${collection.id}`}
-                      className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline"
+                      className="text-sm font-medium text-ac-espresso underline-offset-4 hover:underline"
                     >
                       {c.viewCollectionCta}
                     </Link>

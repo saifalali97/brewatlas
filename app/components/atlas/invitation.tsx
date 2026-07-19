@@ -88,7 +88,7 @@ export function Invitation({
             className={joinClasses(
               acTypography.nav,
               "inline-flex items-center gap-2 px-4",
-              dark ? "text-ac-sand/80 hover:text-ac-pearl" : "text-ac-walnut/70 hover:text-ac-espresso",
+              dark ? "text-ac-sand/80 hover:text-ac-pearl" : "text-ac-espresso hover:text-ba-bronze",
               acFocus.ring,
             )}
           >

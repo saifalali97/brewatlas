@@ -40,10 +40,10 @@ export function CommunityFavoritesForm({
   );
 
   return (
-    <form action={formAction} className="mt-10 space-y-5 border-t border-white/[0.08] pt-10">
+    <form action={formAction} className="mt-10 space-y-5 border-t border-ba-espresso/08 pt-10">
       <div>
-        <h2 className="text-lg font-semibold text-stone-50">{t("profilePage.communityFavoritesTitle")}</h2>
-        <p className="mt-1 text-sm text-stone-500">{t("profilePage.communityFavoritesDescription")}</p>
+        <h2 className="text-lg font-semibold text-ac-espresso">{t("profilePage.communityFavoritesTitle")}</h2>
+        <p className="mt-1 text-sm text-ac-espresso">{t("profilePage.communityFavoritesDescription")}</p>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">

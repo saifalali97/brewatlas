@@ -4,8 +4,9 @@
   /* ── Atlas Canon — canonical palette (Phase 0) ── */
   --ac-limestone: #F3EEE6;
   --ac-pearl: #FCF8F2;
-  --ac-secondary: #5E564D;
-  --ac-muted: #736B61;
+  --ac-body: #1a1410;
+  --ac-secondary: #1a1410;
+  --ac-muted: #1a1410;
   --ac-sand: #e8dcc8;
   --ac-dune: #d4c4a8;
   --ac-espresso: #1a1410;
@@ -39,8 +40,9 @@
   --ds-border: rgba(26, 20, 16, 0.08);
   --ds-border-strong: rgba(26, 20, 16, 0.12);
   --ds-text-primary: var(--ac-espresso);
-  --ds-text-secondary: #5E564D;
-  --ds-text-muted: #736B61;
+  --ds-text-body: var(--ac-body);
+  --ds-text-secondary: var(--ac-secondary);
+  --ds-text-muted: var(--ac-muted);
   --ds-card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
   --ds-accent: var(--ac-gold);
   --ds-accent-deep: var(--ac-copper);
@@ -116,6 +118,7 @@
   --color-ac-palm: var(--ac-palm);
   --color-ac-mist: var(--ac-mist);
   --color-ac-charcoal: var(--ac-charcoal);
+  --color-ac-body: var(--ac-body);
   --color-ac-secondary: var(--ac-secondary);
   --color-ac-muted: var(--ac-muted);
 

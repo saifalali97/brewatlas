@@ -48,14 +48,14 @@ export async function ProfileEngagementPanel({ supabase, userId, dictionary }: P
   return (
     <div className="mt-10 space-y-10">
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-[1.25rem] border border-white/[0.1] bg-white/[0.03] p-5">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">{p.reviewsWrittenLabel}</p>
-          <p className="mt-2 text-2xl font-semibold text-stone-50">{stats.reviewsWritten}</p>
+        <div className="rounded-[1.25rem] border border-ba-espresso/10 bg-ba-pearl p-5">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-ac-espresso">{p.reviewsWrittenLabel}</p>
+          <p className="mt-2 text-2xl font-semibold text-ac-espresso">{stats.reviewsWritten}</p>
         </div>
-        <div className="rounded-[1.25rem] border border-white/[0.1] bg-white/[0.03] p-5">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">{p.averageRatingGivenLabel}</p>
+        <div className="rounded-[1.25rem] border border-ba-espresso/10 bg-ba-pearl p-5">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-ac-espresso">{p.averageRatingGivenLabel}</p>
           <div className="mt-2 flex items-center gap-2">
-            <p className="text-2xl font-semibold text-stone-50">
+            <p className="text-2xl font-semibold text-ac-espresso">
               {averageRatingGiven !== null ? averageRatingGiven.toFixed(1) : "—"}
             </p>
             {averageRatingGiven !== null && (
@@ -63,26 +63,26 @@ export async function ProfileEngagementPanel({ supabase, userId, dictionary }: P
             )}
           </div>
         </div>
-        <div className="rounded-[1.25rem] border border-white/[0.1] bg-white/[0.03] p-5">
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">{p.favoriteRecipesLabel}</p>
-          <p className="mt-2 text-2xl font-semibold text-stone-50">{favoriteRecipes.length}</p>
+        <div className="rounded-[1.25rem] border border-ba-espresso/10 bg-ba-pearl p-5">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-ac-espresso">{p.favoriteRecipesLabel}</p>
+          <p className="mt-2 text-2xl font-semibold text-ac-espresso">{favoriteRecipes.length}</p>
         </div>
       </div>
 
       <section aria-labelledby="profile-favorites-heading">
         <div className="mb-5 flex items-end justify-between gap-4">
-          <h2 id="profile-favorites-heading" className="text-lg font-semibold text-stone-50">
+          <h2 id="profile-favorites-heading" className="text-lg font-semibold text-ac-espresso">
             {p.favoriteRecipesTitle}
           </h2>
           {favoriteRecipes.length > 0 && (
-            <RippleLink href="/account/favorites" className="text-sm font-medium text-amber-500/90 hover:text-amber-400">
+            <RippleLink href="/account/favorites" className="text-sm font-medium text-ac-espresso hover:text-ba-bronze">
               {p.viewAllFavorites}
             </RippleLink>
           )}
         </div>
 
         {favoritePreview.length === 0 ? (
-          <p className="text-sm text-stone-500">{p.noFavoritesYet}</p>
+          <p className="text-sm text-ac-espresso">{p.noFavoritesYet}</p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {favoritePreview.map((recipe) => (
@@ -99,24 +99,24 @@ export async function ProfileEngagementPanel({ supabase, userId, dictionary }: P
       </section>
 
       <section aria-labelledby="profile-reviews-heading">
-        <h2 id="profile-reviews-heading" className="mb-5 text-lg font-semibold text-stone-50">
+        <h2 id="profile-reviews-heading" className="mb-5 text-lg font-semibold text-ac-espresso">
           {p.reviewsWrittenTitle}
         </h2>
 
         {reviewsWritten.length === 0 ? (
-          <p className="text-sm text-stone-500">{p.noReviewsYet}</p>
+          <p className="text-sm text-ac-espresso">{p.noReviewsYet}</p>
         ) : (
           <div className="space-y-4">
             {reviewsWritten.map(({ review, recipeTitle, recipeSlug }) => (
               <article
                 key={review.id}
-                className="rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] p-5"
+                className="rounded-[1.25rem] border border-ba-espresso/08 bg-ba-sand/30 p-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <Link
                       href={`/recipes/${recipeSlug}`}
-                      className="font-medium text-stone-100 transition-colors hover:text-amber-300"
+                      className="font-medium text-ac-espresso transition-colors hover:text-ba-bronze"
                     >
                       {recipeTitle}
                     </Link>
@@ -133,7 +133,7 @@ export async function ProfileEngagementPanel({ supabase, userId, dictionary }: P
                   </RippleLink>
                 </div>
                 {review.reviewText && (
-                  <p className="mt-3 text-sm leading-relaxed text-stone-400">{review.reviewText}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-ac-espresso">{review.reviewText}</p>
                 )}
               </article>
             ))}

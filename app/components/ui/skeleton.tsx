@@ -7,7 +7,7 @@ export function Skeleton({ className = "" }: SkeletonProps) {
   return (
     <div
       aria-hidden
-      className={`animate-shimmer rounded-xl bg-white/[0.04] motion-reduce:animate-none motion-reduce:bg-white/[0.06] ${className}`}
+      className={`animate-shimmer rounded-xl bg-ba-espresso/06 motion-reduce:animate-none motion-reduce:bg-ba-espresso/08 ${className}`}
     />
   );
 }

@@ -1,5 +1,6 @@
-import type { SubscriptionStatus } from "@/types/membership";
+import { badges } from "@/lib/constants/styles";
 import type { Dictionary } from "@/lib/i18n/types";
+import type { SubscriptionStatus } from "@/types/membership";
 
 type SubscriptionStatusBadgeProps = {
   status: SubscriptionStatus;
@@ -31,12 +32,12 @@ export function SubscriptionStatusBadge({ status, isPremium, dictionary, classNa
 
   const tone =
     status === "past_due"
-      ? "border-rose-600/35 bg-rose-950/40 text-rose-200/90"
+      ? "border-rose-600/25 bg-rose-50 text-ac-espresso"
       : status === "trialing"
-        ? "border-sky-600/35 bg-sky-950/40 text-sky-200/90"
+        ? "border-sky-600/30 bg-sky-50 text-ac-espresso"
         : status === "canceled" || status === "expired"
-          ? "border-stone-500/35 bg-stone-900/60 text-stone-300"
-          : "border-amber-600/35 bg-amber-950/45 text-amber-200/90";
+          ? "border-ba-espresso/15 bg-ba-sand/40 text-ac-espresso"
+          : "border-ba-gold/35 bg-ba-gold/12 text-ac-espresso";
 
   return (
     <span
@@ -49,9 +50,7 @@ export function SubscriptionStatusBadge({ status, isPremium, dictionary, classNa
 
 export function PremiumMemberBadge({ dictionary, className = "" }: { dictionary: Dictionary; className?: string }) {
   return (
-    <span
-      className={`inline-flex items-center rounded-full border border-amber-600/35 bg-amber-950/45 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-200/90 ${className}`}
-    >
+    <span className={`${badges.premiumCompact} ${className}`}>
       {dictionary.publicProfilePage.premiumMemberBadge}
     </span>
   );

@@ -60,16 +60,16 @@ export default async function DashboardBrewHistoryPage() {
       </div>
 
       {brewLogs.length === 0 ? (
-        <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
-          <p className="text-lg font-medium text-stone-100">{b.noBrewsTitle}</p>
-          <p className="mt-2 text-sm text-stone-500">{b.noBrewsDescription}</p>
+        <div className="rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl px-8 py-16 text-center">
+          <p className="text-lg font-medium text-ac-espresso">{b.noBrewsTitle}</p>
+          <p className="mt-2 text-sm text-ac-espresso">{b.noBrewsDescription}</p>
           <Link href="/account/brew-history/new" className={`${buttons.secondary} mt-8`}>
             {b.logNewCta}
           </Link>
         </div>
       ) : (
-        <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
-          <ul className="divide-y divide-white/[0.07]">
+        <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl">
+          <ul className="divide-y divide-ba-espresso/[0.06]">
             {brewLogs.map((log) => {
               const details: string[] = [formatBrewedAt(log.brewedAt, locale)];
               if (log.coffeeName) details.push(translate(dictionary, "brewHistoryPage.coffeeTemplate", { name: log.coffeeName }));
@@ -89,24 +89,24 @@ export default async function DashboardBrewHistoryPage() {
                       {log.recipeSlug ? (
                         <Link
                           href={`/recipes/${log.recipeSlug}`}
-                          className="font-medium text-stone-100 underline-offset-4 hover:text-amber-400/90 hover:underline"
+                          className="font-medium text-ac-espresso underline-offset-4 hover:text-ba-bronze hover:underline"
                         >
                           {log.recipeTitle ?? b.untitledRecipe}
                         </Link>
                       ) : (
-                        <p className="font-medium text-stone-100">{log.recipeTitle ?? log.coffeeName ?? b.freeformBrew}</p>
+                        <p className="font-medium text-ac-espresso">{log.recipeTitle ?? log.coffeeName ?? b.freeformBrew}</p>
                       )}
                       {log.isFavorite && (
                         <Heart className="h-3.5 w-3.5 fill-amber-500/80 text-amber-500/80" aria-hidden />
                       )}
                     </div>
-                    <p className="mt-1 text-sm text-stone-500">{details.join(" · ")}</p>
-                    {log.notes && <p className="mt-1.5 max-w-xl text-sm text-stone-400">{log.notes}</p>}
+                    <p className="mt-1 text-sm text-ac-espresso">{details.join(" · ")}</p>
+                    {log.notes && <p className="mt-1.5 max-w-xl text-sm text-ac-espresso">{log.notes}</p>}
                   </div>
 
                   <div className="flex shrink-0 flex-col items-end gap-2">
                     {log.rating !== null && (
-                      <div className="flex items-center gap-1.5 text-sm font-semibold text-amber-400/90">
+                      <div className="flex items-center gap-1.5 text-sm font-semibold text-ac-espresso">
                         <Star className="h-3.5 w-3.5 fill-amber-400/90" aria-hidden />
                         {log.rating}
                         {b.ratingOutOfFive}
@@ -114,7 +114,7 @@ export default async function DashboardBrewHistoryPage() {
                     )}
                     <Link
                       href={`/account/brew-history/${log.id}/edit`}
-                      className="text-sm font-medium text-amber-400/90 underline-offset-4 hover:underline"
+                      className="text-sm font-medium text-ac-espresso underline-offset-4 hover:underline"
                     >
                       {b.editCta}
                     </Link>

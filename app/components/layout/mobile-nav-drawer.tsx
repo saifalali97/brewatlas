@@ -147,7 +147,7 @@ export function MobileNavDrawer({
             onClick={onClose}
             aria-label={nav.closeMenu}
             className={joinClasses(
-              "flex h-11 w-11 min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full border border-ba-espresso/10 bg-ba-sand/40 text-ba-coffee touch-manipulation",
+              "flex h-11 w-11 min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full border border-ba-espresso/10 bg-ba-sand/40 text-ac-espresso touch-manipulation",
               "[touch-action:manipulation]",
               dsMotion.transition,
               "hover:border-ba-bronze/35 hover:text-ba-espresso",
@@ -159,7 +159,7 @@ export function MobileNavDrawer({
         </div>
 
         <nav aria-label={nav.mainNavigationAriaLabel} className="flex-1 overflow-y-auto px-6 py-8">
-          <p className="text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-ba-coffee/55">
+          <p className="text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-ac-espresso">
             {nav.discover}
           </p>
           <ul className="mt-4 space-y-1">
@@ -169,7 +169,7 @@ export function MobileNavDrawer({
                   href={link.href}
                   onClick={onClose}
                   className={joinClasses(
-                    "flex min-h-11 items-center py-2 text-lg font-medium text-ba-coffee touch-manipulation",
+                    "flex min-h-11 items-center py-2 text-lg font-medium text-ac-espresso touch-manipulation",
                     dsMotion.transition,
                     "hover:text-ba-espresso",
                     dsFocus.ring,
@@ -201,7 +201,7 @@ export function MobileNavDrawer({
                 href="/premium"
                 onClick={onClose}
                 className={joinClasses(
-                  "flex min-h-11 items-center py-2 text-lg font-medium text-ba-bronze touch-manipulation",
+                  "flex min-h-11 items-center py-2 text-lg font-medium text-ac-espresso touch-manipulation",
                   dsFocus.ring,
                 )}
               >

@@ -68,13 +68,13 @@ export function OriginCard({ origin, ctaHref = "#origins", labels }: OriginCardP
       </div>
 
       <div className="relative flex flex-1 flex-col p-5 lg:p-6">
-        <h3 className="font-display text-[1.25rem] leading-[1.15] tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-coffee lg:text-[1.3rem]">
+        <h3 className="font-display text-[1.25rem] leading-[1.15] tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-bronze lg:text-[1.3rem]">
           {origin.country}
         </h3>
 
         <div className="mt-3 flex items-start gap-2">
-          <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ba-bronze/80" aria-hidden />
-          <p className="text-[0.8125rem] leading-[1.65] text-ba-coffee/75">{origin.tastingProfile}</p>
+          <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ac-espresso" aria-hidden />
+          <p className="text-[0.8125rem] leading-[1.65] text-ac-espresso">{origin.tastingProfile}</p>
         </div>
 
         <div className="mt-4 grid gap-2.5 sm:grid-cols-2">

@@ -39,15 +39,15 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         <div className="my-6 flex items-center gap-3">
           <div className="h-px flex-1 bg-ba-espresso/[0.08]" />
-          <span className="text-xs tracking-[0.08em] text-ba-coffee/55 uppercase">{dictionary.auth.orDivider}</span>
+          <span className="text-xs tracking-[0.08em] text-ac-espresso uppercase">{dictionary.auth.orDivider}</span>
           <div className="h-px flex-1 bg-ba-espresso/[0.08]" />
         </div>
 
         <OAuthButtons />
 
-        <p className="mt-6 text-center text-sm text-ba-coffee/65">
+        <p className="mt-6 text-center text-sm text-ac-espresso">
           {dictionary.auth.newToBrewAtlas}{" "}
-          <Link href="/signup" className="text-ba-bronze underline-offset-4 hover:text-ba-espresso hover:underline">
+          <Link href="/signup" className="text-ac-espresso underline-offset-4 hover:text-ba-bronze hover:underline">
             {dictionary.auth.createAnAccount}
           </Link>
         </p>

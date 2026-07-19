@@ -133,7 +133,7 @@ export function SearchExplorer({
         </label>
         <div className="relative">
           <Search
-            className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ba-coffee/55"
+            className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ac-espresso"
             aria-hidden
           />
           <input
@@ -146,7 +146,7 @@ export function SearchExplorer({
             autoComplete="off"
           />
           {(isPending || query !== debouncedQuery) && (
-            <span className="absolute end-4 top-1/2 -translate-y-1/2 text-xs text-ba-coffee/55" aria-live="polite">
+            <span className="absolute end-4 top-1/2 -translate-y-1/2 text-xs text-ac-espresso" aria-live="polite">
               {t("searchPage.searching")}
             </span>
           )}
@@ -168,7 +168,7 @@ export function SearchExplorer({
                     "relative pb-1 transition-colors duration-300",
                     isActive
                       ? "text-ac-espresso after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-ac-copper"
-                      : "text-ac-walnut/55 hover:text-ac-espresso",
+                      : "text-ac-espresso hover:text-ac-espresso",
                     acFocus.ring,
                   ].join(" ")}
                 >
@@ -183,7 +183,7 @@ export function SearchExplorer({
       <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-end">
         {(initialFilters.category === "all" || initialFilters.category === "recipes") && (
           <div className="flex items-center gap-2">
-            <label htmlFor="search-sort" className="text-sm text-ba-coffee/70">
+            <label htmlFor="search-sort" className="text-sm text-ac-espresso">
               {t("searchPage.sortLabel")}
             </label>
             <select
@@ -224,7 +224,7 @@ export function SearchExplorer({
         <div className="min-w-0">
           {(initialFilters.category === "all" || initialFilters.category === "recipes") &&
             (initialFilters.q || countActiveFilters(initialFilters) > 0) && (
-              <p className="mb-4 text-sm text-ba-coffee/70" aria-live="polite">
+              <p className="mb-4 text-sm text-ac-espresso" aria-live="polite">
                 {t("searchPage.resultsCount", { count: results.totalRecipes })}
               </p>
             )}
@@ -252,18 +252,18 @@ export function SearchExplorer({
                 type="button"
                 disabled={initialFilters.page <= 1}
                 onClick={() => patchFilters({ page: Math.max(1, initialFilters.page - 1) })}
-                className={`min-h-11 rounded-full border border-ba-espresso/[0.12] px-4 py-2 text-sm text-ba-coffee/75 transition-colors enabled:hover:border-ba-gold/30 enabled:hover:text-ba-espresso disabled:opacity-40 ${dsFocus.ring}`}
+                className={`min-h-11 rounded-full border border-ba-espresso/[0.12] px-4 py-2 text-sm text-ac-espresso transition-colors enabled:hover:border-ba-gold/30 enabled:hover:text-ba-espresso disabled:opacity-40 ${dsFocus.ring}`}
               >
                 {t("searchPage.previousPage")}
               </button>
-              <span className="text-sm text-ba-coffee/55">
+              <span className="text-sm text-ac-espresso">
                 {t("searchPage.pageIndicator", { page: initialFilters.page, total: totalPages })}
               </span>
               <button
                 type="button"
                 disabled={initialFilters.page >= totalPages}
                 onClick={() => patchFilters({ page: Math.min(totalPages, initialFilters.page + 1) })}
-                className={`min-h-11 rounded-full border border-ba-espresso/[0.12] px-4 py-2 text-sm text-ba-coffee/75 transition-colors enabled:hover:border-ba-gold/30 enabled:hover:text-ba-espresso disabled:opacity-40 ${dsFocus.ring}`}
+                className={`min-h-11 rounded-full border border-ba-espresso/[0.12] px-4 py-2 text-sm text-ac-espresso transition-colors enabled:hover:border-ba-gold/30 enabled:hover:text-ba-espresso disabled:opacity-40 ${dsFocus.ring}`}
               >
                 {t("searchPage.nextPage")}
               </button>

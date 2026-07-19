@@ -4,7 +4,7 @@ import { cards, dsElevation, dsRadius } from "@/lib/constants/styles";
 const variantClasses = {
   default: dsElevation.raised,
   premium: cards.premiumShell,
-  flat: `${dsRadius.card} border border-white/[0.06] bg-white/[0.02]`,
+  flat: `${dsRadius.card} border border-ba-espresso/08 bg-ba-pearl`,
   testimonial: cards.testimonial,
 } as const;
 
@@ -37,7 +37,7 @@ export function Card({ variant = "default", className = "", children, ...props }
 
 export function CardHeader({ className = "", children, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={joinClasses("border-b border-white/[0.08] px-6 py-5", className)} {...props}>
+    <div className={joinClasses("border-b border-ba-espresso/08 px-6 py-5", className)} {...props}>
       {children}
     </div>
   );
@@ -55,7 +55,7 @@ export function CardFooter({ className = "", children, ...props }: HTMLAttribute
   return (
     <div
       className={joinClasses(
-        "flex flex-col gap-3 border-t border-white/[0.08] px-6 py-5 sm:flex-row sm:items-center",
+        "flex flex-col gap-3 border-t border-ba-espresso/08 px-6 py-5 sm:flex-row sm:items-center",
         className,
       )}
       {...props}

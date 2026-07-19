@@ -71,7 +71,7 @@ export default async function XBloomPage() {
       
 <Link
         href="/devices"
-        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90"
+        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-ac-espresso transition-colors duration-300 hover:text-ba-bronze"
       >
         <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
         {p.backToDevices}
@@ -87,10 +87,10 @@ export default async function XBloomPage() {
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-600/25 bg-amber-950/40">
               <Cpu className="h-4 w-4 text-amber-500/85" aria-hidden />
             </div>
-            <h3 className="relative mt-4 text-[1.05rem] font-semibold leading-snug tracking-tight text-stone-50">
+            <h3 className="relative mt-4 text-[1.05rem] font-semibold leading-snug tracking-tight text-ac-espresso">
               {model}
             </h3>
-            <p className="relative mt-2 text-[0.8125rem] leading-[1.65] text-stone-300/90">
+            <p className="relative mt-2 text-[0.8125rem] leading-[1.65] text-ac-espresso">
               {p[deviceBlurbKey(model)]}
             </p>
           </article>
@@ -107,7 +107,7 @@ export default async function XBloomPage() {
         </div>
       </div>
 
-      <div className="mt-14 border-t border-white/[0.06] pt-10">
+      <div className="mt-14 border-t border-ba-espresso/06 pt-10">
         <GhostCtaLink href="/recipes" autoWidth>
           {dictionary.homeFooter.browseRecipes}
         </GhostCtaLink>

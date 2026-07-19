@@ -55,7 +55,7 @@ export default async function CultureSectionPage({ params }: CultureSectionPageP
       
 <Link
         href="/culture"
-        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90 rtl:flex-row-reverse"
+        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-ac-espresso transition-colors duration-300 hover:text-ba-bronze rtl:flex-row-reverse"
       >
         <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
         {c.backToHub}

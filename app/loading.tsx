@@ -9,7 +9,7 @@ export default function Loading() {
         <div className="relative h-1 w-36 overflow-hidden rounded-full bg-ba-espresso/[0.06]">
           <div className="animate-loader-bar absolute inset-y-0 start-0 w-1/3 rounded-full bg-gradient-to-r from-ba-bronze/20 via-ba-gold/80 to-ba-bronze/20" />
         </div>
-        <p className="font-display text-sm tracking-[0.12em] text-ba-coffee/55">BrewAtlas</p>
+        <p className="font-display text-sm tracking-[0.12em] text-ac-espresso">BrewAtlas</p>
         <span className="sr-only">Loading</span>
       </div>
     </div>

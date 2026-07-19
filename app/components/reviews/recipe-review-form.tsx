@@ -35,15 +35,15 @@ export function RecipeReviewForm({
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] px-5 py-6 text-center">
-        <p className="text-sm text-stone-400">{t("recipeReviews.signInToReview")}</p>
+      <div className="rounded-[1.25rem] border border-ba-espresso/08 bg-ba-sand/30 px-5 py-6 text-center">
+        <p className="text-sm text-ac-espresso">{t("recipeReviews.signInToReview")}</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-[1.25rem] border border-white/[0.1] bg-white/[0.03] p-5 sm:p-6">
-      <h3 className="text-base font-semibold text-stone-100">
+    <div className="rounded-[1.25rem] border border-ba-espresso/10 bg-ba-pearl p-5 sm:p-6">
+      <h3 className="text-base font-semibold text-ac-espresso">
         {existingReview ? t("recipeReviews.editYourReview") : t("recipeReviews.writeReview")}
       </h3>
 
