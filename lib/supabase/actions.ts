@@ -1,20 +1,13 @@
 "use server";
 
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { buildAuthCallbackUrl } from "@/lib/auth/redirect-url";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/profile";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
-import { getSiteUrl } from "@/lib/seo/site";
 
 export type AuthActionState = { error?: string; success?: string } | undefined;
-
-/** Resolves the current request's origin for building auth redirect URLs. */
-async function resolveOrigin(): Promise<string> {
-  const headerList = await headers();
-  return headerList.get("origin") ?? getSiteUrl();
-}
 
 /** Only ever redirect to a same-site path, never to an attacker-supplied URL. */
 function readRedirectTarget(formData: FormData): string {
@@ -72,14 +65,13 @@ export async function signUpAction(
     return { error: dictionary.forms.passwordsDoNotMatch };
   }
 
-  const origin = await resolveOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: fullName ? { full_name: fullName } : undefined,
-      emailRedirectTo: `${origin}/auth/callback?next=/account`,
+      emailRedirectTo: buildAuthCallbackUrl("/account"),
     },
   });
 
@@ -119,10 +111,9 @@ export async function requestPasswordResetAction(
     return { error: dictionary.auth.enterEmailAddress };
   }
 
-  const origin = await resolveOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?next=/reset-password`,
+    redirectTo: buildAuthCallbackUrl("/reset-password"),
   });
 
   if (error) {
@@ -157,52 +148,4 @@ export async function updatePasswordAction(
   }
 
   redirect("/account");
-}
-
-export async function signInWithGoogleAction(): Promise<void> {
-  const origin = await resolveOrigin();
-  const supabase = await createClient();
-  const dictionary = await getDictionary(await getLocale());
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${origin}/auth/callback?next=/account`,
-    },
-  });
-
-  if (error || !data.url) {
-    redirect(
-      `/login?error=${encodeURIComponent(error?.message ?? dictionary.auth.googleSignInUnavailable)}`,
-    );
-  }
-
-  redirect(data.url);
-}
-
-/**
- * Apple Sign In requires a Services ID, Team ID, Key ID, and private key
- * configured under Authentication > Providers > Apple in the Supabase
- * dashboard. Until that's set up, Supabase responds with an error (e.g.
- * "Unsupported provider") and the user is bounced back to /login with a
- * message - the code path itself is fully wired and ready to go live the
- * moment the provider is configured.
- */
-export async function signInWithAppleAction(): Promise<void> {
-  const origin = await resolveOrigin();
-  const supabase = await createClient();
-  const dictionary = await getDictionary(await getLocale());
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "apple",
-    options: {
-      redirectTo: `${origin}/auth/callback?next=/account`,
-    },
-  });
-
-  if (error || !data.url) {
-    redirect(
-      `/login?error=${encodeURIComponent(error?.message ?? dictionary.auth.appleSignInNotConfigured)}`,
-    );
-  }
-
-  redirect(data.url);
 }
