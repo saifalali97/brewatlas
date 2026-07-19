@@ -2,15 +2,6 @@ import { createServerClient } from "@supabase/ssr";
 import type { EmailOtpType, Session, User } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import {
-  logSafariAccountComparison,
-  logServerAuthDebug,
-  logServerAuthException,
-  summarizeCookieOptions,
-  summarizeCookies,
-  summarizeNextRequest,
-  summarizeResponseHeaders,
-} from "@/lib/debug/server-auth-debug";
 import { getSiteUrl } from "@/lib/seo/site";
 import { ensureProfile } from "@/lib/supabase/profile";
 
@@ -19,8 +10,8 @@ import { ensureProfile } from "@/lib/supabase/profile";
  *
  * - Email confirm / password reset: `token_hash` + `type` → verifyOtp()
  *   (official SSR pattern — no PKCE verifier cookie required).
- * - OAuth: `code` → exchangeCodeForSession() (PKCE verifier must be in cookies
- *   from the browser that started the flow via createBrowserClient).
+ * - OAuth: `code` → exchangeCodeForSession() (PKCE verifier must be in request cookies
+ *   from the browser that started the flow via createBrowserClient)
  *
  * Session cookies must be written onto the redirect NextResponse itself.
  */
@@ -35,12 +26,7 @@ function resolveSafeNext(raw: string | null): string {
   return next.startsWith("/") && !next.startsWith("//") ? next : "/account";
 }
 
-function loginErrorRedirect(redirectBase: string, message: string, cause?: unknown) {
-  logServerAuthException("auth/callback", cause ?? new Error(message), {
-    phase: "loginErrorRedirect",
-    redirectTarget: `${redirectBase}/login?error=…`,
-    message,
-  });
+function loginErrorRedirect(redirectBase: string, message: string) {
   return NextResponse.redirect(
     `${redirectBase}/login?error=${encodeURIComponent(message)}`,
   );
@@ -66,21 +52,10 @@ function createSupabaseForCallback(
           cookiesToSet.forEach(({ name, value, options }) => {
             try {
               cookieStore.set(name, value, options);
-            } catch (cookieError) {
-              logServerAuthException("auth/callback", cookieError, {
-                phase: "cookieStore.set",
-                cookieName: name,
-              });
+            } catch {
+              // Route handlers allow cookie writes; ignore if unavailable.
             }
             response.cookies.set(name, value, options);
-          });
-          logServerAuthDebug("auth/callback", "cookie-write", {
-            cookiesWritten: summarizeCookieOptions(cookiesToSet),
-          });
-          logSafariAccountComparison("auth/callback", "cookie-write", {
-            cookiesWritten: summarizeCookieOptions(cookiesToSet),
-            supabaseCacheHeaders: headers,
-            note: "Post-login Set-Cookie — verify SameSite/Secure for Safari",
           });
           if (headers) {
             Object.entries(headers).forEach(([key, value]) => {
@@ -99,15 +74,7 @@ async function finalizeAuthenticatedRedirect(
   session: Session | null,
   user: User | null,
   redirectBase: string,
-  successRedirect: string,
 ) {
-  logServerAuthDebug("auth/callback", "step", {
-    step: "finalizeAuthenticatedRedirect",
-    userId: user?.id ?? null,
-    hasSession: Boolean(session?.access_token),
-    redirectTarget: successRedirect,
-  });
-
   if (!session?.access_token) {
     return loginErrorRedirect(
       redirectBase,
@@ -118,29 +85,10 @@ async function finalizeAuthenticatedRedirect(
   if (user) {
     try {
       await ensureProfile(supabase, user);
-    } catch (profileError) {
-      logServerAuthException("auth/callback", profileError, {
-        phase: "ensureProfile",
-        userId: user.id,
-        redirectTarget: successRedirect,
-      });
+    } catch {
+      // Profile provisioning is best-effort; session cookies are already on the response.
     }
   }
-
-  logServerAuthDebug("auth/callback", "redirect", {
-    target: successRedirect,
-    userId: user?.id ?? null,
-    responseCookies: summarizeCookies(response.cookies.getAll()),
-    responseHeaders: summarizeResponseHeaders(response),
-  });
-  logSafariAccountComparison("auth/callback", "redirect", {
-    target: successRedirect,
-    userId: user?.id ?? null,
-    responseCookies: summarizeCookieOptions(
-      response.cookies.getAll().map(({ name, value }) => ({ name, value, options: {} })),
-    ),
-    responseHeaders: summarizeResponseHeaders(response),
-  });
 
   return response;
 }
@@ -150,23 +98,10 @@ export async function GET(request: NextRequest) {
   const safeNext = resolveSafeNext(request.nextUrl.searchParams.get("next"));
   const successRedirect = `${redirectBase}${safeNext}`;
 
-  logServerAuthDebug("auth/callback", "entry", {
-    pathname: request.nextUrl.pathname,
-    safeNext,
-    cookiesReceived: summarizeCookies(request.cookies.getAll()),
-    hasTokenHash: Boolean(request.nextUrl.searchParams.get("token_hash")),
-    hasCode: Boolean(request.nextUrl.searchParams.get("code")),
-  });
-  logSafariAccountComparison("auth/callback", "entry", summarizeNextRequest(request));
-
   const authError = request.nextUrl.searchParams.get("error");
   const authErrorDescription = request.nextUrl.searchParams.get("error_description");
   if (authError) {
-    return loginErrorRedirect(
-      redirectBase,
-      authErrorDescription ?? authError,
-      { authError, authErrorDescription },
-    );
+    return loginErrorRedirect(redirectBase, authErrorDescription ?? authError);
   }
 
   const tokenHash = request.nextUrl.searchParams.get("token_hash");
@@ -183,7 +118,6 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createSupabaseForCallback(request, response, cookieStore);
 
-    // Email confirm / password reset — verifyOtp (SSR-safe, no PKCE verifier).
     if (tokenHash && otpType) {
       let verifyResult;
       try {
@@ -195,20 +129,14 @@ export async function GET(request: NextRequest) {
         return loginErrorRedirect(
           redirectBase,
           verifyThrown instanceof Error ? verifyThrown.message : "Email confirmation failed.",
-          verifyThrown,
         );
       }
 
       const { data, error } = verifyResult;
 
       if (error) {
-        return loginErrorRedirect(redirectBase, error.message, error);
+        return loginErrorRedirect(redirectBase, error.message);
       }
-
-      logServerAuthDebug("auth/callback", "step", {
-        step: "verifyOtp success",
-        userId: data.user?.id ?? null,
-      });
 
       return finalizeAuthenticatedRedirect(
         supabase,
@@ -216,11 +144,9 @@ export async function GET(request: NextRequest) {
         data.session,
         data.user,
         redirectBase,
-        successRedirect,
       );
     }
 
-    // OAuth — PKCE code exchange (verifier must exist in request cookies).
     if (code) {
       let exchangeResult;
       try {
@@ -230,21 +156,15 @@ export async function GET(request: NextRequest) {
           redirectBase,
           exchangeThrown instanceof Error
             ? exchangeThrown.message
-            : "Email confirmation failed.",
-          exchangeThrown,
+            : "Authentication failed.",
         );
       }
 
       const { data, error } = exchangeResult;
 
       if (error) {
-        return loginErrorRedirect(redirectBase, error.message, error);
+        return loginErrorRedirect(redirectBase, error.message);
       }
-
-      logServerAuthDebug("auth/callback", "step", {
-        step: "exchangeCodeForSession success",
-        userId: data.user?.id ?? null,
-      });
 
       return finalizeAuthenticatedRedirect(
         supabase,
@@ -252,7 +172,6 @@ export async function GET(request: NextRequest) {
         data.session,
         data.user,
         redirectBase,
-        successRedirect,
       );
     }
 
@@ -260,8 +179,7 @@ export async function GET(request: NextRequest) {
   } catch (unexpected) {
     return loginErrorRedirect(
       redirectBase,
-      unexpected instanceof Error ? unexpected.message : "Email confirmation failed.",
-      unexpected,
+      unexpected instanceof Error ? unexpected.message : "Authentication failed.",
     );
   }
 }

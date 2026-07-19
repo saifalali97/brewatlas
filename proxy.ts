@@ -1,12 +1,5 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import {
-  isAuthRelatedPath,
-  logSafariAccountComparison,
-  logServerAuthDebug,
-  summarizeNextRequest,
-  summarizeResponseHeaders,
-} from "@/lib/debug/server-auth-debug";
 import { isSupportedLocale, matchAcceptLanguage } from "@/lib/i18n/config";
 import { checkRateLimit, getClientIp, RATE_LIMITS } from "@/lib/security/rate-limit";
 import { updateSession } from "@/lib/supabase/middleware";
@@ -57,22 +50,8 @@ function applyRateLimit(request: NextRequest): NextResponse | null {
  * 3. The browser's `Accept-Language` header, on first visit.
  */
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  logServerAuthDebug("proxy", "entry", {
-    pathname,
-    method: request.method,
-  });
-
-  if (isAuthRelatedPath(pathname)) {
-    logSafariAccountComparison("proxy", "entry", summarizeNextRequest(request));
-  }
-
   const rateLimited = applyRateLimit(request);
-  if (rateLimited) {
-    logServerAuthDebug("proxy", "exit", { pathname, status: 429, reason: "rate_limited" });
-    return rateLimited;
-  }
+  if (rateLimited) return rateLimited;
 
   const response = await updateSession(request);
 
@@ -90,31 +69,6 @@ export async function proxy(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 365,
       path: "/",
       sameSite: "lax",
-    });
-    logServerAuthDebug("proxy", "cookie-write", {
-      pathname,
-      cookie: LOCALE_COOKIE_NAME,
-      valueLength: resolved.length,
-    });
-  }
-
-  logServerAuthDebug("proxy", "exit", {
-    pathname,
-    status: response.status,
-    redirect: response.headers.get("location") ?? null,
-    responseHeaders: summarizeResponseHeaders(response),
-  });
-
-  if (isAuthRelatedPath(pathname)) {
-    logSafariAccountComparison("proxy", "exit", {
-      pathname,
-      status: response.status,
-      redirect: response.headers.get("location") ?? null,
-      responseHeaders: summarizeResponseHeaders(response),
-      responseCookies: response.cookies.getAll().map(({ name, value }) => ({
-        name,
-        valueLength: value.length,
-      })),
     });
   }
 

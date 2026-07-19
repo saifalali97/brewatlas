@@ -14,12 +14,16 @@ function GoogleIcon() {
     <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" aria-hidden>
       <path
         fill="#EA4335"
-        d="M12 10.2v3.9h5.5c-.24 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6.2s2.7-6.2 6-6.2c1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 3 14.7 2 12 2 6.9 2 2.8 6.1 2.8 11.2s4.1 9.2 9.2 9.2c5.3 0 8.8-3.7 8.8-9 0-.6-.1-1.1-.1-1.2z"
+        d="M12 10.2v3.9h5.5c-.24 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-2.2s2.7-6.2 6-6.2c1.9 0 3.2.8 3.9 1.5l2.7-2.6C17 3 14.7 2 12 2 6.9 2 2.8 6.1 2.8 11.2s4.1 9.2 9.2 9.2c5.3 0 8.8-3.7 8.8-9 0-.6-.1-1.1-.1-1.2z"
       />
     </svg>
   );
 }
 
+/**
+ * Google / Apple sign-in via the browser Supabase client so PKCE state is stored
+ * in cookies before redirecting to the provider.
+ */
 export function OAuthButtons() {
   const { t } = useTranslations();
   const [error, setError] = useState<string | null>(null);

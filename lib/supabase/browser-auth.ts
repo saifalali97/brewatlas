@@ -1,6 +1,9 @@
 "use client";
 
-import { buildAuthCallbackUrl } from "@/lib/auth/redirect-url";
+import {
+  buildAuthCallbackUrl,
+  buildAuthCallbackUrlFromOrigin,
+} from "@/lib/auth/redirect-url";
 import { createClient } from "@/lib/supabase/client";
 
 export type SignUpInput = {
@@ -67,12 +70,18 @@ export async function signUpWithEmail(input: SignUpInput): Promise<SignUpResult>
 
 export type OAuthProvider = "google" | "apple";
 
-/** Starts an OAuth redirect via the browser Supabase client (PKCE cookies). */
+/**
+ * Starts OAuth via createBrowserClient so the PKCE code verifier is stored in
+ * browser cookies before the redirect to the provider. Uses the current origin
+ * for the callback URL so local development PKCE exchange matches the initiating host.
+ */
 export async function startOAuthSignIn(
   provider: OAuthProvider,
-  redirectTo = buildAuthCallbackUrl("/account"),
+  next = "/account",
 ): Promise<{ ok: true; url: string } | { ok: false; error: string }> {
   const supabase = createClient();
+  const redirectTo = buildAuthCallbackUrlFromOrigin(window.location.origin, next);
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: { redirectTo },

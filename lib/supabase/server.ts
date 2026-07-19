@@ -1,14 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
-import { cookies, headers } from "next/headers";
-import {
-  logSafariAccountComparison,
-  logServerAuthDebug,
-  logServerAuthException,
-  summarizeAuthCookies,
-  summarizeCookieOptions,
-  summarizeCookies,
-  summarizeRscRequestHeaders,
-} from "@/lib/debug/server-auth-debug";
+import { cookies } from "next/headers";
 
 /**
  * Supabase client for use in Server Components, Server Actions, and Route
@@ -17,20 +8,6 @@ import {
  */
 export async function createClient() {
   const cookieStore = await cookies();
-  const headerStore = await headers();
-  const authCookies = summarizeAuthCookies(cookieStore.getAll());
-
-  logServerAuthDebug("createClient", "entry", {
-    cookiesReceived: summarizeCookies(cookieStore.getAll()),
-    ...authCookies,
-    rsc: summarizeRscRequestHeaders(headerStore),
-  });
-
-  logSafariAccountComparison("createClient", "entry", {
-    ...authCookies,
-    rsc: summarizeRscRequestHeaders(headerStore),
-    note: "Server Component / Server Action cookie jar — compare with updateSession for Safari",
-  });
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -45,18 +22,10 @@ export async function createClient() {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options),
             );
-            logServerAuthDebug("createClient", "cookie-write", {
-              cookiesWritten: summarizeCookieOptions(cookiesToSet),
-            });
-            logSafariAccountComparison("createClient", "cookie-write", {
-              cookiesWritten: summarizeCookieOptions(cookiesToSet),
-              note: "RSC attempted cookie write — fails silently in Server Components on some paths",
-            });
-          } catch (cookieError) {
-            logServerAuthException("createClient", cookieError, {
-              phase: "setAll",
-              note: "Server Component cookie write failed — proxy should refresh session",
-            });
+          } catch {
+            // `setAll` was called from a Server Component. This can be
+            // ignored if you have proxy (middleware) refreshing user
+            // sessions.
           }
         },
       },

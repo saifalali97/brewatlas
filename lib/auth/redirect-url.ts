@@ -1,5 +1,9 @@
 import { getSiteUrl } from "@/lib/seo/site";
 
+function safeNextPath(next: string): string {
+  return next.startsWith("/") && !next.startsWith("//") ? next : "/account";
+}
+
 /**
  * Builds the auth callback URL Supabase should redirect to after email confirm / OAuth.
  *
@@ -8,6 +12,13 @@ import { getSiteUrl } from "@/lib/seo/site";
  * `<a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=signup">Confirm</a>`
  */
 export function buildAuthCallbackUrl(next = "/account"): string {
-  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/account";
-  return `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(safeNext)}`;
+  return `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(safeNextPath(next))}`;
+}
+
+/**
+ * Auth callback URL for browser-initiated OAuth (uses the current origin so local dev works).
+ */
+export function buildAuthCallbackUrlFromOrigin(origin: string, next = "/account"): string {
+  const base = origin.replace(/\/$/, "");
+  return `${base}/auth/callback?next=${encodeURIComponent(safeNextPath(next))}`;
 }
