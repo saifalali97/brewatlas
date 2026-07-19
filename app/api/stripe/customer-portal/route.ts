@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { createStripeCustomerPortalForUser, StripeApiError } from "@/lib/billing/stripe-sessions";
+import { verifySameOrigin } from "@/lib/security/csrf";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  if (!verifySameOrigin(request)) {
+    return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
+  }
+
   try {
     const body = await request.json().catch(() => ({}));
     const returnPath = typeof body?.returnPath === "string" ? body.returnPath : undefined;

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { BillingNotConfiguredError, getBillingAdapter, isStripeBillingEnabled } from "@/lib/billing/billing-adapter";
 import {
@@ -9,10 +10,12 @@ import {
   StripeApiError,
 } from "@/lib/billing/stripe-sessions";
 import { cancelUserSubscription, getMembershipSummary, getOrCreateSubscription, refreshUserMembership } from "@/lib/data/membership";
+import { verifySameOriginHeaders } from "@/lib/security/csrf";
 import { createClient } from "@/lib/supabase/server";
 import { BILLING_PROVIDERS, MEMBERSHIP_PLANS } from "@/types/membership";
 import type { BillingProvider, MembershipPlan, MembershipSummary } from "@/types/membership";
 import type { BillingInterval } from "@/types/billing";
+import { isPlanAtLeast } from "@/lib/membership/plans";
 
 /**
  * Server Actions for the membership/subscription system (requirement
@@ -49,10 +52,21 @@ function readString(formData: FormData, key: string): string | null {
   return typeof value === "string" && value.length > 0 ? value : null;
 }
 
+async function assertSameOriginMutation(): Promise<MembershipActionState | null> {
+  const headerStore = await headers();
+  if (!verifySameOriginHeaders(headerStore.get("origin"), headerStore.get("referer"))) {
+    return { error: "Invalid request origin." };
+  }
+  return null;
+}
+
 /** Starts the caller's 7-day Premium trial. No-op success shape on failure -- `error` explains why (already premium, trial already used, etc.). */
 export async function startTrial(prevState: MembershipActionState, formData: FormData): Promise<MembershipActionState> {
   void prevState;
   void formData;
+  const originError = await assertSameOriginMutation();
+  if (originError) return originError;
+
   const { supabase, userId } = await requireUser();
   if (!userId) return { error: "You must be signed in to start a trial." };
 
@@ -72,12 +86,19 @@ export async function startTrial(prevState: MembershipActionState, formData: For
 
 /** Changes the caller's plan. Performs a direct, manual plan change today (no payment is collected) -- see `lib/billing/billing-adapter.ts` for the architecture a real checkout would call this through once wired up. Expects `plan` (required) and optional `billingProvider` (defaults to "manual") in `formData`. */
 export async function upgradePlan(_prevState: MembershipActionState, formData: FormData): Promise<MembershipActionState> {
+  const originError = await assertSameOriginMutation();
+  if (originError) return originError;
+
   const { supabase, userId } = await requireUser();
   if (!userId) return { error: "You must be signed in to change your plan." };
 
   const planRaw = readString(formData, "plan");
   if (!isMembershipPlan(planRaw)) {
     return { error: `plan must be one of: ${MEMBERSHIP_PLANS.join(", ")}.` };
+  }
+
+  if (isStripeBillingEnabled() && isPlanAtLeast(planRaw, "premium")) {
+    return { error: "Premium plans must be activated through Stripe checkout." };
   }
 
   const billingProviderRaw = readString(formData, "billingProvider");
@@ -96,6 +117,11 @@ export async function upgradePlan(_prevState: MembershipActionState, formData: F
 
 /** Creates a Stripe Checkout session and redirects the user to complete payment. */
 export async function createCheckoutSessionAction(formData: FormData): Promise<void> {
+  const headerStore = await headers();
+  if (!verifySameOriginHeaders(headerStore.get("origin"), headerStore.get("referer"))) {
+    redirect("/premium?error=invalid_origin");
+  }
+
   const intervalRaw = readString(formData, "interval");
   const interval = isBillingInterval(intervalRaw) ? intervalRaw : "month";
   const returnPath = readString(formData, "returnPath") ?? "/premium";
@@ -123,6 +149,11 @@ export async function createCheckoutSessionAction(formData: FormData): Promise<v
 export async function createBillingPortalAction(formData: FormData): Promise<void> {
   void formData;
 
+  const headerStore = await headers();
+  if (!verifySameOriginHeaders(headerStore.get("origin"), headerStore.get("referer"))) {
+    redirect("/account/subscription?error=invalid_origin");
+  }
+
   try {
     const { portalUrl } = await createStripeCustomerPortalForUser();
     redirect(portalUrl);
@@ -143,6 +174,9 @@ export async function createBillingPortalAction(formData: FormData): Promise<voi
 export async function cancelSubscription(prevState: MembershipActionState, formData: FormData): Promise<MembershipActionState> {
   void prevState;
   void formData;
+  const originError = await assertSameOriginMutation();
+  if (originError) return originError;
+
   const { supabase, userId } = await requireUser();
   if (!userId) return { error: "You must be signed in to cancel your subscription." };
 

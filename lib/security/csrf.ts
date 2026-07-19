@@ -17,17 +17,12 @@ export function getAllowedOrigins(): Set<string> {
   return origins;
 }
 
-/**
- * Validates that a mutating API request originates from this site.
- * Stripe webhooks are excluded — they use signature verification instead.
- */
-export function verifySameOrigin(request: Request): boolean {
-  const origin = request.headers.get("origin");
+/** Validates Origin/Referer headers against allowed site origins. */
+export function verifySameOriginHeaders(origin: string | null, referer: string | null): boolean {
   if (origin) {
     return getAllowedOrigins().has(normalizeOrigin(origin));
   }
 
-  const referer = request.headers.get("referer");
   if (referer) {
     try {
       const refererOrigin = normalizeOrigin(new URL(referer).origin);
@@ -37,6 +32,14 @@ export function verifySameOrigin(request: Request): boolean {
     }
   }
 
-  // Non-browser clients (Stripe, cron) omit Origin/Referer.
+  // Non-browser clients (Stripe webhooks, cron) omit Origin/Referer.
   return false;
+}
+
+/**
+ * Validates that a mutating API request originates from this site.
+ * Stripe webhooks are excluded — they use signature verification instead.
+ */
+export function verifySameOrigin(request: Request): boolean {
+  return verifySameOriginHeaders(request.headers.get("origin"), request.headers.get("referer"));
 }
