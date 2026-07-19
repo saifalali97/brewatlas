@@ -4,8 +4,8 @@ import type { Dictionary } from "@/lib/i18n/types";
 
 const GATEWAY_IMAGES = {
   coffee: "/images/recipes/espresso-shot.png",
-  arabicCoffee: "/images/culture/arabic-coffee-hero.png",
-  karakTea: "/images/culture/tea-hero.png",
+  gulfHeritage: "/images/culture/arabic-coffee-hero.png",
+  aiCoach: "/images/culture/tea-hero.png",
 } as const;
 
 type GatewaySectionProps = {
@@ -47,26 +47,29 @@ export function GatewaySection({ copy }: GatewaySectionProps) {
           minimal
         />
         <Portal
-          href="/culture/arabic-coffee"
+          href="/gulf-heritage"
           eyebrow="02"
-          title={destinations.arabicCoffee.title}
+          title={destinations.gulfHeritage.title}
+          tagline={destinations.gulfHeritage.tagline}
           enterLabel={copy.enterLabel}
-          imageSrc={GATEWAY_IMAGES.arabicCoffee}
-          imageAlt={destinations.arabicCoffee.imageAlt}
+          imageSrc={GATEWAY_IMAGES.gulfHeritage}
+          imageAlt={destinations.gulfHeritage.imageAlt}
           tone="earth"
           size="gateway"
           minimal
         />
         <Portal
-          href="/culture/tea"
+          href="/ai-coach"
           eyebrow="03"
-          title={destinations.karakTea.title}
+          title={destinations.aiCoach.title}
+          tagline={destinations.aiCoach.tagline}
           enterLabel={copy.enterLabel}
-          imageSrc={GATEWAY_IMAGES.karakTea}
-          imageAlt={destinations.karakTea.imageAlt}
+          imageSrc={GATEWAY_IMAGES.aiCoach}
+          imageAlt={destinations.aiCoach.imageAlt}
           tone="sand"
           size="gateway"
           minimal
+          badge={copy.comingSoonBadge}
         />
       </div>
     </section>

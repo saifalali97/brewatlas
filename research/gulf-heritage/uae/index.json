@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "country": "united-arab-emirates",
+  "lastUpdated": "2026-07-19",
+  "topics": [
+    { "slug": "emirati-arabic-coffee", "category": "arabic-coffee", "file": "topics/emirati-arabic-coffee.json" },
+    { "slug": "dallah", "category": "arabic-coffee", "file": "topics/dallah.json" },
+    { "slug": "finjan", "category": "arabic-coffee", "file": "topics/finjan.json" },
+    { "slug": "mihmas", "category": "arabic-coffee", "file": "topics/mihmas.json" },
+    { "slug": "cardamom", "category": "arabic-coffee", "file": "topics/cardamom.json" },
+    { "slug": "saffron", "category": "arabic-coffee", "file": "topics/saffron.json" },
+    { "slug": "coffee-hospitality", "category": "arabic-coffee", "file": "topics/coffee-hospitality.json" },
+    { "slug": "coffee-etiquette", "category": "arabic-coffee", "file": "topics/coffee-etiquette.json" },
+    { "slug": "coffee-serving-traditions", "category": "arabic-coffee", "file": "topics/coffee-serving-traditions.json" },
+    { "slug": "karak-chai", "category": "tea-karak", "file": "topics/karak-chai.json" },
+    { "slug": "black-tea", "category": "tea-karak", "file": "topics/black-tea.json" },
+    { "slug": "milk-tea", "category": "tea-karak", "file": "topics/milk-tea.json" },
+    { "slug": "mint-tea", "category": "tea-karak", "file": "topics/mint-tea.json" },
+    { "slug": "saffron-tea", "category": "tea-karak", "file": "topics/saffron-tea.json" },
+    { "slug": "adani-tea", "category": "tea-karak", "file": "topics/adani-tea.json" }
+  ],
+  "roasters": [
+    { "slug": "raw-coffee-company", "file": "roasters/raw-coffee-company.json" },
+    { "slug": "the-espresso-lab", "file": "roasters/the-espresso-lab.json" },
+    { "slug": "seven-fortunes", "file": "roasters/seven-fortunes.json" },
+    { "slug": "cypher-roastery", "file": "roasters/cypher-roastery.json" },
+    { "slug": "boom-coffee", "file": "roasters/boom-coffee.json" },
+    { "slug": "gold-box-roastery", "file": "roasters/gold-box-roastery.json" },
+    { "slug": "nightjar-coffee", "file": "roasters/nightjar-coffee.json" }
+  ],
+  "recipesCatalog": "recipes/index.json"
+}

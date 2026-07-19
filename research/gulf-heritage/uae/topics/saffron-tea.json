@@ -1,0 +1,55 @@
+{
+  "topicSlug": "saffron-tea",
+  "categorySlug": "tea-karak",
+  "researchStatus": "sources-catalogued",
+  "notes": "Saffron tea / Zafran Karak in UAE — FiLLi Cafe is primary commercial source; Visit Dubai covers karak culture.",
+  "sources": [
+    {
+      "title": "What is Zafran Chai — FiLLi's Saffron Karak, Since 1991",
+      "organization": "FiLLi Cafe",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://fillicafe.com/what-is-zafran-chai",
+      "type": "official",
+      "confidence": "Medium"
+    },
+    {
+      "title": "FiLLi Cafe Menu — Zafran Black Tea, Milk Zafran, FiLLi Tea Zafran",
+      "organization": "FiLLi Cafe",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://fillicafe.com/menu/signature-chai",
+      "type": "official",
+      "confidence": "Medium"
+    },
+    {
+      "title": "Top Karak Chai Spots in Dubai",
+      "organization": "Dubai Department of Economy and Tourism (Visit Dubai)",
+      "author": null,
+      "publicationDate": "2024-12-10",
+      "accessedDate": "2026-07-19",
+      "url": "https://www.visitdubai.com/en/articles/top-karak-chai-spots",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Emirati Recipes: Chai Karak and Chbaab (saffron in karak recipe)",
+      "organization": "Smithsonian Institution (Smithsonian Folklife Festival)",
+      "author": "Kathy Phung",
+      "publicationDate": "2022",
+      "accessedDate": "2026-07-19",
+      "url": "https://festival.si.edu/blog/emirati-recipes-chai-karak-and-chbaab",
+      "type": "official",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [
+    "smithsonian-karak-chai"
+  ],
+  "gaps": [
+    "FiLLi describes Zafran Karak composition but does not publish verified home-brew ratios.",
+    "Distinguish saffron-in-gahwa (Arabic coffee) from saffron-in-karak (tea) in editorial copy."
+  ]
+}

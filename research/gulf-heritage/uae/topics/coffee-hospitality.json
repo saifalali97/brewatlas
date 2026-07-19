@@ -1,0 +1,50 @@
+{
+  "topicSlug": "coffee-hospitality",
+  "categorySlug": "arabic-coffee",
+  "researchStatus": "sources-catalogued",
+  "notes": "Gahwa as hospitality and generosity — UNESCO and DCT are primary.",
+  "sources": [
+    {
+      "title": "Arabic coffee, a symbol of generosity",
+      "organization": "UNESCO Intangible Cultural Heritage",
+      "author": null,
+      "publicationDate": "2015",
+      "accessedDate": "2026-07-19",
+      "url": "https://ich.unesco.org/en/RL/arabic-coffee-a-symbol-of-generosity-02111",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Gahwa-Arabic coffee (Traditions and practices — hospitality)",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/Cultural-Resources/Publications/Gahwa-Arabic-coffee",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Bait Al Gahwa — Home of Gahwa Heritage",
+      "organization": "Department of Culture and Tourism – Abu Dhabi (Bait Al Gahwa)",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://baitalgahwa.ae/en",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Gahwa Experience Operating Permit",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/cultural-programmes/cultural-platforms/bait-al-gahwa/gahwa-experience-operating-permit",
+      "type": "government",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": []
+}

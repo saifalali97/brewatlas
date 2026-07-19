@@ -1,0 +1,42 @@
+{
+  "topicSlug": "saffron",
+  "categorySlug": "arabic-coffee",
+  "researchStatus": "sources-catalogued",
+  "notes": "Saffron in gahwa context — referenced in heritage demonstration reporting.",
+  "sources": [
+    {
+      "title": "Visitors to Sharjah Heritage Days can experience Bedouin coffee tradition (saffron in gahwa)",
+      "organization": "Gulf News",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://gulfnews.com/uae/visitors-to-sharjah-heritage-days-can-experience-bedouin-coffee-tradition-1.78143364",
+      "type": "news",
+      "confidence": "Medium"
+    },
+    {
+      "title": "Gahwa-Arabic coffee",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/Cultural-Resources/Publications/Gahwa-Arabic-coffee",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Al Gahwa Activity Guide",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/Cultural-Resources/Learning-Resources/Cultural-Heritage/Al-Gahwa",
+      "type": "government",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": [
+    "UAE-specific saffron-in-gahwa quantities not verified from primary government recipe document."
+  ]
+}

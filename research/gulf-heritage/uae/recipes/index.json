@@ -1,0 +1,134 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-19",
+  "notes": "Recipe SOURCE CATALOG only. Ingredient quantities listed here are copied from primary published sources for editorial verification — BrewAtlas must not publish until human sign-off.",
+  "recipes": [
+    {
+      "id": "smithsonian-karak-chai",
+      "title": "Chai Karak (Cardamom Milk Tea)",
+      "category": "tea",
+      "topicSlugs": ["karak-chai", "saffron-tea", "milk-tea"],
+      "sourceType": "official",
+      "confidence": "High",
+      "originalAuthor": "Ahmed Al Bawardi",
+      "publication": "Smithsonian Folklife Festival (republished from Table Tales: The Global Nomad Cuisine of Abu Dhabi)",
+      "publicationDate": "2022",
+      "url": "https://festival.si.edu/blog/emirati-recipes-chai-karak-and-chbaab",
+      "organization": "Smithsonian Institution",
+      "verificationStatus": "pending-editorial-review",
+      "notes": "Full recipe with quantities published on Smithsonian blog. Primary cookbook attribution: Hanan Sayed Worrell, Table Tales (Rizzoli, 2018)."
+    },
+    {
+      "id": "table-tales-karak-chai",
+      "title": "Chai Karak (Cardamom Milk Tea)",
+      "category": "tea",
+      "topicSlugs": ["karak-chai"],
+      "sourceType": "book",
+      "confidence": "High",
+      "originalAuthor": "Ahmed Al Bawardi (contributor); Hanan Sayed Worrell (editor/author)",
+      "publication": "Table Tales: The Global Nomad Cuisine of Abu Dhabi",
+      "publicationDate": "2018",
+      "url": "https://www.rizzoliusa.com/book/table-tales/",
+      "organization": "Rizzoli",
+      "verificationStatus": "pending-print-verification",
+      "notes": "Primary print source for karak recipe. Confirm ingredient quantities against print edition before publication."
+    },
+    {
+      "id": "dct-al-gahwa-activity-guide",
+      "title": "Al Gahwa Activity Guide (Gahwa preparation and etiquette)",
+      "category": "arabic-coffee",
+      "topicSlugs": [
+        "emirati-arabic-coffee",
+        "coffee-etiquette",
+        "coffee-serving-traditions",
+        "coffee-hospitality"
+      ],
+      "sourceType": "government",
+      "confidence": "High",
+      "originalAuthor": null,
+      "publication": "Department of Culture and Tourism – Abu Dhabi",
+      "publicationDate": null,
+      "url": "https://abudhabiculture.ae/en/Cultural-Resources/Learning-Resources/Cultural-Heritage/Al-Gahwa",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "verificationStatus": "pending-pdf-review",
+      "notes": "Downloadable activity guide PDF linked from DCT page. Brew ratios and step-by-step preparation require PDF extraction — not republished here."
+    },
+    {
+      "id": "dct-gahwa-arabic-coffee-publication",
+      "title": "Gahwa-Arabic coffee (publication)",
+      "category": "arabic-coffee",
+      "topicSlugs": ["emirati-arabic-coffee", "dallah", "finjan", "mihmas", "cardamom", "saffron"],
+      "sourceType": "government",
+      "confidence": "High",
+      "originalAuthor": null,
+      "publication": "Department of Culture and Tourism – Abu Dhabi",
+      "publicationDate": null,
+      "url": "https://abudhabiculture.ae/en/Cultural-Resources/Publications/Gahwa-Arabic-coffee",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "verificationStatus": "pending-recipe-extraction",
+      "notes": "Covers utensils, traditions, and practices. Recipe quantities not extracted in this registry pass."
+    },
+    {
+      "id": "raw-6-simple-brewing",
+      "title": "6 Simple Brewing Options & Basic Rules for Success",
+      "category": "specialty-coffee",
+      "topicSlugs": [],
+      "roasterSlugs": ["raw-coffee-company"],
+      "sourceType": "official",
+      "confidence": "High",
+      "originalAuthor": null,
+      "publication": "RAW Coffee Company blog",
+      "publicationDate": null,
+      "url": "https://rawcoffeecompany.com/blogs/blogs/6-simple-brewing-options-basic-rules-for-success",
+      "organization": "RAW Coffee Company LLC",
+      "verificationStatus": "pending-editorial-review",
+      "notes": "General brewing guidance; does not specify fixed ratios for all methods. Not Arabic coffee."
+    },
+    {
+      "id": "raw-cold-brew-recipes",
+      "title": "Cold Brew Mocktail & Cocktail Recipes",
+      "category": "specialty-coffee",
+      "topicSlugs": [],
+      "roasterSlugs": ["raw-coffee-company"],
+      "sourceType": "official",
+      "confidence": "High",
+      "originalAuthor": "Matt Toogood",
+      "publication": "RAW Coffee Company blog",
+      "publicationDate": "2020-04-09",
+      "url": "https://rawcoffeecompany.com/blogs/blogs/cold-brew-recipes",
+      "organization": "RAW Coffee Company LLC",
+      "verificationStatus": "pending-editorial-review",
+      "notes": "Published mocktail/cocktail recipes using Rocket Fuel cold brew. Quantities on source page."
+    },
+    {
+      "id": "raw-espresso-martini",
+      "title": "RAW Espresso Martini",
+      "category": "specialty-coffee",
+      "topicSlugs": [],
+      "roasterSlugs": ["raw-coffee-company"],
+      "sourceType": "official",
+      "confidence": "High",
+      "originalAuthor": null,
+      "publication": "RAW Coffee Company blog",
+      "publicationDate": null,
+      "url": "https://rawcoffeecompany.com/blogs/blogs/b-raw-espresso-martini-b",
+      "organization": "RAW Coffee Company LLC",
+      "verificationStatus": "pending-editorial-review",
+      "notes": "Three espresso martini variants with shot measurements on source page."
+    }
+  ],
+  "blocked": [
+    {
+      "reason": "No verified UAE gahwa brew recipe with editorial sign-off",
+      "pendingSources": ["dct-al-gahwa-activity-guide", "dct-gahwa-arabic-coffee-publication"]
+    },
+    {
+      "reason": "No verified Adani tea recipe from approved source list",
+      "topicSlugs": ["adani-tea"]
+    },
+    {
+      "reason": "No verified mint tea home recipe from approved source list",
+      "topicSlugs": ["mint-tea"]
+    }
+  ]
+}

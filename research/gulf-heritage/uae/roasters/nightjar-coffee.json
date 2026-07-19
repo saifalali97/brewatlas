@@ -1,0 +1,42 @@
+{
+  "roasterSlug": "nightjar-coffee",
+  "researchStatus": "sources-catalogued",
+  "notes": "Nightjar Coffee Roasters — Dubai specialty roaster, founded 2017, flagship at Alserkal Avenue.",
+  "sources": [
+    {
+      "title": "Nightjar Coffee Roasters",
+      "organization": "Nightjar Coffee Roasters LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.nightjar.coffee/",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Nightjar Coffee Roasters — Alserkal Avenue community page",
+      "organization": "Alserkal Avenue",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://alserkal.online/community/nightjar/",
+      "type": "reference",
+      "confidence": "Medium"
+    },
+    {
+      "title": "NIGHTJAR — LinkedIn",
+      "organization": "Nightjar Coffee Roasters LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.linkedin.com/company/nightjarcoffee",
+      "type": "reference",
+      "confidence": "Medium"
+    }
+  ],
+  "scaSources": [],
+  "recipeSources": [],
+  "gaps": [
+    "Published brew recipes on nightjar.coffee not catalogued in this pass."
+  ]
+}

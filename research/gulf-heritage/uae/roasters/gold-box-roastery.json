@@ -1,0 +1,63 @@
+{
+  "roasterSlug": "gold-box-roastery",
+  "researchStatus": "sources-catalogued",
+  "notes": "Gold Box Roastery — Dubai specialty roaster, founded 2011; competition baristas documented on official site.",
+  "sources": [
+    {
+      "title": "Gold Box Roastery",
+      "organization": "Gold Box Roastery LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://goldboxroastery.com/",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Dubai Location",
+      "organization": "Gold Box Roastery LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://goldboxroastery.com/pages/dubai-location",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Wholesale Contact",
+      "organization": "Gold Box Roastery LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://goldboxroastery.com/pages/wholesale-contact",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Gold Box Roastery — LinkedIn",
+      "organization": "Gold Box Roastery LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://uk.linkedin.com/company/gold-box-roastery-d",
+      "type": "reference",
+      "confidence": "Medium"
+    }
+  ],
+  "scaSources": [
+    {
+      "title": "Specialty Coffee Association",
+      "organization": "Specialty Coffee Association",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://sca.coffee/",
+      "type": "official",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": [
+    "Published brew recipes on goldboxroastery.com not catalogued in this pass."
+  ]
+}

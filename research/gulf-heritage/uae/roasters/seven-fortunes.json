@@ -1,0 +1,53 @@
+{
+  "roasterSlug": "seven-fortunes",
+  "researchStatus": "sources-catalogued",
+  "notes": "Seven Fortunes Coffee Roasters — Dubai specialty roaster, SCA trainings, founded 2015.",
+  "sources": [
+    {
+      "title": "Home | Seven Fortunes Coffee Roasters",
+      "organization": "Seven Fortunes Coffee Roasters",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.sevenfortunes.com/",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Our Store Locations",
+      "organization": "Seven Fortunes Coffee Roasters",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.sevenfortunes.com/our-store-locations/",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Seven Fortunes Coffee Roasters — LinkedIn",
+      "organization": "Seven Fortunes Coffee Roasters",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://ae.linkedin.com/company/sevenfortunescoffeeroasters",
+      "type": "reference",
+      "confidence": "Medium"
+    }
+  ],
+  "scaSources": [
+    {
+      "title": "Specialty Coffee Association",
+      "organization": "Specialty Coffee Association",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://sca.coffee/",
+      "type": "official",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": [
+    "Published brew recipes on sevenfortunes.com not catalogued in this pass."
+  ]
+}

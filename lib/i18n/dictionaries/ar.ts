@@ -1,4 +1,9 @@
 import type { Dictionary } from "@/lib/i18n/types";
+import {
+  gulfHeritageCategoriesAr,
+  gulfHeritagePagesAr,
+  gulfHeritageRecipeTitlesAr,
+} from "@/lib/i18n/gulf-heritage-copy-ar";
 
 /**
  * Arabic UI dictionary. Must mirror the exact key shape of
@@ -16,6 +21,7 @@ const ar: Dictionary = {
     roasters: "محامص القهوة",
     devices: "الأجهزة",
     culture: "الثقافة",
+    gulfHeritage: "تراث الخليج",
     coach: "مدرّب الذكاء الاصطناعي",
     pricing: "بريميوم",
     faq: "الأسئلة الشائعة",
@@ -92,20 +98,33 @@ const ar: Dictionary = {
     title: "بريو أطلس",
     subtitle: "اختر عالم التحضير.",
     enterLabel: "ادخل",
+    comingSoonBadge: "قريباً",
     destinations: {
       coffee: {
-        title: "القهوة",
+        title: "القهوة المختصة",
         imageAlt: "قهوة متخصصة pour-over بإضاءة تحريرية دافئة",
       },
-      arabicCoffee: {
-        title: "القهوة العربية",
+      gulfHeritage: {
+        title: "تراث الخليج",
+        tagline: "قهوة وشاي وتقاليد ووصفات ومحامص وتراث تحضير من أنحاء الخليج.",
         imageAlt: "دلة قهوة عربية وفنجان في مجلس تقليدي",
       },
-      karakTea: {
-        title: "الكرك والشاي",
+      aiCoach: {
+        title: "المدرب الذكي",
+        tagline:
+          "مساعد تحضير شخصي من بريو أطلس — لتحسين الوصفات والضبط والطحن والاستخلاص وتقنيات التحضير.",
         imageAlt: "كرك وشاي يُقدّمان على الطريقة الخليجية",
       },
     },
+  },
+  aiCoachComingSoonPage: {
+    metaTitle: "المدرب الذكي — قريباً",
+    metaDescription:
+      "المدرب الذكي من بريو أطلس قيد التطوير — مساعد تحضير شخصي للوصفات والضبط والطحن والاستخلاص والتقنية.",
+    comingSoonEyebrow: "قريباً",
+    title: "المدرب الذكي",
+    subtitle: "قريباً",
+    body: "المدرب الذكي من بريو أطلس قيد التطوير. نعمل على مساعد تحضير شخصي يساعدك على تحسين الوصفات والضبط والطحن والاستخلاص وتقنيات التحضير — مبني على حِرفة بريو أطلس.",
   },
   homeDiscover: {
     sectionAriaLabel: "اكتشف بريو أطلس",
@@ -344,6 +363,7 @@ const ar: Dictionary = {
     linkDevices: "الأجهزة",
     linkPremium: "بريميوم",
     linkCulture: "الثقافة",
+    linkGulfHeritage: "تراث الخليج",
     linkSearch: "بحث",
     linkArabicCoffee: "القهوة العربية",
     linkTeaKarak: "الشاي والكرك",
@@ -668,6 +688,125 @@ const ar: Dictionary = {
     eyebrow: "دليل عملي",
     title: "دليل القهوة الإماراتية",
     description: "القهوة العربية، الكرك، شاي الزعفران، الشاي الأسود، وشاي عدني — إلى جانب تقاليد التقديم والاحتفالات التي تجمعهم على المائدة.",
+  },
+  gulfHeritagePage: {
+    metaTitle: "تراث الخليج — أدلة القهوة والشاي",
+    metaDescription:
+      "تراث الخليج على BrewAtlas — أدلة منظمة للقهوة والشاي في دول الخليج. يُنشر المحتوى التحريري فقط من مصادر موثّقة.",
+    eyebrow: "تراث إقليمي",
+    title: "تراث الخليج",
+    description:
+      "أدلة حسب الدولة لتراث القهوة والشاي في الخليج. ابدأ بالإمارات العربية المتحدة؛ تُضاف الدول الأخرى بعد التحقق من المحتوى.",
+    backToHub: "العودة إلى تراث الخليج",
+    backToCountryTemplate: "العودة إلى {name}",
+    backToCategoryTemplate: "العودة إلى {name}",
+    moreInCountryTemplate: "المزيد في {name}",
+    allGuides: "جميع أدلة تراث الخليج",
+    defaultCountryEyebrow: "دولة خليجية",
+    exploreCountry: "استكشاف الدولة",
+    readPage: "عرض الدليل",
+    readCategory: "تصفح الفئة",
+    comingSoon: "قريبًا",
+    comingSoonTitle: "المحتوى قريبًا",
+    comingSoonCountryDescription:
+      "أدلة تراث الخليج لـ{name} قيد الإعداد. سيُضاف المحتوى التحريري من مصادر موثّقة.",
+    placeholderBody:
+      "هذا القسم محجوز للمحتوى التحريري الموثّق. ينشر BrewAtlas مواد تراث الخليج فقط من مصادر أولية.",
+    guideSingular: "دليل",
+    guidePlural: "أدلة",
+    guideCountTemplate: "{count} {label}",
+    countryNotFoundTitle: "الدولة غير موجودة",
+    categoryNotFoundTitle: "الفئة غير موجودة",
+    pageNotFoundTitle: "الدليل غير موجود",
+    sections: {
+      verifiedContentComingSoon: "محتوى موثّق قريبًا.",
+      verifiedRecipeComingSoon: "وصفة موثّقة قريبًا.",
+      verifiedRecipes: "وصفات موثّقة",
+      relatedPages: "صفحات ذات صلة",
+      relatedGuides: "أدلة ذات صلة",
+      references: "المراجع",
+      imagePending: "ستُضاف الصور من مصادر موثّقة.",
+    },
+    articleSections: {
+      overview: "نظرة عامة",
+      history: "التاريخ",
+      culturalSignificance: "الأهمية الثقافية",
+      traditionalPreparation: "التحضير التقليدي",
+      regionalDifferences: "الاختلافات الإقليمية",
+      servingEtiquette: "آداب التقديم",
+      equipment: "الأدوات",
+      ingredients: "المكونات",
+    },
+    teaSections: {
+      history: "التاريخ",
+      ingredients: "المكونات",
+      traditionalPreparation: "التحضير التقليدي",
+      servingTraditions: "تقاليد التقديم",
+      regionalVariations: "الاختلافات الإقليمية",
+    },
+    imageSections: {
+      hero: "صورة رئيسية",
+      gallery: "معرض الصور",
+      equipment: "معدات",
+      historical: "صور تاريخية",
+    },
+    roaster: {
+      story: "القصة",
+      foundingYear: "سنة التأسيس",
+      location: "الموقع",
+      website: "الموقع الإلكتروني",
+      instagram: "إنستغرام",
+      roastingPhilosophy: "فلسفة التحميص",
+      coffeeLineup: "تشكيلة القهوة",
+      brewingRecommendations: "توصيات التحضير",
+      featuredBeans: "حبوب مميزة",
+      awards: "الجوائز",
+      coverImage: "صورة الغلاف",
+      logo: "الشعار",
+    },
+    countries: {
+      "united-arab-emirates": {
+        name: "الإمارات العربية المتحدة",
+        description:
+          "القهوة العربية والشاي والكرك ومحمصات الإمارات المتخصصة — أدلة منظمة يُضاف محتواها من مصادر موثّقة.",
+        seoTitle: "تراث الخليج — الإمارات | BrewAtlas",
+        seoDescription:
+          "أدلة تراث الخليج للإمارات العربية المتحدة على BrewAtlas. يُنشر المحتوى التحريري فقط من مصادر موثّقة.",
+      },
+      "saudi-arabia": {
+        name: "المملكة العربية السعودية",
+        description: "أدلة تراث الخليج للسعودية — قيد الإعداد.",
+        seoTitle: "تراث الخليج — السعودية | BrewAtlas",
+        seoDescription: "أدلة تراث الخليج للسعودية — قريبًا على BrewAtlas.",
+      },
+      oman: {
+        name: "عُمان",
+        description: "أدلة تراث الخليج لعُمان — قيد الإعداد.",
+        seoTitle: "تراث الخليج — عُمان | BrewAtlas",
+        seoDescription: "أدلة تراث الخليج لعُمان — قريبًا على BrewAtlas.",
+      },
+      kuwait: {
+        name: "الكويت",
+        description: "أدلة تراث الخليج للكويت — قيد الإعداد.",
+        seoTitle: "تراث الخليج — الكويت | BrewAtlas",
+        seoDescription: "أدلة تراث الخليج للكويت — قريبًا على BrewAtlas.",
+      },
+      qatar: {
+        name: "قطر",
+        description: "أدلة تراث الخليج لقطر — قيد الإعداد.",
+        seoTitle: "تراث الخليج — قطر | BrewAtlas",
+        seoDescription: "أدلة تراث الخليج لقطر — قريبًا على BrewAtlas.",
+      },
+      bahrain: {
+        name: "البحرين",
+        description: "أدلة تراث الخليج للبحرين — قيد الإعداد.",
+        seoTitle: "تراث الخليج — البحرين | BrewAtlas",
+        seoDescription: "أدلة تراث الخليج للبحرين — قريبًا على BrewAtlas.",
+      },
+    },
+    categories: { ...gulfHeritageCategoriesAr },
+    pages: { ...gulfHeritagePagesAr },
+    recipeTitles: gulfHeritageRecipeTitlesAr,
   },
   communityPage: {
     eyebrow: "مجتمع القهوة",

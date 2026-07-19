@@ -1,4 +1,9 @@
 import type { Dictionary } from "@/lib/i18n/types";
+import {
+  gulfHeritageCategoriesEn,
+  gulfHeritagePagesEn,
+  gulfHeritageRecipeTitlesEn,
+} from "@/lib/i18n/gulf-heritage-copy-en";
 
 /**
  * English (default) UI dictionary. Every other locale's dictionary is
@@ -16,6 +21,7 @@ const en: Dictionary = {
     roasters: "Roasters",
     devices: "Devices",
     culture: "Culture",
+    gulfHeritage: "Gulf Heritage",
     coach: "AI Coach",
     pricing: "Premium",
     faq: "FAQ",
@@ -92,20 +98,34 @@ const en: Dictionary = {
     title: "BrewAtlas",
     subtitle: "Choose your brewing world.",
     enterLabel: "Enter",
+    comingSoonBadge: "Coming Soon",
     destinations: {
       coffee: {
         title: "Coffee",
         imageAlt: "Specialty coffee pour-over in warm editorial light",
       },
-      arabicCoffee: {
-        title: "Arabic Coffee",
+      gulfHeritage: {
+        title: "Gulf Heritage",
+        tagline:
+          "Coffee, tea, traditions, recipes, roasters and brewing heritage from across the Gulf.",
         imageAlt: "Traditional Arabic coffee dallah and finjan in a majlis setting",
       },
-      karakTea: {
-        title: "Karak & Tea",
+      aiCoach: {
+        title: "AI Coach",
+        tagline:
+          "Personal brewing assistant powered by BrewAtlas. Help users improve recipes, dialing-in, grinders, extraction and brewing techniques.",
         imageAlt: "Karak chai and tea served in the Gulf tradition",
       },
     },
+  },
+  aiCoachComingSoonPage: {
+    metaTitle: "AI Coach — Coming Soon",
+    metaDescription:
+      "BrewAtlas AI Coach is under development — a personal brewing assistant for recipes, dialing-in, grinders, extraction, and technique.",
+    comingSoonEyebrow: "Coming Soon",
+    title: "AI Coach",
+    subtitle: "Coming Soon",
+    body: "BrewAtlas AI Coach is under development. We are building a personal brewing assistant to help you improve recipes, dialing-in, grinders, extraction, and brewing techniques — all grounded in the BrewAtlas craft.",
   },
   homeDiscover: {
     sectionAriaLabel: "Discover BrewAtlas",
@@ -344,6 +364,7 @@ const en: Dictionary = {
     linkDevices: "Devices",
     linkPremium: "Premium",
     linkCulture: "Culture",
+    linkGulfHeritage: "Gulf Heritage",
     linkSearch: "Search",
     linkArabicCoffee: "Arabic Coffee",
     linkTeaKarak: "Tea & Karak",
@@ -668,6 +689,125 @@ const en: Dictionary = {
     eyebrow: "A Practical Guide",
     title: "Emirati Coffee Guide",
     description: "Arabic coffee, karak, saffron tea, black tea, and Adani tea — plus the serving traditions and ceremonies that bring them to the table.",
+  },
+  gulfHeritagePage: {
+    metaTitle: "Gulf Heritage — Coffee & Tea Guides",
+    metaDescription:
+      "Gulf Heritage on BrewAtlas — structured guides for coffee and tea across the GCC. Editorial content is published only from verified sources.",
+    eyebrow: "Regional Heritage",
+    title: "Gulf Heritage",
+    description:
+      "Country-by-country guides to coffee and tea heritage across the Gulf. Start with the United Arab Emirates; additional countries are added as content is verified.",
+    backToHub: "Back to Gulf Heritage",
+    backToCountryTemplate: "Back to {name}",
+    backToCategoryTemplate: "Back to {name}",
+    moreInCountryTemplate: "More in {name}",
+    allGuides: "All Gulf Heritage Guides",
+    defaultCountryEyebrow: "Gulf Country",
+    exploreCountry: "Explore country",
+    readPage: "View guide",
+    readCategory: "Browse category",
+    comingSoon: "Coming soon",
+    comingSoonTitle: "Content coming soon",
+    comingSoonCountryDescription:
+      "Gulf Heritage guides for {name} are in preparation. Editorial content will be added from verified sources.",
+    placeholderBody:
+      "This section is reserved for verified editorial content. BrewAtlas publishes Gulf Heritage material only from primary sources.",
+    guideSingular: "Guide",
+    guidePlural: "Guides",
+    guideCountTemplate: "{count} {label}",
+    countryNotFoundTitle: "Country Not Found",
+    categoryNotFoundTitle: "Category Not Found",
+    pageNotFoundTitle: "Guide Not Found",
+    sections: {
+      verifiedContentComingSoon: "Verified content coming soon.",
+      verifiedRecipeComingSoon: "Verified recipe coming soon.",
+      verifiedRecipes: "Verified recipes",
+      relatedPages: "Related pages",
+      relatedGuides: "Related guides",
+      references: "References",
+      imagePending: "Images will be added from verified sources.",
+    },
+    articleSections: {
+      overview: "Overview",
+      history: "History",
+      culturalSignificance: "Cultural significance",
+      traditionalPreparation: "Traditional preparation",
+      regionalDifferences: "Regional differences",
+      servingEtiquette: "Serving etiquette",
+      equipment: "Equipment",
+      ingredients: "Ingredients",
+    },
+    teaSections: {
+      history: "History",
+      ingredients: "Ingredients",
+      traditionalPreparation: "Traditional preparation",
+      servingTraditions: "Serving traditions",
+      regionalVariations: "Regional variations",
+    },
+    imageSections: {
+      hero: "Hero image",
+      gallery: "Gallery",
+      equipment: "Equipment",
+      historical: "Historical",
+    },
+    roaster: {
+      story: "Story",
+      foundingYear: "Founding year",
+      location: "Location",
+      website: "Website",
+      instagram: "Instagram",
+      roastingPhilosophy: "Roasting philosophy",
+      coffeeLineup: "Coffee lineup",
+      brewingRecommendations: "Brewing recommendations",
+      featuredBeans: "Featured beans",
+      awards: "Awards",
+      coverImage: "Cover image",
+      logo: "Logo",
+    },
+    countries: {
+      "united-arab-emirates": {
+        name: "United Arab Emirates",
+        description:
+          "Arabic coffee, tea & karak, and UAE specialty roasters — structured guides with content added from verified sources.",
+        seoTitle: "UAE Gulf Heritage | BrewAtlas",
+        seoDescription:
+          "Gulf Heritage guides for the United Arab Emirates on BrewAtlas. Editorial content is published only from verified sources.",
+      },
+      "saudi-arabia": {
+        name: "Saudi Arabia",
+        description: "Gulf Heritage guides for Saudi Arabia — in preparation.",
+        seoTitle: "Saudi Arabia Gulf Heritage | BrewAtlas",
+        seoDescription: "Gulf Heritage guides for Saudi Arabia — coming soon on BrewAtlas.",
+      },
+      oman: {
+        name: "Oman",
+        description: "Gulf Heritage guides for Oman — in preparation.",
+        seoTitle: "Oman Gulf Heritage | BrewAtlas",
+        seoDescription: "Gulf Heritage guides for Oman — coming soon on BrewAtlas.",
+      },
+      kuwait: {
+        name: "Kuwait",
+        description: "Gulf Heritage guides for Kuwait — in preparation.",
+        seoTitle: "Kuwait Gulf Heritage | BrewAtlas",
+        seoDescription: "Gulf Heritage guides for Kuwait — coming soon on BrewAtlas.",
+      },
+      qatar: {
+        name: "Qatar",
+        description: "Gulf Heritage guides for Qatar — in preparation.",
+        seoTitle: "Qatar Gulf Heritage | BrewAtlas",
+        seoDescription: "Gulf Heritage guides for Qatar — coming soon on BrewAtlas.",
+      },
+      bahrain: {
+        name: "Bahrain",
+        description: "Gulf Heritage guides for Bahrain — in preparation.",
+        seoTitle: "Bahrain Gulf Heritage | BrewAtlas",
+        seoDescription: "Gulf Heritage guides for Bahrain — coming soon on BrewAtlas.",
+      },
+    },
+    categories: { ...gulfHeritageCategoriesEn },
+    pages: { ...gulfHeritagePagesEn },
+    recipeTitles: gulfHeritageRecipeTitlesEn,
   },
   communityPage: {
     eyebrow: "Coffee Community",

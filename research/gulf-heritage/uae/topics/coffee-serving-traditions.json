@@ -1,0 +1,60 @@
+{
+  "topicSlug": "coffee-serving-traditions",
+  "categorySlug": "arabic-coffee",
+  "researchStatus": "sources-catalogued",
+  "notes": "Broader gahwa traditions including roasting, brewing, and social occasions.",
+  "sources": [
+    {
+      "title": "Gahwa-Arabic Coffee (heritage carousel)",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/heritage-carousel/gahwa-arabic-coffee",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Gahwa (Arabic coffee): UNESCO inscribed element",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/cultural-heritage/intangible/unesco-ich-inscribed-elements/gahwa-arabic-coffee",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Arabic coffee, a symbol of generosity",
+      "organization": "UNESCO Intangible Cultural Heritage",
+      "author": null,
+      "publicationDate": "2015",
+      "accessedDate": "2026-07-19",
+      "url": "https://ich.unesco.org/en/RL/arabic-coffee-a-symbol-of-generosity-02111",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Coffee in the Arabian Gulf (Sharjah exhibition)",
+      "organization": "Gulf News / Sharjah Museums Authority",
+      "author": null,
+      "publicationDate": "2022",
+      "accessedDate": "2026-07-19",
+      "url": "https://gulfnews.com/travel/energising-berries-arabian-dallah-and-the-origins-of-gahwa-1.2305409",
+      "type": "news",
+      "confidence": "Medium"
+    },
+    {
+      "title": "Coffee Museum — About the Museum",
+      "organization": "Dubai Coffee Museum",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.coffeemuseum.ae/index.php",
+      "type": "museum",
+      "confidence": "Medium"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": []
+}

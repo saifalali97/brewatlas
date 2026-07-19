@@ -1,0 +1,73 @@
+{
+  "roasterSlug": "the-espresso-lab",
+  "researchStatus": "sources-catalogued",
+  "notes": "The Espresso Lab — Dubai-born specialty coffee company founded by Ibrahim Al Mallouhi.",
+  "sources": [
+    {
+      "title": "Specialty Coffee & Roastery Experience",
+      "organization": "The Espresso Lab",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://theespressolab.com/",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "About The Espresso Lab",
+      "organization": "The Espresso Lab",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://theespressolab.com/pages/about",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Our Story & Specialty Coffee Journey",
+      "organization": "The Espresso Lab",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://theespressolab.com/our-story",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Find Our Coffee Shops in UAE",
+      "organization": "The Espresso Lab",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://theespressolab.com/visit-us",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Where Ancient Hospitality Meets Modern Craft (Ibrahim Al Mallouhi profile)",
+      "organization": "The Espresso Lab",
+      "author": null,
+      "publicationDate": "2026",
+      "accessedDate": "2026-07-19",
+      "url": "https://theespressolab.com/catalogue/profile",
+      "type": "official",
+      "confidence": "High"
+    }
+  ],
+  "scaSources": [
+    {
+      "title": "World of Coffee Dubai 2027",
+      "organization": "Specialty Coffee Association",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://sca.coffee/",
+      "type": "official",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": [
+    "Published brew recipes on official site not catalogued in this pass — review theespressolab.com blog/recipes if present before recipe import."
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "topicSlug": "mihmas",
+  "categorySlug": "arabic-coffee",
+  "researchStatus": "sources-catalogued",
+  "notes": "Mihmas (coffee roasting/stirring tool) — named in DCT ma`ameel (brew basket) tool list.",
+  "sources": [
+    {
+      "title": "Gahwa-Arabic coffee (Utensils and tools — mihmas, ma`ameel)",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/Cultural-Resources/Publications/Gahwa-Arabic-coffee",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Gahwa-Arabic Coffee (UNESCO inscribed element — utensils)",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/cultural-heritage/intangible/unesco-ich-inscribed-elements/gahwa-arabic-coffee",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Visitors to Sharjah Heritage Days can experience Bedouin coffee tradition",
+      "organization": "Gulf News",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://gulfnews.com/uae/visitors-to-sharjah-heritage-days-can-experience-bedouin-coffee-tradition-1.78143364",
+      "type": "news",
+      "confidence": "Medium"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": [
+    "Dedicated museum catalog entry for mihmas as distinct artifact not yet sourced — DCT publication is primary."
+  ]
+}

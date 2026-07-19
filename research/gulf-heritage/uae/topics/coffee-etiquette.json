@@ -1,0 +1,50 @@
+{
+  "topicSlug": "coffee-etiquette",
+  "categorySlug": "arabic-coffee",
+  "researchStatus": "sources-catalogued",
+  "notes": "Serving order, guest signals, and host duties — DCT activity guide and UNESCO nomination text.",
+  "sources": [
+    {
+      "title": "Al Gahwa Activity Guide",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/Cultural-Resources/Learning-Resources/Cultural-Heritage/Al-Gahwa",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Gahwa-Arabic coffee (Traditions and practices)",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/Cultural-Resources/Publications/Gahwa-Arabic-coffee",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Arabic coffee, a symbol of generosity",
+      "organization": "UNESCO Intangible Cultural Heritage",
+      "author": null,
+      "publicationDate": "2015",
+      "accessedDate": "2026-07-19",
+      "url": "https://ich.unesco.org/en/RL/arabic-coffee-a-symbol-of-generosity-02111",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Gahwa Experience Operating Permit (etiquette for licensed experiences)",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/cultural-programmes/cultural-platforms/bait-al-gahwa/gahwa-experience-operating-permit",
+      "type": "government",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": []
+}

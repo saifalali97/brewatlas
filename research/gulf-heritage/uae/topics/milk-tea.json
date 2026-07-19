@@ -1,0 +1,44 @@
+{
+  "topicSlug": "milk-tea",
+  "categorySlug": "tea-karak",
+  "researchStatus": "sources-catalogued",
+  "notes": "Milk tea in UAE context primarily documented via karak (chai with milk).",
+  "sources": [
+    {
+      "title": "Top karak chai spots in Dubai",
+      "organization": "Dubai Department of Economy and Tourism (Visit Dubai)",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.visitdubai.com/en/articles/top-karak-chai-spots",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Table Tales: The Global Nomad Cuisine of Abu Dhabi",
+      "organization": "Rizzoli / Hanan Sayed Worrell",
+      "author": "Hanan Sayed Worrell",
+      "publicationDate": "2018",
+      "accessedDate": "2026-07-19",
+      "url": "https://www.rizzoliusa.com/book/table-tales/",
+      "type": "book",
+      "confidence": "High"
+    },
+    {
+      "title": "Karak Chai: A Spiced Tea from the United Arab Emirates",
+      "organization": "Smithsonian Institution",
+      "author": "Smithsonian Folklife Festival",
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://festival.si.edu/blog/emirati-recipes-chai-karak-and-chbaab",
+      "type": "official",
+      "confidence": "Medium"
+    }
+  ],
+  "recipeSources": [
+    "table-tales-karak-chai"
+  ],
+  "gaps": [
+    "Standalone 'milk tea' (non-karak) UAE official source not identified."
+  ]
+}

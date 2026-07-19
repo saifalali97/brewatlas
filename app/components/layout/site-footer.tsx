@@ -15,6 +15,7 @@ function buildExploreLinks(footer: Dictionary["homeFooter"]): FooterLinkItem[] {
     { href: "/roasters", label: footer.linkRoasters },
     { href: "/devices", label: footer.linkDevices },
     { href: "/culture", label: footer.linkCulture },
+    { href: "/gulf-heritage", label: footer.linkGulfHeritage },
   ];
 }
 
