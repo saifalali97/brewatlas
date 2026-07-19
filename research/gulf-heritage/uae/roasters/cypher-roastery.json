@@ -1,0 +1,71 @@
+{
+  "roasterSlug": "cypher-roastery",
+  "researchStatus": "sources-catalogued",
+  "notes": "Cypher Urban Roastery — Dubai specialty roaster and green coffee trader, founded 2016.",
+  "sources": [
+    {
+      "title": "Cypher Urban Roastery",
+      "organization": "Cypher Roastery LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.bycypher.com/",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Cypher Roastery",
+      "organization": "Cypher Roastery LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.bycypher.com/pages/cypher-roastery",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Roasting Facility",
+      "organization": "Cypher Roastery LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.bycypher.com/pages/roasting-facility",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Contact us",
+      "organization": "Cypher Roastery LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.bycypher.com/pages/contact-us",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Cypher Urban Roastery — LinkedIn",
+      "organization": "Cypher Roastery LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.linkedin.com/company/by-cypher",
+      "type": "reference",
+      "confidence": "Medium"
+    }
+  ],
+  "scaSources": [
+    {
+      "title": "Specialty Coffee Association",
+      "organization": "Specialty Coffee Association",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://sca.coffee/",
+      "type": "official",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": []
+}

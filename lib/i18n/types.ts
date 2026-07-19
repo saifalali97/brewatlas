@@ -22,6 +22,7 @@ export type Dictionary = {
     roasters: string;
     devices: string;
     culture: string;
+    gulfHeritage: string;
     coach: string;
     pricing: string;
     faq: string;
@@ -98,11 +99,20 @@ export type Dictionary = {
     title: string;
     subtitle: string;
     enterLabel: string;
+    comingSoonBadge: string;
     destinations: {
       coffee: { title: string; imageAlt: string };
-      arabicCoffee: { title: string; imageAlt: string };
-      karakTea: { title: string; imageAlt: string };
+      gulfHeritage: { title: string; tagline: string; imageAlt: string };
+      aiCoach: { title: string; tagline: string; imageAlt: string };
     };
+  };
+  aiCoachComingSoonPage: {
+    metaTitle: string;
+    metaDescription: string;
+    comingSoonEyebrow: string;
+    title: string;
+    subtitle: string;
+    body: string;
   };
   homeDiscover: {
     sectionAriaLabel: string;
@@ -287,6 +297,7 @@ export type Dictionary = {
     linkDevices: string;
     linkPremium: string;
     linkCulture: string;
+    linkGulfHeritage: string;
     linkSearch: string;
     linkArabicCoffee: string;
     linkTeaKarak: string;
@@ -610,6 +621,161 @@ export type Dictionary = {
     eyebrow: string;
     title: string;
     description: string;
+  };
+  gulfHeritagePage: {
+    metaTitle: string;
+    metaDescription: string;
+    eyebrow: string;
+    title: string;
+    description: string;
+    backToHub: string;
+    backToCountryTemplate: string;
+    backToCategoryTemplate: string;
+    moreInCountryTemplate: string;
+    allGuides: string;
+    defaultCountryEyebrow: string;
+    exploreCountry: string;
+    readPage: string;
+    readCategory: string;
+    comingSoon: string;
+    comingSoonTitle: string;
+    comingSoonCountryDescription: string;
+    placeholderBody: string;
+    guideSingular: string;
+    guidePlural: string;
+    guideCountTemplate: string;
+    countryNotFoundTitle: string;
+    categoryNotFoundTitle: string;
+    pageNotFoundTitle: string;
+    sections: {
+      verifiedContentComingSoon: string;
+      verifiedRecipeComingSoon: string;
+      verifiedRecipes: string;
+      relatedPages: string;
+      relatedGuides: string;
+      references: string;
+      imagePending: string;
+    };
+    articleSections: {
+      overview: string;
+      history: string;
+      culturalSignificance: string;
+      traditionalPreparation: string;
+      regionalDifferences: string;
+      servingEtiquette: string;
+      equipment: string;
+      ingredients: string;
+    };
+    teaSections: {
+      history: string;
+      ingredients: string;
+      traditionalPreparation: string;
+      servingTraditions: string;
+      regionalVariations: string;
+    };
+    imageSections: {
+      hero: string;
+      gallery: string;
+      equipment: string;
+      historical: string;
+    };
+    roaster: {
+      story: string;
+      foundingYear: string;
+      location: string;
+      website: string;
+      instagram: string;
+      roastingPhilosophy: string;
+      coffeeLineup: string;
+      brewingRecommendations: string;
+      featuredBeans: string;
+      awards: string;
+      coverImage: string;
+      logo: string;
+    };
+    countries: {
+      "united-arab-emirates": {
+        name: string;
+        description: string;
+        seoTitle: string;
+        seoDescription: string;
+      };
+      "saudi-arabia": {
+        name: string;
+        description: string;
+        seoTitle: string;
+        seoDescription: string;
+      };
+      oman: {
+        name: string;
+        description: string;
+        seoTitle: string;
+        seoDescription: string;
+      };
+      kuwait: {
+        name: string;
+        description: string;
+        seoTitle: string;
+        seoDescription: string;
+      };
+      qatar: {
+        name: string;
+        description: string;
+        seoTitle: string;
+        seoDescription: string;
+      };
+      bahrain: {
+        name: string;
+        description: string;
+        seoTitle: string;
+        seoDescription: string;
+      };
+    };
+    categories: {
+      "arabic-coffee": {
+        title: string;
+        description: string;
+        seoTitle: string;
+        seoDescription: string;
+      };
+      "tea-karak": {
+        title: string;
+        description: string;
+        seoTitle: string;
+        seoDescription: string;
+      };
+      "uae-roasters": {
+        title: string;
+        description: string;
+        seoTitle: string;
+        seoDescription: string;
+      };
+    };
+    pages: {
+      "emirati-arabic-coffee": { title: string; seoTitle: string; seoDescription: string };
+      dallah: { title: string; seoTitle: string; seoDescription: string };
+      finjan: { title: string; seoTitle: string; seoDescription: string };
+      mihmas: { title: string; seoTitle: string; seoDescription: string };
+      cardamom: { title: string; seoTitle: string; seoDescription: string };
+      saffron: { title: string; seoTitle: string; seoDescription: string };
+      "coffee-hospitality": { title: string; seoTitle: string; seoDescription: string };
+      "coffee-etiquette": { title: string; seoTitle: string; seoDescription: string };
+      "coffee-serving-traditions": { title: string; seoTitle: string; seoDescription: string };
+      "karak-chai": { title: string; seoTitle: string; seoDescription: string };
+      "black-tea": { title: string; seoTitle: string; seoDescription: string };
+      "milk-tea": { title: string; seoTitle: string; seoDescription: string };
+      "saffron-tea": { title: string; seoTitle: string; seoDescription: string };
+      "mint-tea": { title: string; seoTitle: string; seoDescription: string };
+      "adani-tea": { title: string; seoTitle: string; seoDescription: string };
+      "raw-coffee-company": { title: string; seoTitle: string; seoDescription: string };
+      "the-espresso-lab": { title: string; seoTitle: string; seoDescription: string };
+      "seven-fortunes": { title: string; seoTitle: string; seoDescription: string };
+      "cypher-roastery": { title: string; seoTitle: string; seoDescription: string };
+      "boom-coffee": { title: string; seoTitle: string; seoDescription: string };
+      "gold-box-roastery": { title: string; seoTitle: string; seoDescription: string };
+      "nightjar-coffee": { title: string; seoTitle: string; seoDescription: string };
+    };
+    recipeTitles: Record<string, string>;
   };
   communityPage: {
     eyebrow: string;

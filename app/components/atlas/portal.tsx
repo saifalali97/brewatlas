@@ -9,6 +9,7 @@ import {
   acTypography,
   type AcPhotoGrade,
 } from "@/lib/design-system/atlas-canon";
+import { badges } from "@/lib/constants/styles";
 
 export type PortalTone = "warm" | "neutral" | "earth" | "sand" | "night";
 
@@ -42,6 +43,8 @@ export type PortalProps = {
   className?: string;
   /** Hide tagline for minimal gateway layouts */
   minimal?: boolean;
+  /** Optional overlay badge (e.g. Coming Soon) */
+  badge?: string;
 };
 
 function joinClasses(...parts: Array<string | false | undefined>) {
@@ -65,6 +68,7 @@ export function Portal({
   priority = false,
   className = "",
   minimal = false,
+  badge,
 }: PortalProps) {
   const heightClass =
     size === "gateway"
@@ -110,6 +114,11 @@ export function Portal({
           toneOverlays[tone],
         )}
       />
+      {badge ? (
+        <div className="absolute end-5 top-5 sm:end-8 sm:top-8">
+          <span className={badges.premiumDark}>{badge}</span>
+        </div>
+      ) : null}
       <div className="absolute inset-x-0 bottom-0 p-8 sm:p-10 lg:p-12">
         <p className={acTypography.eyebrowDark}>{eyebrow}</p>
         <h3
@@ -120,7 +129,7 @@ export function Portal({
         >
           {title}
         </h3>
-        {!minimal && tagline ? (
+        {tagline ? (
           <p className={joinClasses(acTypography.bodyDark, "mt-3 max-w-md")}>{tagline}</p>
         ) : null}
         <span

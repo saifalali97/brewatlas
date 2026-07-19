@@ -1,0 +1,42 @@
+{
+  "topicSlug": "cardamom",
+  "categorySlug": "arabic-coffee",
+  "researchStatus": "sources-catalogued",
+  "notes": "Cardamom as gahwa spice — referenced in DCT and live-demonstration reporting; no standalone botanical editorial drafted.",
+  "sources": [
+    {
+      "title": "Gahwa-Arabic coffee",
+      "organization": "Department of Culture and Tourism – Abu Dhabi",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://abudhabiculture.ae/en/Cultural-Resources/Publications/Gahwa-Arabic-coffee",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Visitors to Sharjah Heritage Days can experience Bedouin coffee tradition (cardamom in gahwa)",
+      "organization": "Gulf News",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://gulfnews.com/uae/visitors-to-sharjah-heritage-days-can-experience-bedouin-coffee-tradition-1.78143364",
+      "type": "news",
+      "confidence": "Medium"
+    },
+    {
+      "title": "Dubai's Coffee Museum pays tribute to the bean (Arabic coffee spice notes)",
+      "organization": "The National",
+      "author": null,
+      "publicationDate": "2026-01-09",
+      "accessedDate": "2026-07-19",
+      "url": "https://www.thenationalnews.com/lifestyle/things-to-do/2026/01/09/museums-of-the-uae-dubai-coffee-museum/",
+      "type": "news",
+      "confidence": "Medium"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": [
+    "Quantified spice ratios for Emirati gahwa require verified recipe source (e.g. DCT PDF) — not extracted here."
+  ]
+}

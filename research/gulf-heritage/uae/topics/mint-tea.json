@@ -1,0 +1,43 @@
+{
+  "topicSlug": "mint-tea",
+  "categorySlug": "tea-karak",
+  "researchStatus": "sources-catalogued",
+  "notes": "Mint tea in UAE context — FiLLi Cafe menu documents mint tea variants; distinct from karak. No UAE government standalone page identified.",
+  "sources": [
+    {
+      "title": "FiLLi Cafe Menu — Signature Chai (Black Mint Tea, Green Mint Tea, Moroccan Mint Tea)",
+      "organization": "FiLLi Cafe",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://fillicafe.com/menu/signature-chai",
+      "type": "official",
+      "confidence": "Medium"
+    },
+    {
+      "title": "Tea House Dubai — FiLLi, the Home of Karak & Chai",
+      "organization": "FiLLi Cafe",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://fillicafe.com/tea-house-dubai",
+      "type": "official",
+      "confidence": "Medium"
+    },
+    {
+      "title": "Top Karak Chai Spots in Dubai",
+      "organization": "Dubai Department of Economy and Tourism (Visit Dubai)",
+      "author": null,
+      "publicationDate": "2024-12-10",
+      "accessedDate": "2026-07-19",
+      "url": "https://www.visitdubai.com/en/articles/top-karak-chai-spots",
+      "type": "government",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": [
+    "No published mint-tea recipe with verified quantities from UAE government or museum source identified.",
+    "FiLLi menu lists mint tea products but does not publish home-brew ratios on public pages reviewed."
+  ]
+}

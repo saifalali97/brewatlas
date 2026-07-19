@@ -1,0 +1,65 @@
+{
+  "roasterSlug": "raw-coffee-company",
+  "researchStatus": "sources-catalogued",
+  "notes": "RAW Coffee Company — Dubai specialty roaster, SCA training campus. Official site and blog recipe sources catalogued.",
+  "sources": [
+    {
+      "title": "RAW Coffee Company",
+      "organization": "RAW Coffee Company LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://rawcoffeecompany.com/",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "About RAW Coffee Company",
+      "organization": "RAW Coffee Company LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://rawcoffeecompany.com/pages/about",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "Our Story",
+      "organization": "RAW Coffee Company LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://rawcoffeecompany.com/pages/our-story",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "RAW Coffee Company — LinkedIn",
+      "organization": "RAW Coffee Company LLC",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://ae.linkedin.com/company/rawcoffeecompany",
+      "type": "reference",
+      "confidence": "Medium"
+    }
+  ],
+  "scaSources": [
+    {
+      "title": "Specialty Coffee Association",
+      "organization": "Specialty Coffee Association",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://sca.coffee/",
+      "type": "official",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [
+    "raw-6-simple-brewing",
+    "raw-cold-brew-recipes",
+    "raw-espresso-martini"
+  ],
+  "gaps": []
+}

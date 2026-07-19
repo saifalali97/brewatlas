@@ -1,0 +1,34 @@
+{
+  "topicSlug": "adani-tea",
+  "categorySlug": "tea-karak",
+  "researchStatus": "sources-catalogued-partial",
+  "notes": "Adani (Adeni / Shai Adeni) tea — Yemeni origin; consumed in UAE diaspora and Gulf tea culture. No UAE government primary source identified.",
+  "sources": [
+    {
+      "title": "Yemeni Tea: The Jewel Of Aden Yemen",
+      "organization": "Arab America",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://www.arabamerica.com/yemeni-tea-the-jewel-of-aden-yemen/",
+      "type": "cultural",
+      "confidence": "Medium"
+    },
+    {
+      "title": "Tea Culture in Yemen",
+      "organization": "It's Never Not Teatime",
+      "author": null,
+      "publicationDate": null,
+      "accessedDate": "2026-07-19",
+      "url": "https://itsnevernotteatime.com/tea-culture-in-yemen/",
+      "type": "reference",
+      "confidence": "Medium"
+    }
+  ],
+  "recipeSources": [],
+  "gaps": [
+    "No UAE government tourism or heritage page dedicated to Adani tea found.",
+    "Primary Adeni tea sources are Yemeni/cultural — confirm UAE editorial framing before publication.",
+    "Do not use commercial recipe blogs (e.g. Tara's Multicultural Table, yemenitea.com) until editorial review — not listed as verified recipe sources."
+  ]
+}

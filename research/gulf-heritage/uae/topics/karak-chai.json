@@ -1,0 +1,65 @@
+{
+  "topicSlug": "karak-chai",
+  "categorySlug": "tea-karak",
+  "researchStatus": "sources-catalogued",
+  "notes": "Karak (karak chai) — UAE tourism and published cookbook sources. Recipe catalogued separately in recipes/index.json.",
+  "sources": [
+    {
+      "title": "Top karak chai spots in Dubai",
+      "organization": "Dubai Department of Economy and Tourism (Visit Dubai)",
+      "author": null,
+      "publicationDate": "2024-12-10",
+      "accessedDate": "2026-07-19",
+      "url": "https://www.visitdubai.com/en/articles/top-karak-chai-spots",
+      "type": "government",
+      "confidence": "High"
+    },
+    {
+      "title": "Table Tales: The Global Nomad Cuisine of Abu Dhabi",
+      "organization": "Rizzoli / Hanan Sayed Worrell",
+      "author": "Hanan Sayed Worrell",
+      "publicationDate": "2018",
+      "accessedDate": "2026-07-19",
+      "url": "https://www.rizzoliusa.com/book/table-tales/",
+      "type": "book",
+      "confidence": "High"
+    },
+    {
+      "title": "Emirati Recipes: Chai Karak and Chbaab",
+      "organization": "Smithsonian Institution (Smithsonian Folklife Festival)",
+      "author": "Kathy Phung",
+      "publicationDate": "2022",
+      "accessedDate": "2026-07-19",
+      "url": "https://festival.si.edu/blog/emirati-recipes-chai-karak-and-chbaab",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "United Arab Emirates: Living Landscape | Living Memory",
+      "organization": "Smithsonian Institution (Smithsonian Folklife Festival)",
+      "author": null,
+      "publicationDate": "2022",
+      "accessedDate": "2026-07-19",
+      "url": "https://festival.si.edu/2022/uae",
+      "type": "official",
+      "confidence": "High"
+    },
+    {
+      "title": "UAE Cultural Traditions Explored at the 2022 Smithsonian Folklife Festival",
+      "organization": "Smithsonian Institution",
+      "author": null,
+      "publicationDate": "2022",
+      "accessedDate": "2026-07-19",
+      "url": "https://www.si.edu/newsdesk/releases/uae-cultural-traditions-explored-2022-smithsonian-folklife-festival",
+      "type": "official",
+      "confidence": "High"
+    }
+  ],
+  "recipeSources": [
+    "table-tales-karak-chai",
+    "smithsonian-karak-chai"
+  ],
+  "gaps": [
+    "Primary karak recipe attribution in Table Tales is to Ahmed Al Bawardi — confirm ingredient quantities in print edition before publication."
+  ]
+}

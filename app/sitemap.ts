@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getCultureTopicSitemapEntries } from "@/lib/data/culture-sitemap";
+import { listGulfHeritageSitemapPaths } from "@/lib/content/gulf-heritage";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { getPublishedRecipeSlugs } from "@/lib/data/recipe-publishing";
 import { buildHreflangAlternates } from "@/lib/seo/localized-metadata";
@@ -46,13 +47,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getCultureTopicSitemapEntries(supabase),
   ]);
 
-  const staticEntries = publicPages.map(({ path, changeFrequency, priority }) => ({
-    url: path === "/" ? baseUrl : `${baseUrl}${path}`,
-    lastModified,
-    changeFrequency,
-    priority,
-    alternates: { languages: buildHreflangAlternates(path) },
-  }));
+  const gulfHeritagePaths = listGulfHeritageSitemapPaths();
+
+  const staticEntries = [
+    ...publicPages.map(({ path, changeFrequency, priority }) => ({
+      url: path === "/" ? baseUrl : `${baseUrl}${path}`,
+      lastModified,
+      changeFrequency,
+      priority,
+      alternates: { languages: buildHreflangAlternates(path) },
+    })),
+    ...gulfHeritagePaths.map(({ path, priority }) => ({
+      url: `${baseUrl}${path}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority,
+      alternates: { languages: buildHreflangAlternates(path) },
+    })),
+  ];
 
   const staticSlugs = new Set(getAllRecipeSlugs());
 
