@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
+import { PasswordInput } from "@/app/components/auth/password-input";
 import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import { buttons, forms } from "@/lib/constants/styles";
 import { useTranslations } from "@/lib/i18n/translation-context";
@@ -39,28 +40,22 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
         />
       </div>
 
-      <div>
-        <div className="flex items-center justify-between">
-          <label htmlFor="password" className={forms.label}>
-            {t("auth.password")}
-          </label>
+      <PasswordInput
+        id="password"
+        name="password"
+        label={t("auth.password")}
+        placeholder={t("auth.passwordPlaceholderDots")}
+        required
+        autoComplete="current-password"
+        labelAside={
           <Link
             href="/forgot-password"
             className={`${acTypography.nav} text-xs text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
           >
             {t("auth.forgotPassword")}
           </Link>
-        </div>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          autoComplete="current-password"
-          className={forms.input}
-          placeholder={t("auth.passwordPlaceholderDots")}
-        />
-      </div>
+        }
+      />
 
       <FormMessage error={state?.error} success={state?.success} />
 

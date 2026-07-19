@@ -9,6 +9,7 @@ import { ensureProfile } from "@/lib/supabase/profile";
  * Completes Supabase auth redirects:
  *
  * - Email confirm / password reset: `token_hash` + `type` → verifyOtp()
+ *   (official SSR pattern — no PKCE verifier cookie required).
  * - OAuth: `code` → exchangeCodeForSession() (PKCE verifier must be in request cookies
  *   from the browser that started the flow via createBrowserClient)
  *
@@ -118,10 +119,20 @@ export async function GET(request: NextRequest) {
     const supabase = createSupabaseForCallback(request, response, cookieStore);
 
     if (tokenHash && otpType) {
-      const { data, error } = await supabase.auth.verifyOtp({
-        token_hash: tokenHash,
-        type: otpType as EmailOtpType,
-      });
+      let verifyResult;
+      try {
+        verifyResult = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: otpType as EmailOtpType,
+        });
+      } catch (verifyThrown) {
+        return loginErrorRedirect(
+          redirectBase,
+          verifyThrown instanceof Error ? verifyThrown.message : "Email confirmation failed.",
+        );
+      }
+
+      const { data, error } = verifyResult;
 
       if (error) {
         return loginErrorRedirect(redirectBase, error.message);
@@ -137,7 +148,19 @@ export async function GET(request: NextRequest) {
     }
 
     if (code) {
-      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      let exchangeResult;
+      try {
+        exchangeResult = await supabase.auth.exchangeCodeForSession(code);
+      } catch (exchangeThrown) {
+        return loginErrorRedirect(
+          redirectBase,
+          exchangeThrown instanceof Error
+            ? exchangeThrown.message
+            : "Authentication failed.",
+        );
+      }
+
+      const { data, error } = exchangeResult;
 
       if (error) {
         return loginErrorRedirect(redirectBase, error.message);

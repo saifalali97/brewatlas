@@ -6,7 +6,7 @@ Use this checklist before every production deployment.
 
 - [ ] `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
 - [ ] `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — anon/publishable key
-- [ ] `NEXT_PUBLIC_SITE_URL` — canonical HTTPS URL (e.g. `https://www.brewatlas.app`)
+- [ ] `NEXT_PUBLIC_SITE_URL` — canonical HTTPS URL (e.g. `https://brewatlas.app`)
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` — required for admin ops, Stripe webhooks, owner moderation
 - [ ] `BILLING_PROVIDER` — `manual` (default) or `stripe`
 - [ ] When `BILLING_PROVIDER=stripe`:
@@ -20,12 +20,27 @@ Run `npm run build` locally with production env to confirm `lib/env.ts` validati
 
 ## Database & RLS
 
-- [ ] Apply all Supabase migrations through `20260713301700_production_hardening.sql`
+- [ ] Apply all Supabase migrations through `20260713302200_profiles_owner_insert_policy.sql`
 - [ ] Verify RLS is enabled on all user-owned tables (`profiles`, `recipes`, `recipe_reviews`, `favorites`, etc.)
 - [ ] Confirm `is_admin()` gates owner dashboard tables (`admin_audit_log`, `recipe_views` reads)
 - [ ] Confirm `prevent_role_escalation` trigger blocks non-admin role changes
 - [ ] Confirm `prevent_suspension_self_modification` trigger blocks self-unsuspension
 - [ ] Test suspended user cannot access `/account/*` (middleware redirect)
+
+## Supabase Auth (email + PKCE)
+
+- [ ] Site URL: `https://brewatlas.app` (no `www`, match `NEXT_PUBLIC_SITE_URL` exactly)
+- [ ] Redirect URLs include `https://brewatlas.app/auth/callback` and `https://brewatlas.app/auth/callback?next=*`
+- [ ] **Confirm sign up** email template uses `token_hash` (not `ConfirmationURL` alone):
+  ```html
+  <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=signup">Confirm email</a>
+  ```
+- [ ] **Reset password** email template uses `token_hash`:
+  ```html
+  <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=recovery">Reset password</a>
+  ```
+- [ ] Sign-up and OAuth run in the browser (`createBrowserClient`) so OAuth PKCE verifiers live in cookies on the initiating device
+- [ ] After email confirm, user lands on `/account` (not `/login?error=PKCE...`)
 
 ## Security
 

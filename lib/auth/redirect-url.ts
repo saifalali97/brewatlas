@@ -5,8 +5,11 @@ function safeNextPath(next: string): string {
 }
 
 /**
- * Auth callback URL for server-initiated redirects (email confirm, password reset).
- * Uses the configured public site URL in production.
+ * Builds the auth callback URL Supabase should redirect to after email confirm / OAuth.
+ *
+ * For SSR email confirm, Supabase email templates must link with token_hash (not
+ * ConfirmationURL alone), e.g.:
+ * `<a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=signup">Confirm</a>`
  */
 export function buildAuthCallbackUrl(next = "/account"): string {
   return `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(safeNextPath(next))}`;

@@ -17,6 +17,6 @@ export function resolveSitePathname(pathOrUrl: string, fallback: string): string
 export function resolveAbsoluteAssetUrl(pathOrUrl: string): string {
   const trimmed = pathOrUrl.trim();
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://www.brewatlas.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://brewatlas.app";
   return `${siteUrl}${trimmed.startsWith("/") ? trimmed : `/${trimmed}`}`;
 }
