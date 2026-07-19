@@ -52,6 +52,17 @@ export const SMITHSONIAN_KARAK_INGREDIENTS =
 export const SMITHSONIAN_KARAK_PREP =
   "Combine the water, cardamom pods, and loose-leaf tea in a medium saucepan. Allow the mixture to boil on high heat for 5 to 8 minutes or until aromatic, stirring regularly. Turn the heat down to medium and add milk and sugar to taste. Increase the amount of milk for a creamier tea. Stir the chai karak until thoroughly heated, but don't let the milk boil. Remove from heat, cover, and let steep for 5 minutes. Strain the chai karak into a thermal carafe or teapot. As an option, add a few sprigs of saffron either to the carafe/teapot or the tea glasses. Serve hot in small tea glasses or teacups.";
 
+export const SMITHSONIAN_KARAK_SERVING =
+  "You can find karak everywhere from specialized cafes to roadside stalls where drivers simply roll up, honk, and a server rushes out with a piping hot cup. Serving sizes range from small pick-me-ups to full mugs to be savored.";
+
+/** Terms compiled from DCT Gahwa publication and UNESCO ICH listing. */
+export const GAHWA_GLOSSARY =
+  "Gahwa — Emirati Arabic dialect term for Arabic coffee. Ma`ameel — collective name for coffee-making tools (the brew basket). Al tawa — wide circular pan for roasting coffee beans. Mihmas — spoon for stirring beans during roasting. Mehbash — iron tongs to distribute coals and spread embers in the stove. Dallah — coffee pot; types include dallat al-khumrah (large pot for boiling coffee and cardamom), dallat al-talgeemah (medium pot for filtering), and dallat al-mazalah (small serving pot). Finjal — small cup from which Arabic coffee is served. Kuwar — clay pit with a stove used in houses or tents, replacing the rudimentary ground fireplace.";
+
+/** Terms from Smithsonian Folklife Festival and Visit Dubai karak sources. */
+export const KARAK_GLOSSARY =
+  "Chai karak — adapted from Indian chai masala; karak means \"hard\" or \"strong\" in Hindi. Khaleej — the Arabian Peninsula. Zafran — Hindi, Urdu, and Persian name for saffron, used in saffron karak variants.";
+
 /** Source: FiLLi Cafe (fillicafe.com). */
 export const FILLI_ZAFRAN =
   "Zafran Chai is the saffron-infused version of Karak Chai. The word 'zafran' is the Hindi, Urdu, and Persian name for saffron, and the drink sits squarely in the South-Asian and Gulf tea tradition that the FiLLi menu is built around. Some menus in English-speaking countries call it \"saffron tea\" or \"saffron karak.\" The base is Karak Chai — black tea brewed with evaporated milk, cardamom, and sugar, simmered until it's thick enough to coat the cup.";

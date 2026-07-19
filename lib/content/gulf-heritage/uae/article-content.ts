@@ -1,4 +1,8 @@
 import type { GulfHeritageArabicCoffeePageSlug, GulfHeritageTeaKarakPageSlug } from "@/types/gulf-heritage";
+import type { Locale } from "@/types/i18n";
+import { DEFAULT_LOCALE } from "@/types/i18n";
+import { localizeGulfHeritageArticleContent } from "@/lib/content/gulf-heritage/localize";
+import { getUaeArticleContentAr } from "@/lib/content/gulf-heritage/uae/article-content.ar";
 import type { GulfHeritageArticleContent } from "@/types/gulf-heritage-article-content";
 import {
   ARAB_AMERICA_ADANI,
@@ -10,13 +14,16 @@ import {
   DCT_GAHWA_UTENSILS,
   FILLI_MINT_MENU,
   FILLI_ZAFRAN,
+  GAHWA_GLOSSARY,
   GULF_NEWS_GAHWA_HOSPITALITY,
   GULF_NEWS_GAHWA_PREP,
   GULF_NEWS_THREE_POT,
+  KARAK_GLOSSARY,
   SMITHSONIAN_KARAK_CULTURE,
   SMITHSONIAN_KARAK_HISTORY,
   SMITHSONIAN_KARAK_INGREDIENTS,
   SMITHSONIAN_KARAK_PREP,
+  SMITHSONIAN_KARAK_SERVING,
   UNESCO_GAHWA_ETIQUETTE,
   UNESCO_GAHWA_GENEROSITY,
   VISIT_DUBAI_KARAK,
@@ -29,6 +36,9 @@ export const UAE_ARTICLE_CONTENT: Record<
 > = {
   "emirati-arabic-coffee": {
     variant: "arabic-coffee",
+    intro:
+      "Arabic coffee ('Gahwa' in the Emirati Arabic dialect) has been a central part of Arab culture for centuries and its preparation and serving is marked by elaborate traditions.",
+    glossary: GAHWA_GLOSSARY,
     sections: {
       overview: DCT_GAHWA_OVERVIEW,
       history:
@@ -44,6 +54,10 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   dallah: {
     variant: "arabic-coffee",
+    intro:
+      "The dallah or coffee pot is an important utensil in the coffee-making process. Specially designed and decorated, there are three types of dallah in the preparation and serving of Arabic coffee.",
+    glossary:
+      "Dallah — coffee pot used in gahwa preparation and serving. Dallat al-khumrah — large pot for boiling coffee and cardamom. Dallat al-talgeemah — medium-sized pot for filtering the coffee. Dallat al-mazalah — small pot from which the coffee is served.",
     sections: {
       overview:
         "The dallah or coffee pot is an important utensil in the coffee-making process. Specially designed and decorated, there are three types of dallah in the preparation and serving of Arabic coffee.",
@@ -58,11 +72,14 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   finjan: {
     variant: "arabic-coffee",
+    intro:
+      "The finjal is the small cup from which Arabic coffee is served. Etiquette for the guest dictates they must use the right hand to receive and return the cup to the server.",
+    glossary: "Finjal — small cup from which Arabic coffee is served.",
     sections: {
       overview:
         "The finjal is the small cup from which Arabic coffee is served. Etiquette for the guest dictates they must use the right hand to receive and return the cup to the server.",
       history: null,
-      culturalSignificance: null,
+      culturalSignificance: DCT_AL_GAHWA_GUIDE,
       traditionalPreparation: null,
       regionalDifferences: null,
       servingEtiquette: `${DCT_GAHWA_TRADITIONS} ${UNESCO_GAHWA_ETIQUETTE}`,
@@ -72,11 +89,14 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   mihmas: {
     variant: "arabic-coffee",
+    intro:
+      "Coffee-making tools are collectively called the ma`ameel (brew basket). The mihmas is a spoon for stirring beans during roasting.",
+    glossary: "Mihmas — spoon for stirring beans during roasting. Ma`ameel — collective term for coffee-making tools.",
     sections: {
       overview:
         "Coffee-making tools are collectively called the ma`ameel (brew basket). The mihmas is a spoon for stirring beans during roasting.",
       history: null,
-      culturalSignificance: null,
+      culturalSignificance: DCT_GAHWA_PREPARATION,
       traditionalPreparation: GULF_NEWS_GAHWA_PREP,
       regionalDifferences: null,
       servingEtiquette: null,
@@ -86,6 +106,8 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   cardamom: {
     variant: "arabic-coffee",
+    intro: null,
+    glossary: null,
     sections: {
       overview:
         "Dallat al-khumrah is a large pot for boiling coffee and cardamom. Cardamom is part of the traditional gahwa preparation described in Emirati heritage sources.",
@@ -101,6 +123,8 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   saffron: {
     variant: "arabic-coffee",
+    intro: null,
+    glossary: null,
     sections: {
       overview:
         "At Sharjah Heritage Days, veteran coffee maker Mohammad Ahmad Al Tamimi adds a dash of saffron and cardamom after brewing Arabic coffee.",
@@ -116,6 +140,8 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   "coffee-hospitality": {
     variant: "arabic-coffee",
+    intro: UNESCO_GAHWA_GENEROSITY,
+    glossary: "Majlis — gathering space where gahwa is served as a symbol of generosity and welcome.",
     sections: {
       overview: UNESCO_GAHWA_GENEROSITY,
       history: null,
@@ -129,6 +155,9 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   "coffee-etiquette": {
     variant: "arabic-coffee",
+    intro: UNESCO_GAHWA_ETIQUETTE,
+    glossary:
+      "Finjal — small serving cup. Dallah — coffee pot; server holds it with the left hand, thumb pointing to the top, while holding the finjal with the right hand.",
     sections: {
       overview: UNESCO_GAHWA_ETIQUETTE,
       history: null,
@@ -142,6 +171,8 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   "coffee-serving-traditions": {
     variant: "arabic-coffee",
+    intro: DCT_GAHWA_TRADITIONS,
+    glossary: GAHWA_GLOSSARY,
     sections: {
       overview: DCT_GAHWA_TRADITIONS,
       history: null,
@@ -155,16 +186,21 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   "karak-chai": {
     variant: "tea-karak",
+    intro:
+      "Chai karak, or simply karak, has become a beloved staple of the Khaleej (Arabian Peninsula), to be consumed at any time of day.",
+    glossary: KARAK_GLOSSARY,
     sections: {
       history: SMITHSONIAN_KARAK_HISTORY,
       ingredients: `${VISIT_DUBAI_KARAK} ${SMITHSONIAN_KARAK_INGREDIENTS}`,
       traditionalPreparation: SMITHSONIAN_KARAK_PREP,
-      servingTraditions: SMITHSONIAN_KARAK_CULTURE,
+      servingTraditions: `${SMITHSONIAN_KARAK_CULTURE} ${SMITHSONIAN_KARAK_SERVING}`,
       regionalVariations: null,
     },
   },
   "black-tea": {
     variant: "tea-karak",
+    intro: null,
+    glossary: null,
     sections: {
       history: SMITHSONIAN_KARAK_HISTORY,
       ingredients: `${VISIT_DUBAI_KARAK} A strong black tea is the base for chai karak.`,
@@ -175,6 +211,8 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   "milk-tea": {
     variant: "tea-karak",
+    intro: null,
+    glossary: null,
     sections: {
       history: SMITHSONIAN_KARAK_HISTORY,
       ingredients: `${VISIT_DUBAI_KARAK} Chai karak is finished with a creaminess that can come from evaporated or condensed milk.`,
@@ -185,6 +223,8 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   "saffron-tea": {
     variant: "tea-karak",
+    intro: null,
+    glossary: null,
     sections: {
       history: SMITHSONIAN_KARAK_HISTORY,
       ingredients: `${FILLI_ZAFRAN} ${VISIT_DUBAI_KARAK}`,
@@ -196,6 +236,8 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   "mint-tea": {
     variant: "tea-karak",
+    intro: null,
+    glossary: null,
     sections: {
       history: null,
       ingredients: FILLI_MINT_MENU,
@@ -206,6 +248,8 @@ export const UAE_ARTICLE_CONTENT: Record<
   },
   "adani-tea": {
     variant: "tea-karak",
+    intro: null,
+    glossary: null,
     sections: {
       history: ARAB_AMERICA_ADANI_HISTORY,
       ingredients: ARAB_AMERICA_ADANI,
@@ -218,9 +262,11 @@ export const UAE_ARTICLE_CONTENT: Record<
 
 export function getUaeArticleContent(
   slug: string,
+  locale: Locale = DEFAULT_LOCALE,
 ): GulfHeritageArticleContent | null {
-  if (slug in UAE_ARTICLE_CONTENT) {
-    return UAE_ARTICLE_CONTENT[slug as keyof typeof UAE_ARTICLE_CONTENT];
-  }
-  return null;
+  if (!(slug in UAE_ARTICLE_CONTENT)) return null;
+
+  const english = UAE_ARTICLE_CONTENT[slug as keyof typeof UAE_ARTICLE_CONTENT];
+  const arabic = getUaeArticleContentAr(slug);
+  return localizeGulfHeritageArticleContent(locale, english, arabic);
 }

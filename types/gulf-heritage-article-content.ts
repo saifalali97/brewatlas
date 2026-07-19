@@ -23,11 +23,17 @@ export type GulfHeritageTeaKarakSections = Record<GulfHeritageTeaKarakSectionKey
 
 export type GulfHeritageArabicCoffeeArticleContent = {
   variant: "arabic-coffee";
+  intro: string | null;
+  /** Term definitions transcribed from verified sources, when relevant. */
+  glossary: string | null;
   sections: GulfHeritageArabicCoffeeSections;
 };
 
 export type GulfHeritageTeaKarakArticleContent = {
   variant: "tea-karak";
+  intro: string | null;
+  /** Term definitions transcribed from verified sources, when relevant. */
+  glossary: string | null;
   sections: GulfHeritageTeaKarakSections;
 };
 

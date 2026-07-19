@@ -24,6 +24,7 @@ function toRouteRecord(
     countrySlug,
     categorySlug: page.categorySlug,
     kind: page.kind,
+    editorialStatus: page.editorialStatus,
     relatedPageSlugs: page.relatedPageSlugs,
     relatedRecipeSlugs: page.relatedRecipeSlugs,
   };
@@ -42,6 +43,7 @@ export const staticGulfHeritagePagesRepository: GulfHeritagePagesRepository = {
       countrySlug,
       categorySlug: page.categorySlug,
       kind: page.kind,
+      editorialStatus: page.editorialStatus,
       relatedPageSlugs: page.relatedPageSlugs,
       relatedRecipeSlugs: page.relatedRecipeSlugs,
     }));

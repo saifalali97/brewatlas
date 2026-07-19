@@ -1,15 +1,25 @@
 import { RippleLink } from "@/app/components/ui/ripple-link";
-import { GulfHeritageGallerySection } from "@/app/components/gulf-heritage/gulf-heritage-gallery-section";
+import { GhArticleNavigation } from "@/app/components/gulf-heritage/gh-article-navigation";
+import { GhArticleSection, type GhArticleSectionVariant } from "@/app/components/gulf-heritage/gh-article-section";
+import { GhRelatedContentGrid } from "@/app/components/gulf-heritage/gh-related-content-grid";
+import { GhRecipesExperience } from "@/app/components/gulf-heritage/gh-recipes-experience";
+import { GhSectionDivider } from "@/app/components/gulf-heritage/gh-section-divider";
+import { GhTableOfContents, type GhTocItem } from "@/app/components/gulf-heritage/gh-table-of-contents";
+import { getCategoryPageNavigation } from "@/app/components/gulf-heritage/shared/gh-navigation-utils";
+import { ghMotion, ghTypography } from "@/app/components/gulf-heritage/shared/gh-styles";
+import { GulfHeritageBreadcrumbs } from "@/app/components/gulf-heritage/gulf-heritage-breadcrumbs";
+import { GulfHeritageEditorialStatusBadge } from "@/app/components/gulf-heritage/gulf-heritage-editorial-status";
+import { GulfHeritageGallerySection, GulfHeritageHeroSection } from "@/app/components/gulf-heritage/gulf-heritage-gallery-section";
+import { GulfHeritageIntroSection } from "@/app/components/gulf-heritage/gulf-heritage-intro-section";
 import { GulfHeritageReferencesList } from "@/app/components/gulf-heritage/gulf-heritage-references-list";
-import { GulfHeritageRelatedTopics } from "@/app/components/gulf-heritage/gulf-heritage-related-topics";
-import { GulfHeritageSlotSection } from "@/app/components/gulf-heritage/gulf-heritage-slot-section";
-import { GulfHeritageVerifiedRecipesSection } from "@/app/components/gulf-heritage/gulf-heritage-verified-recipes-section";
 import { buttons } from "@/lib/constants/styles";
 import { interpolate } from "@/lib/i18n/format";
 import type { Dictionary } from "@/lib/i18n/types";
 import {
   ARABIC_COFFEE_SECTION_KEYS,
   TEA_KARAK_SECTION_KEYS,
+  type GulfHeritageArabicCoffeeSectionKey,
+  type GulfHeritageTeaKarakSectionKey,
 } from "@/types/gulf-heritage-article-content";
 import type { GulfHeritageResolvedPage } from "@/types/gulf-heritage";
 import { gulfHeritageCategoryPath } from "@/types/gulf-heritage";
@@ -19,83 +29,223 @@ type GulfHeritageArticleLayoutProps = {
   dictionary: Dictionary;
 };
 
+function sectionVariant(key: string): GhArticleSectionVariant {
+  if (key === "history") return "history";
+  if (key === "culturalSignificance") return "cultural";
+  return "default";
+}
+
+function buildArticleToc(
+  dictionary: Dictionary,
+  page: GulfHeritageResolvedPage,
+  isTea: boolean,
+): GhTocItem[] {
+  const gh = dictionary.gulfHeritagePage;
+  const items: GhTocItem[] = [{ id: "gh-section-intro", label: gh.sections.introduction }];
+
+  if (page.articleContent?.glossary) {
+    items.push({ id: "gh-section-glossary", label: gh.sections.glossary });
+  }
+
+  const sectionKeys = isTea ? TEA_KARAK_SECTION_KEYS : ARABIC_COFFEE_SECTION_KEYS;
+  const labels = isTea ? gh.teaSections : gh.articleSections;
+
+  for (const key of sectionKeys) {
+    items.push({ id: `gh-section-${key}`, label: labels[key as keyof typeof labels] });
+  }
+
+  if (page.relatedPages.length > 0) {
+    items.push({
+      id: "gh-section-related",
+      label: isTea ? gh.sections.relatedGuides : gh.sections.relatedPages,
+    });
+  }
+
+  items.push({ id: "gh-section-references", label: gh.sections.references });
+
+  if (page.relatedRecipes.length > 0) {
+    items.push({ id: "gh-section-recipes", label: gh.sections.relatedRecipes });
+  }
+
+  items.push({ id: "gh-section-gallery", label: gh.imageSections.gallery });
+
+  return items;
+}
+
 /** Article layout for Arabic Coffee and Tea & Karak guides. */
 export function GulfHeritageArticleLayout({ page, dictionary }: GulfHeritageArticleLayoutProps) {
   const gh = dictionary.gulfHeritagePage;
+  const presentation = gh.presentation;
   const sections = gh.sections;
   const pending = sections.verifiedContentComingSoon;
   const content = page.articleContent;
   const isTea = content?.variant === "tea-karak";
+  const galleryLabels = gh.imageSections;
+  const creditLabels = gh.imageCredits;
+  const tocItems = buildArticleToc(dictionary, page, isTea);
+  const navigation = getCategoryPageNavigation(
+    page.countrySlug,
+    page.categorySlug,
+    page.definition.slug,
+    gh.pages,
+  );
 
   return (
-    <div className="max-w-3xl">
-      <p className="text-xs font-medium uppercase tracking-[0.2em] text-ac-espresso">
-        {page.categoryCopy.title} · {page.countryCopy.name}
-      </p>
-      <h1
-        id="gulf-heritage-page-heading"
-        className="mt-3 text-3xl font-semibold leading-[1.08] tracking-[-0.03em] text-ac-espresso sm:text-4xl"
-      >
-        {page.copy.title}
-      </h1>
+    <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-start lg:gap-12 xl:grid-cols-[minmax(0,1fr)_15rem] xl:gap-14">
+      <div className={`max-w-[44rem] ${ghMotion.fadeIn}`}>
+        <GulfHeritageBreadcrumbs items={page.breadcrumbs} />
 
-      {content?.variant === "arabic-coffee"
-        ? ARABIC_COFFEE_SECTION_KEYS.map((key) => (
-            <GulfHeritageSlotSection
-              key={key}
-              title={gh.articleSections[key]}
-              body={content.sections[key]}
-              pendingMessage={pending}
-            />
-          ))
-        : null}
+        <GulfHeritageHeroSection
+          images={page.images}
+          labels={galleryLabels}
+          creditLabels={creditLabels}
+          pendingMessage={sections.imagePending}
+          pageTitle={page.copy.title}
+          placeholderTitle={presentation.imagePlaceholderTitle}
+          placeholderDescription={presentation.imagePlaceholderDescription}
+        />
 
-      {content?.variant === "tea-karak"
-        ? TEA_KARAK_SECTION_KEYS.map((key) => (
-            <GulfHeritageSlotSection
-              key={key}
-              title={gh.teaSections[key]}
-              body={content.sections[key]}
-              pendingMessage={pending}
-            />
-          ))
-        : null}
+        <header className="mt-8">
+          <p className={ghTypography.sectionEyebrow}>
+            {page.categoryCopy.title} · {page.countryCopy.name}
+          </p>
+          <h1
+            id="gulf-heritage-page-heading"
+            className="mt-3 font-display text-[2rem] font-semibold leading-[1.06] tracking-[-0.035em] text-ac-espresso sm:text-[2.5rem]"
+          >
+            {page.copy.title}
+          </h1>
+          <div className="mt-4">
+            <GulfHeritageEditorialStatusBadge status={page.editorialStatus} labels={gh.editorialStatus} />
+          </div>
+        </header>
 
-      <GulfHeritageGallerySection
-        images={page.images}
-        labels={gh.imageSections}
-        pendingMessage={sections.imagePending}
-        pageTitle={page.copy.title}
-      />
+        <GulfHeritageIntroSection title={sections.introduction} intro={page.copy.intro} pendingMessage={pending} />
 
-      <GulfHeritageVerifiedRecipesSection
-        title={sections.verifiedRecipes}
-        recipes={page.verifiedRecipes}
-        verifiedContentComingSoon={pending}
-      />
+        {content?.glossary ? (
+          <GhArticleSection
+            id="gh-section-glossary"
+            title={sections.glossary}
+            body={content.glossary}
+            pendingMessage={pending}
+            variant="glossary"
+            imagePlaceholderTitle={presentation.imagePlaceholderTitle}
+            imagePlaceholderDescription={presentation.imagePlaceholderDescription}
+          />
+        ) : null}
 
-      <GulfHeritageRelatedTopics
-        title={isTea ? sections.relatedGuides : sections.relatedPages}
-        pages={page.relatedPages}
-      />
+        {content?.variant === "arabic-coffee"
+          ? ARABIC_COFFEE_SECTION_KEYS.map((key) => (
+              <GhArticleSection
+                key={key}
+                id={`gh-section-${key}`}
+                title={gh.articleSections[key as GulfHeritageArabicCoffeeSectionKey]}
+                body={content.sections[key]}
+                pendingMessage={pending}
+                variant={sectionVariant(key)}
+                imagePlaceholderTitle={presentation.imagePlaceholderTitle}
+                imagePlaceholderDescription={presentation.imagePlaceholderDescription}
+              />
+            ))
+          : null}
 
-      <GulfHeritageReferencesList
-        title={sections.references}
-        references={page.references}
-        pendingMessage={pending}
-      />
+        {content?.variant === "tea-karak"
+          ? TEA_KARAK_SECTION_KEYS.map((key) => (
+              <GhArticleSection
+                key={key}
+                id={`gh-section-${key}`}
+                title={gh.teaSections[key as GulfHeritageTeaKarakSectionKey]}
+                body={content.sections[key]}
+                pendingMessage={pending}
+                variant={sectionVariant(key)}
+                imagePlaceholderTitle={presentation.imagePlaceholderTitle}
+                imagePlaceholderDescription={presentation.imagePlaceholderDescription}
+              />
+            ))
+          : null}
 
-      <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <RippleLink
-          href={gulfHeritageCategoryPath(page.countrySlug, page.categorySlug)}
-          className={`${buttons.secondary} w-full sm:w-auto`}
-        >
-          {interpolate(gh.backToCategoryTemplate, { name: page.categoryCopy.title })}
-        </RippleLink>
-        <RippleLink href={`/gulf-heritage/${page.countrySlug}`} className={`${buttons.secondary} w-full sm:w-auto`}>
-          {interpolate(gh.moreInCountryTemplate, { name: page.countryCopy.name })}
-        </RippleLink>
+        <GhSectionDivider />
+
+        <div id="gh-section-related">
+          <GhRelatedContentGrid
+            title={isTea ? sections.relatedGuides : sections.relatedPages}
+            country={page.countryCopy.name}
+            category={page.categoryCopy.title}
+            readLabel={presentation.readGuide}
+            pendingDescription={pending}
+            statusLabels={gh.editorialStatus}
+            pages={page.relatedPages}
+          />
+        </div>
+
+        <div id="gh-section-references">
+          <GulfHeritageReferencesList
+            title={sections.references}
+            references={page.references}
+            pendingMessage={pending}
+            typeLabels={gh.referenceTypes}
+            fieldLabels={gh.referenceFields}
+          />
+        </div>
+
+        <GhRecipesExperience
+          title={sections.relatedRecipes}
+          recipes={page.relatedRecipes}
+          country={page.countryCopy.name}
+          category={page.categoryCopy.title}
+          editorialStatus={page.editorialStatus}
+          verifiedContentComingSoon={sections.verifiedRecipeComingSoon}
+          statusLabels={gh.recipeStatus}
+          fieldLabels={gh.recipeFields}
+          ingredientLabels={{
+            main: presentation.mainIngredients,
+            optional: presentation.optionalIngredients,
+            garnishes: presentation.garnishes,
+            notes: presentation.ingredientNotes,
+          }}
+          presentationLabels={{
+            stepTemplate: presentation.stepTemplate,
+            imagePlaceholderTitle: presentation.imagePlaceholderTitle,
+            imagePlaceholderDescription: presentation.imagePlaceholderDescription,
+          }}
+        />
+
+        <div id="gh-section-gallery">
+          <GulfHeritageGallerySection
+            images={page.images}
+            labels={galleryLabels}
+            creditLabels={creditLabels}
+            pendingMessage={sections.imagePending}
+            pageTitle={page.copy.title}
+            slots={["inline", "stepImages", "gallery", "equipment", "historical"]}
+            placeholderTitle={presentation.imagePlaceholderTitle}
+            placeholderDescription={presentation.imagePlaceholderDescription}
+          />
+        </div>
+
+        <GhArticleNavigation
+          previousLabel={presentation.previousArticle}
+          nextLabel={presentation.nextArticle}
+          previous={navigation.previous}
+          next={navigation.next}
+        />
+
+        <div className="mt-12 flex flex-col gap-3 border-t border-ba-espresso/8 pt-8 sm:flex-row sm:items-center">
+          <RippleLink
+            href={gulfHeritageCategoryPath(page.countrySlug, page.categorySlug)}
+            className={`${buttons.secondary} w-full sm:w-auto`}
+          >
+            {interpolate(gh.backToCategoryTemplate, { name: page.categoryCopy.title })}
+          </RippleLink>
+          <RippleLink href={`/gulf-heritage/${page.countrySlug}`} className={`${buttons.secondary} w-full sm:w-auto`}>
+            {interpolate(gh.moreInCountryTemplate, { name: page.countryCopy.name })}
+          </RippleLink>
+        </div>
       </div>
+
+      <aside className="hidden lg:block">
+        <GhTableOfContents title={presentation.tableOfContents} items={tocItems} />
+      </aside>
     </div>
   );
 }

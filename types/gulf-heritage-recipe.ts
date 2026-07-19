@@ -1,5 +1,9 @@
-/** Verification lifecycle for Gulf Heritage and editorial recipes. */
-export type RecipeVerificationStatus = "unverified" | "pending" | "verified";
+import type { GulfHeritageEditorialStatus } from "@/types/gulf-heritage-editorial";
+import type { GulfHeritageReference } from "@/types/gulf-heritage-reference";
+import type { GulfHeritageImageAsset } from "@/types/gulf-heritage-images";
+
+/** Verification lifecycle for Gulf Heritage recipes. */
+export type RecipeVerificationStatus = GulfHeritageEditorialStatus | "unverified";
 
 export type RecipeVerificationMetadata = {
   status: RecipeVerificationStatus;
@@ -12,13 +16,39 @@ export type RecipeVerificationMetadata = {
   recipeVersion: string | null;
 };
 
+export type GulfHeritageRecipeIngredient = {
+  name: string;
+  amount: string | null;
+  unit: string | null;
+  notes: string | null;
+};
+
+export type GulfHeritageRecipeStep = {
+  order: number;
+  instruction: string;
+  image: GulfHeritageImageAsset | null;
+  duration: string | null;
+};
+
 /**
- * Gulf Heritage recipe — all fields remain nullable until verified.
+ * Gulf Heritage recipe — structured fields remain empty until verified.
  * Designed for future Supabase / CMS persistence.
  */
 export type GulfHeritageRecipeReference = {
   slug: string;
   title: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced" | null;
+  preparationTime: string | null;
+  servingSize: string | null;
+  equipmentList: readonly string[];
+  ingredientsList: readonly GulfHeritageRecipeIngredient[];
+  steps: readonly GulfHeritageRecipeStep[];
+  tips: readonly string[];
+  notes: string | null;
+  warnings: readonly string[];
+  references: readonly GulfHeritageReference[];
+  stepImages: readonly GulfHeritageImageAsset[];
+  /** Legacy flat fields — retained for migration and specialty-coffee parity. */
   country: string | null;
   region: string | null;
   yield: string | null;
@@ -29,7 +59,6 @@ export type GulfHeritageRecipeReference = {
   waterTemperature: string | null;
   time: string | null;
   servingNotes: string | null;
-  /** Legacy specialty-coffee fields — nullable until verified. */
   method: string | null;
   coffee: string | null;
   grinder: string | null;
@@ -42,9 +71,7 @@ export type GulfHeritageRecipeReference = {
   brewTime: string | null;
   tds: number | null;
   extractionYield: number | null;
-  notes: string | null;
   images: readonly string[];
-  difficulty: "Beginner" | "Intermediate" | "Advanced" | null;
   verification: RecipeVerificationMetadata;
 };
 
@@ -55,10 +82,22 @@ export function isRecipeVerified(recipe: GulfHeritageRecipeReference): boolean {
 export function createUnverifiedRecipeReference(
   slug: string,
   title: string,
+  status: RecipeVerificationStatus = "coming-soon",
 ): GulfHeritageRecipeReference {
   return {
     slug,
     title,
+    difficulty: null,
+    preparationTime: null,
+    servingSize: null,
+    equipmentList: [],
+    ingredientsList: [],
+    steps: [],
+    tips: [],
+    notes: null,
+    warnings: [],
+    references: [],
+    stepImages: [],
     country: null,
     region: null,
     yield: null,
@@ -81,11 +120,9 @@ export function createUnverifiedRecipeReference(
     brewTime: null,
     tds: null,
     extractionYield: null,
-    notes: null,
     images: [],
-    difficulty: null,
     verification: {
-      status: "unverified",
+      status,
       sourceName: null,
       sourceUrl: null,
       originalAuthor: null,

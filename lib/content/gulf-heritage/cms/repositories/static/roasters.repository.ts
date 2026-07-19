@@ -1,4 +1,4 @@
-import { UAE_ROASTER_PROFILE_FIELDS } from "@/lib/content/gulf-heritage/uae/roasters";
+import { getUaeRoasterProfileFields } from "@/lib/content/gulf-heritage/uae/roasters";
 import { staticGulfHeritagePagesRepository } from "@/lib/content/gulf-heritage/cms/repositories/static/pages.repository";
 import { createStaticCmsBase } from "@/lib/content/gulf-heritage/cms/repositories/static/cms-base";
 import type { GulfHeritageRoastersRepository } from "@/lib/content/gulf-heritage/cms/repositories/types";
@@ -20,14 +20,15 @@ async function toRoasterRecord(
   const route = await staticGulfHeritagePagesRepository.getRoute(countrySlug, categorySlug, pageSlug);
   if (!route || route.kind !== "roaster") return null;
 
-  const profile = UAE_ROASTER_PROFILE_FIELDS[pageSlug as GulfHeritageRoasterPageSlug];
-  if (!profile) return null;
+  const profile = getUaeRoasterProfileFields(pageSlug as GulfHeritageRoasterPageSlug, locale);
 
   return {
     ...createStaticCmsBase("roaster", `${countrySlug}:${categorySlug}:${pageSlug}`, locale),
     countrySlug,
     categorySlug,
+    editorialStatus: route.editorialStatus,
     title: null,
+    intro: profile.history ?? profile.story,
     seoTitle: null,
     seoDescription: null,
     relatedPageSlugs: route.relatedPageSlugs,

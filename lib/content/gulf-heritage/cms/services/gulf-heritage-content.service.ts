@@ -1,6 +1,8 @@
+import { localizeGulfHeritageRecipe } from "@/lib/content/gulf-heritage/localize";
 import type { GulfHeritageCmsRepositories } from "@/lib/content/gulf-heritage/cms/repositories/types";
 import { GULF_HERITAGE_COUNTRIES } from "@/lib/content/gulf-heritage/config";
 import type {
+  GulfHeritageBreadcrumb,
   GulfHeritageCategoryCopy,
   GulfHeritageCategorySlug,
   GulfHeritageCountryCopy,
@@ -10,7 +12,12 @@ import type {
   GulfHeritagePageSlug,
   GulfHeritageResolvedPage,
 } from "@/types/gulf-heritage";
-import { gulfHeritagePagePath } from "@/types/gulf-heritage";
+import {
+  GULF_HERITAGE_HUB_PATH,
+  gulfHeritageCategoryPath,
+  gulfHeritagePagePath,
+} from "@/types/gulf-heritage";
+import type { GulfHeritageArticleContent } from "@/types/gulf-heritage-article-content";
 import { isRecipeVerified } from "@/types/gulf-heritage-recipe";
 import { createEmptyGulfHeritagePageImages } from "@/types/gulf-heritage-images";
 import type { Dictionary } from "@/lib/i18n/types";
@@ -19,9 +26,10 @@ import { DEFAULT_LOCALE } from "@/types/i18n";
 
 function mergePageCopy(recordCopy: Partial<GulfHeritagePageCopy>, dictionaryCopy: GulfHeritagePageCopy): GulfHeritagePageCopy {
   return {
-    title: recordCopy.title ?? dictionaryCopy.title,
-    seoTitle: recordCopy.seoTitle ?? dictionaryCopy.seoTitle,
-    seoDescription: recordCopy.seoDescription ?? dictionaryCopy.seoDescription,
+    title: dictionaryCopy.title ?? recordCopy.title ?? "",
+    intro: dictionaryCopy.intro ?? recordCopy.intro ?? null,
+    seoTitle: dictionaryCopy.seoTitle ?? recordCopy.seoTitle ?? dictionaryCopy.seoTitle,
+    seoDescription: dictionaryCopy.seoDescription ?? recordCopy.seoDescription ?? dictionaryCopy.seoDescription,
   };
 }
 
@@ -49,6 +57,35 @@ function mergeCountryCopy(
   };
 }
 
+function resolveArticleIntro(content: GulfHeritageArticleContent | null, locale: Locale): string | null {
+  if (!content) return null;
+  if (content.intro) return content.intro;
+  // Do not promote English section bodies into the intro slot on Arabic pages.
+  if (locale !== DEFAULT_LOCALE) return null;
+  if (content.variant === "arabic-coffee") return content.sections.overview;
+  return content.sections.history;
+}
+
+function buildBreadcrumbs(
+  dictionary: Dictionary,
+  countrySlug: GulfHeritageCountrySlug,
+  categorySlug: GulfHeritageCategorySlug,
+  pageSlug: GulfHeritagePageSlug,
+  pageTitle: string,
+): readonly GulfHeritageBreadcrumb[] {
+  const gh = dictionary.gulfHeritagePage;
+
+  return [
+    { href: GULF_HERITAGE_HUB_PATH, label: gh.breadcrumbHub },
+    { href: `/gulf-heritage/${countrySlug}`, label: gh.countries[countrySlug].name },
+    {
+      href: gulfHeritageCategoryPath(countrySlug, categorySlug),
+      label: gh.categories[categorySlug].title,
+    },
+    { href: gulfHeritagePagePath(countrySlug, categorySlug, pageSlug), label: pageTitle },
+  ];
+}
+
 export class GulfHeritageContentService {
   constructor(private readonly repositories: GulfHeritageCmsRepositories) {}
 
@@ -72,6 +109,7 @@ export class GulfHeritageContentService {
       slug: route.slug,
       categorySlug: route.categorySlug,
       kind: route.kind,
+      editorialStatus: route.editorialStatus,
       relatedPageSlugs: route.relatedPageSlugs,
       relatedRecipeSlugs: route.relatedRecipeSlugs,
     };
@@ -117,9 +155,13 @@ export class GulfHeritageContentService {
         : Promise.resolve(null),
     ]);
 
+    const articleIntro = resolveArticleIntro(articleRecord?.content ?? null, locale);
+    const roasterIntro = roasterRecord?.intro ?? roasterRecord?.profile.history ?? roasterRecord?.profile.story ?? null;
+
     const copy = mergePageCopy(
       {
         title: articleRecord?.title ?? roasterRecord?.title ?? undefined,
+        intro: articleRecord?.intro ?? articleIntro ?? roasterIntro ?? undefined,
         seoTitle: articleRecord?.seoTitle ?? roasterRecord?.seoTitle ?? undefined,
         seoDescription: articleRecord?.seoDescription ?? roasterRecord?.seoDescription ?? undefined,
       },
@@ -132,16 +174,23 @@ export class GulfHeritageContentService {
       href: gulfHeritagePagePath(countrySlug, route.categorySlug, relatedSlug),
     }));
 
-    const relatedRecipes = recipeRecords.map((record) => record.recipe);
+    const relatedRecipes = recipeRecords.map((record) =>
+      localizeGulfHeritageRecipe(record.recipe, dictionary.gulfHeritagePage.recipeTitles),
+    );
     const verifiedRecipes = relatedRecipes.filter(isRecipeVerified);
+
+    const editorialStatus =
+      articleRecord?.editorialStatus ?? roasterRecord?.editorialStatus ?? route.editorialStatus;
 
     return {
       countrySlug,
       categorySlug: route.categorySlug,
       definition,
+      editorialStatus,
       copy,
       categoryCopy,
       countryCopy,
+      breadcrumbs: buildBreadcrumbs(dictionary, countrySlug, route.categorySlug, route.slug, copy.title),
       relatedPages,
       relatedRecipes,
       verifiedRecipes,

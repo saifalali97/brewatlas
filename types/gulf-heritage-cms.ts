@@ -1,4 +1,5 @@
 import type { GulfHeritageArticleContent } from "@/types/gulf-heritage-article-content";
+import type { GulfHeritageEditorialStatus } from "@/types/gulf-heritage-editorial";
 import type { GulfHeritagePageImages } from "@/types/gulf-heritage-images";
 import type { GulfHeritageRecipeReference } from "@/types/gulf-heritage-recipe";
 import type { GulfHeritageReference } from "@/types/gulf-heritage-reference";
@@ -60,7 +61,9 @@ export type GulfHeritageCategoryRecord = GulfHeritageCmsRecordBase & {
 export type GulfHeritageArticleRecord = GulfHeritageCmsRecordBase & {
   countrySlug: GulfHeritageCountrySlug;
   categorySlug: GulfHeritageCategorySlug;
+  editorialStatus: GulfHeritageEditorialStatus;
   title: string | null;
+  intro: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
   relatedPageSlugs: readonly GulfHeritagePageSlug[];
@@ -71,7 +74,9 @@ export type GulfHeritageArticleRecord = GulfHeritageCmsRecordBase & {
 export type GulfHeritageRoasterRecord = GulfHeritageCmsRecordBase & {
   countrySlug: GulfHeritageCountrySlug;
   categorySlug: GulfHeritageCategorySlug;
+  editorialStatus: GulfHeritageEditorialStatus;
   title: string | null;
+  intro: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
   relatedPageSlugs: readonly GulfHeritagePageSlug[];
@@ -104,6 +109,7 @@ export type GulfHeritagePageRouteRecord = {
   countrySlug: GulfHeritageCountrySlug;
   categorySlug: GulfHeritageCategorySlug;
   kind: GulfHeritagePageKind;
+  editorialStatus: GulfHeritageEditorialStatus;
   relatedPageSlugs: readonly GulfHeritagePageSlug[];
   relatedRecipeSlugs: readonly string[];
 };
@@ -154,7 +160,9 @@ export type GulfHeritageArticleRow = {
   country_slug: GulfHeritageCountrySlug;
   category_id: string;
   category_slug: GulfHeritageCategorySlug;
+  editorial_status: GulfHeritageEditorialStatus;
   title: string | null;
+  intro: string | null;
   seo_title: string | null;
   seo_description: string | null;
   related_page_slugs: GulfHeritagePageSlug[];
@@ -174,7 +182,9 @@ export type GulfHeritageRoasterRow = {
   country_slug: GulfHeritageCountrySlug;
   category_id: string;
   category_slug: GulfHeritageCategorySlug;
+  editorial_status: GulfHeritageEditorialStatus;
   title: string | null;
+  intro: string | null;
   seo_title: string | null;
   seo_description: string | null;
   related_page_slugs: GulfHeritagePageSlug[];

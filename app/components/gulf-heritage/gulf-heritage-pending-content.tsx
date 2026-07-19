@@ -1,4 +1,4 @@
-import { acTypography } from "@/lib/design-system/atlas-canon";
+import { GhPendingContent } from "@/app/components/gulf-heritage/gh-pending-content";
 
 type GulfHeritagePendingContentProps = {
   message: string;
@@ -6,5 +6,5 @@ type GulfHeritagePendingContentProps = {
 
 /** Standard placeholder for unverified Gulf Heritage editorial content. */
 export function GulfHeritagePendingContent({ message }: GulfHeritagePendingContentProps) {
-  return <p className={acTypography.body}>{message}</p>;
+  return <GhPendingContent message={message} />;
 }
