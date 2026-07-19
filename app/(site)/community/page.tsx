@@ -46,7 +46,7 @@ export default async function CommunityPage() {
       <div className="grid gap-12 lg:grid-cols-2">
         <div>
           <div className="flex items-center gap-2.5">
-            <Trophy className="h-4 w-4 text-ac-copper" aria-hidden />
+            <Trophy className="h-4 w-4 text-ac-espresso" aria-hidden />
             <h2 className={acTypography.eyebrow}>{dictionary.community.topBrewers}</h2>
           </div>
           {topBrewers.length === 0 ? (
@@ -60,7 +60,7 @@ export default async function CommunityPage() {
                     <div>
                       <Link
                         href={`/users/${entry.profile.id}`}
-                        className={`${acTypography.folioTitle} hover:text-ac-copper ${acFocus.ring}`}
+                        className={`${acTypography.folioTitle} hover:text-ba-bronze ${acFocus.ring}`}
                       >
                         {entry.profile.displayName ?? p.anonymousBrewer}
                       </Link>
@@ -69,7 +69,7 @@ export default async function CommunityPage() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-sm font-semibold text-ac-copper">
+                  <div className="flex items-center gap-1.5 text-sm font-semibold text-ac-espresso">
                     <Award className="h-3.5 w-3.5" aria-hidden />
                     {entry.value}
                   </div>
@@ -81,7 +81,7 @@ export default async function CommunityPage() {
 
         <div>
           <div className="flex items-center gap-2.5">
-            <TrendingUp className="h-4 w-4 text-ac-copper" aria-hidden />
+            <TrendingUp className="h-4 w-4 text-ac-espresso" aria-hidden />
             <h2 className={acTypography.eyebrow}>{p.highestRatedRecipesHeading}</h2>
           </div>
           {topRecipes.length === 0 ? (
@@ -94,7 +94,7 @@ export default async function CommunityPage() {
                     <span className={`${acTypography.caption} me-3`}>#{entry.rank}</span>
                     <Link
                       href={`/recipes/${entry.slug}`}
-                      className={`${acTypography.folioTitle} hover:text-ac-copper ${acFocus.ring}`}
+                      className={`${acTypography.folioTitle} hover:text-ba-bronze ${acFocus.ring}`}
                     >
                       {entry.title}
                     </Link>
@@ -104,7 +104,7 @@ export default async function CommunityPage() {
                         : translate(dictionary, "communityPage.reviewsPlural", { count: entry.reviewCount })}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1.5 text-sm font-semibold text-ac-copper">
+                  <div className="flex items-center gap-1.5 text-sm font-semibold text-ac-espresso">
                     <Star className="h-3.5 w-3.5 fill-ac-copper" aria-hidden />
                     {entry.averageRating.toFixed(1)}
                   </div>
@@ -133,7 +133,7 @@ export default async function CommunityPage() {
         </Link>
         <Link
           href="/recipes"
-          className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+          className={`${acTypography.nav} text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
         >
           {dictionary.homeFooter.browseRecipes} →
         </Link>

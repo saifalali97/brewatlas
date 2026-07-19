@@ -74,17 +74,17 @@ import type {
 function CompatibleDevices({ hasXBloom, dictionary }: { hasXBloom: boolean; dictionary: Dictionary }) {
   return (
     <div className="mt-6">
-      <p className="text-xs font-medium uppercase tracking-[0.16em] text-ba-coffee/55">
+      <p className="text-xs font-medium uppercase tracking-[0.16em] text-ac-espresso">
         {dictionary.recipeDetail.compatibleDevicesLabel}
       </p>
       <div className="mt-2.5 flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-ba-espresso/[0.12] bg-ba-sand/35 px-3 py-1 text-xs font-medium text-ba-coffee/75">
-          <Hand className="h-3 w-3 text-ba-coffee/70" aria-hidden />
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-ba-espresso/[0.12] bg-ba-sand/35 px-3 py-1 text-xs font-medium text-ac-espresso">
+          <Hand className="h-3 w-3 text-ac-espresso" aria-hidden />
           {dictionary.recipeDetail.manualDevice}
         </span>
         {hasXBloom && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-ba-gold/30 bg-ba-gold/15 px-3 py-1 text-xs font-medium text-ba-bronze">
-            <Cpu className="h-3 w-3 text-ba-bronze" aria-hidden />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-ba-gold/30 bg-ba-gold/15 px-3 py-1 text-xs font-medium text-ac-espresso">
+            <Cpu className="h-3 w-3 text-ac-espresso" aria-hidden />
             {dictionary.recipeDetail.xbloomDevice}
           </span>
         )}
@@ -404,7 +404,7 @@ function DbRecipeView({
         badge={
           <>
             {!recipe.published ? (
-              <span className="me-2 rounded-full border border-ac-espresso/15 bg-ac-pearl/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-ac-walnut backdrop-blur-sm">
+              <span className="me-2 rounded-full border border-ac-espresso/15 bg-ac-pearl/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-ac-espresso backdrop-blur-sm">
                 {d.draftBadge}
               </span>
             ) : null}
@@ -568,16 +568,16 @@ function DbRecipeView({
                     key={pour.id}
                     className="ac-folio-divider flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4"
                   >
-                    <span className="text-sm font-medium text-ba-bronze">
+                    <span className="text-sm font-medium text-ac-espresso">
                       {d.pourPrefix} {pour.pour_number}
                     </span>
-                    {pour.water_amount !== null && <span className="text-sm text-ba-coffee/75">{pour.water_amount}g</span>}
+                    {pour.water_amount !== null && <span className="text-sm text-ac-espresso">{pour.water_amount}g</span>}
                     {pour.time_label && (
-                      <span className="text-sm text-ba-coffee/55">
+                      <span className="text-sm text-ac-espresso">
                         {d.atTimeLabel} {pour.time_label}
                       </span>
                     )}
-                    {pour.notes && <span className="text-sm text-ba-coffee/55">— {pour.notes}</span>}
+                    {pour.notes && <span className="text-sm text-ac-espresso">— {pour.notes}</span>}
                   </li>
                 ))}
               </ol>
@@ -606,7 +606,7 @@ function DbRecipeView({
               {recipe.tags.map((tag) => (
                 <span
                   key={tag.id}
-                  className="rounded-full border border-ba-espresso/[0.12] bg-ba-sand/35 px-3 py-1 text-xs font-medium text-ba-coffee/75"
+                  className="rounded-full border border-ba-espresso/[0.12] bg-ba-sand/35 px-3 py-1 text-xs font-medium text-ac-espresso"
                 >
                   {tag.name}
                 </span>

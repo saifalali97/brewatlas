@@ -23,15 +23,15 @@ export function RecipeRatingBadge({ summary, labels }: RecipeRatingBadgeProps) {
   return (
     <Link
       href="#reviews"
-      className="inline-flex flex-wrap items-center gap-2 rounded-full border border-white/[0.12] bg-white/[0.04] px-3 py-1.5 text-xs text-stone-300 transition-colors hover:border-amber-600/30 hover:text-stone-100"
+      className="inline-flex flex-wrap items-center gap-2 rounded-full border border-ba-espresso/12 bg-ba-sand/40 px-3 py-1.5 text-xs text-ac-espresso transition-colors hover:border-ba-bronze/30 hover:text-ba-bronze"
     >
       <StarRatingDisplay
         rating={summary.averageRating}
         label={interpolate(labels.averageRatingTemplate, { rating: summary.averageRating.toFixed(1) })}
         size="sm"
       />
-      <span className="font-medium text-stone-200">{summary.averageRating.toFixed(1)}</span>
-      <span className="text-stone-500">({countLabel})</span>
+      <span className="font-medium text-ac-espresso">{summary.averageRating.toFixed(1)}</span>
+      <span className="text-ac-espresso">({countLabel})</span>
     </Link>
   );
 }

@@ -28,7 +28,7 @@ export function GatewaySection({ copy }: GatewaySectionProps) {
     >
       <header className="shrink-0 px-6 pb-10 pt-16 text-center sm:px-8 sm:pb-12 sm:pt-20 lg:px-12 lg:pb-14 lg:pt-24">
         <h1 className={joinClasses(acTypography.displayLg, "tracking-[-0.04em]")}>{copy.title}</h1>
-        <p className={joinClasses(acTypography.body, "mx-auto mt-5 max-w-md text-ac-walnut/65")}>
+        <p className={joinClasses(acTypography.body, "mx-auto mt-5 max-w-md text-ac-espresso")}>
           {copy.subtitle}
         </p>
       </header>

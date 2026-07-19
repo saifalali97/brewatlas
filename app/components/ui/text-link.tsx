@@ -3,9 +3,9 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { dsFocus, dsMotion } from "@/lib/constants/styles";
 
 const variantClasses = {
-  default: `text-ba-coffee/70 ${dsMotion.transition} hover:text-ba-espresso underline-offset-4 hover:underline`,
-  accent: `text-ba-bronze ${dsMotion.transition} hover:text-ba-espresso underline-offset-4 hover:underline`,
-  nav: `text-sm text-ba-coffee/70 ${dsMotion.transition} hover:text-ba-espresso`,
+  default: `text-ac-espresso ${dsMotion.transition} hover:text-ba-bronze underline-offset-4 hover:underline`,
+  accent: `text-ac-espresso ${dsMotion.transition} hover:text-ba-bronze underline-offset-4 hover:underline`,
+  nav: `text-sm text-ac-espresso ${dsMotion.transition} hover:text-ba-bronze`,
   navActive: `text-sm text-ba-espresso`,
   navOnDark: `text-sm text-ba-sand-deep/80 ${dsMotion.transition} hover:text-ba-pearl`,
   navActiveOnDark: `text-sm text-ba-pearl`,

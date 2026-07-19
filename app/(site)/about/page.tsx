@@ -62,7 +62,7 @@ export default async function AboutPage() {
           </Link>
           <Link
             href="/contact"
-            className={`inline-flex h-12 items-center justify-center px-8 ${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+            className={`inline-flex h-12 items-center justify-center px-8 ${acTypography.nav} text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
           >
             {a.getInTouchCta} →
           </Link>

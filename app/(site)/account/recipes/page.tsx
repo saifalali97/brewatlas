@@ -78,7 +78,7 @@ export default async function DashboardRecipesPage() {
                       className={`rounded-full border px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider ${
                         recipe.published
                           ? "border-ac-palm/30 text-ac-palm"
-                          : "border-ac-espresso/15 text-ac-walnut/55"
+                          : "border-ac-espresso/15 text-ac-espresso"
                       }`}
                     >
                       {recipe.published ? r.publishedBadge : r.draftBadge}
@@ -92,14 +92,14 @@ export default async function DashboardRecipesPage() {
                   {recipe.published ? (
                     <Link
                       href={`/recipes/${recipe.slug}`}
-                      className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+                      className={`${acTypography.nav} text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
                     >
                       {r.viewLink}
                     </Link>
                   ) : null}
                   <Link
                     href={`/account/recipes/${recipe.id}/edit`}
-                    className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+                    className={`${acTypography.nav} text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
                   >
                     {r.editLink}
                   </Link>

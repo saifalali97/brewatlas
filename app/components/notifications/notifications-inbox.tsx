@@ -103,8 +103,10 @@ export function NotificationsInbox({
           <Link
             href={pathname}
             aria-current={!unreadOnly ? "page" : undefined}
-            className={`rounded-full px-3 py-1.5 transition-colors ${
-              !unreadOnly ? "bg-amber-950/40 text-amber-200" : "text-stone-500 hover:text-stone-300"
+            className={`rounded-full border px-3 py-1.5 transition-colors ${
+              !unreadOnly
+                ? "border-ba-bronze/35 bg-ba-gold/15 text-ac-espresso"
+                : "border-transparent text-ac-espresso hover:text-ba-bronze"
             }`}
           >
             {labels.allNotifications}
@@ -112,12 +114,14 @@ export function NotificationsInbox({
           <Link
             href={`${pathname}?filter=unread`}
             aria-current={unreadOnly ? "page" : undefined}
-            className={`rounded-full px-3 py-1.5 transition-colors ${
-              unreadOnly ? "bg-amber-950/40 text-amber-200" : "text-stone-500 hover:text-stone-300"
+            className={`rounded-full border px-3 py-1.5 transition-colors ${
+              unreadOnly
+                ? "border-ba-bronze/35 bg-ba-gold/15 text-ac-espresso"
+                : "border-transparent text-ac-espresso hover:text-ba-bronze"
             }`}
           >
             {labels.unreadOnly}
-            {unreadCount > 0 ? <span className="ms-1.5 text-xs text-amber-400">({unreadCount})</span> : null}
+            {unreadCount > 0 ? <span className="ms-1.5 text-xs text-ac-espresso">({unreadCount})</span> : null}
           </Link>
         </div>
 
@@ -143,9 +147,9 @@ export function NotificationsInbox({
       </div>
 
       {notifications.length === 0 ? (
-        <div className="mt-6 rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
-          <p className="text-lg font-medium text-stone-100">{labels.emptyTitle}</p>
-          <p className="mt-2 text-sm text-stone-500">{labels.emptyDescription}</p>
+        <div className="mt-6 rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl px-8 py-16 text-center">
+          <p className="text-lg font-medium text-ac-espresso">{labels.emptyTitle}</p>
+          <p className="mt-2 text-sm text-ac-espresso">{labels.emptyDescription}</p>
         </div>
       ) : (
         <div className="mt-6 space-y-8" aria-busy={isLoadingMore}>
@@ -153,12 +157,12 @@ export function NotificationsInbox({
             <section key={section.group} aria-labelledby={`notifications-group-${section.group}`}>
               <h2
                 id={`notifications-group-${section.group}`}
-                className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-stone-500"
+                className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-ac-espresso"
               >
                 {dateGroupLabel(dictionary, section.group)}
               </h2>
-              <div className="overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03]">
-                <ul className="divide-y divide-white/[0.07]">
+              <div className="overflow-hidden rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl">
+                <ul className="divide-y divide-ba-espresso/[0.06]">
                   {section.items.map((item) => (
                     <NotificationItemRow
                       key={item.id}
@@ -177,9 +181,9 @@ export function NotificationsInbox({
           {hasMore ? (
             <div ref={sentinelRef} className="flex justify-center py-4" aria-hidden={!isLoadingMore}>
               {isLoadingMore ? (
-                <p className="text-sm text-stone-500">{labels.loadingMore}</p>
+                <p className="text-sm text-ac-espresso">{labels.loadingMore}</p>
               ) : (
-                <p className="text-sm text-stone-600">{labels.loadMoreHint}</p>
+                <p className="text-sm text-ac-espresso">{labels.loadMoreHint}</p>
               )}
             </div>
           ) : null}

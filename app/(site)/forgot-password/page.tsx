@@ -35,9 +35,9 @@ export default async function ForgotPasswordPage() {
       <SurfaceCard>
         <ForgotPasswordForm />
 
-        <p className="mt-6 text-center text-sm text-ba-coffee/65">
+        <p className="mt-6 text-center text-sm text-ac-espresso">
           {dictionary.auth.rememberYourPassword}{" "}
-          <Link href="/login" className="text-ba-bronze underline-offset-4 hover:text-ba-espresso hover:underline">
+          <Link href="/login" className="text-ac-espresso underline-offset-4 hover:text-ba-bronze hover:underline">
             {dictionary.auth.login}
           </Link>
         </p>

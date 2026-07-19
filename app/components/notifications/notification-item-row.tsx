@@ -39,7 +39,7 @@ export function NotificationItemRow({
 
   const content = (
     <div className={`flex gap-3 ${compact ? "px-4 py-3" : "px-5 py-4"}`}>
-      <div className="relative mt-0.5 h-9 w-9 shrink-0 overflow-hidden rounded-full border border-white/[0.1] bg-white/[0.04]">
+      <div className="relative mt-0.5 h-9 w-9 shrink-0 overflow-hidden rounded-full border border-ba-espresso/12 bg-ba-sand/40">
         {item.actor?.avatarUrl ? (
           <Image src={item.actor.avatarUrl} alt="" fill sizes="36px" className="object-cover" />
         ) : (
@@ -57,14 +57,14 @@ export function NotificationItemRow({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
-          <p className={`text-sm leading-snug ${item.isRead ? "text-stone-400" : "font-medium text-stone-100"}`}>
+          <p className={`text-sm leading-snug ${item.isRead ? "text-ac-espresso" : "font-medium text-ac-espresso"}`}>
             {title}
           </p>
-          <time dateTime={item.createdAt} className="shrink-0 text-[0.6875rem] text-stone-600">
+          <time dateTime={item.createdAt} className="shrink-0 text-[0.6875rem] text-ac-espresso">
             {timeLabel}
           </time>
         </div>
-        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-stone-500">{message}</p>
+        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-ac-espresso">{message}</p>
 
         {!compact ? (
           <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -74,7 +74,7 @@ export function NotificationItemRow({
                 <input type="hidden" name="currentPath" value={currentPath} />
                 <button
                   type="submit"
-                  className="text-xs font-medium text-amber-400/90 underline-offset-4 hover:underline"
+                  className="text-xs font-medium text-ac-espresso underline-offset-4 hover:underline"
                   aria-label={labels.markAsReadAria}
                 >
                   {labels.markAsRead}
@@ -86,7 +86,7 @@ export function NotificationItemRow({
                 <input type="hidden" name="currentPath" value={currentPath} />
                 <button
                   type="submit"
-                  className="text-xs font-medium text-stone-500 underline-offset-4 hover:text-stone-300 hover:underline"
+                  className="text-xs font-medium text-ac-espresso underline-offset-4 hover:text-ac-espresso hover:underline"
                   aria-label={labels.markAsUnreadAria}
                 >
                   {labels.markAsUnread}
@@ -98,7 +98,7 @@ export function NotificationItemRow({
               <input type="hidden" name="currentPath" value={currentPath} />
               <button
                 type="submit"
-                className="text-xs font-medium text-stone-500 underline-offset-4 hover:text-stone-300 hover:underline"
+                className="text-xs font-medium text-ac-espresso underline-offset-4 hover:text-ac-espresso hover:underline"
                 aria-label={labels.deleteAria}
               >
                 {labels.delete}
@@ -110,7 +110,7 @@ export function NotificationItemRow({
     </div>
   );
 
-  const rowClass = `transition-colors hover:bg-white/[0.03] ${item.isRead ? "" : "bg-amber-950/10"}`;
+  const rowClass = `transition-colors hover:bg-ba-sand/30 ${item.isRead ? "" : "bg-ba-gold/08"}`;
 
   if (href) {
     return (

@@ -29,17 +29,17 @@ export function LanguageSwitcher({
   const pathname = usePathname();
   const isLarge = size === "large";
 
-  const textMuted = onDark ? "text-ba-sand-deep/55" : "text-ba-coffee/45";
+  const textMuted = onDark ? "text-ba-sand-deep/55" : "text-ac-espresso";
   const textActive = onDark ? "text-ba-pearl" : "text-ba-espresso";
   const textInactive = onDark
     ? "text-ba-sand-deep/70 hover:text-ba-pearl"
-    : "text-ba-coffee/55 hover:text-ba-espresso";
+    : "text-ac-espresso hover:text-ba-bronze";
 
   return (
     <div
       className={joinClasses(
         "flex items-center gap-1 font-medium",
-        onDark ? "text-ba-sand-deep/70" : "text-ba-coffee/55",
+        onDark ? "text-ba-sand-deep/70" : "text-ac-espresso",
         isLarge ? "text-sm" : "text-xs",
       )}
       role="group"

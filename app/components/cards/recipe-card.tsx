@@ -96,17 +96,17 @@ function RecipeCardBody({ recipe, featured, labels }: RecipeCardBodyProps) {
 
       <div className={`relative flex flex-1 flex-col ${featured ? "p-8 lg:p-10" : "p-7 lg:p-8"}`}>
         <div className="flex-1">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-ba-bronze/80">{recipe.country}</p>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-ac-espresso">{recipe.country}</p>
           <h3
-            className={`font-display mt-2 leading-snug tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-coffee ${
+            className={`font-display mt-2 leading-snug tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-bronze ${
               featured ? "text-xl lg:text-2xl" : "text-lg"
             }`}
           >
             {recipe.name}
           </h3>
-          <p className="mt-2 text-sm leading-relaxed text-ba-coffee/65">{recipe.origin}</p>
+          <p className="mt-2 text-sm leading-relaxed text-ac-espresso">{recipe.origin}</p>
           <p
-            className={`mt-4 leading-[1.75] text-ba-coffee/72 ${featured ? "text-sm lg:text-[0.9375rem]" : "text-sm"}`}
+            className={`mt-4 leading-[1.75] text-ac-espresso ${featured ? "text-sm lg:text-[0.9375rem]" : "text-sm"}`}
           >
             {recipe.notes}
           </p>
@@ -116,10 +116,10 @@ function RecipeCardBody({ recipe, featured, labels }: RecipeCardBodyProps) {
           <DifficultyIndicator
             level={recipe.difficulty}
             label={difficultyLabel}
-            labelClassName="text-xs text-ba-coffee/55"
+            labelClassName="text-xs text-ac-espresso"
             className="flex items-center gap-2"
           />
-          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ba-coffee/55">
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ac-espresso">
             <span>
               {labels.ratio}{" "}
               <strong className="font-medium text-ba-espresso">{recipe.ratio}</strong>

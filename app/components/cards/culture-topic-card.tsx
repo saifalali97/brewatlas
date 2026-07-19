@@ -37,16 +37,16 @@ export async function CultureTopicCard({ topic, sectionSlug }: CultureTopicCardP
       </div>
 
       <div className="relative flex flex-1 flex-col p-5 lg:p-6">
-        <h3 className="text-[1.25rem] font-semibold leading-[1.15] tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-50 lg:text-[1.3rem]">
+        <h3 className="text-[1.25rem] font-semibold leading-[1.15] tracking-tight text-ac-espresso transition-colors duration-300 group-hover:text-ba-bronze lg:text-[1.3rem]">
           {topic.title}
         </h3>
 
         <div className="mt-3 flex items-start gap-2">
           <BookOpen className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500/75" aria-hidden />
-          <p className="text-[0.8125rem] leading-[1.65] text-stone-300/90">{topic.excerpt}</p>
+          <p className="text-[0.8125rem] leading-[1.65] text-ac-espresso">{topic.excerpt}</p>
         </div>
 
-        <div className="mt-auto border-t border-white/[0.06] pt-4">
+        <div className="mt-auto border-t border-ba-espresso/06 pt-4">
           <GhostCtaLink href={`/culture/${sectionSlug}/${topic.slug}`}>{dictionary.culturePage.readArticle}</GhostCtaLink>
         </div>
       </div>

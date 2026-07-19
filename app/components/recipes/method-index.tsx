@@ -57,7 +57,7 @@ export function MethodIndex({
                   "relative pb-1 transition-colors duration-300",
                   isActive
                     ? "text-ac-espresso after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-ac-copper"
-                    : "text-ac-walnut/55 hover:text-ac-espresso",
+                    : "text-ac-espresso hover:text-ba-bronze",
                   acFocus.ring,
                 ].join(" ")}
               >

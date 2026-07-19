@@ -134,7 +134,7 @@ export default async function DashboardPage() {
         <form action={signOutAction}>
           <button
             type="submit"
-            className={`${acTypography.nav} h-10 rounded-full border border-ac-espresso/12 px-6 text-ac-walnut/70 hover:border-ac-copper/35 hover:text-ac-espresso ${acFocus.ring}`}
+            className={`${acTypography.nav} h-10 rounded-full border border-ac-espresso/12 px-6 text-ac-espresso hover:border-ac-copper/35 hover:text-ac-espresso ${acFocus.ring}`}
           >
             {d.signOut}
           </button>
@@ -146,7 +146,7 @@ export default async function DashboardPage() {
           <div key={label}>
             <dt className={acTypography.eyebrow}>{label}</dt>
             <dd className="mt-3 flex items-center gap-3">
-              <Icon className="h-4 w-4 text-ac-copper" aria-hidden />
+              <Icon className="h-4 w-4 text-ac-espresso" aria-hidden />
               <span className="font-display text-3xl tracking-[-0.03em] text-ac-espresso">{value}</span>
             </dd>
           </div>
@@ -159,7 +159,7 @@ export default async function DashboardPage() {
             {profile?.avatar_url ? (
               <Image src={profile.avatar_url} alt="" fill sizes="56px" className="object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-lg font-medium text-ba-coffee/55">
+              <div className="flex h-full w-full items-center justify-center text-lg font-medium text-ac-espresso">
                 {displayName.charAt(0).toUpperCase()}
               </div>
             )}
@@ -183,7 +183,7 @@ export default async function DashboardPage() {
           ) : null}
           <Link
             href="/account/profile"
-            className={`${acTypography.nav} inline-flex h-10 items-center px-4 text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+            className={`${acTypography.nav} inline-flex h-10 items-center px-4 text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
           >
             {d.editProfile} →
           </Link>
@@ -212,7 +212,7 @@ export default async function DashboardPage() {
           <h2 className={acTypography.h2}>{dictionary.dashboard.myRecipes}</h2>
           <div className="flex items-center gap-5">
             {ownRecipes.length > 0 ? (
-              <Link href="/account/recipes" className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}>
+              <Link href="/account/recipes" className={`${acTypography.nav} text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}>
                 {d.manageAll}
               </Link>
             ) : null}
@@ -249,7 +249,7 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between gap-4">
           <h2 className={acTypography.h2}>{d.favoriteRecipesTitle}</h2>
           {favoriteRecipes.length > 0 ? (
-            <Link href="/recipes" className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}>
+            <Link href="/recipes" className={`${acTypography.nav} text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}>
               {d.browseMore}
             </Link>
           ) : null}
@@ -258,7 +258,7 @@ export default async function DashboardPage() {
         {favoriteRecipes.length === 0 ? (
           <p className={`${acTypography.body} mt-6 ${acSurface.plate} px-6 py-8`}>
             {d.noFavoritesYetPrefix}{" "}
-            <Link href="/recipes" className={`text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}>
+            <Link href="/recipes" className={`text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}>
               {d.recipeLibraryLink}
             </Link>{" "}
             {d.noFavoritesYetSuffix}

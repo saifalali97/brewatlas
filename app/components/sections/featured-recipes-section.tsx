@@ -86,7 +86,7 @@ export function FeaturedCoverSection({ items }: { items: FeaturedRecipeItem[] })
               <p className="mt-3 text-sm text-ac-sand/75">{hero.recipe.origin}</p>
               <p className="mt-6 text-base leading-[1.75] text-ac-sand/85">{hero.recipe.notes}</p>
 
-              <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-white/[0.08] pt-8 text-sm text-ac-sand/70">
+              <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-ba-espresso/08 pt-8 text-sm text-ac-sand/70">
                 <DifficultyIndicator
                   level={hero.recipe.difficulty}
                   label={heroLabels.difficultyLabel}

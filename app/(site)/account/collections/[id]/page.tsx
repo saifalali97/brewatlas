@@ -89,7 +89,7 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
       
 <Link
         href="/account/collections"
-        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-stone-400 transition-colors duration-300 hover:text-amber-400/90 rtl:flex-row-reverse"
+        className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-ac-espresso transition-colors duration-300 hover:text-ba-bronze rtl:flex-row-reverse"
       >
         <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden />
         {c.backToCollections}
@@ -100,9 +100,9 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-start">
         <div>
           {collection.recipes.length === 0 ? (
-            <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.03] px-8 py-16 text-center">
-              <p className="text-lg font-medium text-stone-100">{c.noRecipesInCollectionTitle}</p>
-              <p className="mt-2 text-sm text-stone-500">{c.noRecipesInCollectionDescription}</p>
+            <div className="rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl px-8 py-16 text-center">
+              <p className="text-lg font-medium text-ac-espresso">{c.noRecipesInCollectionTitle}</p>
+              <p className="mt-2 text-sm text-ac-espresso">{c.noRecipesInCollectionDescription}</p>
             </div>
           ) : (
             <div className="grid gap-7 sm:grid-cols-2 sm:gap-8 lg:grid-cols-2 lg:gap-9">
@@ -123,7 +123,7 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
           )}
         </div>
 
-        <div className="rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
+        <div className="rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
           <CollectionManagePanel
             collectionId={collection.id}
             initialName={collection.name}

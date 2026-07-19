@@ -23,7 +23,7 @@ export function EmptyState({
   return (
     <div className={`${acSurface.plate} px-8 py-16 text-center ${className}`.trim()}>
       {icon ? (
-        <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center text-ac-copper">{icon}</div>
+        <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center text-ac-espresso">{icon}</div>
       ) : null}
       <h2 className={acTypography.h3}>{title}</h2>
       {description ? (

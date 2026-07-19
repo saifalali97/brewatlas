@@ -50,7 +50,7 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
         labelAside={
           <Link
             href="/forgot-password"
-            className={`${acTypography.nav} text-xs text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+            className={`${acTypography.nav} text-xs text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
           >
             {t("auth.forgotPassword")}
           </Link>

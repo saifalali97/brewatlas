@@ -36,7 +36,7 @@ function SectionHeading({
         <span className={`${acTypography.caption} ms-2 font-normal`}>({count})</span>
       </h2>
       {href && count > 0 ? (
-        <Link href={href} className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}>
+        <Link href={href} className={`${acTypography.nav} text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}>
           {t("searchPage.viewAll")} →
         </Link>
       ) : null}
@@ -68,7 +68,7 @@ export function SearchResultsView({
         <p className={`${acTypography.folioMeta} mx-auto mt-3 max-w-md`}>{t("emptyStates.noResultsHint")}</p>
         <Link
           href="/recipes"
-          className={`${acTypography.nav} mt-8 inline-flex text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+          className={`${acTypography.nav} mt-8 inline-flex text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
         >
           {t("emptyStates.startExploring")} →
         </Link>

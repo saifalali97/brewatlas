@@ -61,7 +61,7 @@ export default async function CulturePage() {
       <div className="ac-folio-divider mt-14 pt-10">
         <Link
           href="/culture/guide"
-          className={`${acTypography.nav} text-ac-copper hover:text-ac-espresso ${acFocus.ring}`}
+          className={`${acTypography.nav} text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
         >
           {c.guideCta} →
         </Link>

@@ -83,7 +83,7 @@ export default async function EditRecipePage({ params }: EditRecipePageProps) {
         centered={false}
       />
 
-      <div className="max-w-3xl rounded-[1.5rem] border border-white/[0.1] bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-white/[0.01] p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
+      <div className="max-w-3xl rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">
         <RecipeForm
           mode="edit"
           recipeId={recipe.id}

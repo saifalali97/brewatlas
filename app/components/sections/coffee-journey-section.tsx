@@ -69,7 +69,7 @@ export function CoffeeCraftSection({
               {method.description}
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-8 border-t border-white/[0.08] pt-8">
+            <div className="mt-10 flex flex-wrap gap-8 border-t border-ba-espresso/08 pt-8">
               {[
                 { label: "Body", value: method.body },
                 { label: "Acidity", value: method.acidity },

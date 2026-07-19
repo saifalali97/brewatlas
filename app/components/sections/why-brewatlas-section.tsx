@@ -30,7 +30,7 @@ export function WhyBrewAtlasSection({ about, stats }: WhyBrewAtlasSectionProps) 
       </MotionReveal>
 
       <MotionReveal delay={80}>
-        <p className="mt-12 max-w-2xl text-xl leading-[1.75] text-ac-walnut/80 lg:text-[1.375rem] lg:leading-[1.8]">
+        <p className="mt-12 max-w-2xl text-xl leading-[1.75] text-ac-espresso lg:text-[1.375rem] lg:leading-[1.8]">
           {about.body}
         </p>
       </MotionReveal>
@@ -42,7 +42,7 @@ export function WhyBrewAtlasSection({ about, stats }: WhyBrewAtlasSectionProps) 
               <p className="font-display text-4xl tracking-[-0.03em] text-ac-espresso tabular-nums lg:text-5xl">
                 {value}
               </p>
-              <p className="mt-3 text-sm uppercase tracking-[0.14em] text-ac-walnut/55">{label}</p>
+              <p className="mt-3 text-sm uppercase tracking-[0.14em] text-ac-espresso">{label}</p>
             </div>
           ))}
         </div>

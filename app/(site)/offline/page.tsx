@@ -20,7 +20,7 @@ export default function OfflinePage() {
       id="main-content"
       className="flex min-h-[70svh] flex-col items-center justify-center bg-ac-limestone px-6 py-24 text-center"
     >
-      <div className="mb-6 flex h-12 w-12 items-center justify-center text-ac-copper">
+      <div className="mb-6 flex h-12 w-12 items-center justify-center text-ac-espresso">
         <WifiOff className="h-6 w-6" aria-hidden />
       </div>
       <p className={acTypography.eyebrow}>{o.eyebrow}</p>

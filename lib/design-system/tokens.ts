@@ -40,6 +40,7 @@ export const dsColors = {
   borderDark: acBorder.onDark,
   borderAccent: acBorder.accent,
   textPrimary: acText.primary,
+  textBody: acText.body,
   textSecondary: acText.secondary,
   textMuted: acText.muted,
   textOnDark: acText.onDark,

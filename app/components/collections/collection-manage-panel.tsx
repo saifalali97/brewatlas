@@ -36,7 +36,7 @@ export function CollectionManagePanel({ collectionId, initialName, availableReci
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-lg font-semibold text-stone-50">{t("collectionsPage.renameSectionTitle")}</h2>
+        <h2 className="text-lg font-semibold text-ac-espresso">{t("collectionsPage.renameSectionTitle")}</h2>
         <form action={renameAction} className="mt-5 space-y-5">
           <input type="hidden" name="collectionId" value={collectionId} />
           <div className="max-w-sm">
@@ -60,7 +60,7 @@ export function CollectionManagePanel({ collectionId, initialName, availableReci
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold text-stone-50">{t("collectionsPage.addRecipeSectionTitle")}</h2>
+        <h2 className="text-lg font-semibold text-ac-espresso">{t("collectionsPage.addRecipeSectionTitle")}</h2>
         <form action={addAction} className="mt-5 space-y-5">
           <input type="hidden" name="collectionId" value={collectionId} />
           <div className="max-w-sm">

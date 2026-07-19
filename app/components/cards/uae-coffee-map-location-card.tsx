@@ -40,12 +40,12 @@ export function UaeCoffeeMapLocationCard({ location }: UaeCoffeeMapLocationCardP
           </p>
         </div>
 
-        <h3 className="mt-3 text-[1.05rem] font-semibold leading-[1.2] tracking-tight text-stone-50">
+        <h3 className="mt-3 text-[1.05rem] font-semibold leading-[1.2] tracking-tight text-ac-espresso">
           {location.name}
         </h3>
 
         {location.description && (
-          <p className="mt-2.5 line-clamp-2 text-[0.8125rem] leading-[1.65] text-stone-300/90">
+          <p className="mt-2.5 line-clamp-2 text-[0.8125rem] leading-[1.65] text-ac-espresso">
             {location.description}
           </p>
         )}
@@ -59,7 +59,7 @@ export function UaeCoffeeMapLocationCard({ location }: UaeCoffeeMapLocationCardP
           />
         </div>
 
-        <p className="mt-3 text-[0.6875rem] text-stone-500">
+        <p className="mt-3 text-[0.6875rem] text-ac-espresso">
           {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
         </p>
       </div>

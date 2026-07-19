@@ -80,7 +80,7 @@ export function Cover({
         <span
           className={joinClasses(
             acTypography.nav,
-            "mt-8 inline-flex items-center gap-2 text-ac-copper",
+            "mt-8 inline-flex items-center gap-2 text-ac-espresso",
             acMotion.transition,
           )}
         >

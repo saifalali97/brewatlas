@@ -3,17 +3,14 @@
 import Image from "next/image";
 import { useActionState, useState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
-import { buttons } from "@/lib/constants/styles";
+import { buttons, forms } from "@/lib/constants/styles";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { updateProfileAction, type ProfileActionState } from "@/lib/supabase/profile-actions";
 import type { LookupOption } from "@/types/recipe";
 
-const inputClass =
-  "mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45";
-
-const selectClass = `${inputClass} appearance-none`;
-
-const labelClass = "text-sm font-medium text-stone-300";
+const inputClass = forms.input;
+const selectClass = forms.select;
+const labelClass = forms.label;
 
 type ProfileFormProps = {
   initialFullName: string;
@@ -49,7 +46,7 @@ export function ProfileForm({
   return (
     <form action={formAction} className="space-y-7">
       <div className="flex items-center gap-5">
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border border-white/[0.12] bg-white/[0.04]">
+        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border border-ba-espresso/12 bg-ba-sand/40">
           {displayAvatar ? (
             <Image
               src={displayAvatar}
@@ -60,7 +57,7 @@ export function ProfileForm({
               unoptimized={Boolean(previewUrl)}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-2xl font-medium text-stone-500">
+            <div className="flex h-full w-full items-center justify-center text-2xl font-medium text-ac-espresso">
               {initialFullName.charAt(0).toUpperCase() || "?"}
             </div>
           )}
@@ -78,9 +75,9 @@ export function ProfileForm({
               const file = event.target.files?.[0];
               setPreviewUrl(file ? URL.createObjectURL(file) : null);
             }}
-            className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
+            className="mt-2 block text-sm text-ac-espresso file:mr-4 file:rounded-full file:border-0 file:bg-ba-sand/50 file:px-4 file:py-2 file:text-xs file:font-medium file:text-ac-espresso file:transition-colors hover:file:bg-ba-sand/70"
           />
-          <p className="mt-1.5 text-xs text-stone-500">{t("profilePage.avatarHint")}</p>
+          <p className="mt-1.5 text-xs text-ac-espresso">{t("profilePage.avatarHint")}</p>
         </div>
       </div>
 
@@ -180,7 +177,7 @@ export function ProfileForm({
           <option value="public">{t("profilePage.visibilityPublic")}</option>
           <option value="private">{t("profilePage.visibilityPrivate")}</option>
         </select>
-        <p className="mt-1.5 text-xs text-stone-500">{t("profilePage.visibilityHint")}</p>
+        <p className="mt-1.5 text-xs text-ac-espresso">{t("profilePage.visibilityHint")}</p>
       </div>
 
       <FormMessage error={state?.error} success={state?.success} />

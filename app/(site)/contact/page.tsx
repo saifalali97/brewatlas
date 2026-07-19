@@ -37,8 +37,8 @@ export default async function ContactPage() {
         <div className={`${acSurface.plate} p-6 sm:p-8`}>
           <p className={acTypography.h3}>{c.supportCardTitle}</p>
           <p className={`${acTypography.body} mt-4`}>{c.supportCardBody}</p>
-          <div className="ac-folio-divider mt-8 flex items-center gap-2.5 pt-6 text-sm text-ac-walnut/70">
-            <Mail className="h-4 w-4 text-ac-copper" aria-hidden />
+          <div className="ac-folio-divider mt-8 flex items-center gap-2.5 pt-6 text-sm text-ac-espresso">
+            <Mail className="h-4 w-4 text-ac-espresso" aria-hidden />
             support@brewatlas.app
           </div>
         </div>

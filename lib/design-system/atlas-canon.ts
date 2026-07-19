@@ -12,8 +12,10 @@
 export const acColorHex = {
   limestone: "#F3EEE6",
   pearl: "#FCF8F2",
-  secondary: "#5E564D",
-  muted: "#736B61",
+  /** All light-surface copy — unified near-black for maximum readability. */
+  body: "#1A1410",
+  secondary: "#1A1410",
+  muted: "#1A1410",
   sand: "#E8DCC8",
   dune: "#D4C4A8",
   espresso: "#1A1410",
@@ -31,6 +33,7 @@ export type AcColorToken = keyof typeof acColorHex;
 export const acColor = {
   limestone: "ac-limestone",
   pearl: "ac-pearl",
+  body: "ac-body",
   secondary: "ac-secondary",
   muted: "ac-muted",
   sand: "ac-sand",
@@ -59,6 +62,7 @@ export const acSurface = {
 /** Semantic text roles. */
 export const acText = {
   primary: "text-ac-espresso",
+  body: "text-ac-body",
   secondary: "text-ac-secondary",
   muted: "text-ac-muted",
   onDark: "text-ac-pearl",
@@ -107,7 +111,7 @@ export const acLegacySectionThemeMap = {
 
 export const acTypography = {
   eyebrow:
-    "text-[0.6875rem] font-medium uppercase tracking-[0.20em] text-ac-copper",
+    "text-[0.6875rem] font-medium uppercase tracking-[0.20em] text-ac-espresso",
   eyebrowDark:
     "text-[0.6875rem] font-medium uppercase tracking-[0.20em] text-ac-gold/90",
   displayXl:
@@ -124,11 +128,11 @@ export const acTypography = {
   h2Dark: "font-display text-2xl leading-[1.10] tracking-[-0.025em] text-ac-pearl sm:text-3xl lg:text-[2.25rem]",
   h3: "text-xl font-medium leading-[1.20] text-ac-espresso sm:text-2xl",
   h3Dark: "text-xl font-medium leading-[1.20] text-ac-pearl sm:text-2xl",
-  bodyLg: "text-lg leading-[1.75] text-ac-secondary md:text-xl md:leading-[1.75]",
-  body: "text-base leading-[1.70] text-ac-secondary md:text-[1.0625rem] md:leading-[1.70]",
+  bodyLg: "text-lg leading-[1.75] text-ac-body md:text-xl md:leading-[1.75]",
+  body: "text-base leading-[1.70] text-ac-body md:text-[1.0625rem] md:leading-[1.70]",
   bodyDark: "text-base leading-[1.70] text-ac-sand/90 md:text-[1.0625rem] md:leading-[1.70]",
-  bodyCentered: "mx-auto text-base leading-[1.70] text-ac-secondary md:text-[1.0625rem]",
-  label: "text-sm font-medium text-ac-walnut",
+  bodyCentered: "mx-auto text-base leading-[1.70] text-ac-body md:text-[1.0625rem]",
+  label: "text-sm font-medium text-ac-espresso",
   caption: "text-[0.8125rem] leading-[1.50] text-ac-muted",
   captionDark: "text-[0.8125rem] leading-[1.50] text-ac-sand/60",
   nav: "text-sm font-medium tracking-[-0.01em]",

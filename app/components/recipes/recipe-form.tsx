@@ -6,7 +6,7 @@ import { FormMessage } from "@/app/components/auth/form-message";
 import { OwnerRecipePublishToolbar } from "@/app/components/owner/recipes/owner-recipe-publish-toolbar";
 import { RecipeMediaField } from "@/app/components/owner/media/recipe-media-field";
 import { RecipeImageFileInput } from "@/app/components/recipes/recipe-image-file-input";
-import { buttons } from "@/lib/constants/styles";
+import { buttons, forms } from "@/lib/constants/styles";
 import { translate } from "@/lib/i18n/format";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { createRecipeAction, updateRecipeAction, type RecipeActionState } from "@/lib/supabase/recipe-actions";
@@ -19,19 +19,17 @@ import {
 import type { LookupOption, PourRow, RecipeFullDetail, RecipeImageRow } from "@/types/recipe";
 import type { MediaFolder } from "@/types/media";
 
-const inputClass =
-  "mt-2 w-full rounded-xl border border-white/[0.1] bg-white/[0.03] px-4 py-3 text-sm text-stone-100 outline-none transition-colors duration-300 placeholder:text-stone-500 focus:border-amber-500/45";
-
-const selectClass = `${inputClass} appearance-none`;
-const labelClass = "text-sm font-medium text-stone-300";
-const checkboxRowClass = "flex items-center gap-2.5 text-sm text-stone-300";
-const checkboxClass = "h-4 w-4 rounded border-white/[0.2] bg-white/[0.03] text-amber-500 focus:ring-amber-500/40";
+const inputClass = forms.input;
+const selectClass = forms.select;
+const labelClass = forms.label;
+const checkboxRowClass = forms.checkboxRow;
+const checkboxClass = forms.checkbox;
 
 function SectionHeading({ title, description }: { title: string; description?: string }) {
   return (
-    <div className="mt-12 border-t border-white/[0.08] pt-8 first:mt-0 first:border-t-0 first:pt-0">
-      <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-amber-500/80">{title}</h2>
-      {description && <p className="mt-1.5 text-sm text-stone-500">{description}</p>}
+    <div className="mt-12 border-t border-ba-espresso/08 pt-8 first:mt-0 first:border-t-0 first:pt-0">
+      <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-ac-espresso">{title}</h2>
+      {description && <p className="mt-1.5 text-sm text-ac-espresso">{description}</p>}
     </div>
   );
 }
@@ -75,7 +73,7 @@ export function RecipeForm({
 }: RecipeFormProps) {
   const { t, dictionary } = useTranslations();
   const isOwner = variant === "owner";
-  const optionalLabel = <span className="ml-1 text-xs text-stone-500">{t("recipeForm.optionalTag")}</span>;
+  const optionalLabel = <span className="ml-1 text-xs text-ac-espresso">{t("recipeForm.optionalTag")}</span>;
   const action =
     mode === "create"
       ? isOwner
@@ -198,7 +196,7 @@ export function RecipeForm({
               className={inputClass}
               placeholder={t("ownerRecipesPage.slugPlaceholder")}
             />
-            <p className="mt-1.5 text-xs text-stone-500">{t("ownerRecipesPage.slugHelp")}</p>
+            <p className="mt-1.5 text-xs text-ac-espresso">{t("ownerRecipesPage.slugHelp")}</p>
           </div>
 
           <div>
@@ -329,7 +327,7 @@ export function RecipeForm({
               {optionalLabel}
             </label>
             {initialValues?.coverImageUrl && (
-              <p className="mt-2 text-xs text-stone-500">{t("recipeForm.coverPhotoCurrentHint")}</p>
+              <p className="mt-2 text-xs text-ac-espresso">{t("recipeForm.coverPhotoCurrentHint")}</p>
             )}
             <RecipeImageFileInput
               id="coverImage"
@@ -338,7 +336,7 @@ export function RecipeForm({
               heightFieldName="coverImageHeight"
               blurFieldName="coverImageBlur"
               accept="image/jpeg,image/png,image/webp,image/avif"
-              className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
+              className="mt-2 block text-sm text-ac-espresso file:mr-4 file:rounded-full file:border-0 file:bg-ba-sand/50 file:px-4 file:py-2 file:text-xs file:font-medium file:text-ac-espresso file:transition-colors hover:file:bg-ba-sand/70"
             />
           </div>
           <div>
@@ -347,7 +345,7 @@ export function RecipeForm({
               {optionalLabel}
             </label>
             {existingImages.length > 0 && (
-              <p className="mt-2 text-xs text-stone-500">
+              <p className="mt-2 text-xs text-ac-espresso">
                 {translate(dictionary, "recipeForm.additionalPhotosAttachedTemplate", { count: existingImages.length })}
               </p>
             )}
@@ -357,7 +355,7 @@ export function RecipeForm({
               multiple
               metaFieldName="galleryImageMeta"
               accept="image/jpeg,image/png,image/webp,image/avif"
-              className="mt-2 block text-sm text-stone-400 file:mr-4 file:rounded-full file:border-0 file:bg-white/[0.08] file:px-4 file:py-2 file:text-xs file:font-medium file:text-stone-100 file:transition-colors hover:file:bg-white/[0.12]"
+              className="mt-2 block text-sm text-ac-espresso file:mr-4 file:rounded-full file:border-0 file:bg-ba-sand/50 file:px-4 file:py-2 file:text-xs file:font-medium file:text-ac-espresso file:transition-colors hover:file:bg-ba-sand/70"
             />
           </div>
         </div>
@@ -378,7 +376,7 @@ export function RecipeForm({
             </option>
           ))}
         </select>
-        <p className="mt-1.5 text-xs text-stone-500">{t("recipeForm.useExistingCoffeeHint")}</p>
+        <p className="mt-1.5 text-xs text-ac-espresso">{t("recipeForm.useExistingCoffeeHint")}</p>
       </div>
 
       <div>
@@ -743,9 +741,9 @@ export function RecipeForm({
 
       <div className="space-y-4">
         {pourRows.map((row, index) => (
-          <div key={row.key} className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
+          <div key={row.key} className="rounded-xl border border-ba-espresso/08 bg-ba-sand/30 p-4">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-[0.1em] text-stone-500">
+              <p className="text-xs font-medium uppercase tracking-[0.1em] text-ac-espresso">
                 {translate(dictionary, "recipeForm.pourLabelTemplate", { number: index + 1 })}
               </p>
               {pourRows.length > 1 && (
@@ -760,7 +758,7 @@ export function RecipeForm({
             </div>
             <div className="mt-3 grid gap-4 sm:grid-cols-3">
               <div>
-                <label htmlFor={`pourWater_${index}`} className="text-xs text-stone-400">
+                <label htmlFor={`pourWater_${index}`} className="text-xs text-ac-espresso">
                   {t("recipeForm.pourWaterLabel")}
                 </label>
                 <input
@@ -774,7 +772,7 @@ export function RecipeForm({
                 />
               </div>
               <div>
-                <label htmlFor={`pourTime_${index}`} className="text-xs text-stone-400">
+                <label htmlFor={`pourTime_${index}`} className="text-xs text-ac-espresso">
                   {t("recipeForm.pourTimeLabel")}
                 </label>
                 <input
@@ -787,7 +785,7 @@ export function RecipeForm({
                 />
               </div>
               <div>
-                <label htmlFor={`pourNotes_${index}`} className="text-xs text-stone-400">
+                <label htmlFor={`pourNotes_${index}`} className="text-xs text-ac-espresso">
                   {t("recipeForm.pourNotesLabel")}
                 </label>
                 <input
@@ -943,7 +941,7 @@ export function RecipeForm({
       {/* TAGS */}
       <SectionHeading title={t("recipeForm.sectionTags")} />
 
-      <div className="flex flex-wrap gap-x-6 gap-y-3 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-4">
+      <div className="flex flex-wrap gap-x-6 gap-y-3 rounded-xl border border-ba-espresso/08 bg-ba-sand/30 px-4 py-4">
         {tags.map((tag) => (
           <label key={tag.id} className={checkboxRowClass}>
             <input
@@ -972,7 +970,7 @@ export function RecipeForm({
         />
       ) : null}
 
-      <div className="flex flex-wrap gap-6 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-4">
+      <div className="flex flex-wrap gap-6 rounded-xl border border-ba-espresso/08 bg-ba-sand/30 px-4 py-4">
         {!isOwner ? (
           <label className={checkboxRowClass}>
             <input
@@ -1007,7 +1005,7 @@ export function RecipeForm({
       <FormMessage error={state?.error ?? autosaveState?.error} success={state?.success} />
 
       {isOwner && mode === "edit" ? (
-        <div className="flex flex-wrap items-center gap-3 text-xs text-stone-500">
+        <div className="flex flex-wrap items-center gap-3 text-xs text-ac-espresso">
           {autosavePending ? (
             <span>{t("ownerRecipesPage.autosaveSaving")}</span>
           ) : savedAtLabel ? (

@@ -29,7 +29,7 @@ export function PremiumExperienceSection({ copy, testimonials }: PremiumExperien
         </div>
       ))}
       {featuredTestimonial ? (
-        <figure className="mt-8 border-t border-white/[0.08] pt-10">
+        <figure className="mt-8 border-t border-ba-espresso/08 pt-10">
           <blockquote className="font-display text-xl leading-[1.4] tracking-[-0.02em] text-ac-pearl sm:text-2xl">
             &ldquo;{featuredTestimonial.quote}&rdquo;
           </blockquote>

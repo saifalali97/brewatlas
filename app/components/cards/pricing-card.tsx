@@ -42,7 +42,7 @@ function FeatureValue({ enabled }: { enabled: boolean }) {
   return enabled ? (
     <Check className="h-3.5 w-3.5 text-ba-bronze" aria-hidden />
   ) : (
-    <X className="h-3.5 w-3.5 text-ba-coffee/35" aria-hidden />
+    <X className="h-3.5 w-3.5 text-ac-espresso" aria-hidden />
   );
 }
 
@@ -60,8 +60,8 @@ function PlanFeature({
   return (
     <div className="flex items-center justify-between gap-3 border-b border-ba-espresso/[0.06] py-2.5 last:border-b-0">
       <div className="flex min-w-0 items-center gap-2">
-        <Icon className="h-3.5 w-3.5 shrink-0 text-ba-bronze/85" aria-hidden />
-        <span className="text-[0.8125rem] text-ba-coffee/70">{label}</span>
+        <Icon className="h-3.5 w-3.5 shrink-0 text-ac-espresso" aria-hidden />
+        <span className="text-[0.8125rem] text-ac-espresso">{label}</span>
       </div>
       {value !== undefined ? (
         <span className="shrink-0 text-[0.8125rem] font-medium text-ba-espresso">{value}</span>
@@ -158,11 +158,11 @@ export function PricingCard({ plan, ctaHref = "#pricing", ctaAsSubmit = false, l
           >
             {plan.price}
           </span>
-          {plan.price !== "$0" && <span className="text-sm text-ba-coffee/55">/{plan.period}</span>}
+          {plan.price !== "$0" && <span className="text-sm text-ac-espresso">/{plan.period}</span>}
         </div>
-        {plan.price === "$0" && <span className="mt-1 text-sm text-ba-coffee/55">{plan.period}</span>}
+        {plan.price === "$0" && <span className="mt-1 text-sm text-ac-espresso">{plan.period}</span>}
 
-        <p className="mt-4 text-[0.8125rem] leading-[1.65] text-ba-coffee/75">{plan.description}</p>
+        <p className="mt-4 text-[0.8125rem] leading-[1.65] text-ac-espresso">{plan.description}</p>
 
         <div className={`mt-5 ${dsRadius.md} border border-ba-espresso/[0.06] bg-ba-sand/25 px-3.5`}>
           <PlanFeature icon={BookOpen} label={l.recipes} value={plan.recipeCount} />
@@ -180,7 +180,7 @@ export function PricingCard({ plan, ctaHref = "#pricing", ctaAsSubmit = false, l
 
         <ul className="mt-5 flex-1 space-y-2.5">
           {plan.features.map((feature) => (
-            <li key={feature} className="flex items-start gap-2.5 text-[0.8125rem] leading-relaxed text-ba-coffee/70">
+            <li key={feature} className="flex items-start gap-2.5 text-[0.8125rem] leading-relaxed text-ac-espresso">
               <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ba-bronze" aria-hidden />
               {feature}
             </li>

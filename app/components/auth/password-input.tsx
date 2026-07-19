@@ -57,7 +57,7 @@ export function PasswordInput({
           aria-label={visible ? t("auth.hidePassword") : t("auth.showPassword")}
           aria-controls={inputId}
           aria-pressed={visible}
-          className={`absolute end-2 top-1/2 flex h-9 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-md text-ba-coffee/65 transition-colors hover:text-ba-espresso ${acFocus.ring} touch-manipulation [-webkit-tap-highlight-color:transparent]`}
+          className={`absolute end-2 top-1/2 flex h-9 min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center rounded-md text-ac-espresso transition-colors hover:text-ba-espresso ${acFocus.ring} touch-manipulation [-webkit-tap-highlight-color:transparent]`}
         >
           {visible ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
         </button>

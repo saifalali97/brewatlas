@@ -10,7 +10,7 @@ import { StarRatingDisplay } from "@/app/components/reviews/star-rating";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
-import { buttons } from "@/lib/constants/styles";
+import { buttons, surfaces } from "@/lib/constants/styles";
 import { PremiumMemberBadge } from "@/app/components/subscription/subscription-status-badge";
 import { getUserPublishedRecipes } from "@/lib/data/db-recipes";
 import { getMembershipSummary } from "@/lib/data/membership";
@@ -81,18 +81,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 function FavoriteRow({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">
-      <span className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">{label}</span>
-      <span className="text-sm text-stone-200">{value}</span>
+    <div className={`flex items-center justify-between gap-3 px-4 py-3 ${surfaces.lightInset}`}>
+      <span className="text-xs font-medium uppercase tracking-[0.12em] text-ac-espresso">{label}</span>
+      <span className="text-sm text-ac-espresso">{value}</span>
     </div>
   );
 }
 
 function StatTile({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] p-4 text-center">
-      <p className="text-2xl font-semibold text-stone-50">{value}</p>
-      <p className="mt-1 text-xs text-stone-500">{label}</p>
+    <div className="rounded-[1.25rem] border border-ba-espresso/08 bg-ba-sand/30 p-4 text-center">
+      <p className="text-2xl font-semibold text-ac-espresso">{value}</p>
+      <p className="mt-1 text-xs text-ac-espresso">{label}</p>
     </div>
   );
 }
@@ -103,12 +103,12 @@ function BadgesRow({ badges, labels }: { badges: UserBadge[]; labels: Dictionary
 
   return (
     <div className="mt-6">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{labels.badgesTitle}</h2>
+      <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ac-espresso">{labels.badgesTitle}</h2>
       <div className="mt-3 flex flex-wrap gap-2">
         {earned.map((badge) => (
           <span
             key={badge.id}
-            className="inline-flex items-center gap-1.5 rounded-full border border-amber-600/25 bg-amber-950/30 px-3 py-1 text-xs font-medium text-amber-200/90"
+            className="inline-flex items-center gap-1.5 rounded-full border border-ba-gold/35 bg-ba-gold/12 px-3 py-1 text-xs font-medium text-ac-espresso"
           >
             <Award className="h-3.5 w-3.5" aria-hidden />
             {badge.name}
@@ -164,13 +164,13 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:gap-10">
         <aside className="space-y-6">
-          <div className="rounded-[1.5rem] border border-white/[0.1] bg-white/[0.03] p-6">
+          <div className={`p-6 ${surfaces.lightPanel}`}>
             <div className="flex flex-col items-center text-center">
-              <div className="relative h-24 w-24 overflow-hidden rounded-full border border-white/[0.12] bg-white/[0.04]">
+              <div className="relative h-24 w-24 overflow-hidden rounded-full border border-ba-espresso/12 bg-ba-sand/40">
                 {profile.avatarUrl ? (
                   <Image src={profile.avatarUrl} alt="" fill sizes="96px" className="object-cover" />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-3xl font-medium text-stone-500">
+                  <div className="flex h-full w-full items-center justify-center text-3xl font-medium text-ac-espresso">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -183,13 +183,13 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
               )}
 
               {profile.country && (
-                <p className="mt-4 inline-flex items-center gap-1.5 text-sm text-stone-400">
+                <p className="mt-4 inline-flex items-center gap-1.5 text-sm text-ac-espresso">
                   <MapPin className="h-3.5 w-3.5 text-amber-500/80" aria-hidden />
                   {profile.country}
                 </p>
               )}
 
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-sm text-stone-400">
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-sm text-ac-espresso">
                 <span className="inline-flex items-center gap-1.5">
                   <Users className="h-4 w-4" aria-hidden />
                   {interpolate(labels.followersCountTemplate, { count: profile.stats.followersCount })}
@@ -221,7 +221,7 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
               <FavoriteRow label={labels.favoriteCoffee} value={profile.favoriteCoffee?.name ?? null} />
               <FavoriteRow label={labels.favoriteRoaster} value={profile.favoriteRoaster?.name ?? null} />
               {profile.ownsXbloom && (
-                <div className="rounded-xl border border-amber-600/25 bg-amber-950/25 px-4 py-3 text-center text-xs font-medium text-amber-200/90">
+                <div className={`px-4 py-3 text-center text-xs font-medium text-ac-espresso ${surfaces.lightInset}`}>
                   {dictionary.profile.ownsXbloom}
                 </div>
               )}
@@ -251,8 +251,8 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
                   aria-current={isActive ? "page" : undefined}
                   className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     isActive
-                      ? "border-amber-600/45 bg-amber-950/50 text-amber-100"
-                      : "border-white/[0.1] bg-white/[0.04] text-stone-400 hover:border-amber-600/25 hover:text-stone-200"
+                      ? "border-ba-bronze/40 bg-ba-gold/15 text-ac-espresso"
+                      : "border-ba-espresso/12 bg-ba-pearl text-ac-espresso hover:border-ba-bronze/30 hover:text-ba-bronze"
                   }`}
                 >
                   {label}
@@ -267,7 +267,7 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
                 {labels.tabRecipes}
               </h2>
               {publishedRecipes.length === 0 ? (
-                <p className="text-sm text-stone-500">{labels.noRecipesYet}</p>
+                <p className="text-sm text-ac-espresso">{labels.noRecipesYet}</p>
               ) : (
                 <div className="grid gap-6 sm:grid-cols-2">
                   {publishedRecipes.map((recipe) => (
@@ -290,17 +290,17 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
                 {labels.tabReviews}
               </h2>
               {reviewsWritten.length === 0 ? (
-                <p className="text-sm text-stone-500">{labels.noReviewsYet}</p>
+                <p className="text-sm text-ac-espresso">{labels.noReviewsYet}</p>
               ) : (
                 <div className="space-y-4">
                   {reviewsWritten.map(({ review, recipeTitle, recipeSlug }) => (
                     <article
                       key={review.id}
-                      className="rounded-[1.25rem] border border-white/[0.08] bg-white/[0.02] p-5"
+                      className="rounded-[1.25rem] border border-ba-espresso/08 bg-ba-sand/30 p-5"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <Link href={`/recipes/${recipeSlug}`} className="font-medium text-stone-100 hover:text-amber-300">
+                          <Link href={`/recipes/${recipeSlug}`} className="font-medium text-ac-espresso hover:text-ba-bronze">
                             {recipeTitle}
                           </Link>
                           <div className="mt-2">
@@ -316,7 +316,7 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
                         </RippleLink>
                       </div>
                       {review.reviewText && (
-                        <p className="mt-3 text-sm leading-relaxed text-stone-400">{review.reviewText}</p>
+                        <p className="mt-3 text-sm leading-relaxed text-ac-espresso">{review.reviewText}</p>
                       )}
                     </article>
                   ))}
@@ -327,7 +327,7 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
 
           {tab === "activity" && (
             <section aria-labelledby="profile-activity-heading">
-              <h2 id="profile-activity-heading" className="mb-4 text-base font-semibold text-stone-100">
+              <h2 id="profile-activity-heading" className="mb-4 text-base font-semibold text-ac-espresso">
                 {labels.tabActivity}
               </h2>
               <CommunityActivityFeed items={activity} dictionary={dictionary} locale={locale} />

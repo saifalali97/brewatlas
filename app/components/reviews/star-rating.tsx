@@ -61,10 +61,10 @@ export function StarRatingInput({ name, value, onChange, disabled = false }: Sta
               onClick={() => setRating(star)}
               onMouseEnter={() => setHoverValue(star)}
               onKeyDown={(event) => handleKeyDown(event, star)}
-              className="rounded-md p-1 transition-colors duration-200 hover:text-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 disabled:opacity-50"
+              className="rounded-md p-1 transition-colors duration-200 hover:text-ba-bronze focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 disabled:opacity-50"
             >
               <Star
-                className={`h-6 w-6 ${filled ? "fill-amber-400 text-amber-400" : "text-stone-600"}`}
+                className={`h-6 w-6 ${filled ? "fill-amber-400 text-amber-400" : "text-ac-espresso"}`}
                 aria-hidden
               />
             </button>
@@ -95,7 +95,7 @@ export function StarRatingDisplay({ rating, max = 5, size = "md", label }: StarR
         return (
           <Star
             key={star}
-            className={`${iconClass} ${filled || half ? "fill-amber-400 text-amber-400" : "text-stone-600"}`}
+            className={`${iconClass} ${filled || half ? "fill-amber-400 text-amber-400" : "text-ac-espresso"}`}
             aria-hidden
           />
         );

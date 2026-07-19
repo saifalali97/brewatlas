@@ -29,7 +29,7 @@ export function UaeRoasterCard({ roaster }: UaeRoasterCardProps) {
       <div aria-hidden className={cards.premiumSheen} />
       <div aria-hidden className={cards.premiumGlow} />
 
-      <div className="relative flex items-center gap-4 border-b border-white/[0.06] p-5 lg:p-6">
+      <div className="relative flex items-center gap-4 border-b border-ba-espresso/06 p-5 lg:p-6">
         <span
           aria-hidden
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-uae-warm-gold/35 bg-gradient-to-br from-uae-warm-gold/25 via-uae-sand/15 to-transparent text-base font-semibold tracking-wide text-uae-pearl"
@@ -37,7 +37,7 @@ export function UaeRoasterCard({ roaster }: UaeRoasterCardProps) {
           {initials(roaster.name)}
         </span>
         <div className="min-w-0">
-          <h3 className="truncate text-[1.1rem] font-semibold leading-[1.15] tracking-tight text-stone-50 transition-colors duration-300 group-hover:text-amber-50">
+          <h3 className="truncate text-[1.1rem] font-semibold leading-[1.15] tracking-tight text-ac-espresso transition-colors duration-300 group-hover:text-ba-bronze">
             {roaster.name}
           </h3>
           {roaster.featured && (
@@ -51,7 +51,7 @@ export function UaeRoasterCard({ roaster }: UaeRoasterCardProps) {
 
       <div className="relative flex flex-1 flex-col p-5 lg:p-6">
         {roaster.description && (
-          <p className="line-clamp-3 text-[0.8125rem] leading-[1.65] text-stone-300/90">{roaster.description}</p>
+          <p className="line-clamp-3 text-[0.8125rem] leading-[1.65] text-ac-espresso">{roaster.description}</p>
         )}
 
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -65,7 +65,7 @@ export function UaeRoasterCard({ roaster }: UaeRoasterCardProps) {
         </div>
 
         {roaster.website && (
-          <div className="mt-auto border-t border-white/[0.06] pt-4">
+          <div className="mt-auto border-t border-ba-espresso/06 pt-4">
             <GhostCtaLink href={roaster.website}>Visit Roaster</GhostCtaLink>
           </div>
         )}

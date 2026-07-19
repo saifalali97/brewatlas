@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { SubscriptionStatusBadge } from "@/app/components/subscription/subscription-status-badge";
-import { buttons } from "@/lib/constants/styles";
+import { buttons, surfaces } from "@/lib/constants/styles";
 import { interpolate } from "@/lib/i18n/format";
 import {
   cancelSubscription,
@@ -64,12 +64,12 @@ export function SubscriptionPanel({
         />
       )}
 
-      <div className="rounded-[1.5rem] border border-white/[0.09] bg-white/[0.035] p-6 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:p-8">
+      <div className={`p-6 sm:p-8 ${surfaces.lightPanel}`}>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-stone-500">{labels.currentPlanLabel}</p>
-            <p className="mt-2 text-2xl font-semibold capitalize tracking-tight text-stone-50">{membership.plan}</p>
-            {intervalLabel && <p className="mt-1 text-sm text-stone-500">{intervalLabel}</p>}
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-ac-espresso">{labels.currentPlanLabel}</p>
+            <p className="mt-2 text-2xl font-semibold capitalize tracking-tight text-ac-espresso">{membership.plan}</p>
+            {intervalLabel && <p className="mt-1 text-sm text-ac-espresso">{intervalLabel}</p>}
           </div>
           <SubscriptionStatusBadge
             status={membership.status}
@@ -80,23 +80,23 @@ export function SubscriptionPanel({
 
         <dl className="mt-6 grid gap-4 sm:grid-cols-2">
           <div>
-            <dt className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">{labels.billingCycleLabel}</dt>
-            <dd className="mt-1 text-sm text-stone-200">{intervalLabel ?? labels.freePlanInterval}</dd>
+            <dt className="text-xs font-medium uppercase tracking-[0.12em] text-ac-espresso">{labels.billingCycleLabel}</dt>
+            <dd className="mt-1 text-sm text-ac-espresso">{intervalLabel ?? labels.freePlanInterval}</dd>
           </div>
           {membership.trial.isTrialing && (
             <div>
-              <dt className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">{labels.trialRemainingLabel}</dt>
-              <dd className="mt-1 text-sm text-stone-200">
+              <dt className="text-xs font-medium uppercase tracking-[0.12em] text-ac-espresso">{labels.trialRemainingLabel}</dt>
+              <dd className="mt-1 text-sm text-ac-espresso">
                 {interpolate(labels.trialDaysRemainingTemplate, { days: membership.trial.daysRemaining })}
               </dd>
             </div>
           )}
           {expiresLabel && (
             <div>
-              <dt className="text-xs font-medium uppercase tracking-[0.12em] text-stone-500">
+              <dt className="text-xs font-medium uppercase tracking-[0.12em] text-ac-espresso">
                 {membership.cancelAtPeriodEnd ? labels.accessUntilLabel : labels.renewsOnLabel}
               </dt>
-              <dd className="mt-1 text-sm text-stone-200">{expiresLabel}</dd>
+              <dd className="mt-1 text-sm text-ac-espresso">{expiresLabel}</dd>
             </div>
           )}
           {membership.cancelAtPeriodEnd && (
@@ -141,7 +141,7 @@ export function SubscriptionPanel({
       </div>
 
       {!stripeEnabled && (
-        <p className="text-sm text-stone-500">{labels.manualBillingNote}</p>
+        <p className="text-sm text-ac-espresso">{labels.manualBillingNote}</p>
       )}
     </div>
   );

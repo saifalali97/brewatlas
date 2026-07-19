@@ -15,7 +15,7 @@ export function CreateCollectionForm({ canCreate }: CreateCollectionFormProps) {
   const [state, formAction, pending] = useActionState<CollectionActionState, FormData>(createCollectionAction, undefined);
 
   if (!canCreate) {
-    return <p className="text-sm text-stone-500">{t("collectionsPage.limitReached")}</p>;
+    return <p className="text-sm text-ac-espresso">{t("collectionsPage.limitReached")}</p>;
   }
 
   return (
