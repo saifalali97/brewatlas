@@ -1,5 +1,9 @@
 import type { GulfHeritagePageSlug } from "@/types/gulf-heritage";
 import type { GulfHeritageReference, GulfHeritageReferenceType } from "@/types/gulf-heritage-reference";
+import { localizeGulfHeritageReference } from "@/lib/content/gulf-heritage/localize";
+import { getUaeReferenceLocalizationAr } from "@/lib/content/gulf-heritage/uae/references.ar";
+import type { Locale } from "@/types/i18n";
+import { DEFAULT_LOCALE } from "@/types/i18n";
 
 type ResearchSourceType =
   | "official"
@@ -11,25 +15,42 @@ type ResearchSourceType =
   | "reference";
 
 function mapSourceType(type: ResearchSourceType): GulfHeritageReferenceType {
-  if (type === "cultural" || type === "reference") return "research";
-  return type;
+  switch (type) {
+    case "official":
+      return "official-company";
+    case "government":
+      return "government";
+    case "museum":
+      return "museum";
+    case "book":
+      return "book";
+    case "news":
+      return "journal";
+    case "cultural":
+    case "reference":
+      return "academic";
+    default:
+      return "academic";
+  }
 }
 
 function ref(
-  title: string,
+  sourceName: string,
   organization: string | null,
   author: string | null,
   publishedDate: string | null,
   url: string | null,
   type: ResearchSourceType,
 ): GulfHeritageReference {
+  const publication =
+    author && publishedDate ? `${author} (${publishedDate})` : author ?? publishedDate;
+
   return {
-    title,
+    sourceName,
     organization,
-    author,
-    publishedDate,
-    accessedDate: "2026-07-19",
+    publication,
     url,
+    retrievedDate: "2026-07-19",
     type: mapSourceType(type),
   };
 }
@@ -382,6 +403,14 @@ export const UAE_PAGE_REFERENCES: Record<GulfHeritagePageSlug, readonly GulfHeri
   "nightjar-coffee": [NJ_HOME, NJ_ALSERKAL],
 };
 
-export function getUaePageReferences(slug: GulfHeritagePageSlug): readonly GulfHeritageReference[] {
-  return UAE_PAGE_REFERENCES[slug] ?? [];
+export function getUaePageReferences(
+  slug: GulfHeritagePageSlug,
+  locale: Locale = DEFAULT_LOCALE,
+): readonly GulfHeritageReference[] {
+  const references = UAE_PAGE_REFERENCES[slug] ?? [];
+  if (locale === DEFAULT_LOCALE) return references;
+
+  return references.map((reference) =>
+    localizeGulfHeritageReference(reference, getUaeReferenceLocalizationAr(reference.url)),
+  );
 }

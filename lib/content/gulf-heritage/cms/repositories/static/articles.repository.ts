@@ -19,14 +19,16 @@ async function toArticleRecord(
   const route = await staticGulfHeritagePagesRepository.getRoute(countrySlug, categorySlug, pageSlug);
   if (!route || route.kind !== "article") return null;
 
-  const content = getUaeArticleContent(pageSlug);
+  const content = getUaeArticleContent(pageSlug, locale);
   if (!content) return null;
 
   return {
     ...createStaticCmsBase("article", `${countrySlug}:${categorySlug}:${pageSlug}`, locale),
     countrySlug,
     categorySlug,
+    editorialStatus: route.editorialStatus,
     title: null,
+    intro: content.intro,
     seoTitle: null,
     seoDescription: null,
     relatedPageSlugs: route.relatedPageSlugs,

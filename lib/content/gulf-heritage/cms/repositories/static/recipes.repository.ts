@@ -4,7 +4,7 @@ import type { GulfHeritageRecipesRepository } from "@/lib/content/gulf-heritage/
 
 export const staticGulfHeritageRecipesRepository: GulfHeritageRecipesRepository = {
   async listByPage(pageSlug, locale) {
-    const recipes = getUaePageRecipes(pageSlug);
+    const recipes = getUaePageRecipes(pageSlug, locale);
 
     return recipes.map((recipe, index) => ({
       ...createStaticCmsBase("recipe", `${pageSlug}:${recipe.slug}`, locale),

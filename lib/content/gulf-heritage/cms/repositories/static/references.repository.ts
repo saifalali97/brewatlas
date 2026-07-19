@@ -12,15 +12,15 @@ function referenceSlug(title: string, index: number): string {
 
 export const staticGulfHeritageReferencesRepository: GulfHeritageReferencesRepository = {
   async listByPage(pageSlug, locale) {
-    const references = getUaePageReferences(pageSlug);
+    const references = getUaePageReferences(pageSlug, locale);
 
     return references.map((reference, index) => ({
-      ...createStaticCmsBase("reference", `${pageSlug}:${referenceSlug(reference.title, index)}`, locale),
+      ...createStaticCmsBase("reference", `${pageSlug}:${referenceSlug(reference.sourceName, index)}`, locale),
       countrySlug: "united-arab-emirates",
       pageSlug,
       reference,
       sortOrder: index,
-      slug: referenceSlug(reference.title, index),
+      slug: referenceSlug(reference.sourceName, index),
       id: `gh:reference:${pageSlug}:${index}:${locale}`,
     }));
   },

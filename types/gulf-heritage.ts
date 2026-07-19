@@ -1,4 +1,5 @@
 import type { GulfHeritageArticleContent } from "@/types/gulf-heritage-article-content";
+import type { GulfHeritageEditorialStatus } from "@/types/gulf-heritage-editorial";
 import type { GulfHeritagePageImages } from "@/types/gulf-heritage-images";
 import type { GulfHeritageRecipeReference } from "@/types/gulf-heritage-recipe";
 import type { GulfHeritageReference } from "@/types/gulf-heritage-reference";
@@ -69,6 +70,7 @@ export type GulfHeritagePageDefinition = {
   slug: GulfHeritagePageSlug;
   categorySlug: GulfHeritageCategorySlug;
   kind: GulfHeritagePageKind;
+  editorialStatus: GulfHeritageEditorialStatus;
   /** Related page slugs within the same country (resolved at runtime). */
   relatedPageSlugs: readonly GulfHeritagePageSlug[];
   /** Recipe slugs reserved for verified content — empty until sourced. */
@@ -77,17 +79,23 @@ export type GulfHeritagePageDefinition = {
 
 /** Roaster profile field slots — null until verified from primary sources. */
 export type GulfHeritageRoasterProfileFields = {
+  history: string | null;
+  founder: string | null;
   story: string | null;
   foundingYear: number | null;
   location: string | null;
+  branches: readonly string[];
   websiteUrl: string | null;
   instagramUrl: string | null;
   roastingPhilosophy: string | null;
+  signatureCoffees: readonly string[];
   coffeeLineup: string | null;
+  coffeeOrigins: readonly string[];
   brewingRecommendations: string | null;
   featuredBeans: string | null;
   awards: string | null;
   socialLinks: ReadonlyArray<{ label: string; url: string }>;
+  references: readonly GulfHeritageReference[];
 };
 
 export type GulfHeritageCountryCopy = {
@@ -106,17 +114,25 @@ export type GulfHeritageCategoryCopy = {
 
 export type GulfHeritagePageCopy = {
   title: string;
+  intro: string | null;
   seoTitle: string;
   seoDescription: string;
+};
+
+export type GulfHeritageBreadcrumb = {
+  href: string;
+  label: string;
 };
 
 export type GulfHeritageResolvedPage = {
   countrySlug: GulfHeritageCountrySlug;
   categorySlug: GulfHeritageCategorySlug;
   definition: GulfHeritagePageDefinition;
+  editorialStatus: GulfHeritageEditorialStatus;
   copy: GulfHeritagePageCopy;
   categoryCopy: GulfHeritageCategoryCopy;
   countryCopy: GulfHeritageCountryCopy;
+  breadcrumbs: readonly GulfHeritageBreadcrumb[];
   relatedPages: Array<{ slug: GulfHeritagePageSlug; copy: GulfHeritagePageCopy; href: string }>;
   relatedRecipes: GulfHeritageRecipeReference[];
   verifiedRecipes: GulfHeritageRecipeReference[];

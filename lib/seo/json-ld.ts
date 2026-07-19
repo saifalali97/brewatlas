@@ -19,6 +19,29 @@ export function buildCollectionPageJsonLd(input: {
   };
 }
 
+export function buildArticleJsonLd(input: {
+  url: string;
+  headline: string;
+  description: string;
+  dateModified?: string;
+}) {
+  const siteUrl = getSiteUrl();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.headline,
+    description: input.description,
+    url: input.url,
+    mainEntityOfPage: input.url,
+    publisher: {
+      "@type": "Organization",
+      name: siteConfig.name,
+      url: siteUrl,
+    },
+    ...(input.dateModified ? { dateModified: input.dateModified } : {}),
+  };
+}
+
 export function getJsonLdGraph() {
   const siteUrl = getSiteUrl();
   const organizationId = `${siteUrl}/#organization`;
