@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next";
-import { getCultureTopicSitemapEntries } from "@/lib/data/culture-sitemap";
+import {
+  getCultureSectionSitemapEntries,
+  getCultureTopicSitemapEntries,
+} from "@/lib/data/culture-sitemap";
 import { listGulfHeritageSitemapPaths } from "@/lib/content/gulf-heritage";
 import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { getPublishedRecipeSlugs } from "@/lib/data/recipe-publishing";
@@ -25,10 +28,8 @@ const publicPages: Array<{
   { path: "/community", changeFrequency: "weekly", priority: 0.6 },
   { path: "/premium", changeFrequency: "monthly", priority: 0.8 },
   { path: "/culture", changeFrequency: "monthly", priority: 0.7 },
-  { path: "/culture/uae-coffee-culture", changeFrequency: "monthly", priority: 0.6 },
-  { path: "/culture/arabic-coffee", changeFrequency: "monthly", priority: 0.6 },
-  { path: "/culture/tea", changeFrequency: "monthly", priority: 0.6 },
   { path: "/culture/guide", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/gulf-heritage", changeFrequency: "monthly", priority: 0.7 },
   { path: "/about", changeFrequency: "yearly", priority: 0.5 },
   { path: "/contact", changeFrequency: "yearly", priority: 0.5 },
   { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
@@ -42,12 +43,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl();
   const lastModified = new Date();
   const supabase = await createClient();
-  const [dbPublished, cultureTopics] = await Promise.all([
+  const [dbPublished, cultureTopics, cultureSections] = await Promise.all([
     getPublishedRecipeSlugs(supabase),
     getCultureTopicSitemapEntries(supabase),
+    getCultureSectionSitemapEntries(supabase),
   ]);
 
-  const gulfHeritagePaths = listGulfHeritageSitemapPaths();
+  const gulfHeritagePaths = listGulfHeritageSitemapPaths().filter(({ path }) => path !== "/gulf-heritage");
 
   const staticEntries = [
     ...publicPages.map(({ path, changeFrequency, priority }) => ({
@@ -79,24 +81,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...dbPublished
       .filter(({ slug }) => !staticSlugs.has(slug))
       .map(({ slug, updatedAt }) => ({
-      url: `${baseUrl}/recipes/${slug}`,
-      lastModified: new Date(updatedAt),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-      alternates: { languages: buildHreflangAlternates(`/recipes/${slug}`) },
-    })),
+        url: `${baseUrl}/recipes/${slug}`,
+        lastModified: new Date(updatedAt),
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+        alternates: { languages: buildHreflangAlternates(`/recipes/${slug}`) },
+      })),
   ];
 
-  const cultureEntries = cultureTopics.map(({ sectionSlug, topicSlug, lastModified }) => {
+  const cultureSectionEntries = cultureSections.map(({ slug, lastModified: sectionUpdatedAt }) => {
+    const path = `/culture/${slug}`;
+    return {
+      url: `${baseUrl}${path}`,
+      lastModified: sectionUpdatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+      alternates: { languages: buildHreflangAlternates(path) },
+    };
+  });
+
+  const cultureEntries = cultureTopics.map(({ sectionSlug, topicSlug, lastModified: topicUpdatedAt }) => {
     const path = `/culture/${sectionSlug}/${topicSlug}`;
     return {
       url: `${baseUrl}${path}`,
-      lastModified,
+      lastModified: topicUpdatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.55,
       alternates: { languages: buildHreflangAlternates(path) },
     };
   });
 
-  return [...staticEntries, ...recipeEntries, ...cultureEntries];
+  return [...staticEntries, ...recipeEntries, ...cultureSectionEntries, ...cultureEntries];
 }

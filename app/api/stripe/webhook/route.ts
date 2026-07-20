@@ -16,6 +16,7 @@ import {
   pruneStripeWebhookEvents,
   recordStripeWebhookEvent,
 } from "@/lib/data/stripe-webhook-events";
+import { captureError } from "@/lib/observability/capture-error";
 import { checkRateLimit, getClientIp, RATE_LIMITS } from "@/lib/security/rate-limit";
 import { createAdminClient, hasAdminClient } from "@/lib/supabase/admin";
 
@@ -140,7 +141,7 @@ export async function POST(request: Request) {
     await recordStripeWebhookEvent(admin, event.id, event.type);
     await pruneStripeWebhookEvents(admin);
   } catch (error) {
-    console.error("Stripe webhook handler failed", event.type, error);
+    captureError(error, { source: "api.stripe.webhook", eventType: event.type });
     return NextResponse.json({ error: "Webhook handler failed." }, { status: 500 });
   }
 

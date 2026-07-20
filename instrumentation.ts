@@ -10,3 +10,23 @@ export async function register() {
     await ensureInitialAdminFromEnv();
   }
 }
+
+type RequestErrorContext = {
+  routerKind: "App Router" | "Pages Router";
+};
+
+/** Captures unhandled server request errors (API routes, Server Components, Server Actions). */
+export async function onRequestError(
+  error: Error & { digest?: string },
+  request: { path: string; method: string; headers: Record<string, string | string[] | undefined> },
+  context: RequestErrorContext,
+): Promise<void> {
+  const { captureError } = await import("./lib/observability/capture-error");
+  captureError(error, {
+    source: "server.request",
+    digest: error.digest,
+    path: request.path,
+    method: request.method,
+    routerKind: context.routerKind,
+  });
+}

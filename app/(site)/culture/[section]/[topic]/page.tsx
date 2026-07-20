@@ -6,11 +6,12 @@ import { notFound } from "next/navigation";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { buttons, cards } from "@/lib/constants/styles";
-import { getCachedCultureTopicBySlug } from "@/lib/data/cached-public-data";
+import { getCachedCultureSectionBySlug, getCachedCultureTopicBySlug } from "@/lib/data/cached-public-data";
 import { translate } from "@/lib/i18n/format";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
-import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildPopularDestinationsJsonLd } from "@/lib/seo/json-ld";
+import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
 import { CULTURE_IMAGE_PLACEHOLDER } from "@/types/culture";
 
 type CultureTopicPageProps = {
@@ -47,16 +48,52 @@ export default async function CultureTopicPage({ params }: CultureTopicPageProps
   const { section: sectionSlug, topic: topicSlug } = await params;
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const topic = await getCachedCultureTopicBySlug(sectionSlug, topicSlug, locale);
+  const [topic, section] = await Promise.all([
+    getCachedCultureTopicBySlug(sectionSlug, topicSlug, locale),
+    getCachedCultureSectionBySlug(sectionSlug, locale),
+  ]);
 
   if (!topic) {
     notFound();
   }
 
   const heroImage = topic.heroImageUrl ?? CULTURE_IMAGE_PLACEHOLDER;
+  const pathname = `/culture/${sectionSlug}/${topic.slug}`;
+  const pageUrl = localizedPathUrl(pathname, locale);
+  const relatedTopics = (section?.topics ?? [])
+    .filter((entry) => entry.slug !== topic.slug)
+    .slice(0, 4)
+    .map((entry) => ({
+      name: entry.title,
+      path: `/culture/${sectionSlug}/${entry.slug}`,
+    }));
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      buildArticleJsonLd({
+        url: pageUrl,
+        headline: topic.seoTitle ?? topic.title,
+        description: topic.seoDescription ?? topic.excerpt,
+        image: topic.heroImageUrl,
+        type: "BlogPosting",
+      }),
+      buildBreadcrumbJsonLd(
+        [
+          { name: dictionary.nav.home, path: "/" },
+          { name: dictionary.nav.culture, path: "/culture" },
+          { name: topic.section.name, path: `/culture/${sectionSlug}` },
+          { name: topic.title, path: pathname },
+        ],
+        locale,
+      ),
+      ...(relatedTopics.length > 0 ? [buildPopularDestinationsJsonLd(relatedTopics, locale)] : []),
+    ],
+  };
 
   return (
     <SectionFrame id="culture-topic" ariaLabelledBy="culture-topic-heading" padding="compact">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <Link
         href={`/culture/${sectionSlug}`}
         className="mb-10 inline-flex items-center gap-2 text-sm font-medium text-ac-espresso transition-colors duration-300 hover:text-ba-bronze rtl:flex-row-reverse"

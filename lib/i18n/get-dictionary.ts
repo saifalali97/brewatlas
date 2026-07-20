@@ -1,4 +1,7 @@
 import "server-only";
+
+import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import type { Locale } from "@/types/i18n";
 import type { Dictionary } from "@/lib/i18n/types";
 
@@ -17,7 +20,17 @@ const loaders: Record<Locale, () => Promise<Dictionary>> = {
   ar: () => import("@/lib/i18n/dictionaries/ar").then((m) => m.default),
 };
 
-export async function getDictionary(locale: Locale): Promise<Dictionary> {
-  const loader = loaders[locale] ?? loaders.en;
-  return loader();
+const DICTIONARY_CACHE_TTL = 3600;
+
+async function loadDictionary(locale: Locale): Promise<Dictionary> {
+  return unstable_cache(
+    async () => {
+      const loader = loaders[locale] ?? loaders.en;
+      return loader();
+    },
+    ["dictionary", locale],
+    { revalidate: DICTIONARY_CACHE_TTL, tags: ["dictionary", `dictionary-${locale}`] },
+  )();
 }
+
+export const getDictionary = cache(async (locale: Locale): Promise<Dictionary> => loadDictionary(locale));

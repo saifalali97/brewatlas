@@ -1,5 +1,7 @@
 import "server-only";
+
 import { cookies, headers } from "next/headers";
+import { cache } from "react";
 import { DEFAULT_LOCALE, isSupportedLocale, matchAcceptLanguage } from "@/lib/i18n/config";
 import { LOCALE_COOKIE_NAME, type Locale } from "@/types/i18n";
 
@@ -20,7 +22,7 @@ import { LOCALE_COOKIE_NAME, type Locale } from "@/types/i18n";
  * priority Proxy uses, so Server Components and Proxy never disagree
  * about the resolved locale.
  */
-export async function getLocale(): Promise<Locale> {
+export const getLocale = cache(async (): Promise<Locale> => {
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
   if (isSupportedLocale(cookieLocale)) return cookieLocale;
@@ -30,4 +32,4 @@ export async function getLocale(): Promise<Locale> {
   if (headerLocale) return headerLocale;
 
   return DEFAULT_LOCALE;
-}
+});

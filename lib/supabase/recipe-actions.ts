@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { revalidatePublishedRecipesCache } from "@/lib/cache/revalidate-public-data";
 import { generateUniqueRecipeSlug } from "@/lib/data/db-recipes";
 import { evaluateAndAwardBadges, recordActivity, refreshCommunityStats } from "@/lib/data/community";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -100,6 +101,7 @@ export async function createRecipeAction(
     });
   }
 
+  revalidatePublishedRecipesCache();
   revalidatePath("/recipes");
   revalidatePath("/account/recipes");
   revalidatePath("/account");
@@ -202,6 +204,7 @@ export async function updateRecipeAction(
     await evaluateAndAwardBadges(supabase, authData.user.id);
   }
 
+  revalidatePublishedRecipesCache();
   revalidatePath("/recipes");
   revalidatePath("/account/recipes");
   revalidatePath("/account");
@@ -223,6 +226,7 @@ export async function deleteRecipeAction(formData: FormData): Promise<void> {
 
   await supabase.from("recipes").delete().eq("id", recipeId).eq("author_id", authData.user.id);
 
+  revalidatePublishedRecipesCache();
   revalidatePath("/recipes");
   revalidatePath("/account/recipes");
   revalidatePath("/account");

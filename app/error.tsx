@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { buttons } from "@/lib/constants/styles";
 import { useTranslations } from "@/lib/i18n/translation-context";
+import { reportClientError } from "@/lib/observability/report-client-error";
 
 export default function Error({
   error,
@@ -15,7 +16,7 @@ export default function Error({
   const { t } = useTranslations();
 
   useEffect(() => {
-    console.error(error);
+    reportClientError(error);
   }, [error]);
 
   return (

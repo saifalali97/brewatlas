@@ -1,4 +1,12 @@
+import { localizedPathUrl } from "@/lib/seo/localized-metadata";
+import { resolveAbsoluteAssetUrl } from "@/lib/seo/path-utils";
 import { getSiteUrl, siteConfig } from "@/lib/seo/site";
+import type { Locale } from "@/types/i18n";
+
+export type BreadcrumbItem = {
+  name: string;
+  path: string;
+};
 
 export function buildCollectionPageJsonLd(input: {
   url: string;
@@ -19,26 +27,77 @@ export function buildCollectionPageJsonLd(input: {
   };
 }
 
-export function buildArticleJsonLd(input: {
+export type ArticleJsonLdInput = {
   url: string;
   headline: string;
   description: string;
+  image?: string | null;
+  datePublished?: string;
   dateModified?: string;
-}) {
+  type?: "Article" | "BlogPosting";
+};
+
+export function buildArticleJsonLd(input: ArticleJsonLdInput) {
   const siteUrl = getSiteUrl();
+  const schemaType = input.type ?? "Article";
+
   return {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": schemaType,
     headline: input.headline,
     description: input.description,
     url: input.url,
     mainEntityOfPage: input.url,
-    publisher: {
+    ...(input.image ? { image: resolveAbsoluteAssetUrl(input.image) } : {}),
+    ...(input.datePublished ? { datePublished: input.datePublished } : {}),
+    ...(input.dateModified ? { dateModified: input.dateModified } : {}),
+    author: {
       "@type": "Organization",
       name: siteConfig.name,
       url: siteUrl,
     },
-    ...(input.dateModified ? { dateModified: input.dateModified } : {}),
+    publisher: {
+      "@type": "Organization",
+      name: siteConfig.name,
+      url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/icon.svg`,
+      },
+    },
+  };
+}
+
+export function buildBreadcrumbJsonLd(items: BreadcrumbItem[], locale: Locale = "en") {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: localizedPathUrl(item.path, locale),
+    })),
+  };
+}
+
+export type PopularDestinationLink = {
+  name: string;
+  path: string;
+};
+
+/** ItemList of popular site destinations for the base search page (no UI change). */
+export function buildPopularDestinationsJsonLd(destinations: PopularDestinationLink[], locale: Locale = "en") {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Popular BrewAtlas destinations",
+    itemListElement: destinations.map((destination, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: destination.name,
+      url: localizedPathUrl(destination.path, locale),
+    })),
   };
 }
 
@@ -76,7 +135,7 @@ export function getJsonLdGraph() {
         name: siteConfig.name,
         description: siteConfig.description,
         publisher: { "@id": organizationId },
-        inLanguage: "en-US",
+        inLanguage: ["en-US", "ar"],
         potentialAction: {
           "@type": "SearchAction",
           target: {

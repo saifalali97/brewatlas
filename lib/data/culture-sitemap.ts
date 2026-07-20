@@ -6,6 +6,40 @@ export type CultureTopicSitemapEntry = {
   lastModified: Date;
 };
 
+export type CultureSectionSitemapEntry = {
+  slug: string;
+  lastModified: Date;
+};
+
+/** Published culture section paths for sitemap generation. */
+export async function getCultureSectionSitemapEntries(
+  supabase: SupabaseClient,
+): Promise<CultureSectionSitemapEntry[]> {
+  const { data, error } = await supabase
+    .from("culture_sections")
+    .select("slug, updated_at")
+    .eq("locale", "en")
+    .eq("published", true)
+    .order("updated_at", { ascending: false });
+
+  if (error || !data) {
+    if (error) console.error("getCultureSectionSitemapEntries failed", error);
+    return [];
+  }
+
+  const seen = new Set<string>();
+  return data.flatMap((row) => {
+    if (typeof row.slug !== "string" || seen.has(row.slug)) return [];
+    seen.add(row.slug);
+    return [
+      {
+        slug: row.slug,
+        lastModified: row.updated_at ? new Date(row.updated_at as string) : new Date(),
+      },
+    ];
+  });
+}
+
 /** Published culture topic paths for sitemap generation. */
 export async function getCultureTopicSitemapEntries(
   supabase: SupabaseClient,

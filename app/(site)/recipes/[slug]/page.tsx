@@ -46,7 +46,7 @@ import { getLocale } from "@/lib/i18n/locale";
 import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { resolveSitePathname } from "@/lib/seo/path-utils";
-import { buildRecipeReviewJsonLd } from "@/lib/seo/recipe-review-json-ld";
+import { buildRecipeReviewJsonLd, buildStaticRecipeJsonLd } from "@/lib/seo/recipe-review-json-ld";
 import { RecipeReviewsPanel } from "@/lib/dynamic-sections";
 import { RecipeRatingBadge } from "@/app/components/reviews/recipe-rating-badge";
 import {
@@ -178,15 +178,31 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
       { premiumOnly: Boolean(recipe.premium) },
       authData.user ? undefined : { guestRecipeIndex: staticIndex },
     );
+    const staticJsonLd = buildStaticRecipeJsonLd({
+      recipe,
+      slug,
+      locale,
+      breadcrumbs: [
+        { name: dictionary.nav.home, path: "/" },
+        { name: dictionary.nav.recipes, path: "/recipes" },
+        { name: recipe.name, path: `/recipes/${slug}` },
+      ],
+    });
 
     return (
-      <StaticRecipeView
-        recipe={recipe}
-        slug={slug}
-        dictionary={dictionary}
-        isAuthenticated={Boolean(authData.user)}
-        canAccessFull={canAccessFull}
-      />
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(staticJsonLd) }}
+        />
+        <StaticRecipeView
+          recipe={recipe}
+          slug={slug}
+          dictionary={dictionary}
+          isAuthenticated={Boolean(authData.user)}
+          canAccessFull={canAccessFull}
+        />
+      </>
     );
   }
 
@@ -232,6 +248,12 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
     slug,
     summary: ratingSummary,
     reviews: reviewsResult.reviews,
+    locale,
+    breadcrumbs: [
+      { name: dictionary.nav.home, path: "/" },
+      { name: dictionary.nav.recipes, path: "/recipes" },
+      { name: recipe.title, path: `/recipes/${slug}` },
+    ],
   });
 
   return (
