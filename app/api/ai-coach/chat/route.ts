@@ -87,6 +87,7 @@ export async function POST(request: Request) {
           history: prepared.history,
           context: {
             officialRecipes: prepared.officialRecipesContext,
+            brewingSetup: prepared.brewingSetupContext,
           },
         })) {
           if (chunk.type === "delta") {

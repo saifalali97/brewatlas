@@ -113,7 +113,7 @@ export default async function DashboardPage() {
     { icon: Coffee, label: d.premiumLabel, description: d.premiumDescription, href: "/premium" },
     { icon: CreditCard, label: d.subscriptionLabel, description: d.subscriptionDescription, href: "/account/subscription" },
     { icon: Cpu, label: d.xbloomProfilesLabel, description: d.xbloomProfilesDescription, href: "/account/xbloom" },
-    { icon: Wrench, label: d.coffeeSetupLabel, description: d.coffeeSetupDescription, href: "/account/coffee-setup" },
+    { icon: Wrench, label: d.coffeeSetupLabel, description: d.coffeeSetupDescription, href: "/account/setup" },
     { icon: Bell, label: d.notificationsLabel, description: d.notificationsDescription, href: "/account/notifications" },
     { icon: Settings2, label: d.notificationPreferencesLabel, description: d.notificationPreferencesDescription, href: "/account/notification-preferences" },
     { icon: Heart, label: d.savedRecipesLabel, description: d.savedRecipesDescription, href: "/account/favorites" },

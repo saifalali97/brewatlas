@@ -64,7 +64,11 @@ import { canAccessFullRecipeContent } from "@/lib/membership/premium";
 import { recordRecipeView } from "@/lib/data/recipe-analytics";
 import { getMembershipSummary } from "@/lib/data/membership";
 import { createClient } from "@/lib/supabase/server";
+import { getUserBrewingSetup } from "@/lib/data/brewing-setup";
+import { evaluateRecipeSetupCompatibility } from "@/lib/recipes/setup-compatibility";
+import { RecipeSetupCompatibilityPanel } from "@/app/components/recipes/recipe-setup-compatibility";
 import { OfficialRecipeDetailPanel } from "@/app/components/recipes/official-recipe-detail-panel";
+import type { RecipeSetupCompatibility } from "@/types/brewing-setup";
 import { RecipePremiumPaywall } from "@/app/components/recipes/recipe-premium-paywall";
 import type { FeaturedRecipe } from "@/types/homepage";
 import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
@@ -224,7 +228,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   const viewerId = authData.user?.id ?? null;
 
-  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview, membership, guestRecipeIndex] =
+  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview, membership, guestRecipeIndex, userSetup] =
     await Promise.all([
       getFavoritesCount(supabase, recipe.id),
       viewerId ? getUserFavoriteRecipeIds(supabase, viewerId) : Promise.resolve(new Set<string>()),
@@ -243,7 +247,11 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
             const allSlugs = [...staticSlugs, ...dbRecipes.map((entry) => entry.slug)];
             return allSlugs.indexOf(slug);
           })(),
+      viewerId ? getUserBrewingSetup(supabase, viewerId) : Promise.resolve(null),
     ]);
+
+  const setupCompatibility =
+    userSetup ? evaluateRecipeSetupCompatibility(localizedRecipe, userSetup) : null;
 
   const isOwner = Boolean(viewerId && recipe.authorId === viewerId);
   const canAccessFull =
@@ -281,6 +289,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
       userReview={userReview}
       viewerId={viewerId}
       reviewJsonLd={reviewJsonLd}
+      setupCompatibility={setupCompatibility}
     />
   );
 }
@@ -383,6 +392,7 @@ type DbRecipeViewProps = {
   userReview: RecipeReview | null;
   viewerId: string | null;
   reviewJsonLd: Record<string, unknown>;
+  setupCompatibility: RecipeSetupCompatibility | null;
 };
 
 function DbRecipeView({
@@ -401,6 +411,7 @@ function DbRecipeView({
   userReview,
   viewerId,
   reviewJsonLd,
+  setupCompatibility,
 }: DbRecipeViewProps) {
   const d = dictionary.recipeDetail;
   const coverImage = recipe.coverImageUrl ?? RECIPE_IMAGE_PLACEHOLDER;
@@ -651,6 +662,7 @@ function DbRecipeView({
           )}
 
           <OfficialRecipeDetailPanel recipe={recipe} />
+          {setupCompatibility ? <RecipeSetupCompatibilityPanel compatibility={setupCompatibility} /> : null}
 
           {recipe.instructions && (
             <RecipeEditorialSection title={dictionary.recipes.instructions} className="mt-14">

@@ -1,6 +1,8 @@
 import { generateConversationTitle } from "@/lib/ai/coach-knowledge-engine";
 import { getCoachModuleAdapter, isCoachModuleStreamingEnabled } from "@/lib/ai/coach-module-adapter";
 import { findOfficialRecipesForCoach } from "@/lib/data/official-recipes";
+import { getUserBrewingSetup } from "@/lib/data/brewing-setup";
+import { buildBrewingSetupCoachContext } from "@/lib/ai/brewing-setup-coach";
 import { buildOfficialRecipeCoachContext } from "@/lib/ai/official-recipe-coach";
 import { getCoachModuleErrorMessage } from "@/lib/ai/coach-module-errors";
 import {
@@ -27,6 +29,7 @@ export type CoachChatTurnResult =
       userId: string;
       supabase: Awaited<ReturnType<typeof createClient>>;
       officialRecipesContext: string;
+      brewingSetupContext: string;
     }
   | { ok: false; error: string; status?: number };
 
@@ -80,6 +83,8 @@ export async function prepareCoachChatTurn(
     limit: 3,
   });
   const officialRecipesContext = buildOfficialRecipeCoachContext(officialMatches);
+  const brewingSetup = await getUserBrewingSetup(supabase, userId);
+  const brewingSetupContext = buildBrewingSetupCoachContext(brewingSetup);
 
   return {
     ok: true,
@@ -89,6 +94,7 @@ export async function prepareCoachChatTurn(
     userId,
     supabase,
     officialRecipesContext,
+    brewingSetupContext,
   };
 }
 
@@ -140,6 +146,7 @@ export async function runCoachChatCompletion(
       history: prepared.history,
       context: {
         officialRecipes: prepared.officialRecipesContext,
+        brewingSetup: prepared.brewingSetupContext,
       },
     });
 
