@@ -43,6 +43,8 @@ export type LocalizedMetadataInput = {
   openGraphType?: "website" | "article";
   /** Set for account-only utility pages (login, signup, password reset) that shouldn't be indexed. */
   noIndex?: boolean;
+  articlePublishedTime?: string;
+  articleModifiedTime?: string;
 };
 
 function defaultOgImage() {
@@ -77,6 +79,8 @@ export function buildLocalizedMetadata({
   ogImage,
   openGraphType = "website",
   noIndex,
+  articlePublishedTime,
+  articleModifiedTime,
 }: LocalizedMetadataInput): Metadata {
   const canonical = localizedPathUrl(pathname, locale);
   const localeMeta = LOCALE_METADATA[locale];
@@ -99,6 +103,8 @@ export function buildLocalizedMetadata({
       title,
       description,
       images,
+      ...(openGraphType === "article" && articlePublishedTime ? { publishedTime: articlePublishedTime } : {}),
+      ...(openGraphType === "article" && articleModifiedTime ? { modifiedTime: articleModifiedTime } : {}),
     },
     twitter: {
       card: siteConfig.twitter.card,

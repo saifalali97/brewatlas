@@ -1,4 +1,7 @@
 import "server-only";
+
+import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import type { Locale } from "@/types/i18n";
 import type { HomeContent } from "@/types/homepage";
 
@@ -18,7 +21,17 @@ const loaders: Record<Locale, () => Promise<HomeContent>> = {
   ar: () => import("@/lib/i18n/home-content/ar").then((m) => m.default),
 };
 
-export async function getHomeContent(locale: Locale): Promise<HomeContent> {
-  const loader = loaders[locale] ?? loaders.en;
-  return loader();
+const HOME_CONTENT_CACHE_TTL = 3600;
+
+async function loadHomeContent(locale: Locale): Promise<HomeContent> {
+  return unstable_cache(
+    async () => {
+      const loader = loaders[locale] ?? loaders.en;
+      return loader();
+    },
+    ["home-content", locale],
+    { revalidate: HOME_CONTENT_CACHE_TTL, tags: ["home-content", `home-content-${locale}`] },
+  )();
 }
+
+export const getHomeContent = cache(async (locale: Locale): Promise<HomeContent> => loadHomeContent(locale));

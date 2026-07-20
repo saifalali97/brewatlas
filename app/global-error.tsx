@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
+import { reportClientError } from "@/lib/observability/report-client-error";
 import { LOCALE_COOKIE_NAME } from "@/types/i18n";
 import type { Locale } from "@/types/i18n";
 
@@ -34,6 +36,10 @@ export default function GlobalError({
 }) {
   const locale: Locale = typeof document !== "undefined" ? readLocaleFromCookie() : "en";
   const labels = copy[locale];
+
+  useEffect(() => {
+    reportClientError(error);
+  }, [error]);
 
   return (
     <html lang={locale}>

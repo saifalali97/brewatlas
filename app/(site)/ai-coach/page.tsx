@@ -16,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     locale,
     title: p.metaTitle,
     description: p.metaDescription,
+    noIndex: true,
   });
 }
 

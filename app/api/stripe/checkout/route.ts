@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createStripeCheckoutForUser, StripeApiError } from "@/lib/billing/stripe-sessions";
+import { captureError } from "@/lib/observability/capture-error";
 import { verifySameOrigin } from "@/lib/security/csrf";
 import type { BillingInterval } from "@/types/billing";
 
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
 
-    console.error("Stripe checkout API failed", error);
+    captureError(error, { source: "api.stripe.checkout" });
     return NextResponse.json({ error: "Failed to create checkout session." }, { status: 500 });
   }
 }

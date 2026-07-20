@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { revalidatePublishedRecipesCache } from "@/lib/cache/revalidate-public-data";
 import { requireAdmin } from "@/lib/auth/is-admin";
 import { buildRecipeVersionSnapshot } from "@/lib/data/owner-recipes";
 import { buildVersionMetadata } from "@/lib/data/recipe-versions";
@@ -39,6 +40,7 @@ export type OwnerRecipeActionState = RecipeActionState;
 const OWNER_PARSE_OPTIONS = { includeSeo: true, includeSlug: true } as const;
 
 function revalidateOwnerRecipePaths(slug?: string, recipeId?: string) {
+  revalidatePublishedRecipesCache();
   revalidatePath("/admin/recipes");
   revalidatePath("/recipes");
   revalidatePath("/account/recipes");

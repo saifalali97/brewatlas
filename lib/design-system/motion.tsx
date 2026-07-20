@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { acMotion } from "@/lib/design-system/atlas-canon";
 

@@ -10,7 +10,7 @@ import {
 } from "@/lib/content/gulf-heritage";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
-import { buildArticleJsonLd } from "@/lib/seo/json-ld";
+import { buildArticleJsonLd, buildBreadcrumbJsonLd, buildPopularDestinationsJsonLd } from "@/lib/seo/json-ld";
 import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
 
 type GulfHeritagePageRouteProps = {
@@ -44,6 +44,7 @@ export async function generateMetadata({ params }: GulfHeritagePageRouteProps): 
     title: resolved.copy.seoTitle,
     description: resolved.copy.seoDescription,
     openGraphType: "article",
+    noIndex: resolved.editorialStatus !== "verified",
   });
 }
 
@@ -59,20 +60,44 @@ export default async function GulfHeritagePageRoute({ params }: GulfHeritagePage
 
   const pageCopy = getGulfHeritagePageCopy(dictionary, resolved.definition.slug);
   const pathname = `/gulf-heritage/${countrySlug}/${categorySlug}/${pageSlug}`;
-  const articleJsonLd =
+  const gh = dictionary.gulfHeritagePage;
+  const countryCopy = gh.countries[countrySlug as keyof typeof gh.countries];
+  const categoryCopy = gh.categories[categorySlug as keyof typeof gh.categories];
+  const relatedPages = resolved.relatedPages.slice(0, 4).map((page) => ({
+    name: page.copy.seoTitle,
+    path: page.href,
+  }));
+
+  const structuredData =
     resolved.editorialStatus === "verified"
-      ? buildArticleJsonLd({
-          url: localizedPathUrl(pathname, locale),
-          headline: resolved.copy.seoTitle,
-          description: resolved.copy.seoDescription,
-          dateModified: "2026-07-19",
-        })
+      ? {
+          "@context": "https://schema.org",
+          "@graph": [
+            buildArticleJsonLd({
+              url: localizedPathUrl(pathname, locale),
+              headline: resolved.copy.seoTitle,
+              description: resolved.copy.seoDescription,
+              type: "Article",
+            }),
+            buildBreadcrumbJsonLd(
+              [
+                { name: dictionary.nav.home, path: "/" },
+                { name: gh.breadcrumbHub, path: "/gulf-heritage" },
+                { name: countryCopy?.name ?? countrySlug, path: `/gulf-heritage/${countrySlug}` },
+                { name: categoryCopy?.title ?? categorySlug, path: `/gulf-heritage/${countrySlug}/${categorySlug}` },
+                { name: pageCopy.title, path: pathname },
+              ],
+              locale,
+            ),
+            ...(relatedPages.length > 0 ? [buildPopularDestinationsJsonLd(relatedPages, locale)] : []),
+          ],
+        }
       : null;
 
   return (
     <>
-      {articleJsonLd ? (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
+      {structuredData ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       ) : null}
       <SectionFrame id="gulf-heritage-page" ariaLabelledBy="gulf-heritage-page-heading" padding="compact">
         {resolved.definition.kind === "roaster" ? (

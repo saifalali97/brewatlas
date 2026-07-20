@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { SiteNav } from "@/app/components/layout/site-nav";
-import { NotificationsBell } from "@/app/components/notifications/notifications-bell";
 import { FloatingActions } from "@/app/components/layout/client-chrome";
 import { SiteFooter } from "@/lib/dynamic-sections";
 import { getNotifications, getUnreadNotificationCount } from "@/lib/data/community";
@@ -8,6 +8,10 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { createClient } from "@/lib/supabase/server";
 import { resolveIsAdmin } from "@/lib/auth/is-admin";
+
+const NotificationsBell = dynamic(
+  () => import("@/app/components/notifications/notifications-bell").then((mod) => mod.NotificationsBell),
+);
 
 /**
  * Shared chrome (background, nav, footer) for every public marketing/app

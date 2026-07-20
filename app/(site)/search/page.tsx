@@ -10,6 +10,7 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { getLocale } from "@/lib/i18n/locale";
 import { countActiveFilters, parseSearchParams } from "@/lib/search/params";
+import { buildPopularDestinationsJsonLd } from "@/lib/seo/json-ld";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { getSiteUrl } from "@/lib/seo/site";
 import { createClient } from "@/lib/supabase/server";
@@ -138,11 +139,33 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     results.varieties.length +
     results.flavors.length;
 
+  const hasActiveQuery = Boolean(filters.q?.trim()) || countActiveFilters(filters) > 0;
+  const popularDestinations = hasActiveQuery
+    ? null
+    : buildPopularDestinationsJsonLd(
+        [
+          { name: dictionary.nav.recipes, path: "/recipes" },
+          { name: dictionary.nav.culture, path: "/culture" },
+          { name: dictionary.nav.gulfHeritage, path: "/gulf-heritage" },
+          { name: dictionary.nav.origins, path: "/origins" },
+          { name: dictionary.nav.roasters, path: "/roasters" },
+          { name: dictionary.nav.methods, path: "/methods" },
+        ],
+        locale,
+      );
+
+  const searchStructuredData = hasActiveQuery
+    ? buildSearchJsonLd(filters.q, totalResultCount)
+    : {
+        "@context": "https://schema.org",
+        "@graph": [buildSearchJsonLd(filters.q, totalResultCount), popularDestinations],
+      };
+
   return (
     <SectionFrame id="search" ariaLabelledBy="search-heading" padding="compact">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildSearchJsonLd(filters.q, totalResultCount)) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(searchStructuredData) }}
       />
       <PageHeader
         headingId="search-heading"

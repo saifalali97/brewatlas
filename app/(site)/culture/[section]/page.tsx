@@ -8,6 +8,7 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { getCachedCultureSectionBySlug } from "@/lib/data/cached-public-data";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
+import { buildBreadcrumbJsonLd } from "@/lib/seo/json-ld";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 
 type CultureSectionPageProps = {
@@ -50,8 +51,18 @@ export default async function CultureSectionPage({ params }: CultureSectionPageP
     notFound();
   }
 
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd(
+    [
+      { name: dictionary.nav.home, path: "/" },
+      { name: dictionary.nav.culture, path: "/culture" },
+      { name: section.name, path: `/culture/${section.slug}` },
+    ],
+    locale,
+  );
+
   return (
     <SectionFrame id="culture-section" ariaLabelledBy="culture-section-heading" padding="compact">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       
 <Link
         href="/culture"

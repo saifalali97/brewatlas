@@ -133,6 +133,9 @@ export function listGulfHeritageSitemapPaths(): Array<{ path: string; priority: 
       });
 
       for (const page of category.pageSlugs) {
+        const definition = getGulfHeritagePageDefinition(country.slug, category.slug, page);
+        if (definition && definition.editorialStatus !== "verified") continue;
+
         paths.push({
           path: `/gulf-heritage/${country.slug}/${category.slug}/${page}`,
           priority: 0.58,

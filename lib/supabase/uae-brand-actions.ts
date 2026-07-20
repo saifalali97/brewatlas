@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { revalidateCulturePublicCache } from "@/lib/cache/revalidate-public-data";
 import {
   upsertHeritageHighlight,
   upsertUaeCoffeeMapLocation,
@@ -83,6 +84,10 @@ export async function saveHeritageHighlightAction(
 
   if (!saved) return { error: "Failed to save the heritage highlight." };
 
+  revalidateCulturePublicCache({
+    sectionSlug: optionalString(formData, "relatedSectionSlug") ?? undefined,
+    topicSlug: optionalString(formData, "relatedTopicSlug") ?? undefined,
+  });
   revalidatePath("/culture");
   return { success: "Heritage highlight saved." };
 }

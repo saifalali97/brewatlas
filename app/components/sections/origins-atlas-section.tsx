@@ -1,5 +1,3 @@
-"use client";
-
 import { Chapter } from "@/app/components/atlas/chapter";
 import { Destination, DestinationRail } from "@/app/components/atlas/destination";
 import { RippleLink } from "@/app/components/ui/ripple-link";
