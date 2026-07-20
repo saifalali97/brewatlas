@@ -1,4 +1,5 @@
 import { getMembershipSummary } from "@/lib/data/membership";
+import { getCoachModuleProvider, isCoachModuleStreamingEnabled } from "@/lib/ai/coach-module-adapter";
 import { getAiCoachUsageSummary, getAiCoachSettings, canMakeAiCoachRequest } from "@/lib/membership/ai-coach-limits";
 import { listConversations } from "@/lib/data/ai-coach-module";
 import { isPremium } from "@/lib/membership/access";
@@ -12,6 +13,8 @@ export type AiCoachPageContext = {
   usage: { used: number; limit: number | null; remaining: number | null; isUnlimited: boolean };
   isEnabled: boolean;
   userId: string | null;
+  provider: string;
+  streamingEnabled: boolean;
 };
 
 export async function getAiCoachPageContext(): Promise<AiCoachPageContext> {
@@ -28,6 +31,8 @@ export async function getAiCoachPageContext(): Promise<AiCoachPageContext> {
       usage: { used: 0, limit: settings.freeDailyLimit, remaining: settings.freeDailyLimit, isUnlimited: false },
       isEnabled: settings.isEnabled,
       userId: null,
+      provider: getCoachModuleProvider(),
+      streamingEnabled: false,
     };
   }
 
@@ -43,6 +48,8 @@ export async function getAiCoachPageContext(): Promise<AiCoachPageContext> {
     usage,
     isEnabled: settings.isEnabled,
     userId: authData.user.id,
+    provider: getCoachModuleProvider(),
+    streamingEnabled: isCoachModuleStreamingEnabled(),
   };
 }
 

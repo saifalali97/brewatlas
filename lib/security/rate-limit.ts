@@ -64,4 +64,5 @@ export const RATE_LIMITS = {
   apiRoute: { namespace: "api", limit: 60, windowMs: 60_000 },
   authPage: { namespace: "auth-page", limit: 30, windowMs: 60_000 },
   contactForm: { namespace: "contact-form", limit: 5, windowMs: 60 * 60 * 1000 },
+  aiCoach: { namespace: "ai-coach", limit: 30, windowMs: 60_000 },
 } as const satisfies Record<string, RateLimitConfig>;

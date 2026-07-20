@@ -1,18 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { generateConversationTitle } from "@/lib/ai/coach-knowledge-engine";
+import { runCoachChatCompletion } from "@/lib/ai/coach-chat-service";
 import {
   formatAnalyzerMarkdown,
   formatBrewDoctorMarkdown,
   formatGuidedBrewMarkdown,
   formatRecipeMarkdown,
   getCoachModuleAdapter,
+  getCoachModuleProvider,
+  isCoachModuleStreamingEnabled,
 } from "@/lib/ai/coach-module-adapter";
 import {
-  addMessage,
   createBrewSession,
-  createConversation,
   deleteBrewSession,
   deleteConversation,
   duplicateBrewSession,
@@ -74,41 +74,15 @@ export async function sendChatMessageAction(
   const auth = await requireAuth();
   if (auth.error || !auth.userId) return { error: auth.error ?? "Not signed in." };
 
-  const gate = await gateRequest(auth.userId, auth.supabase);
-  if ("error" in gate && gate.error) return { error: gate.error };
-
-  const prefs = await getPreferences(auth.supabase, auth.userId);
-  const adapter = getCoachModuleAdapter(prefs);
-
-  let conversation: AiCoachConversation;
-  if (conversationId) {
-    const existing = await getConversation(auth.supabase, conversationId, auth.userId);
-    if (!existing) return { error: "Conversation not found." };
-    conversation = existing;
-  } else {
-    conversation = await createConversation(auth.supabase, auth.userId, generateConversationTitle(message), mode);
-    await trackAnalyticsEvent(auth.supabase, "chat_started", auth.userId, { mode });
+  const result = await runCoachChatCompletion(message, conversationId, mode);
+  if (!result.ok) {
+    return { error: result.error };
   }
 
-  const history = await getMessages(auth.supabase, conversation.id, auth.userId);
-  await addMessage(auth.supabase, conversation.id, auth.userId, "user", message);
-
-  const response = await adapter.chat({ message, conversationId: conversation.id, mode, history });
-  await addMessage(auth.supabase, conversation.id, auth.userId, "assistant", response.content);
-
-  if (history.length === 0) {
-    await updateConversation(auth.supabase, conversation.id, auth.userId, {
-      title: generateConversationTitle(message),
-    });
-  }
-
-  await afterSuccessfulRequest(auth.userId, auth.supabase, gate.summary!);
   revalidatePath("/ai-coach");
-
-  const allMessages = await getMessages(auth.supabase, conversation.id, auth.userId);
   return {
     success: "Message sent.",
-    data: { conversationId: conversation.id, messages: allMessages },
+    data: { conversationId: result.conversationId, messages: result.messages },
   };
 }
 
@@ -274,11 +248,20 @@ export async function getAiCoachAccessAction(): Promise<{
   isPremium: boolean;
   usage: { used: number; limit: number | null; remaining: number | null; isUnlimited: boolean };
   isEnabled: boolean;
+  provider: string;
+  streamingEnabled: boolean;
 }> {
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
   if (!authData.user) {
-    return { isAuthenticated: false, isPremium: false, usage: { used: 0, limit: 5, remaining: 5, isUnlimited: false }, isEnabled: true };
+    return {
+      isAuthenticated: false,
+      isPremium: false,
+      usage: { used: 0, limit: 5, remaining: 5, isUnlimited: false },
+      isEnabled: true,
+      provider: getCoachModuleProvider(),
+      streamingEnabled: false,
+    };
   }
   const summary = await getMembershipSummary(supabase, authData.user.id);
   const { getAiCoachUsageSummary, getAiCoachSettings } = await import("@/lib/membership/ai-coach-limits");
@@ -291,5 +274,7 @@ export async function getAiCoachAccessAction(): Promise<{
     isPremium: isPremium(summary),
     usage,
     isEnabled: settings.isEnabled,
+    provider: getCoachModuleProvider(),
+    streamingEnabled: isCoachModuleStreamingEnabled(),
   };
 }
