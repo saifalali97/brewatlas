@@ -266,8 +266,8 @@ begin
       coffee_name, method_name, lower(primary_tag), lower(secondary_tag), coffee_country
     );
     instructions_text := format(
-      'Grind %sg of coffee on the %s to a %s consistency. Heat water to %s°C using %s, then brew with the pour structure below. Serve immediately for the best aromatics.',
-      dose, grinder_name, lower(grind_size_val), temp, water_name
+      E'1. Grind %sg of %s to a %s consistency (%s).\n2. Heat water to %s°C using %s.\n3. Brew with the pour structure below until you reach %sg total water.\n4. Target beverage weight ~%sg; serve immediately.',
+      dose, coffee_name, lower(grind_size_val), grinder_name, temp, water_name, water_amt, beverage_wt
     );
 
     insert into public.recipes (

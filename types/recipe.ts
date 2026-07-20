@@ -233,6 +233,11 @@ export type RecipeFullDetail = {
   canonicalUrl: string | null;
 
   tagIds: string[];
+  /** From recipe_translations when available */
+  brewNotes?: string | null;
+  tips?: string | null;
+  warnings?: string | null;
+  aiSummary?: string | null;
 };
 
 export const RECIPE_IMAGE_PLACEHOLDER = "/images/fallback/coffee-placeholder.webp";

@@ -8,6 +8,11 @@ import {
   GhRecipeTipsSection,
   GhRecipeWarningsSection,
 } from "@/app/components/gulf-heritage/gh-recipe-steps";
+import {
+  GhRecipeBulletSection,
+  GhRecipeFaqSection,
+  GhRecipeProseSection,
+} from "@/app/components/gulf-heritage/gh-recipe-prose-sections";
 import { GhPendingContent } from "@/app/components/gulf-heritage/gh-pending-content";
 import { GhSectionDivider } from "@/app/components/gulf-heritage/gh-section-divider";
 import { ghMotion } from "@/app/components/gulf-heritage/shared/gh-styles";
@@ -108,8 +113,32 @@ export function GhRecipeDetail({
         stepLabelTemplate={presentationLabels.stepTemplate}
       />
 
+      {recipe.whyItWorks ? (
+        <GhRecipeProseSection title="Why this recipe exists" body={recipe.whyItWorks} />
+      ) : null}
+      {recipe.brewingScience ? (
+        <GhRecipeProseSection title="Why these parameters work" body={recipe.brewingScience} />
+      ) : null}
+      {recipe.adjustmentGuide ? (
+        <GhRecipeProseSection title="Adjustments & troubleshooting" body={recipe.adjustmentGuide} />
+      ) : null}
+      {recipe.whenToChoose ? (
+        <GhRecipeProseSection title="When to choose this recipe" body={recipe.whenToChoose} />
+      ) : null}
+      {recipe.bestFor ? (
+        <GhRecipeProseSection title="Who this recipe is best for" body={recipe.bestFor} />
+      ) : null}
+      {recipe.waterRecommendations ? (
+        <GhRecipeProseSection title="Water recommendations" body={recipe.waterRecommendations} />
+      ) : null}
+
       <GhRecipeTipsSection title={fieldLabels.tips} tips={recipe.tips} />
+      <GhRecipeBulletSection title="Common mistakes" items={recipe.commonMistakes ?? []} />
       <GhRecipeWarningsSection title={fieldLabels.warnings} warnings={recipe.warnings} />
+      <GhRecipeFaqSection title="FAQ" items={recipe.faq ?? []} />
+      {recipe.storageTips ? (
+        <GhRecipeProseSection title="Storage tips" body={recipe.storageTips} />
+      ) : null}
       <GhRecipeServingSection title={fieldLabels.servingSuggestions} servingNotes={recipe.servingNotes} />
       <GhRecipeHistoricalNotes title={fieldLabels.historicalNotes} notes={recipe.notes} />
     </article>

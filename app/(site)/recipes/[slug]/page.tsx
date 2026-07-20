@@ -47,6 +47,9 @@ import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { resolveSitePathname } from "@/lib/seo/path-utils";
 import { buildRecipeReviewJsonLd, buildStaticRecipeJsonLd } from "@/lib/seo/recipe-review-json-ld";
+import { RecipeGuideSections, RecipeTextExtrasSections } from "@/app/components/recipes/recipe-guide-sections";
+import { getStaticRecipeDetail } from "@/lib/data/static-recipe-details";
+import { getRecipeTranslation, localizeRecipe } from "@/lib/data/translations";
 import { RecipeReviewsPanel } from "@/lib/dynamic-sections";
 import { RecipeRatingBadge } from "@/app/components/reviews/recipe-rating-badge";
 import {
@@ -201,6 +204,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
           dictionary={dictionary}
           isAuthenticated={Boolean(authData.user)}
           canAccessFull={canAccessFull}
+          detail={getStaticRecipeDetail(slug)}
         />
       </>
     );
@@ -213,6 +217,9 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
   if (!recipe) {
     notFound();
   }
+
+  const translation = await getRecipeTranslation(supabase, recipe.id, locale);
+  const localizedRecipe = localizeRecipe(recipe, translation);
 
   const viewerId = authData.user?.id ?? null;
 
@@ -258,7 +265,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   return (
     <DbRecipeView
-      recipe={recipe}
+      recipe={localizedRecipe}
       slug={slug}
       favoritesCount={favoritesCount}
       isFavorited={favoriteIds.has(recipe.id)}
@@ -283,12 +290,14 @@ function StaticRecipeView({
   dictionary,
   isAuthenticated,
   canAccessFull,
+  detail,
 }: {
   recipe: FeaturedRecipe;
   slug: string;
   dictionary: Dictionary;
   isAuthenticated: boolean;
   canAccessFull: boolean;
+  detail?: ReturnType<typeof getStaticRecipeDetail>;
 }) {
   const d = dictionary.recipeDetail;
   const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
@@ -349,6 +358,10 @@ function StaticRecipeView({
       {!canAccessFull && (
         <RecipePremiumPaywall dictionary={dictionary} isAuthenticated={isAuthenticated} recipeSlug={slug} />
       )}
+
+      {canAccessFull && detail ? (
+        <RecipeGuideSections detail={detail} recipe={recipe} dictionary={dictionary} />
+      ) : null}
     </SectionFrame>
   );
 }
@@ -641,6 +654,13 @@ function DbRecipeView({
               <p className={`${acTypography.body} whitespace-pre-line`}>{recipe.instructions}</p>
             </RecipeEditorialSection>
           )}
+
+          <RecipeTextExtrasSections
+            dictionary={dictionary}
+            brewNotes={recipe.brewNotes}
+            tips={recipe.tips}
+            warnings={recipe.warnings}
+          />
 
           {recipe.images.length > 0 && (
             <RecipeEditorialSection title={d.galleryTitle} className="mt-14">
