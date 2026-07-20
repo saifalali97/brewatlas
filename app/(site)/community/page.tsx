@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Award, Star, TrendingUp, Trophy } from "lucide-react";
 import { PageHeader } from "@/app/components/ui/page-header";
+import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import { getHighestRatedRecipesLeaderboard, getTopBrewersLeaderboard, getActivityFeed } from "@/lib/data/community";
 import { CommunityActivityFeed } from "@/app/components/profile/community-activity-feed";
@@ -36,6 +38,7 @@ export default async function CommunityPage() {
 
   return (
     <SectionFrame id="community" ariaLabelledBy="community-heading" padding="compact">
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.community} alt="" priority />
       <PageHeader
         headingId="community-heading"
         eyebrow={p.eyebrow}

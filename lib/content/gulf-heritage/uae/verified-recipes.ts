@@ -14,6 +14,69 @@ const SMITHSONIAN_KARAK_REF: GulfHeritageReference = {
   type: "official-company",
 };
 
+const KARAK_STEP_CARDAMOM = {
+  url: "/images/gulf-heritage/cardamom.webp",
+  caption: null,
+  altText: "Cardamom pods and spices for karak",
+  credit: "Editorial",
+  license: "Licensed",
+  photographer: null,
+} as const;
+
+const KARAK_STEP_STEEP = {
+  url: "/images/gulf-heritage/karak-chai.webp",
+  caption: null,
+  altText: "Karak chai resting before serving",
+  credit: "Editorial",
+  license: "Licensed",
+  photographer: null,
+} as const;
+
+const KARAK_STEP_SERVE = {
+  url: "/images/culture/karak-tea-pour.webp",
+  caption: null,
+  altText: "Serving karak chai in small glasses",
+  credit: "Editorial",
+  license: "Licensed",
+  photographer: null,
+} as const;
+
+const KARAK_HERO = {
+  url: "/images/gulf-heritage/karak-chai.webp",
+  caption: null,
+  altText: "Karak chai being poured into a glass",
+  credit: "Editorial",
+  license: "Licensed",
+  photographer: null,
+} as const;
+
+const KARAK_STEP_SIMMER = {
+  url: "/images/gulf-heritage/karak-chai-step-simmer.webp",
+  caption: null,
+  altText: "Karak tea simmering with cardamom and black tea",
+  credit: "Editorial",
+  license: "Licensed",
+  photographer: null,
+} as const;
+
+const KARAK_STEP_MILK = {
+  url: "/images/gulf-heritage/karak-chai-step-milk.webp",
+  caption: null,
+  altText: "Karak chai with evaporated milk and sugar",
+  credit: "Editorial",
+  license: "Licensed",
+  photographer: null,
+} as const;
+
+const KARAK_STEP_STRAIN = {
+  url: "/images/culture/karak-tea-pour.webp",
+  caption: null,
+  altText: "Straining karak chai into a serving pot",
+  credit: "Editorial",
+  license: "Licensed",
+  photographer: null,
+} as const;
+
 /** Verified chai karak recipe — transcribed from Smithsonian Folklife Festival (Table Tales, 2018). */
 export const SMITHSONIAN_KARAK_CHAI_RECIPE: GulfHeritageRecipeReference = {
   slug: "smithsonian-karak-chai",
@@ -45,40 +108,40 @@ export const SMITHSONIAN_KARAK_CHAI_RECIPE: GulfHeritageRecipeReference = {
       order: 1,
       instruction:
         "Combine the water, cardamom pods, and loose-leaf tea in a medium saucepan. If using teabags, cut open the bag to use the loose tea.",
-      image: null,
+      image: KARAK_STEP_CARDAMOM,
       duration: null,
     },
     {
       order: 2,
       instruction:
         "Allow the mixture to boil on high heat for 5 to 8 minutes or until aromatic, stirring regularly.",
-      image: null,
+      image: KARAK_STEP_SIMMER,
       duration: "5–8 minutes",
     },
     {
       order: 3,
       instruction:
         "Turn the heat down to medium and add milk and sugar to taste. Increase the amount of milk for a creamier tea. Stir the chai karak until thoroughly heated, but don't let the milk boil.",
-      image: null,
+      image: KARAK_STEP_MILK,
       duration: null,
     },
     {
       order: 4,
       instruction: "Remove from heat, cover, and let steep for 5 minutes.",
-      image: null,
+      image: KARAK_STEP_STEEP,
       duration: "5 minutes",
     },
     {
       order: 5,
       instruction:
         "Strain the chai karak into a thermal carafe or teapot. As an option, add a few sprigs of saffron either to the carafe/teapot or the tea glasses.",
-      image: null,
+      image: KARAK_STEP_STRAIN,
       duration: null,
     },
     {
       order: 6,
       instruction: "Serve hot in small tea glasses or teacups.",
-      image: null,
+      image: KARAK_STEP_SERVE,
       duration: null,
     },
   ],
@@ -90,7 +153,7 @@ export const SMITHSONIAN_KARAK_CHAI_RECIPE: GulfHeritageRecipeReference = {
     "Recipe by Ahmed Al Bawardi and Hanan Sayed Worrell, from Table Tales: The Global Nomad Cuisine of Abu Dhabi (Rizzoli, 2018), republished on the Smithsonian Folklife Festival blog (2022).",
   warnings: ["Do not let the milk boil after adding it."],
   references: [SMITHSONIAN_KARAK_REF],
-  stepImages: [],
+  stepImages: [KARAK_HERO, KARAK_STEP_SIMMER, KARAK_STEP_MILK, KARAK_STEP_STRAIN],
   country: "United Arab Emirates",
   region: null,
   yield: "3 cups (700 ml)",
@@ -113,7 +176,7 @@ export const SMITHSONIAN_KARAK_CHAI_RECIPE: GulfHeritageRecipeReference = {
   brewTime: null,
   tds: null,
   extractionYield: null,
-  images: [],
+  images: ["/images/gulf-heritage/karak-chai.webp"],
   verification: {
     status: "verified",
     sourceName: "Smithsonian Folklife Festival",

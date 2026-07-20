@@ -818,8 +818,6 @@ const en: Dictionary = {
       optionalIngredients: "Optional ingredients",
       garnishes: "Garnishes",
       ingredientNotes: "Notes",
-      imagePlaceholderTitle: "Verified image pending",
-      imagePlaceholderDescription: "A verified image will be added after editorial approval.",
     },
     roaster: {
       history: "History",

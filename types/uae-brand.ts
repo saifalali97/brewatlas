@@ -123,5 +123,3 @@ export type UaeCoffeeGuideEntry = {
   topicSlug: string;
   topic: CultureTopicWithSection | null;
 };
-
-export const UAE_PLACEHOLDER_IMAGE = "/images/coffee-placeholder.svg";

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Mail } from "lucide-react";
 import { PageHeader } from "@/app/components/ui/page-header";
+import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { acSurface, acTypography } from "@/lib/design-system/atlas-canon";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -26,6 +28,7 @@ export default async function ContactPage() {
 
   return (
     <SectionFrame id="contact-page" ariaLabelledBy="contact-page-heading" padding="compact">
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.contact} alt={c.title} />
       <PageHeader
         headingId="contact-page-heading"
         eyebrow={c.eyebrow}

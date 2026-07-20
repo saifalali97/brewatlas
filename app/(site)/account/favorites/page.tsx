@@ -12,6 +12,7 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -55,6 +56,8 @@ export default async function DashboardFavoritesPage() {
           description={f.noFavoritesDescription}
           actionLabel={dictionary.homeFooter.browseRecipes}
           actionHref="/recipes"
+          imageSrc={PAGE_EDITORIAL_IMAGES.emptyFavorites}
+          imageAlt={f.noFavoritesTitle}
         />
       ) : (
         <Folio ariaLabel={f.title}>

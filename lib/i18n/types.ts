@@ -746,8 +746,6 @@ export type Dictionary = {
       optionalIngredients: string;
       garnishes: string;
       ingredientNotes: string;
-      imagePlaceholderTitle: string;
-      imagePlaceholderDescription: string;
     };
     roaster: {
       history: string;

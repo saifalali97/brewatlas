@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { SearchExplorer } from "@/app/components/search/search-explorer";
 import { PageHeader } from "@/app/components/ui/page-header";
+import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
 import { getRecipeSlug } from "@/lib/data/recipes";
@@ -167,6 +169,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(searchStructuredData) }}
       />
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.search} alt="" priority />
       <PageHeader
         headingId="search-heading"
         eyebrow={dictionary.searchPage.eyebrow}

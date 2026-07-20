@@ -1,5 +1,4 @@
 import { OptimizedImage } from "@/app/components/ui/optimized-image";
-import { GhImagePlaceholder } from "@/app/components/gulf-heritage/gh-image-placeholder";
 import { GhTipCard } from "@/app/components/gulf-heritage/gh-tip-card";
 import { GhWarningCard } from "@/app/components/gulf-heritage/gh-warning-card";
 import { ghMotion, ghSurfaces, ghTypography } from "@/app/components/gulf-heritage/shared/gh-styles";
@@ -10,20 +9,14 @@ type GhRecipeStepsProps = {
   title: string;
   steps: readonly GulfHeritageRecipeStep[];
   stepLabelTemplate: string;
-  imagePlaceholderTitle: string;
-  imagePlaceholderDescription: string;
 };
 
 function StepCard({
   step,
   stepLabel,
-  imagePlaceholderTitle,
-  imagePlaceholderDescription,
 }: {
   step: GulfHeritageRecipeStep;
   stepLabel: string;
-  imagePlaceholderTitle: string;
-  imagePlaceholderDescription: string;
 }) {
   const imageUrl = resolveGulfHeritageImageUrl(step.image);
   const hasImage = Boolean(imageUrl && step.image);
@@ -33,7 +26,7 @@ function StepCard({
       className={`${ghSurfaces.card} ${ghMotion.cardHover} overflow-hidden motion-reduce:transform-none`}
       aria-labelledby={`gh-step-${step.order}-title`}
     >
-      <div className="flex flex-col lg:flex-row">
+      <div className={`flex flex-col ${hasImage ? "lg:flex-row" : ""}`}>
         <div className="flex-1 p-5 sm:p-6">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ba-espresso text-sm font-semibold text-ba-pearl">
@@ -49,24 +42,18 @@ function StepCard({
           <p className="mt-4 text-sm leading-relaxed text-ac-espresso/88 sm:text-[0.9375rem]">{step.instruction}</p>
         </div>
 
-        <div className="border-t border-ba-espresso/6 bg-ba-sand/20 lg:w-[42%] lg:border-s lg:border-t-0">
-          {hasImage && step.image && imageUrl ? (
+        {hasImage && step.image && imageUrl ? (
+          <div className="relative min-h-[12rem] border-t border-ba-espresso/6 bg-ba-sand/20 lg:w-[42%] lg:border-s lg:border-t-0">
             <OptimizedImage
               src={imageUrl}
               alt={resolveGulfHeritageImageAlt(step.image, stepLabel)}
-              width={480}
-              height={320}
+              fill
               loading="lazy"
-              className="h-full min-h-[12rem] w-full object-cover"
+              sizes="(min-width: 1024px) 320px, 42vw"
+              className="object-cover object-center"
             />
-          ) : (
-            <GhImagePlaceholder
-              title={imagePlaceholderTitle}
-              description={imagePlaceholderDescription}
-              compact
-            />
-          )}
-        </div>
+          </div>
+        ) : null}
       </div>
     </article>
   );
@@ -77,8 +64,6 @@ export function GhRecipeSteps({
   title,
   steps,
   stepLabelTemplate,
-  imagePlaceholderTitle,
-  imagePlaceholderDescription,
 }: GhRecipeStepsProps) {
   if (steps.length === 0) return null;
 
@@ -93,8 +78,6 @@ export function GhRecipeSteps({
             <StepCard
               step={step}
               stepLabel={stepLabelTemplate.replace("{n}", String(step.order))}
-              imagePlaceholderTitle={imagePlaceholderTitle}
-              imagePlaceholderDescription={imagePlaceholderDescription}
             />
           </li>
         ))}

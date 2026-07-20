@@ -1,7 +1,6 @@
 import { GhFactCard } from "@/app/components/gulf-heritage/gh-fact-card";
 import { GhPullQuote } from "@/app/components/gulf-heritage/gh-pull-quote";
 import { GhTimelineBlock } from "@/app/components/gulf-heritage/gh-timeline-block";
-import { GhImagePlaceholder } from "@/app/components/gulf-heritage/gh-image-placeholder";
 import { GhPendingContent } from "@/app/components/gulf-heritage/gh-pending-content";
 import {
   extractLeadSentence,
@@ -18,8 +17,6 @@ type GhArticleSectionProps = {
   body: string | null;
   pendingMessage: string;
   variant?: GhArticleSectionVariant;
-  imagePlaceholderTitle?: string;
-  imagePlaceholderDescription?: string;
 };
 
 function DefaultBody({ body }: { body: string }) {
@@ -40,8 +37,6 @@ export function GhArticleSection({
   body,
   pendingMessage,
   variant = "default",
-  imagePlaceholderTitle,
-  imagePlaceholderDescription,
 }: GhArticleSectionProps) {
   return (
     <section id={id} aria-labelledby={`${id}-heading`} className={`scroll-mt-28 ${ghMotion.slideUp}`}>
@@ -76,12 +71,6 @@ export function GhArticleSection({
           )}
         </div>
       </div>
-
-      {imagePlaceholderTitle && imagePlaceholderDescription ? (
-        <div className="mt-4">
-          <GhImagePlaceholder title={imagePlaceholderTitle} description={imagePlaceholderDescription} compact />
-        </div>
-      ) : null}
     </section>
   );
 }

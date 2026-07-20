@@ -3,7 +3,6 @@ import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import { RippleLink } from "@/app/components/ui/ripple-link";
 import { GhArticleNavigation } from "@/app/components/gulf-heritage/gh-article-navigation";
 import { GhArticleSection } from "@/app/components/gulf-heritage/gh-article-section";
-import { GhImagePlaceholder } from "@/app/components/gulf-heritage/gh-image-placeholder";
 import { GhRelatedContentGrid } from "@/app/components/gulf-heritage/gh-related-content-grid";
 import { GhRecipesExperience } from "@/app/components/gulf-heritage/gh-recipes-experience";
 import { GhSectionDivider } from "@/app/components/gulf-heritage/gh-section-divider";
@@ -73,7 +72,8 @@ export function GulfHeritageRoasterLayout({ page, dictionary }: GulfHeritageRoas
   const fields = page.roasterFields;
   const logo = page.images.roasterLogo;
   const cover = page.images.roasterCover ?? page.images.hero;
-  const logoUrl = resolveGulfHeritageImageUrl(logo);
+  const logoUrl =
+    resolveGulfHeritageImageUrl(logo) ?? resolveGulfHeritageImageUrl(cover) ?? resolveGulfHeritageImageUrl(page.images.hero);
   const galleryLabels = gh.imageSections;
   const creditLabels = gh.imageCredits;
 
@@ -104,33 +104,22 @@ export function GulfHeritageRoasterLayout({ page, dictionary }: GulfHeritageRoas
           images={{ ...page.images, hero: cover }}
           labels={{ ...galleryLabels, hero: roaster.coverImage }}
           creditLabels={creditLabels}
-          pendingMessage={sections.imagePending}
           pageTitle={page.copy.title}
-          placeholderTitle={presentation.imagePlaceholderTitle}
-          placeholderDescription={presentation.imagePlaceholderDescription}
         />
 
         <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className={`${ghSurfaces.cardElevated} w-full shrink-0 overflow-hidden p-5 lg:w-52`}>
             <p className={ghTypography.metaLabel}>{roaster.logo}</p>
-            {logoUrl && logo ? (
+            {logoUrl ? (
               <OptimizedImage
                 src={logoUrl}
-                alt={resolveGulfHeritageImageAlt(logo, `${page.copy.title} logo`)}
+                alt={resolveGulfHeritageImageAlt(logo ?? cover, `${page.copy.title} logo`)}
                 width={240}
                 height={128}
                 loading="lazy"
                 className="mt-4 max-h-32 w-auto"
               />
-            ) : (
-              <div className="mt-4">
-                <GhImagePlaceholder
-                  title={presentation.imagePlaceholderTitle}
-                  description={presentation.imagePlaceholderDescription}
-                  compact
-                />
-              </div>
-            )}
+            ) : null}
           </div>
 
           <header className={`${ghSurfaces.articlePanel} flex-1 px-6 py-6 sm:px-8`}>
@@ -319,8 +308,6 @@ export function GulfHeritageRoasterLayout({ page, dictionary }: GulfHeritageRoas
           }}
           presentationLabels={{
             stepTemplate: presentation.stepTemplate,
-            imagePlaceholderTitle: presentation.imagePlaceholderTitle,
-            imagePlaceholderDescription: presentation.imagePlaceholderDescription,
           }}
         />
 
@@ -329,11 +316,8 @@ export function GulfHeritageRoasterLayout({ page, dictionary }: GulfHeritageRoas
             images={page.images}
             labels={galleryLabels}
             creditLabels={creditLabels}
-            pendingMessage={sections.imagePending}
             pageTitle={page.copy.title}
             slots={["inline", "stepImages", "gallery", "equipment", "historical"]}
-            placeholderTitle={presentation.imagePlaceholderTitle}
-            placeholderDescription={presentation.imagePlaceholderDescription}
           />
         </div>
 

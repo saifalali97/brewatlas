@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AnimatedStat } from "@/app/components/ui/animated-stat";
 import { PageHeader } from "@/app/components/ui/page-header";
+import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -33,6 +35,7 @@ export default async function AboutPage() {
 
   return (
     <SectionFrame id="about-page" ariaLabelledBy="about-page-heading" padding="compact">
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.about} alt={a.title} />
       <PageHeader
         headingId="about-page-heading"
         eyebrow={a.eyebrow}

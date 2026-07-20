@@ -1,3 +1,4 @@
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { acFocus, acSurface, acTypography } from "@/lib/design-system/atlas-canon";
@@ -8,21 +9,35 @@ type EmptyStateProps = {
   actionLabel?: string;
   actionHref?: string;
   icon?: ReactNode;
+  imageSrc?: string;
+  imageAlt?: string;
   className?: string;
 };
 
-/** Shared empty-state — editorial plate, not a dashboard card. */
+/** Shared empty-state — editorial plate with optional lifestyle photography. */
 export function EmptyState({
   title,
   description,
   actionLabel,
   actionHref,
   icon,
+  imageSrc,
+  imageAlt,
   className = "",
 }: EmptyStateProps) {
   return (
-    <div className={`${acSurface.plate} px-8 py-16 text-center ${className}`.trim()}>
-      {icon ? (
+    <div className={`${acSurface.plate} overflow-hidden px-8 py-16 text-center ${className}`.trim()}>
+      {imageSrc ? (
+        <div className="relative mx-auto mb-8 aspect-[16/10] max-w-md overflow-hidden rounded-sm">
+          <OptimizedImage
+            src={imageSrc}
+            alt={imageAlt ?? title}
+            fill
+            sizes="(min-width: 768px) 400px, 80vw"
+            className="object-cover object-center"
+          />
+        </div>
+      ) : icon ? (
         <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center text-ac-espresso">{icon}</div>
       ) : null}
       <h2 className={acTypography.h3}>{title}</h2>

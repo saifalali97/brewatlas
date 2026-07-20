@@ -49,4 +49,4 @@ export type CultureTopicWithSection = CultureTopicRow & {
   section: Pick<CultureSectionRow, "id" | "slug" | "name">;
 };
 
-export const CULTURE_IMAGE_PLACEHOLDER = "/images/coffee-placeholder.svg";
+export const CULTURE_IMAGE_PLACEHOLDER = "/images/fallback/coffee-placeholder.webp";

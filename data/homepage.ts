@@ -8,10 +8,7 @@ import type {
   TopRoaster,
 } from "@/types/homepage";
 
-const unsplash = (id: string, w = 800) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
-
-export const heroImage = unsplash("photo-1511920170033-f8396924c348", 1600);
+export const heroImage = "/images/hero/home-hero.webp";
 
 export const featuredRecipes: FeaturedRecipe[] = [
   {
@@ -24,7 +21,7 @@ export const featuredRecipes: FeaturedRecipe[] = [
     ratio: "1:16",
     time: "3:30",
     notes: "Jasmine, bergamot, and stone fruit with a silky finish.",
-    image: "/images/recipes/ethiopian-pour-over.png",
+    image: "/images/methods/pour-over.webp",
     premium: true,
     featured: true,
   },
@@ -38,7 +35,7 @@ export const featuredRecipes: FeaturedRecipe[] = [
     ratio: "1:12",
     time: "8 hr",
     notes: "Dark chocolate and caramel with zero bitterness.",
-    image: "/images/recipes/cold-brew.png",
+    image: "/images/recipes/cold-brew.webp",
     premium: true,
   },
   {
@@ -51,7 +48,7 @@ export const featuredRecipes: FeaturedRecipe[] = [
     ratio: "1:1",
     time: "25 sec",
     notes: "Velvety microfoam over a balanced double shot.",
-    image: "/images/recipes/cortado.png",
+    image: "/images/recipes/espresso-shot.webp",
     premium: true,
   },
   {
@@ -64,7 +61,7 @@ export const featuredRecipes: FeaturedRecipe[] = [
     ratio: "1:4",
     time: "30 sec",
     notes: "Bright citrus sparkle over a syrupy Kenyan base.",
-    image: "/images/recipes/espresso-tonic.png",
+    image: "/images/recipes/espresso-tonic.webp",
   },
   {
     name: "Panama Geisha Chemex",
@@ -76,7 +73,7 @@ export const featuredRecipes: FeaturedRecipe[] = [
     ratio: "1:15",
     time: "4:00",
     notes: "Jasmine tea, mango, and honey with extraordinary clarity.",
-    image: "/images/recipes/chemex.png",
+    image: "/images/recipes/chemex.webp",
     premium: true,
   },
   {
@@ -89,7 +86,7 @@ export const featuredRecipes: FeaturedRecipe[] = [
     ratio: "1:10",
     time: "5:00",
     notes: "Earthy cedar, dark cocoa, and a heavy, syrupy body.",
-    image: "/images/recipes/sumatra-moka.png",
+    image: "/images/recipes/moka-pot-classic.webp",
   },
   {
     name: "Costa Rica Honey Aeropress",
@@ -101,7 +98,7 @@ export const featuredRecipes: FeaturedRecipe[] = [
     ratio: "1:14",
     time: "2:00",
     notes: "Honey sweetness, red apple, and a clean caramel finish.",
-    image: "/images/recipes/costa-rica-aeropress.png",
+    image: "/images/recipes/costa-rica-aeropress.webp",
     premium: true,
   },
   {
@@ -114,7 +111,7 @@ export const featuredRecipes: FeaturedRecipe[] = [
     ratio: "1:16",
     time: "3:45",
     notes: "Black tea, cranberry, and brown sugar with vibrant acidity.",
-    image: "/images/recipes/rwanda-v60.png",
+    image: "/images/recipes/origami-dripper.webp",
   },
 ];
 
@@ -128,7 +125,7 @@ export const brewMethods: BrewingMethod[] = [
     acidity: 4,
     sweetness: 3,
     suitableRoast: "Light to Medium",
-    image: "/images/recipes/ethiopian-pour-over.png",
+    image: "/images/methods/pour-over.webp",
   },
   {
     name: "Espresso",
@@ -139,7 +136,7 @@ export const brewMethods: BrewingMethod[] = [
     acidity: 3,
     sweetness: 2,
     suitableRoast: "Medium to Dark",
-    image: "/images/recipes/cortado.png",
+    image: "/images/recipes/espresso-shot.webp",
   },
   {
     name: "French Press",
@@ -150,7 +147,7 @@ export const brewMethods: BrewingMethod[] = [
     acidity: 2,
     sweetness: 3,
     suitableRoast: "Medium to Dark",
-    image: "/images/methods/french-press.svg",
+    image: "/images/methods/french-press.webp",
   },
   {
     name: "Aeropress",
@@ -161,7 +158,7 @@ export const brewMethods: BrewingMethod[] = [
     acidity: 3,
     sweetness: 4,
     suitableRoast: "Light to Medium",
-    image: "/images/recipes/costa-rica-aeropress.png",
+    image: "/images/recipes/costa-rica-aeropress.webp",
   },
   {
     name: "Cold Brew",
@@ -172,7 +169,7 @@ export const brewMethods: BrewingMethod[] = [
     acidity: 1,
     sweetness: 3,
     suitableRoast: "Medium to Dark",
-    image: "/images/recipes/cold-brew.png",
+    image: "/images/recipes/cold-brew.webp",
   },
   {
     name: "Siphon",
@@ -183,7 +180,7 @@ export const brewMethods: BrewingMethod[] = [
     acidity: 4,
     sweetness: 4,
     suitableRoast: "Light Roast",
-    image: "/images/methods/siphon.svg",
+    image: "/images/methods/siphon.webp",
   },
 ];
 
@@ -196,7 +193,7 @@ export const coffeeOrigins: CoffeeOrigin[] = [
     process: "Washed",
     roastRecommendation: "Light Roast",
     brewingMethod: "Pour Over",
-    image: "/images/recipes/ethiopian-pour-over.png",
+    image: "/images/origins/ethiopia.webp",
     premium: true,
   },
   {
@@ -207,7 +204,7 @@ export const coffeeOrigins: CoffeeOrigin[] = [
     process: "Washed",
     roastRecommendation: "Medium Roast",
     brewingMethod: "Chemex",
-    image: "/images/origins/colombia.svg",
+    image: "/images/origins/colombia.webp",
   },
   {
     country: "Kenya",
@@ -217,7 +214,7 @@ export const coffeeOrigins: CoffeeOrigin[] = [
     process: "Double Washed",
     roastRecommendation: "Light-Medium",
     brewingMethod: "V60",
-    image: "/images/recipes/espresso-tonic.png",
+    image: "/images/origins/kenya.webp",
     premium: true,
   },
   {
@@ -228,7 +225,7 @@ export const coffeeOrigins: CoffeeOrigin[] = [
     process: "Washed",
     roastRecommendation: "Medium Roast",
     brewingMethod: "Espresso",
-    image: "/images/recipes/cortado.png",
+    image: "/images/origins/guatemala.webp",
   },
   {
     country: "Panama",
@@ -238,7 +235,7 @@ export const coffeeOrigins: CoffeeOrigin[] = [
     process: "Washed",
     roastRecommendation: "Light Roast",
     brewingMethod: "Pour Over",
-    image: "/images/recipes/chemex.png",
+    image: "/images/origins/panama.webp",
     premium: true,
   },
   {
@@ -249,7 +246,7 @@ export const coffeeOrigins: CoffeeOrigin[] = [
     process: "Wet-Hulled",
     roastRecommendation: "Dark Roast",
     brewingMethod: "French Press",
-    image: "/images/recipes/sumatra-moka.png",
+    image: "/images/origins/indonesia.webp",
   },
 ];
 
@@ -263,7 +260,7 @@ export const topRoasters: TopRoaster[] = [
     recipes: "142 recipes",
     description:
       "Award-winning roastery pushing boundaries with meticulous sourcing and innovative roast profiles.",
-    image: "/images/roasters/onyx.svg",
+    image: "/images/hero/home-hero.webp",
     premium: true,
   },
   {
@@ -275,7 +272,7 @@ export const topRoasters: TopRoaster[] = [
     recipes: "218 recipes",
     description:
       "Pioneer of transparent sourcing with deep farmer relationships and industry-leading training programs.",
-    image: "/images/roasters/counter-culture.svg",
+    image: "/images/recipes/coffee-beans-macro.webp",
     premium: true,
   },
   {
@@ -287,7 +284,7 @@ export const topRoasters: TopRoaster[] = [
     recipes: "96 recipes",
     description:
       "San Francisco roastery celebrating origin expression through delicate, terroir-forward light roasts.",
-    image: "/images/roasters/saint-frank.svg",
+    image: "/images/roasters/saint-frank.webp",
   },
   {
     name: "Tim Wendelboe",
@@ -298,7 +295,7 @@ export const topRoasters: TopRoaster[] = [
     recipes: "84 recipes",
     description:
       "Oslo institution defining Nordic coffee with obsessive quality control and seasonal microlots.",
-    image: "/images/roasters/tim-wendelboe.svg",
+    image: "/images/roasters/tim-wendelboe.webp",
     premium: true,
   },
   {
@@ -310,7 +307,7 @@ export const topRoasters: TopRoaster[] = [
     recipes: "112 recipes",
     description:
       "Aarhus-based roaster known for luminous clarity, gentle sweetness, and minimalist Nordic aesthetics.",
-    image: "/images/roasters/la-cabra.svg",
+    image: "/images/roasters/la-cabra.webp",
     premium: true,
   },
   {
@@ -322,7 +319,7 @@ export const topRoasters: TopRoaster[] = [
     recipes: "78 recipes",
     description:
       "Helsingborg roastery crafting thoughtful seasonal offerings with a focus on balance and approachability.",
-    image: "/images/roasters/koppi.svg",
+    image: "/images/roasters/koppi.webp",
   },
 ];
 
@@ -333,7 +330,7 @@ export const testimonials: Testimonial[] = [
     name: "Elena Vasquez",
     role: "Head Barista, Formative Coffee",
     location: "Portland, OR",
-    image: unsplash("photo-1724910326117-66dc0406f4ed", 600),
+    image: "/images/methods/pour-over.webp",
   },
   {
     quote:
@@ -341,7 +338,7 @@ export const testimonials: Testimonial[] = [
     name: "James Okonkwo",
     role: "Roaster & Q Grader",
     location: "London, UK",
-    image: unsplash("photo-1517245386807-bb43f82c33c4", 600),
+    image: "/images/recipes/espresso-tonic.webp",
   },
   {
     quote:
@@ -349,7 +346,7 @@ export const testimonials: Testimonial[] = [
     name: "Sofia Lindström",
     role: "Founder, Nord Roast Collective",
     location: "Stockholm, SE",
-    image: unsplash("photo-1743389412243-7dbfdf6c48dd", 600),
+    image: "/images/recipes/chemex.webp",
   },
 ];
 

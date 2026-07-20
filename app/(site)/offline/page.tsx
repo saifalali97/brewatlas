@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { WifiOff } from "lucide-react";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import en from "@/lib/i18n/dictionaries/en";
 
@@ -20,6 +22,15 @@ export default function OfflinePage() {
       id="main-content"
       className="flex min-h-[70svh] flex-col items-center justify-center bg-ac-limestone px-6 py-24 text-center"
     >
+      <div className="relative mb-10 aspect-[16/10] w-full max-w-lg overflow-hidden rounded-sm">
+        <OptimizedImage
+          src={PAGE_EDITORIAL_IMAGES.offline}
+          alt=""
+          fill
+          sizes="512px"
+          className="object-cover object-center"
+        />
+      </div>
       <div className="mb-6 flex h-12 w-12 items-center justify-center text-ac-espresso">
         <WifiOff className="h-6 w-6" aria-hidden />
       </div>

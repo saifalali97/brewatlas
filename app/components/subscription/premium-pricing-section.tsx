@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Chapter } from "@/app/components/atlas/chapter";
 import { EditorialFaq } from "@/app/components/atlas/editorial-faq";
 import { Invitation } from "@/app/components/atlas/invitation";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { MotionReveal } from "@/lib/design-system/motion";
 import { createCheckoutSessionAction } from "@/lib/supabase/membership-actions";
 import type { Dictionary } from "@/lib/i18n/types";
@@ -196,6 +198,16 @@ export function PremiumPricingSection({
         />
 
         <MotionReveal>
+          <div className="relative mx-auto mb-12 aspect-[21/9] max-w-4xl overflow-hidden rounded-sm">
+            <OptimizedImage
+              src={PAGE_EDITORIAL_IMAGES.premium}
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 896px, 100vw"
+              className="object-cover object-center opacity-90"
+            />
+            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ac-espresso/60 via-ac-espresso/20 to-transparent" />
+          </div>
           {showStripeCheckout ? (
             <form action={createCheckoutSessionAction}>
               <input type="hidden" name="interval" value={interval} />

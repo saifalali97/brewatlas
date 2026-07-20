@@ -1,3 +1,4 @@
+import { resolveDeviceImage, resolveOriginImage } from "@/lib/media/page-images";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   getBrewingMethodOptions,
@@ -202,7 +203,7 @@ async function searchDbRoasters(supabase: SupabaseClient, q: string, country: st
     recipes: "0",
     rating: "—",
     premium: false,
-    image: (row.logo_url as string) ?? "/images/placeholders/roaster.svg",
+    image: (row.logo_url as string) ?? "/images/hero/home-hero.webp",
     description: "",
   }));
 }
@@ -231,7 +232,7 @@ async function searchDbOrigins(supabase: SupabaseClient, filters: SearchFilters)
     roastRecommendation: filters.roastLevel || "—",
     brewingMethod: "—",
     premium: false,
-    image: "/images/placeholders/origin.svg",
+    image: resolveOriginImage(row.country as string),
   }));
 }
 
@@ -254,6 +255,7 @@ async function searchDbDevices(supabase: SupabaseClient, q: string): Promise<Dev
     slug: row.slug as string,
     manufacturer: (row.manufacturer as string) ?? null,
     source: "db" as const,
+    image: resolveDeviceImage(row.name as string),
   }));
 }
 

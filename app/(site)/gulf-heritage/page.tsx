@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/app/components/ui/page-header";
+import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { GulfHeritageCountryCard } from "@/app/components/gulf-heritage/gulf-heritage-country-card";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import {
   GULF_HERITAGE_COUNTRIES,
   getGulfHeritageCountryCopy,
@@ -33,6 +35,7 @@ export default async function GulfHeritageHubPage() {
 
   return (
     <SectionFrame id="gulf-heritage-hub" ariaLabelledBy="gulf-heritage-hub-heading" padding="compact">
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.emptyGulfHeritage} alt={gh.title} priority />
       <PageHeader
         headingId="gulf-heritage-hub-heading"
         eyebrow={gh.eyebrow}

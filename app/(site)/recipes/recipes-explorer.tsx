@@ -8,6 +8,7 @@ import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { EmptyState } from "@/app/components/ui/empty-state";
 import { ArchiveMasthead } from "@/app/components/recipes/archive-masthead";
 import { GuestArchiveInvitation } from "@/app/components/recipes/guest-archive-invitation";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import {
   MethodIndex,
   type MethodFilter,
@@ -275,6 +276,8 @@ export function RecipesExplorer({
           description={t("emptyStates.noResultsHint")}
           actionLabel={t("emptyStates.startExploring")}
           actionHref="/recipes"
+          imageSrc={PAGE_EDITORIAL_IMAGES.emptyRecipes}
+          imageAlt={t("emptyStates.noRecipesMatchSearch")}
           className="mt-16"
         />
       )}

@@ -99,10 +99,7 @@ export function GulfHeritageArticleLayout({ page, dictionary }: GulfHeritageArti
           images={page.images}
           labels={galleryLabels}
           creditLabels={creditLabels}
-          pendingMessage={sections.imagePending}
           pageTitle={page.copy.title}
-          placeholderTitle={presentation.imagePlaceholderTitle}
-          placeholderDescription={presentation.imagePlaceholderDescription}
         />
 
         <header className="mt-8">
@@ -129,8 +126,6 @@ export function GulfHeritageArticleLayout({ page, dictionary }: GulfHeritageArti
             body={content.glossary}
             pendingMessage={pending}
             variant="glossary"
-            imagePlaceholderTitle={presentation.imagePlaceholderTitle}
-            imagePlaceholderDescription={presentation.imagePlaceholderDescription}
           />
         ) : null}
 
@@ -143,8 +138,6 @@ export function GulfHeritageArticleLayout({ page, dictionary }: GulfHeritageArti
                 body={content.sections[key]}
                 pendingMessage={pending}
                 variant={sectionVariant(key)}
-                imagePlaceholderTitle={presentation.imagePlaceholderTitle}
-                imagePlaceholderDescription={presentation.imagePlaceholderDescription}
               />
             ))
           : null}
@@ -158,8 +151,6 @@ export function GulfHeritageArticleLayout({ page, dictionary }: GulfHeritageArti
                 body={content.sections[key]}
                 pendingMessage={pending}
                 variant={sectionVariant(key)}
-                imagePlaceholderTitle={presentation.imagePlaceholderTitle}
-                imagePlaceholderDescription={presentation.imagePlaceholderDescription}
               />
             ))
           : null}
@@ -205,8 +196,6 @@ export function GulfHeritageArticleLayout({ page, dictionary }: GulfHeritageArti
           }}
           presentationLabels={{
             stepTemplate: presentation.stepTemplate,
-            imagePlaceholderTitle: presentation.imagePlaceholderTitle,
-            imagePlaceholderDescription: presentation.imagePlaceholderDescription,
           }}
         />
 
@@ -215,11 +204,8 @@ export function GulfHeritageArticleLayout({ page, dictionary }: GulfHeritageArti
             images={page.images}
             labels={galleryLabels}
             creditLabels={creditLabels}
-            pendingMessage={sections.imagePending}
             pageTitle={page.copy.title}
             slots={["inline", "stepImages", "gallery", "equipment", "historical"]}
-            placeholderTitle={presentation.imagePlaceholderTitle}
-            placeholderDescription={presentation.imagePlaceholderDescription}
           />
         </div>
 

@@ -817,8 +817,6 @@ const ar: Dictionary = {
       optionalIngredients: "مكونات اختيارية",
       garnishes: "زينة",
       ingredientNotes: "ملاحظات",
-      imagePlaceholderTitle: "صورة موثّقة قيد الإضافة",
-      imagePlaceholderDescription: "ستُضاف صورة موثّقة بعد موافقة التحرير.",
     },
     roaster: {
       history: "التاريخ",

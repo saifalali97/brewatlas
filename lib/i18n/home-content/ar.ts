@@ -12,8 +12,7 @@ import type { HomeContent } from "@/types/homepage";
  * since `PricingCard` string-compares `plan.price !== "$0"`.
  */
 const ar: HomeContent = {
-  heroImage:
-    "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1600&q=80",
+  heroImage: "/images/hero/home-hero.webp",
   featuredRecipes: [
     {
       name: "قهوة يرغاتشيف الإثيوبية بالتقطير اليدوي",
@@ -25,7 +24,7 @@ const ar: HomeContent = {
       ratio: "1:16",
       time: "3:30",
       notes: "ياسمين وبرغموت وفاكهة ذات نواة مع لمسة نهائية حريرية.",
-      image: "/images/recipes/ethiopian-pour-over.png",
+      image: "/images/methods/pour-over.webp",
       premium: true,
       featured: true,
     },
@@ -39,7 +38,7 @@ const ar: HomeContent = {
       ratio: "1:12",
       time: "8 ساعات",
       notes: "شوكولاتة داكنة وكراميل بلا أي مرارة.",
-      image: "/images/recipes/cold-brew.png",
+      image: "/images/recipes/cold-brew.webp",
       premium: true,
     },
     {
@@ -52,7 +51,7 @@ const ar: HomeContent = {
       ratio: "1:1",
       time: "25 ثانية",
       notes: "رغوة حريرية ناعمة فوق جرعة مزدوجة متوازنة.",
-      image: "/images/recipes/cortado.png",
+      image: "/images/recipes/espresso-shot.webp",
       premium: true,
     },
     {
@@ -65,7 +64,7 @@ const ar: HomeContent = {
       ratio: "1:4",
       time: "30 ثانية",
       notes: "بريق حمضيات منعش فوق قاعدة كينية شرابية القوام.",
-      image: "/images/recipes/espresso-tonic.png",
+      image: "/images/recipes/espresso-tonic.webp",
     },
     {
       name: "قهوة غيشا بنما بالتشيميكس",
@@ -77,7 +76,7 @@ const ar: HomeContent = {
       ratio: "1:15",
       time: "4:00",
       notes: "شاي الياسمين والمانجو والعسل بوضوح استثنائي.",
-      image: "/images/recipes/chemex.png",
+      image: "/images/recipes/chemex.webp",
       premium: true,
     },
     {
@@ -90,7 +89,7 @@ const ar: HomeContent = {
       ratio: "1:10",
       time: "5:00",
       notes: "أرز أرضي دافئ وكاكاو داكن وقوام شرابي ثقيل.",
-      image: "/images/recipes/sumatra-moka.png",
+      image: "/images/recipes/moka-pot-classic.webp",
     },
     {
       name: "كوستاريكا هوني بالإيروبرس",
@@ -102,7 +101,7 @@ const ar: HomeContent = {
       ratio: "1:14",
       time: "2:00",
       notes: "حلاوة العسل وتفاح أحمر مع لمسة كراميل نظيفة.",
-      image: "/images/recipes/costa-rica-aeropress.png",
+      image: "/images/recipes/costa-rica-aeropress.webp",
       premium: true,
     },
     {
@@ -115,7 +114,7 @@ const ar: HomeContent = {
       ratio: "1:16",
       time: "3:45",
       notes: "شاي أسود وتوت بري وسكر بني مع حموضة نابضة بالحياة.",
-      image: "/images/recipes/rwanda-v60.png",
+      image: "/images/recipes/origami-dripper.webp",
     },
   ],
   brewMethods: [
@@ -128,7 +127,7 @@ const ar: HomeContent = {
       acidity: 4,
       sweetness: 3,
       suitableRoast: "فاتح إلى متوسط",
-      image: "/images/recipes/ethiopian-pour-over.png",
+      image: "/images/methods/pour-over.webp",
     },
     {
       name: "إسبريسو",
@@ -139,7 +138,7 @@ const ar: HomeContent = {
       acidity: 3,
       sweetness: 2,
       suitableRoast: "متوسط إلى غامق",
-      image: "/images/recipes/cortado.png",
+      image: "/images/recipes/espresso-shot.webp",
     },
     {
       name: "الكبس الفرنسي",
@@ -150,7 +149,7 @@ const ar: HomeContent = {
       acidity: 2,
       sweetness: 3,
       suitableRoast: "متوسط إلى غامق",
-      image: "/images/methods/french-press.svg",
+      image: "/images/methods/french-press.webp",
     },
     {
       name: "إيروبرس",
@@ -161,7 +160,7 @@ const ar: HomeContent = {
       acidity: 3,
       sweetness: 4,
       suitableRoast: "فاتح إلى متوسط",
-      image: "/images/recipes/costa-rica-aeropress.png",
+      image: "/images/recipes/costa-rica-aeropress.webp",
     },
     {
       name: "كولد برو",
@@ -172,7 +171,7 @@ const ar: HomeContent = {
       acidity: 1,
       sweetness: 3,
       suitableRoast: "متوسط إلى غامق",
-      image: "/images/recipes/cold-brew.png",
+      image: "/images/recipes/cold-brew.webp",
     },
     {
       name: "السيفون",
@@ -183,7 +182,7 @@ const ar: HomeContent = {
       acidity: 4,
       sweetness: 4,
       suitableRoast: "تحميص فاتح",
-      image: "/images/methods/siphon.svg",
+      image: "/images/methods/siphon.webp",
     },
   ],
   coffeeOrigins: [
@@ -195,7 +194,7 @@ const ar: HomeContent = {
       process: "مغسولة",
       roastRecommendation: "تحميص فاتح",
       brewingMethod: "التقطير اليدوي",
-      image: "/images/recipes/ethiopian-pour-over.png",
+      image: "/images/origins/ethiopia.webp",
       premium: true,
     },
     {
@@ -206,7 +205,7 @@ const ar: HomeContent = {
       process: "مغسولة",
       roastRecommendation: "تحميص متوسط",
       brewingMethod: "تشيميكس",
-      image: "/images/origins/colombia.svg",
+      image: "/images/origins/colombia.webp",
     },
     {
       country: "كينيا",
@@ -216,7 +215,7 @@ const ar: HomeContent = {
       process: "مغسولة مرتين",
       roastRecommendation: "فاتح إلى متوسط",
       brewingMethod: "V60",
-      image: "/images/recipes/espresso-tonic.png",
+      image: "/images/origins/kenya.webp",
       premium: true,
     },
     {
@@ -227,7 +226,7 @@ const ar: HomeContent = {
       process: "مغسولة",
       roastRecommendation: "تحميص متوسط",
       brewingMethod: "إسبريسو",
-      image: "/images/recipes/cortado.png",
+      image: "/images/origins/guatemala.webp",
     },
     {
       country: "بنما",
@@ -237,7 +236,7 @@ const ar: HomeContent = {
       process: "مغسولة",
       roastRecommendation: "تحميص فاتح",
       brewingMethod: "التقطير اليدوي",
-      image: "/images/recipes/chemex.png",
+      image: "/images/origins/panama.webp",
       premium: true,
     },
     {
@@ -248,7 +247,7 @@ const ar: HomeContent = {
       process: "منزوعة القشرة رطبًا",
       roastRecommendation: "تحميص غامق",
       brewingMethod: "الكبس الفرنسي",
-      image: "/images/recipes/sumatra-moka.png",
+      image: "/images/origins/indonesia.webp",
     },
   ],
   topRoasters: [
@@ -261,7 +260,7 @@ const ar: HomeContent = {
       recipes: "142 وصفة",
       description:
         "محمصة حائزة على جوائز تدفع الحدود من خلال توريد دقيق وملامح تحميص مبتكرة.",
-      image: "/images/roasters/onyx.svg",
+      image: "/images/hero/home-hero.webp",
       premium: true,
     },
     {
@@ -273,7 +272,7 @@ const ar: HomeContent = {
       recipes: "218 وصفة",
       description:
         "رائدة في التوريد الشفاف بعلاقات عميقة مع المزارعين وبرامج تدريب رائدة في القطاع.",
-      image: "/images/roasters/counter-culture.svg",
+      image: "/images/recipes/coffee-beans-macro.webp",
       premium: true,
     },
     {
@@ -285,7 +284,7 @@ const ar: HomeContent = {
       recipes: "96 وصفة",
       description:
         "محمصة من سان فرانسيسكو تحتفي بتعبير المنشأ من خلال تحميص فاتح رقيق يعكس خصوصية الأرض.",
-      image: "/images/roasters/saint-frank.svg",
+      image: "/images/roasters/saint-frank.webp",
     },
     {
       name: "Tim Wendelboe",
@@ -296,7 +295,7 @@ const ar: HomeContent = {
       recipes: "84 وصفة",
       description:
         "مؤسسة أوسلو التي تُعرّف القهوة الاسكندنافية بمراقبة جودة دقيقة ودفعات موسمية محدودة.",
-      image: "/images/roasters/tim-wendelboe.svg",
+      image: "/images/roasters/tim-wendelboe.webp",
       premium: true,
     },
     {
@@ -308,7 +307,7 @@ const ar: HomeContent = {
       recipes: "112 وصفة",
       description:
         "محمصة من آرهوس تشتهر بوضوح متوهج، وحلاوة لطيفة، وجمالية اسكندنافية بسيطة.",
-      image: "/images/roasters/la-cabra.svg",
+      image: "/images/roasters/la-cabra.webp",
       premium: true,
     },
     {
@@ -320,7 +319,7 @@ const ar: HomeContent = {
       recipes: "78 وصفة",
       description:
         "محمصة من هلسينغبورغ تقدم عروضًا موسمية مدروسة تركّز على التوازن وسهولة التذوق.",
-      image: "/images/roasters/koppi.svg",
+      image: "/images/roasters/koppi.webp",
     },
   ],
   testimonials: [
@@ -330,7 +329,7 @@ const ar: HomeContent = {
       name: "إيلينا فاسكيز",
       role: "رئيسة الباريستا، Formative Coffee",
       location: "بورتلاند، أوريغون",
-      image: "https://images.unsplash.com/photo-1724910326117-66dc0406f4ed?auto=format&fit=crop&w=600&q=80",
+      image: "/images/methods/pour-over.webp",
     },
     {
       quote:
@@ -338,7 +337,7 @@ const ar: HomeContent = {
       name: "جيمس أوكونكو",
       role: "محمّص ومُقيّم Q Grader معتمد",
       location: "لندن، المملكة المتحدة",
-      image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80",
+      image: "/images/recipes/espresso-tonic.webp",
     },
     {
       quote:
@@ -346,7 +345,7 @@ const ar: HomeContent = {
       name: "صوفيا ليندستروم",
       role: "مؤسِّسة Nord Roast Collective",
       location: "ستوكهولم، السويد",
-      image: "https://images.unsplash.com/photo-1743389412243-7dbfdf6c48dd?auto=format&fit=crop&w=600&q=80",
+      image: "/images/recipes/chemex.webp",
     },
   ],
   pricingPlans: [
