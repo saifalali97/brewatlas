@@ -1,5 +1,7 @@
 import { generateConversationTitle } from "@/lib/ai/coach-knowledge-engine";
 import { getCoachModuleAdapter, isCoachModuleStreamingEnabled } from "@/lib/ai/coach-module-adapter";
+import { findOfficialRecipesForCoach } from "@/lib/data/official-recipes";
+import { buildOfficialRecipeCoachContext } from "@/lib/ai/official-recipe-coach";
 import { getCoachModuleErrorMessage } from "@/lib/ai/coach-module-errors";
 import {
   addMessage,
@@ -24,6 +26,7 @@ export type CoachChatTurnResult =
       summary: Awaited<ReturnType<typeof getMembershipSummary>>;
       userId: string;
       supabase: Awaited<ReturnType<typeof createClient>>;
+      officialRecipesContext: string;
     }
   | { ok: false; error: string; status?: number };
 
@@ -71,6 +74,13 @@ export async function prepareCoachChatTurn(
     };
   }
 
+  const officialMatches = await findOfficialRecipesForCoach(supabase, {
+    method: mode === "recipe_generator" ? trimmed : undefined,
+    flavorPreference: trimmed,
+    limit: 3,
+  });
+  const officialRecipesContext = buildOfficialRecipeCoachContext(officialMatches);
+
   return {
     ok: true,
     conversation,
@@ -78,6 +88,7 @@ export async function prepareCoachChatTurn(
     summary: access.summary,
     userId,
     supabase,
+    officialRecipesContext,
   };
 }
 
@@ -127,6 +138,9 @@ export async function runCoachChatCompletion(
       conversationId: prepared.conversation.id,
       mode,
       history: prepared.history,
+      context: {
+        officialRecipes: prepared.officialRecipesContext,
+      },
     });
 
     const messages = await completeCoachChatTurn({

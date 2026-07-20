@@ -9,6 +9,9 @@ import type {
 type VersionRow = {
   id: string;
   version_number: number;
+  version_label: string | null;
+  change_reason: string | null;
+  brewing_changes: string | null;
   title: string | null;
   description: string | null;
   seo_title: string | null;
@@ -23,19 +26,25 @@ type VersionRow = {
   created_at: string;
   author: { full_name: string | null } | null;
   editor: { full_name: string | null } | null;
+  version_author: { full_name: string | null } | null;
 };
 
 const VERSION_SELECT = `
-  id, version_number, title, description, seo_title, seo_description, canonical_url,
-  status, scheduled_publish_at, author_id, editor_id, metadata, snapshot, created_at,
+  id, version_number, version_label, change_reason, brewing_changes,
+  title, description, seo_title, seo_description, canonical_url,
+  status, scheduled_publish_at, author_id, editor_id, version_author_id, metadata, snapshot, created_at,
   author:author_id ( full_name ),
-  editor:editor_id ( full_name )
+  editor:editor_id ( full_name ),
+  version_author:version_author_id ( full_name )
 `;
 
 function mapVersionRow(row: VersionRow): RecipeVersionListItem {
   return {
     id: row.id,
     versionNumber: row.version_number,
+    versionLabel: row.version_label,
+    changeReason: row.change_reason,
+    brewingChanges: row.brewing_changes,
     title: row.title ?? "Untitled",
     description: row.description,
     seoTitle: row.seo_title,
@@ -91,6 +100,9 @@ export async function getRecipeVersionById(
 }
 
 const COMPARE_FIELDS: Array<{ key: string; label: string; pick: (v: RecipeVersionListItem) => string }> = [
+  { key: "versionLabel", label: "Version label", pick: (v) => v.versionLabel ?? "" },
+  { key: "changeReason", label: "Change reason", pick: (v) => v.changeReason ?? "" },
+  { key: "brewingChanges", label: "Brewing changes", pick: (v) => v.brewingChanges ?? "" },
   { key: "title", label: "Title", pick: (v) => v.title },
   { key: "description", label: "Description", pick: (v) => v.description ?? "" },
   { key: "seoTitle", label: "Meta title", pick: (v) => v.seoTitle ?? "" },

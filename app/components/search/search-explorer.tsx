@@ -45,6 +45,7 @@ const sortLabelKeys = {
   newest: "searchPage.sortNewest",
   fastest: "searchPage.sortFastest",
   alphabetical: "searchPage.sortAlphabetical",
+  official: "searchPage.sortOfficial",
 } as const satisfies Record<SearchSort, `searchPage.${string}`>;
 
 export function SearchExplorer({
@@ -117,6 +118,9 @@ export function SearchExplorer({
       tempMax: "",
       premiumOnly: false,
       featuredOnly: false,
+      recipeKind: "",
+      verificationStatus: "",
+      verifiedOnly: false,
       page: 1,
       q: debouncedQuery,
     });

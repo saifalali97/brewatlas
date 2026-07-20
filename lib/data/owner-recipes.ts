@@ -5,6 +5,7 @@ export const OWNER_RECIPE_PAGE_SIZE = 12;
 
 export const OWNER_RECIPE_LIST_SELECT = `
   id, title, slug, published, status, scheduled_publish_at, featured, cover_image_url, created_at, updated_at,
+  recipe_kind, verification_status, version_label,
   brewing_methods ( name ),
   devices ( name ),
   coffees ( origins ( country, region ) ),
@@ -22,6 +23,9 @@ type OwnerRecipeListRow = {
   cover_image_url: string | null;
   created_at: string;
   updated_at: string;
+  recipe_kind: string | null;
+  verification_status: string | null;
+  version_label: string | null;
   brewing_methods: { name: string } | null;
   devices: { name: string } | null;
   coffees: { origins: { country: string; region: string } | null } | null;
@@ -43,6 +47,9 @@ export type OwnerRecipeListItem = {
   deviceName: string | null;
   originLabel: string | null;
   authorName: string | null;
+  recipeKind: string | null;
+  verificationStatus: string | null;
+  versionLabel: string | null;
 };
 
 export type OwnerRecipeFilters = {
@@ -51,6 +58,8 @@ export type OwnerRecipeFilters = {
   deviceId?: string;
   originId?: string;
   status?: RecipePublishStatus;
+  recipeKind?: string;
+  verificationStatus?: string;
   page?: number;
 };
 
@@ -78,6 +87,9 @@ function mapOwnerRecipeRow(row: OwnerRecipeListRow): OwnerRecipeListItem {
     deviceName: row.devices?.name ?? null,
     originLabel: origin ? `${origin.region}, ${origin.country}` : null,
     authorName: row.profiles?.full_name ?? null,
+    recipeKind: row.recipe_kind,
+    verificationStatus: row.verification_status,
+    versionLabel: row.version_label,
   };
 }
 
@@ -110,6 +122,12 @@ export async function getOwnerRecipesPage(
   }
   if (filters.status) {
     query = query.eq("status", filters.status);
+  }
+  if (filters.recipeKind) {
+    query = query.eq("recipe_kind", filters.recipeKind);
+  }
+  if (filters.verificationStatus) {
+    query = query.eq("verification_status", filters.verificationStatus);
   }
 
   const { data, error, count } = await query

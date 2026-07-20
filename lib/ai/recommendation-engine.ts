@@ -55,6 +55,7 @@ export type RecipeCandidate = {
   deviceId: string | null;
   hasXbloomProfile: boolean;
   difficultyLabel: string | null;
+  officialBoost?: number;
 };
 
 function roastMatches(preferredRoast: string | null, candidateRoastLevel: string | null): boolean {
@@ -93,9 +94,10 @@ export function scoreRecipeForUser(context: RecommendationContext, candidate: Re
   const score = (Object.keys(RECOMMENDATION_WEIGHTS) as (keyof RecommendationBreakdown)[]).reduce(
     (sum, signal) => sum + breakdown[signal] * RECOMMENDATION_WEIGHTS[signal],
     0,
-  );
+  ) + (candidate.officialBoost ?? 0) * 100;
 
   const reasons: string[] = [];
+  if ((candidate.officialBoost ?? 0) > 0) reasons.push("BrewAtlas official recipe");
   if (breakdown.originMatch > 0) reasons.push("Matches an origin you love");
   if (breakdown.roastMatch > 0) reasons.push("Matches your roast preference");
   if (breakdown.processMatch > 0) reasons.push("Uses a processing method you favor");

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useTransition } from "react";
 import { OwnerRecipeRowActions } from "@/app/components/owner/recipes/owner-recipe-row-actions";
 import { OwnerRecipeStatusBadge } from "@/app/components/owner/recipes/owner-recipe-status-badge";
+import { OfficialRecipeBadge } from "@/app/components/recipes/official-recipe-badge";
 import { buttons } from "@/lib/constants/styles";
 import { translate } from "@/lib/i18n/format";
 import type { Dictionary } from "@/lib/i18n/types";
@@ -25,6 +26,8 @@ type OwnerRecipesExplorerProps = {
     deviceId: string;
     originId: string;
     published: string;
+    library?: string;
+    verification?: string;
   };
 };
 
@@ -39,6 +42,8 @@ function buildQuery(
   if (filters.deviceId) params.set("device", filters.deviceId);
   if (filters.originId) params.set("origin", filters.originId);
   if (filters.published) params.set("status", filters.published);
+  if (filters.library) params.set("library", filters.library);
+  if (filters.verification) params.set("verification", filters.verification);
   if (page > 1) params.set("page", String(page));
   const query = params.toString();
   return query ? `${pathname}?${query}` : pathname;
@@ -88,6 +93,8 @@ export function OwnerRecipesExplorer({
             deviceId: String(formData.get("device") ?? ""),
             originId: String(formData.get("origin") ?? ""),
             published: String(formData.get("status") ?? ""),
+            library: String(formData.get("library") ?? ""),
+            verification: String(formData.get("verification") ?? ""),
           });
         }}
       >
@@ -154,6 +161,21 @@ export function OwnerRecipesExplorer({
             <option value="scheduled">{labels.filterScheduled}</option>
             <option value="archived">{labels.filterArchived}</option>
           </select>
+          <select id="owner-recipe-library" name="library" defaultValue={filters.library ?? ""} className={`${selectClass} max-w-xs`}>
+            <option value="">All libraries</option>
+            <option value="official">Official</option>
+            <option value="community">Community</option>
+            <option value="imported">Imported</option>
+            <option value="competition">Competition</option>
+            <option value="archived">Archived kind</option>
+          </select>
+          <select id="owner-recipe-verification" name="verification" defaultValue={filters.verification ?? ""} className={`${selectClass} max-w-xs`}>
+            <option value="">All verification</option>
+            <option value="draft">Draft</option>
+            <option value="testing">Testing</option>
+            <option value="verified">Verified</option>
+            <option value="competition_tested">Competition tested</option>
+          </select>
           <button type="submit" className={`${buttons.secondary} h-10 px-4 text-xs`} disabled={isPending}>
             {labels.searchLabel}
           </button>
@@ -174,6 +196,16 @@ export function OwnerRecipesExplorer({
                   <div className="flex flex-wrap items-center gap-2.5">
                     <p className="font-medium text-stone-100">{recipe.title}</p>
                     <OwnerRecipeStatusBadge status={recipe.status} scheduledPublishAt={recipe.scheduledPublishAt} />
+                    {recipe.recipeKind === "official" || recipe.recipeKind === "competition" ? (
+                      <OfficialRecipeBadge
+                        verificationStatus={
+                          (recipe.verificationStatus as "verified" | "competition_tested" | "draft" | "testing") ??
+                          "draft"
+                        }
+                        versionLabel={recipe.versionLabel ?? undefined}
+                        compact
+                      />
+                    ) : null}
                     {recipe.featured ? (
                       <span className="rounded-full border border-amber-600/35 bg-amber-950/40 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-300/90">
                         {labels.featuredBadge}
@@ -209,7 +241,14 @@ export function OwnerRecipesExplorer({
                   >
                     {labels.editLink}
                   </Link>
-                  <OwnerRecipeRowActions recipeId={recipe.id} title={recipe.title} status={recipe.status} />
+                  <OwnerRecipeRowActions
+                    recipeId={recipe.id}
+                    title={recipe.title}
+                    status={recipe.status}
+                    recipeKind={recipe.recipeKind}
+                    verificationStatus={recipe.verificationStatus}
+                    featured={recipe.featured}
+                  />
                 </div>
               </li>
             ))}

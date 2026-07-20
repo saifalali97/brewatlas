@@ -32,6 +32,12 @@ import {
   uploadRecipeImage,
   type RecipeActionState,
 } from "@/lib/recipes/recipe-persistence";
+import {
+  duplicateOfficialRecipe,
+  officialRecipePayload,
+  parseOfficialRecipeForm,
+  verifyOfficialRecipe,
+} from "@/lib/recipes/official-recipe-persistence";
 import { parsePublishIntent, resolveStatusFromIntent } from "@/lib/recipes/recipe-status";
 import type { RecipePublishStatus } from "@/types/recipe-publishing";
 
@@ -76,6 +82,9 @@ async function captureRecipeVersion(
     authorId: string | null;
     status: RecipePublishStatus;
     scheduledPublishAt: string | null;
+    versionLabel?: string | null;
+    changeReason?: string | null;
+    brewingChanges?: string | null;
     metadata: Record<string, unknown>;
   },
 ) {
@@ -88,6 +97,10 @@ async function captureRecipeVersion(
     authorId: meta.authorId,
     status: meta.status,
     scheduledPublishAt: meta.scheduledPublishAt,
+    versionLabel: meta.versionLabel,
+    changeReason: meta.changeReason,
+    brewingChanges: meta.brewingChanges,
+    versionAuthorId: editorId,
     metadata: meta.metadata,
     snapshot,
   });
@@ -187,12 +200,15 @@ async function persistOwnerRecipe(
     };
   }
 
+  const officialFields = parseOfficialRecipeForm(formData);
+
   const payload = {
     ...recipeUpdatePayload(parsed.values, coffeeId, {
       includeSeo: true,
       status,
       scheduledPublishAt: resolvedSchedule,
     }),
+    ...officialRecipePayload(officialFields),
     slug: slugResult.slug,
     cover_image_url: coverImageUrl,
     cover_media_asset_id: coverMediaAssetId,
@@ -207,6 +223,11 @@ async function persistOwnerRecipe(
     pours,
     tagIds,
   );
+  const versionCaptureMeta = {
+    versionLabel: officialFields.versionLabel,
+    changeReason: officialFields.versionChangeReason,
+    brewingChanges: officialFields.versionBrewingChanges,
+  };
 
   if (!recipeId) {
     const { data: inserted, error } = await supabase
@@ -214,6 +235,7 @@ async function persistOwnerRecipe(
       .insert({
         ...payload,
         author_id: user.id,
+        recipe_kind: officialFields.recipeKind,
       })
       .select("id, slug, author_id")
       .single();
@@ -253,6 +275,7 @@ async function persistOwnerRecipe(
       authorId: inserted.author_id as string,
       status,
       scheduledPublishAt: resolvedSchedule,
+      ...versionCaptureMeta,
       metadata: versionMetadata,
     });
 
@@ -316,6 +339,7 @@ async function persistOwnerRecipe(
     authorId: existing?.author_id ?? null,
     status,
     scheduledPublishAt: resolvedSchedule,
+    ...versionCaptureMeta,
     metadata: versionMetadata,
   });
 
@@ -523,4 +547,52 @@ export async function restoreOwnerRecipeVersionAction(formData: FormData): Promi
 
   revalidateOwnerRecipePaths(recipeData.slug as string | undefined, recipeId);
   redirect(`/admin/recipes/${recipeId}/edit`);
+}
+
+export async function verifyOfficialRecipeFormAction(formData: FormData): Promise<void> {
+  const recipeId = String(formData.get("recipeId") ?? "");
+  const status = String(formData.get("status") ?? "verified") as
+    | "verified"
+    | "competition_tested"
+    | "testing"
+    | "draft";
+  await verifyOfficialRecipeAction(recipeId, status);
+}
+
+export async function duplicateOfficialRecipeFormAction(formData: FormData): Promise<void> {
+  const recipeId = String(formData.get("recipeId") ?? "");
+  await duplicateOfficialRecipeAction(recipeId);
+}
+
+export async function featureOfficialRecipeFormAction(formData: FormData): Promise<void> {
+  const recipeId = String(formData.get("recipeId") ?? "");
+  const featured = formData.get("featured") === "1";
+  await featureOfficialRecipeAction(recipeId, featured);
+}
+
+export async function verifyOfficialRecipeAction(
+  recipeId: string,
+  status: "verified" | "competition_tested" | "testing" | "draft" = "verified",
+): Promise<OwnerRecipeActionState> {
+  const { supabase, user } = await requireAdmin();
+  const result = await verifyOfficialRecipe(supabase, recipeId, user.id, status);
+  if (result.error) return { error: result.error };
+  revalidateOwnerRecipePaths(undefined, recipeId);
+  return { success: "Recipe verification updated." };
+}
+
+export async function duplicateOfficialRecipeAction(recipeId: string): Promise<OwnerRecipeActionState> {
+  const { supabase, user } = await requireAdmin();
+  const result = await duplicateOfficialRecipe(supabase, recipeId, user.id);
+  if (result.error || !result.id) return { error: result.error ?? "Duplicate failed." };
+  revalidateOwnerRecipePaths(undefined, result.id);
+  redirect(`/admin/recipes/${result.id}/edit`);
+}
+
+export async function featureOfficialRecipeAction(recipeId: string, featured: boolean): Promise<OwnerRecipeActionState> {
+  const { supabase } = await requireAdmin();
+  const { error } = await supabase.from("recipes").update({ featured }).eq("id", recipeId);
+  if (error) return { error: error.message };
+  revalidateOwnerRecipePaths(undefined, recipeId);
+  return { success: featured ? "Recipe featured." : "Recipe unfeatured." };
 }

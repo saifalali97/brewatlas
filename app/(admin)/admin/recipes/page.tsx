@@ -17,6 +17,8 @@ type PageProps = {
     device?: string;
     origin?: string;
     status?: string;
+    library?: string;
+    verification?: string;
     page?: string;
   }>;
 };
@@ -44,6 +46,8 @@ export default async function AdminRecipesPage({ searchParams }: PageProps) {
   const deviceId = params.device ?? "";
   const originId = params.origin ?? "";
   const status = params.status ?? "";
+  const library = params.library ?? "";
+  const verification = params.verification ?? "";
   const statusFilter =
     status === "draft" || status === "published" || status === "archived" || status === "scheduled"
       ? status
@@ -58,6 +62,8 @@ export default async function AdminRecipesPage({ searchParams }: PageProps) {
       deviceId: deviceId || undefined,
       originId: originId || undefined,
       status: statusFilter,
+      recipeKind: library || undefined,
+      verificationStatus: verification || undefined,
       page,
     }),
     getOwnerRecipeFilterOptions(supabase),
@@ -84,6 +90,8 @@ export default async function AdminRecipesPage({ searchParams }: PageProps) {
           deviceId,
           originId,
           published: status,
+          library,
+          verification,
         }}
       />
     </div>

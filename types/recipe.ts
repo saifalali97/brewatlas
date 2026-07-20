@@ -102,6 +102,21 @@ export type DbRecipeRow = {
   seo_title: string | null;
   seo_description: string | null;
   canonical_url: string | null;
+  recipe_kind: "official" | "community" | "imported" | "competition" | "archived";
+  verification_status: "draft" | "testing" | "verified" | "competition_tested" | "archived";
+  version_label: string;
+  recipe_science: string | null;
+  why_it_works: string | null;
+  common_mistakes: string | null;
+  adjustments: string | null;
+  faq: Array<{ question: string; answer: string }> | null;
+  pour_structure: string | null;
+  finish_notes: string | null;
+  grinder_recommendation: string | null;
+  water_recommendation: string | null;
+  equipment_notes: string | null;
+  verified_at: string | null;
+  verified_by: string | null;
   created_at: string;
   updated_at: string;
   brewing_methods: { id: string; name: string } | null;
@@ -155,6 +170,10 @@ export type RecipeListItem = FeaturedRecipe & {
   imageHeight?: number | null;
   /** Extra searchable strings not otherwise surfaced on the card, joined in for the search box. */
   searchableExtras?: string[];
+  recipeKind?: "official" | "community" | "imported" | "competition" | "archived";
+  verificationStatus?: "draft" | "testing" | "verified" | "competition_tested" | "archived";
+  versionLabel?: string;
+  isVerifiedOfficial?: boolean;
 };
 
 /** The full, richly-typed recipe shape used by the detail page and the create/edit form. */
@@ -238,6 +257,21 @@ export type RecipeFullDetail = {
   tips?: string | null;
   warnings?: string | null;
   aiSummary?: string | null;
+
+  recipeKind?: "official" | "community" | "imported" | "competition" | "archived";
+  verificationStatus?: "draft" | "testing" | "verified" | "competition_tested" | "archived";
+  versionLabel?: string;
+  recipeScience?: string | null;
+  whyItWorks?: string | null;
+  commonMistakes?: string | null;
+  adjustments?: string | null;
+  faq?: Array<{ question: string; answer: string }>;
+  pourStructure?: string | null;
+  finishNotes?: string | null;
+  grinderRecommendation?: string | null;
+  waterRecommendation?: string | null;
+  equipmentNotes?: string | null;
+  verifiedAt?: string | null;
 };
 
 export const RECIPE_IMAGE_PLACEHOLDER = "/images/fallback/coffee-placeholder.webp";

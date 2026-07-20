@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { OwnerRecipePublishToolbar } from "@/app/components/owner/recipes/owner-recipe-publish-toolbar";
+import { OfficialRecipeAdminFields } from "@/app/components/owner/recipes/official-recipe-admin-fields";
 import { RecipeMediaField } from "@/app/components/owner/media/recipe-media-field";
 import { RecipeImageFileInput } from "@/app/components/recipes/recipe-image-file-input";
 import { buttons, forms } from "@/lib/constants/styles";
@@ -245,6 +246,8 @@ export function RecipeForm({
           </div>
         </>
       ) : null}
+
+      {isOwner ? <OfficialRecipeAdminFields initialValues={initialValues} /> : null}
 
       <div>
         <label htmlFor="description" className={labelClass}>
