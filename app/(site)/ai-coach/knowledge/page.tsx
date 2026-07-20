@@ -30,7 +30,12 @@ export default async function KnowledgePage() {
           <h2 className={`${acTypography.eyebrow} mb-6`}>{p.quickQuestionsTitle}</h2>
           <QuickQuestions />
         </section>
-        <AiCoachChat isAuthenticated={ctx.isAuthenticated} canUseAi={ctx.canUseAi} paywallReason={ctx.paywallReason} />
+        <AiCoachChat
+          isAuthenticated={ctx.isAuthenticated}
+          canUseAi={ctx.canUseAi}
+          paywallReason={ctx.paywallReason}
+          streamingEnabled={ctx.streamingEnabled}
+        />
       </AiCoachShell>
     </SectionFrame>
   );

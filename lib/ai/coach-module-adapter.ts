@@ -1,10 +1,14 @@
-import { generateChatResponse } from "@/lib/ai/coach-knowledge-engine";
+import { answerKnowledgeQuestion, generateChatResponse } from "@/lib/ai/coach-knowledge-engine";
 import { diagnoseBrew, formatBrewDoctorResponse } from "@/lib/ai/brew-doctor-engine";
+import { buildCoachSystemPrompt, buildOpenAiInputMessages } from "@/lib/ai/coach-module-prompts";
+import { CoachModuleNotConfiguredError } from "@/lib/ai/coach-module-errors";
 import { formatGuidedBrewResponse, formatRecipeResponse, generatePersonalizedRecipe, runGuidedBrew } from "@/lib/ai/guided-brew-engine";
+import { OpenAiResponsesClient } from "@/lib/ai/openai-responses-client";
 import { analyzeBrewSession, formatSessionAnalyzerResponse } from "@/lib/ai/session-analyzer-engine";
 import type {
   AiCoachChatRequest,
   AiCoachChatResponse,
+  AiCoachChatStreamChunk,
   AiCoachMessage,
   AiCoachModuleAdapter,
   AiCoachPreferences,
@@ -54,44 +58,85 @@ export class RuleBasedCoachModuleAdapter implements AiCoachModuleAdapter {
   }
 
   async answerKnowledge(question: string): Promise<string> {
-    const { answerKnowledgeQuestion } = await import("@/lib/ai/coach-knowledge-engine");
     return answerKnowledgeQuestion(question);
   }
 }
 
-export class CoachModuleNotConfiguredError extends Error {
-  constructor(provider: string) {
-    super(
-      provider === "none"
-        ? "No AI Coach provider configured. Set AI_COACH_MODULE_PROVIDER to enable LLM-backed features."
-        : `The '${provider}' AI Coach adapter is structured but not yet wired to a real API.`,
-    );
-    this.name = "CoachModuleNotConfiguredError";
-  }
-}
+export { CoachModuleNotConfiguredError } from "@/lib/ai/coach-module-errors";
 
 export class OpenAICoachModuleAdapter implements AiCoachModuleAdapter {
   readonly provider = "openai";
-  constructor(private readonly apiKey: string | null) {}
+  readonly supportsStreaming = true;
 
-  async chat(): Promise<AiCoachChatResponse> {
-    if (!this.apiKey) throw new CoachModuleNotConfiguredError("openai");
-    throw new CoachModuleNotConfiguredError("openai");
+  private readonly ruleBasedFallback: RuleBasedCoachModuleAdapter;
+  private readonly client: OpenAiResponsesClient | null;
+
+  constructor(
+    private readonly apiKey: string | null,
+    private readonly preferences: AiCoachPreferences | null = null,
+  ) {
+    this.ruleBasedFallback = new RuleBasedCoachModuleAdapter(preferences);
+    this.client = apiKey ? new OpenAiResponsesClient({ apiKey }) : null;
   }
-  async brewDoctor(): Promise<BrewDoctorResult> {
-    throw new CoachModuleNotConfiguredError("openai");
+
+  private assertConfigured(): OpenAiResponsesClient {
+    if (!this.apiKey || !this.client) {
+      throw new CoachModuleNotConfiguredError("openai");
+    }
+    return this.client;
   }
-  async guidedBrew(): Promise<GuidedBrewResult> {
-    throw new CoachModuleNotConfiguredError("openai");
+
+  async chat(request: AiCoachChatRequest & { history: AiCoachMessage[] }): Promise<AiCoachChatResponse> {
+    const client = this.assertConfigured();
+    const content = await client.createResponse({
+      model: client.model,
+      instructions: buildCoachSystemPrompt(this.preferences, request.mode ?? "chat"),
+      input: buildOpenAiInputMessages(request.history, request.message),
+    });
+
+    return {
+      content,
+      conversationId: request.conversationId ?? "",
+      messageId: "",
+    };
   }
-  async generateRecipe(): Promise<GeneratedRecipe> {
-    throw new CoachModuleNotConfiguredError("openai");
+
+  async *chatStream(
+    request: AiCoachChatRequest & { history: AiCoachMessage[] },
+  ): AsyncIterable<AiCoachChatStreamChunk> {
+    const client = this.assertConfigured();
+    let fullText = "";
+
+    for await (const delta of client.streamResponse({
+      model: client.model,
+      instructions: buildCoachSystemPrompt(this.preferences, request.mode ?? "chat"),
+      input: buildOpenAiInputMessages(request.history, request.message),
+    })) {
+      fullText += delta;
+      yield { type: "delta", content: delta };
+    }
+
+    yield { type: "done", content: fullText };
   }
-  async analyzeSession(): Promise<SessionAnalyzerResult> {
-    throw new CoachModuleNotConfiguredError("openai");
+
+  async brewDoctor(input: BrewDoctorInput): Promise<BrewDoctorResult> {
+    return this.ruleBasedFallback.brewDoctor(input);
   }
-  async answerKnowledge(): Promise<string> {
-    throw new CoachModuleNotConfiguredError("openai");
+
+  async guidedBrew(input: GuidedBrewInput): Promise<GuidedBrewResult> {
+    return this.ruleBasedFallback.guidedBrew(input);
+  }
+
+  async generateRecipe(input: Parameters<AiCoachModuleAdapter["generateRecipe"]>[0]): Promise<GeneratedRecipe> {
+    return this.ruleBasedFallback.generateRecipe(input);
+  }
+
+  async analyzeSession(input: SessionAnalyzerInput): Promise<SessionAnalyzerResult> {
+    return this.ruleBasedFallback.analyzeSession(input);
+  }
+
+  async answerKnowledge(question: string): Promise<string> {
+    return this.ruleBasedFallback.answerKnowledge(question);
   }
 }
 
@@ -179,12 +224,21 @@ const API_KEY_ENV: Record<Exclude<CoachModuleProvider, "none" | "rule-based">, s
   openrouter: "OPENROUTER_API_KEY",
 };
 
+export function getCoachModuleProvider(): CoachModuleProvider {
+  return (process.env.AI_COACH_MODULE_PROVIDER ?? "rule-based").toLowerCase() as CoachModuleProvider;
+}
+
+export function isCoachModuleStreamingEnabled(): boolean {
+  const provider = getCoachModuleProvider();
+  return provider === "openai" && Boolean(process.env[API_KEY_ENV.openai]);
+}
+
 export function getCoachModuleAdapter(preferences?: AiCoachPreferences | null): AiCoachModuleAdapter {
-  const provider = (process.env.AI_COACH_MODULE_PROVIDER ?? "rule-based").toLowerCase() as CoachModuleProvider;
+  const provider = getCoachModuleProvider();
 
   switch (provider) {
     case "openai":
-      return new OpenAICoachModuleAdapter(process.env[API_KEY_ENV.openai] ?? null);
+      return new OpenAICoachModuleAdapter(process.env[API_KEY_ENV.openai] ?? null, preferences ?? null);
     case "anthropic":
       return new AnthropicCoachModuleAdapter(process.env[API_KEY_ENV.anthropic] ?? null);
     case "gemini":

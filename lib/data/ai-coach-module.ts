@@ -215,7 +215,11 @@ export async function createConversation(
     .insert({ user_id: userId, title, mode })
     .select("*")
     .single();
-  if (error || !data) throw new Error("Failed to create conversation.");
+  if (error || !data) {
+    const detail = error?.message ?? "unknown error";
+    const code = error?.code ? ` (${error.code})` : "";
+    throw new Error(`Failed to create conversation${code}: ${detail}`);
+  }
   return mapConversation(data as DbConversation);
 }
 

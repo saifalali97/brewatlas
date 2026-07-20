@@ -207,6 +207,10 @@ export type AiCoachChatResponse = {
   metadata?: Record<string, unknown>;
 };
 
+export type AiCoachChatStreamChunk =
+  | { type: "delta"; content: string }
+  | { type: "done"; content: string };
+
 export type AiCoachAnalyticsEvent =
   | "chat_started"
   | "recipe_generated"
@@ -218,7 +222,11 @@ export type AiCoachAnalyticsEvent =
 /** Adapter interface for future LLM providers. */
 export type AiCoachModuleAdapter = {
   readonly provider: string;
+  readonly supportsStreaming?: boolean;
   chat(request: AiCoachChatRequest & { history: AiCoachMessage[] }): Promise<AiCoachChatResponse>;
+  chatStream?(
+    request: AiCoachChatRequest & { history: AiCoachMessage[] },
+  ): AsyncIterable<AiCoachChatStreamChunk>;
   brewDoctor(input: BrewDoctorInput): Promise<BrewDoctorResult>;
   guidedBrew(input: GuidedBrewInput): Promise<GuidedBrewResult>;
   generateRecipe(input: RecipeGeneratorInput): Promise<GeneratedRecipe>;

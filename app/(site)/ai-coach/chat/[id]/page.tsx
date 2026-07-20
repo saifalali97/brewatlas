@@ -61,6 +61,7 @@ export default async function AiCoachChatThreadPage({ params }: Props) {
           isAuthenticated={ctx.isAuthenticated}
           canUseAi={ctx.canUseAi}
           paywallReason={ctx.paywallReason}
+          streamingEnabled={ctx.streamingEnabled}
         />
       </AiCoachShell>
     </SectionFrame>

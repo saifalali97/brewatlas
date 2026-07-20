@@ -53,6 +53,7 @@ export default async function AiCoachChatPage({ searchParams }: Props) {
             canUseAi={ctx.canUseAi}
             paywallReason={ctx.paywallReason}
             quickStart={q}
+            streamingEnabled={ctx.streamingEnabled}
           />
         </div>
       </AiCoachShell>

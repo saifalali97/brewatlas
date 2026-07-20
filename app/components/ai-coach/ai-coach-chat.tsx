@@ -11,6 +11,7 @@ import {
 import { MarkdownRenderer } from "@/app/components/ai-coach/markdown-renderer";
 import { AiCoachPaywall } from "@/app/components/ai-coach/ai-coach-paywall";
 import { trackAiCoachEvent } from "@/lib/analytics/ai-coach";
+import { streamCoachChatMessage } from "@/lib/ai/coach-chat-stream";
 import { cards, forms } from "@/lib/constants/styles";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import {
@@ -27,6 +28,7 @@ type AiCoachChatProps = {
   canUseAi: boolean;
   paywallReason?: string;
   quickStart?: string;
+  streamingEnabled?: boolean;
 };
 
 export function AiCoachChat({
@@ -36,6 +38,7 @@ export function AiCoachChat({
   canUseAi,
   paywallReason,
   quickStart,
+  streamingEnabled = false,
 }: AiCoachChatProps) {
   const { t } = useTranslations();
   const [messages, setMessages] = useState<AiCoachMessage[]>(initialMessages);
@@ -69,6 +72,44 @@ export function AiCoachChat({
       createdAt: new Date().toISOString(),
     };
     setMessages((prev) => [...prev, optimisticUser]);
+
+    if (streamingEnabled) {
+      setIsTyping(false);
+      const assistantId = `temp-assistant-${Date.now()}`;
+      const optimisticAssistant: AiCoachMessage = {
+        id: assistantId,
+        conversationId: conversationId ?? "",
+        userId: "",
+        role: "assistant",
+        content: "",
+        feedback: null,
+        metadata: {},
+        createdAt: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, optimisticAssistant]);
+
+      try {
+        const result = await streamCoachChatMessage(message, conversationId, {
+          onMeta: (nextConversationId) => setConversationId(nextConversationId),
+          onDelta: (delta) => {
+            setMessages((prev) =>
+              prev.map((entry) =>
+                entry.id === assistantId ? { ...entry, content: entry.content + delta } : entry,
+              ),
+            );
+          },
+        });
+        setConversationId(result.conversationId);
+        setMessages(result.messages);
+        trackAiCoachEvent("chat_started", { conversationId: result.conversationId });
+      } catch (streamError) {
+        setError(streamError instanceof Error ? streamError.message : "Something went wrong.");
+        setMessages((prev) => prev.filter((m) => m.id !== optimisticUser.id && m.id !== assistantId));
+      } finally {
+        setIsTyping(false);
+      }
+      return;
+    }
 
     startTransition(async () => {
       const result = await sendChatMessageAction(message, conversationId);
@@ -154,7 +195,14 @@ export function AiCoachChat({
                   }`}
                 >
                   {msg.role === "assistant" ? (
-                    <MarkdownRenderer content={msg.content} />
+                    msg.content ? (
+                      <MarkdownRenderer content={msg.content} />
+                    ) : (
+                      <div className="flex items-center gap-2 text-sm text-stone-500">
+                        <Loader2 className="h-4 w-4 animate-spin text-ba-bronze" />
+                        <span>{t("aiCoachModule.typing")}</span>
+                      </div>
+                    )
                   ) : (
                     <p className="text-sm leading-relaxed">{msg.content}</p>
                   )}
