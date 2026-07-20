@@ -25,6 +25,8 @@ import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getRecipeSlug } from "@/lib/data/recipes";
 import { getUserFavoriteRecipes, getUserRecipes } from "@/lib/data/db-recipes";
 import { AccountSubscriptionSummary } from "@/app/components/subscription/account-subscription-summary";
+import { BrewSessionDashboardWidgets } from "@/app/components/personal/brew-session-dashboard-widgets";
+import { getBrewSessionUserAnalytics } from "@/lib/data/brew-sessions";
 import { getMembershipSummary } from "@/lib/data/membership";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
@@ -77,7 +79,7 @@ export default async function DashboardPage() {
 
   await ensureProfile(supabase, data.user);
 
-  const [{ data: profile }, favoriteRecipes, ownRecipes, membership] = await Promise.all([
+  const [{ data: profile }, favoriteRecipes, ownRecipes, membership, brewAnalytics] = await Promise.all([
     supabase
       .from("profiles")
       .select("full_name, avatar_url, country, bio, role, brewing_methods(name), devices(name)")
@@ -86,6 +88,7 @@ export default async function DashboardPage() {
     getUserFavoriteRecipes(supabase, data.user.id),
     getUserRecipes(supabase, data.user.id),
     getMembershipSummary(supabase, data.user.id),
+    getBrewSessionUserAnalytics(supabase, data.user.id),
   ]);
 
   const displayName = profile?.full_name || data.user.email || dictionary.communityPage.anonymousBrewer;
@@ -109,6 +112,7 @@ export default async function DashboardPage() {
   const quickLinks = [
     { icon: Sparkles, label: d.aiCoachLabel, description: d.aiCoachDescription, href: "/coach" },
     { icon: Clock, label: d.brewHistoryLabel, description: d.brewHistoryDescription, href: "/account/brew-history" },
+    { icon: Coffee, label: d.brewSessionsLabel, description: d.brewSessionsDescription, href: "/account/brew-sessions" },
     { icon: Users, label: d.communityLabel, description: d.communityDescription, href: "/community" },
     { icon: Coffee, label: d.premiumLabel, description: d.premiumDescription, href: "/premium" },
     { icon: CreditCard, label: d.subscriptionLabel, description: d.subscriptionDescription, href: "/account/subscription" },
@@ -191,6 +195,21 @@ export default async function DashboardPage() {
       </div>
 
       <AccountSubscriptionSummary membership={membership} dictionary={dictionary} locale={locale} />
+
+      <BrewSessionDashboardWidgets
+        analytics={brewAnalytics}
+        labels={{
+          recentBrews: dictionary.brewSessionsPage.widgetRecentBrews,
+          bestBrew: dictionary.brewSessionsPage.widgetBestBrew,
+          favoriteCoffee: dictionary.brewSessionsPage.widgetFavoriteCoffee,
+          brewStreak: dictionary.brewSessionsPage.widgetBrewStreak,
+          averageRating: dictionary.brewSessionsPage.widgetAverageRating,
+          favoriteMethod: dictionary.brewSessionsPage.widgetFavoriteMethod,
+          favoriteOrigin: dictionary.brewSessionsPage.widgetFavoriteOrigin,
+          ratingOutOfFive: dictionary.brewSessionsPage.ratingOutOfFive,
+          notSet: d.notSet,
+        }}
+      />
 
       <div className="mt-16">
         <h2 className={acTypography.h2}>{d.quickLinksTitle}</h2>
