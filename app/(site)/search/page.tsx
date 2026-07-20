@@ -27,6 +27,8 @@ function buildSearchTitle(dictionary: Dictionary, filters: SearchFilters): strin
     const categoryLabels: Record<SearchFilters["category"], string> = {
       all: "",
       recipes: dictionary.searchPage.categoryRecipes,
+      users: dictionary.searchPage.categoryUsers,
+      collections: dictionary.searchPage.categoryCollections,
       roasters: dictionary.searchPage.categoryRoasters,
       origins: dictionary.searchPage.categoryOrigins,
       devices: dictionary.searchPage.categoryDevices,

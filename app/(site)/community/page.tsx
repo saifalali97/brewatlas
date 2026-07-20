@@ -7,6 +7,11 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import { getHighestRatedRecipesLeaderboard, getTopBrewersLeaderboard, getActivityFeed } from "@/lib/data/community";
+import {
+  getFeaturedCafes,
+  getFeaturedRoasters,
+  getFeaturedUsers,
+} from "@/lib/data/community-platform";
 import { CommunityActivityFeed } from "@/app/components/profile/community-activity-feed";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { translate } from "@/lib/i18n/format";
@@ -29,11 +34,15 @@ export default async function CommunityPage() {
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
   const p = dictionary.communityPage;
+  const cp = dictionary.communityPlatformPage;
   const supabase = await createClient();
-  const [topBrewers, topRecipes, activityFeed] = await Promise.all([
+  const [topBrewers, topRecipes, activityFeed, featuredUsers, featuredRoasters, featuredCafes] = await Promise.all([
     getTopBrewersLeaderboard(supabase, 8),
     getHighestRatedRecipesLeaderboard(supabase, 6),
     getActivityFeed(supabase, 10),
+    getFeaturedUsers(supabase, 4),
+    getFeaturedRoasters(supabase, 4),
+    getFeaturedCafes(supabase, 4),
   ]);
 
   return (
@@ -45,6 +54,75 @@ export default async function CommunityPage() {
         title={dictionary.community.title}
         description={p.description}
       />
+
+      <div className="mb-10 flex flex-wrap gap-3">
+        <Link
+          href="/community/leaderboards"
+          className={`inline-flex h-10 items-center rounded-full border border-ba-espresso/12 px-5 text-sm font-medium text-ac-espresso hover:border-ba-bronze/30 ${acFocus.ring}`}
+        >
+          {cp.viewAllLeaderboards}
+        </Link>
+        <Link
+          href="/community/trending"
+          className={`inline-flex h-10 items-center rounded-full border border-ba-espresso/12 px-5 text-sm font-medium text-ac-espresso hover:border-ba-bronze/30 ${acFocus.ring}`}
+        >
+          {cp.viewTrending}
+        </Link>
+        <Link
+          href="/community/following"
+          className={`inline-flex h-10 items-center rounded-full border border-ba-espresso/12 px-5 text-sm font-medium text-ac-espresso hover:border-ba-bronze/30 ${acFocus.ring}`}
+        >
+          {cp.viewFollowingFeed}
+        </Link>
+      </div>
+
+      {(featuredUsers.length > 0 || featuredRoasters.length > 0 || featuredCafes.length > 0) && (
+        <div className="mb-14 grid gap-8 lg:grid-cols-3">
+          {featuredUsers.length > 0 ? (
+            <section>
+              <h2 className={acTypography.eyebrow}>{cp.featuredUsersTitle}</h2>
+              <ul className="mt-4 list-none space-y-3 p-0">
+                {featuredUsers.map((user) => (
+                  <li key={user.id}>
+                    <Link href={`/users/${user.userId}`} className={`text-sm font-medium text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}>
+                      {user.displayName ?? p.anonymousBrewer}
+                    </Link>
+                    {user.headline ? <p className="text-xs text-ac-espresso/70">{user.headline}</p> : null}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+          {featuredRoasters.length > 0 ? (
+            <section>
+              <h2 className={acTypography.eyebrow}>{cp.featuredRoastersTitle}</h2>
+              <ul className="mt-4 list-none space-y-3 p-0">
+                {featuredRoasters.map((roaster) => (
+                  <li key={roaster.id} className="text-sm text-ac-espresso">
+                    {roaster.name}
+                    {roaster.headline ? <p className="text-xs text-ac-espresso/70">{roaster.headline}</p> : null}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+          {featuredCafes.length > 0 ? (
+            <section>
+              <h2 className={acTypography.eyebrow}>{cp.featuredCafesTitle}</h2>
+              <ul className="mt-4 list-none space-y-3 p-0">
+                {featuredCafes.map((cafe) => (
+                  <li key={cafe.id} className="text-sm text-ac-espresso">
+                    {cafe.name}
+                    {cafe.city || cafe.country ? (
+                      <p className="text-xs text-ac-espresso/70">{[cafe.city, cafe.country].filter(Boolean).join(", ")}</p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </div>
+      )}
 
       <div className="grid gap-12 lg:grid-cols-2">
         <div>

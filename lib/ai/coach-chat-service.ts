@@ -30,6 +30,7 @@ export type CoachChatTurnResult =
       supabase: Awaited<ReturnType<typeof createClient>>;
       officialRecipesContext: string;
       brewingSetupContext: string;
+      communityContext: string;
     }
   | { ok: false; error: string; status?: number };
 
@@ -85,6 +86,8 @@ export async function prepareCoachChatTurn(
   const officialRecipesContext = buildOfficialRecipeCoachContext(officialMatches);
   const brewingSetup = await getUserBrewingSetup(supabase, userId);
   const brewingSetupContext = buildBrewingSetupCoachContext(brewingSetup);
+  const { buildCommunityCoachContext } = await import("@/lib/ai/community-coach");
+  const communityContext = await buildCommunityCoachContext(supabase, userId);
 
   return {
     ok: true,
@@ -95,6 +98,7 @@ export async function prepareCoachChatTurn(
     supabase,
     officialRecipesContext,
     brewingSetupContext,
+    communityContext,
   };
 }
 
@@ -147,6 +151,7 @@ export async function runCoachChatCompletion(
       context: {
         officialRecipes: prepared.officialRecipesContext,
         brewingSetup: prepared.brewingSetupContext,
+        community: prepared.communityContext,
       },
     });
 

@@ -20,6 +20,11 @@ import {
   getUserBadges,
   getUserReviewsWritten,
 } from "@/lib/data/community";
+import {
+  getProfileCommunityStats,
+  getPublicBrewSessionsForUser,
+  getUserAchievements,
+} from "@/lib/data/community-platform";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { translate, interpolate } from "@/lib/i18n/format";
@@ -30,7 +35,7 @@ import type { Dictionary } from "@/lib/i18n/types";
 import type { UserBadge } from "@/types/community";
 import type { RecipeListItem } from "@/types/recipe";
 
-type PublicProfileTab = "recipes" | "reviews" | "activity";
+type PublicProfileTab = "recipes" | "reviews" | "activity" | "brews";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -38,7 +43,7 @@ type PageProps = {
 };
 
 function parseTab(value: string | undefined): PublicProfileTab {
-  if (value === "reviews" || value === "activity") return value;
+  if (value === "reviews" || value === "activity" || value === "brews") return value;
   return "recipes";
 }
 
@@ -138,19 +143,25 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
   const isOwner = viewerId === profile.id;
   const currentPath = `/users/${id}${tab !== "recipes" ? `?tab=${tab}` : ""}`;
 
-  const [publishedRecipes, reviewsWritten, activity, badges, membership] = await Promise.all([
+  const [publishedRecipes, reviewsWritten, activity, badges, membership, communityStats, achievements, publicBrewSessions] =
+    await Promise.all([
     getUserPublishedRecipes(supabase, id, { limit: 24 }),
     getUserReviewsWritten(supabase, id, { limit: 12 }),
     getUserActivityFeed(supabase, id, 20),
     getUserBadges(supabase, id),
     getMembershipSummary(supabase, id),
+    getProfileCommunityStats(supabase, id),
+    getUserAchievements(supabase, id),
+    getPublicBrewSessionsForUser(supabase, id, 12),
   ]);
 
   const isPremiumMember = membership.isPremium;
 
+  const cp = dictionary.communityPlatformPage;
   const displayName = profile.displayName ?? labels.anonymousMember;
 
-  const tabHref = (nextTab: PublicProfileTab) => (nextTab === "recipes" ? `/users/${id}` : `/users/${id}?tab=${nextTab}`);
+  const tabHref = (nextTab: PublicProfileTab) =>
+    nextTab === "recipes" ? `/users/${id}` : `/users/${id}?tab=${nextTab}`;
 
   return (
     <SectionFrame id="public-profile" ariaLabelledBy="public-profile-heading" padding="compact">
@@ -190,11 +201,13 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
               )}
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-sm text-ac-espresso">
-                <span className="inline-flex items-center gap-1.5">
+                <Link href={`/users/${id}/followers`} className="inline-flex items-center gap-1.5 hover:text-ba-bronze">
                   <Users className="h-4 w-4" aria-hidden />
                   {interpolate(labels.followersCountTemplate, { count: profile.stats.followersCount })}
-                </span>
-                <span>{interpolate(labels.followingCountTemplate, { count: profile.stats.followingCount })}</span>
+                </Link>
+                <Link href={`/users/${id}/following`} className="hover:text-ba-bronze">
+                  {interpolate(labels.followingCountTemplate, { count: profile.stats.followingCount })}
+                </Link>
               </div>
 
               <div className="mt-5 flex flex-wrap justify-center gap-3">
@@ -216,10 +229,14 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
             <div className="mt-6 space-y-2">
               <FavoriteRow label={labels.favoriteBrewMethod} value={profile.favoriteBrewMethod?.name ?? null} />
               <FavoriteRow label={labels.favoriteDevice} value={profile.favoriteBrewer?.name ?? null} />
-              <FavoriteRow label={labels.favoriteGrinder} value={profile.favoriteGrinder?.name ?? null} />
+              <FavoriteRow label={labels.favoriteGrinder} value={profile.favoriteGrinder?.name ?? communityStats.favoriteGrinder} />
               <FavoriteRow label={labels.favoriteOrigin} value={profile.favoriteOrigin?.name ?? null} />
-              <FavoriteRow label={labels.favoriteCoffee} value={profile.favoriteCoffee?.name ?? null} />
+              <FavoriteRow label={labels.favoriteCoffee} value={profile.favoriteCoffee?.name ?? communityStats.favoriteCoffee} />
               <FavoriteRow label={labels.favoriteRoaster} value={profile.favoriteRoaster?.name ?? null} />
+              <FavoriteRow label={cp.favoriteMethod} value={communityStats.favoriteMethod} />
+              {communityStats.averageRating !== null ? (
+                <FavoriteRow label={cp.averageRating} value={`${communityStats.averageRating}/5`} />
+              ) : null}
               {profile.ownsXbloom && (
                 <div className={`px-4 py-3 text-center text-xs font-medium text-ac-espresso ${surfaces.lightInset}`}>
                   {dictionary.profile.ownsXbloom}
@@ -236,14 +253,40 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
           </div>
 
           <BadgesRow badges={badges} labels={labels} />
+
+          {achievements.length > 0 ? (
+            <div className="mt-6">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ac-espresso">{cp.achievementsTitle}</h2>
+              <ul className="mt-3 space-y-2">
+                {achievements.slice(0, 6).map((achievement) => (
+                  <li key={achievement.id} className="rounded-xl border border-ba-espresso/08 bg-ba-pearl px-4 py-3 text-sm">
+                    <p className="font-medium text-ac-espresso">{achievement.title}</p>
+                    <p className="mt-1 text-xs text-ac-espresso/70">{achievement.description}</p>
+                    <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-ba-sand/60">
+                      <div
+                        className="h-full rounded-full bg-ba-gold/70"
+                        style={{ width: `${Math.min(100, Math.round((achievement.progress / achievement.target) * 100))}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </aside>
 
         <div>
           <nav className="mb-6 flex flex-wrap gap-2" aria-label={labels.tabsAriaLabel}>
-            {(["recipes", "reviews", "activity"] as const).map((item) => {
+            {(["recipes", "reviews", "brews", "activity"] as const).map((item) => {
               const isActive = tab === item;
               const label =
-                item === "recipes" ? labels.tabRecipes : item === "reviews" ? labels.tabReviews : labels.tabActivity;
+                item === "recipes"
+                  ? labels.tabRecipes
+                  : item === "reviews"
+                    ? labels.tabReviews
+                    : item === "brews"
+                      ? cp.brewSessionsTitle
+                      : labels.tabActivity;
               return (
                 <Link
                   key={item}
@@ -318,6 +361,41 @@ export default async function PublicProfilePage({ params, searchParams }: PagePr
                       {review.reviewText && (
                         <p className="mt-3 text-sm leading-relaxed text-ac-espresso">{review.reviewText}</p>
                       )}
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          {tab === "brews" && (
+            <section aria-labelledby="profile-brews-heading">
+              <h2 id="profile-brews-heading" className="sr-only">
+                {cp.brewSessionsTitle}
+              </h2>
+              {publicBrewSessions.length === 0 ? (
+                <p className="text-sm text-ac-espresso">{dictionary.communityPage.noActivityYet}</p>
+              ) : (
+                <div className="space-y-4">
+                  {publicBrewSessions.map((session) => (
+                    <article
+                      key={session.id}
+                      className="rounded-[1.25rem] border border-ba-espresso/08 bg-ba-sand/30 p-5"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <p className="font-medium text-ac-espresso">{session.coffeeName ?? cp.brewSessionsTitle}</p>
+                          {session.brewMethod ? (
+                            <p className="mt-1 text-xs text-ac-espresso/70">{session.brewMethod}</p>
+                          ) : null}
+                        </div>
+                        {session.rating !== null ? (
+                          <span className="text-sm font-medium text-ac-espresso">{session.rating}/5</span>
+                        ) : null}
+                      </div>
+                      <RippleLink href={`/account/brew-sessions/${session.id}`} className={`${buttons.secondary} mt-3 text-xs`}>
+                        {labels.viewRecipeCta}
+                      </RippleLink>
                     </article>
                   ))}
                 </div>

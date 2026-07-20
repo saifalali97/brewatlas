@@ -26,6 +26,7 @@ export const adminCopy = {
     origins: "Coffee Origins",
     roasters: "Roasters",
     reviews: "Reviews",
+    community: "Community",
     subscriptions: "Subscriptions",
     analytics: "Analytics",
     aiCoach: "AI Coach",
@@ -114,6 +115,12 @@ export const adminCopy = {
   analytics: {
     title: "Analytics",
     description: "Platform metrics, growth trends, and engagement insights.",
+  },
+  community: {
+    title: "Community moderation",
+    description: "Monitor community engagement, moderation reports, and top contributors.",
+    panelTitle: "Community analytics (30 days)",
+    panelDescription: "Aggregate community metrics across brews, comments, likes, and followers.",
   },
   settings: {
     title: "Settings",

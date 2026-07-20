@@ -1,3 +1,4 @@
+import { searchCommunityUsers, searchPublicCollections } from "@/lib/data/community-platform";
 import { resolveDeviceImage, resolveOriginImage } from "@/lib/media/page-images";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
@@ -407,6 +408,8 @@ export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<Sear
   const needsDevices = category === "all" || category === "devices";
   const needsVarieties = category === "all" || category === "varieties";
   const needsFlavors = category === "all" || category === "flavors";
+  const needsUsers = category === "all" || category === "users";
+  const needsCollections = category === "all" || category === "collections";
 
   const [
     staticFiltered,
@@ -418,6 +421,8 @@ export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<Sear
     varieties,
     flavors,
     sortMaps,
+    users,
+    collections,
   ] = await Promise.all([
     needsRecipes ? Promise.resolve(filterStaticRecipes(staticRecipes, filters)) : Promise.resolve([]),
     needsRoasters ? searchDbRoasters(supabase, filters.q, filters.country) : Promise.resolve([]),
@@ -428,6 +433,8 @@ export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<Sear
     needsVarieties ? searchVarieties(supabase, filters) : Promise.resolve([]),
     needsFlavors ? searchFlavors(supabase, filters) : Promise.resolve([]),
     needsRecipes ? loadRecipeSortMaps(supabase) : Promise.resolve({ ratingById: new Map(), favoriteCounts: new Map() }),
+    needsUsers ? searchCommunityUsers(supabase, filters.q, previewLimit) : Promise.resolve([]),
+    needsCollections ? searchPublicCollections(supabase, filters.q, previewLimit) : Promise.resolve([]),
   ]);
 
   let recipes: RecipeListItem[] = [];
@@ -497,6 +504,23 @@ export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<Sear
 
   return {
     recipes,
+    users: users.map((user) => ({
+      id: user.id,
+      fullName: user.fullName,
+      avatarUrl: user.avatarUrl,
+      country: user.country,
+      bio: user.bio,
+      followersCount: user.followersCount,
+      brewScore: user.brewScore,
+    })),
+    collections: collections.map((collection) => ({
+      id: collection.id,
+      name: collection.name,
+      description: collection.description,
+      shareSlug: collection.shareSlug,
+      ownerName: collection.ownerName,
+      recipeCount: collection.recipeCount,
+    })),
     roasters,
     origins,
     devices,

@@ -56,10 +56,14 @@ export function buildCoachSystemPrompt(
   mode: AiCoachMode = "chat",
   officialRecipeContext?: string,
   brewingSetupContext?: string,
+  communityContext?: string,
 ): string {
   let base = BASE_SYSTEM_PROMPT + formatPreferencesBlock(preferences) + modeHint(mode);
   if (brewingSetupContext?.trim()) {
     base = `${base}\n\n${brewingSetupContext.trim()}`;
+  }
+  if (communityContext?.trim()) {
+    base = `${base}\n\n${communityContext.trim()}`;
   }
   if (!officialRecipeContext?.trim()) return base;
   return `${base}\n\n## BrewAtlas Official Recipe Library\n${officialRecipeContext}`;

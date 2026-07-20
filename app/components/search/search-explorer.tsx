@@ -32,6 +32,8 @@ type SearchExplorerProps = {
 const categoryLabelKeys = {
   all: "searchPage.categoryAll",
   recipes: "searchPage.categoryRecipes",
+  users: "searchPage.categoryUsers",
+  collections: "searchPage.categoryCollections",
   roasters: "searchPage.categoryRoasters",
   origins: "searchPage.categoryOrigins",
   devices: "searchPage.categoryDevices",

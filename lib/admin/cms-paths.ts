@@ -31,6 +31,7 @@ export const ADMIN_CMS_PATHS = {
   homepageSections: adminCmsPath("homepage/sections"),
   users: adminCmsPath("users"),
   reviews: adminCmsPath("reviews"),
+  community: adminCmsPath("community"),
   subscriptions: adminCmsPath("subscriptions"),
   analytics: adminCmsPath("analytics"),
   aiCoach: adminCmsPath("ai-coach"),

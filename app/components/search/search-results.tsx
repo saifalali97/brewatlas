@@ -55,6 +55,8 @@ export function SearchResultsView({
 
   const hasAnyResults =
     results.recipes.length > 0 ||
+    results.users.length > 0 ||
+    results.collections.length > 0 ||
     results.roasters.length > 0 ||
     results.origins.length > 0 ||
     results.devices.length > 0 ||
@@ -122,6 +124,51 @@ export function SearchResultsView({
               );
             })}
           </Folio>
+        </section>
+      ) : null}
+
+      {(showAllSections || results.users.length > 0) && results.users.length > 0 ? (
+        <section aria-labelledby="search-users-heading">
+          <SectionHeading
+            id="search-users-heading"
+            title={t("searchPage.sectionUsers")}
+            count={results.users.length}
+            href={showAllSections ? "/search?cat=users" : undefined}
+          />
+          <ul className="space-y-3">
+            {results.users.map((user) => (
+              <li key={user.id}>
+                <Link href={`/users/${user.id}`} className={`${acTypography.folioTitle} hover:text-ba-bronze ${acFocus.ring}`}>
+                  {user.fullName ?? t("publicProfilePage.anonymousMember")}
+                </Link>
+                {user.country ? <p className={acTypography.folioMeta}>{user.country}</p> : null}
+                {user.bio ? <p className={`${acTypography.body} mt-1 line-clamp-2`}>{user.bio}</p> : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {(showAllSections || results.collections.length > 0) && results.collections.length > 0 ? (
+        <section aria-labelledby="search-collections-heading">
+          <SectionHeading
+            id="search-collections-heading"
+            title={t("searchPage.sectionCollections")}
+            count={results.collections.length}
+            href={showAllSections ? "/search?cat=collections" : undefined}
+          />
+          <ul className="space-y-3">
+            {results.collections.map((collection) => (
+              <li key={collection.id} className="rounded-xl border border-ba-espresso/08 bg-ba-sand/20 px-4 py-3">
+                <p className="font-medium text-ac-espresso">{collection.name}</p>
+                {collection.ownerName ? <p className={`${acTypography.folioMeta} mt-1`}>{collection.ownerName}</p> : null}
+                {collection.description ? (
+                  <p className={`${acTypography.body} mt-2 line-clamp-2`}>{collection.description}</p>
+                ) : null}
+                <p className={`${acTypography.caption} mt-2`}>{collection.recipeCount} recipes</p>
+              </li>
+            ))}
+          </ul>
         </section>
       ) : null}
 
