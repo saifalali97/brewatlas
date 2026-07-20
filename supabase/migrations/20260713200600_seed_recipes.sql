@@ -14,13 +14,13 @@ declare
   water_ids uuid[];
   coffee_ids uuid[];
   cover_images text[] := array[
-    '/images/recipes/ethiopian-pour-over.png', '/images/recipes/chemex.png', '/images/recipes/cold-brew.png',
-    '/images/recipes/cortado.png', '/images/recipes/costa-rica-aeropress.png', '/images/recipes/espresso-tonic.png',
-    '/images/recipes/rwanda-v60.png', '/images/recipes/sumatra-moka.png', '/images/recipes/kalita-wave.png',
-    '/images/recipes/clever-dripper.png', '/images/recipes/siphon-brew.png', '/images/recipes/moka-pot-classic.png',
-    '/images/recipes/espresso-shot.png', '/images/recipes/cold-brew-tower.png', '/images/recipes/coffee-beans-macro.png',
-    '/images/recipes/cupping-flight.png', '/images/recipes/origami-dripper.png', '/images/recipes/french-press-pour.png',
-    '/images/recipes/aeropress-brew.png', '/images/recipes/roastery-bags.png'
+    '/images/methods/pour-over.webp', '/images/recipes/chemex.webp', '/images/recipes/cold-brew.webp',
+    '/images/recipes/espresso-shot.webp', '/images/recipes/costa-rica-aeropress.webp', '/images/recipes/espresso-tonic.webp',
+    '/images/recipes/origami-dripper.webp', '/images/recipes/moka-pot-classic.webp', '/images/methods/pour-over.webp',
+    '/images/recipes/chemex.webp', '/images/methods/siphon.webp', '/images/recipes/moka-pot-classic.webp',
+    '/images/recipes/espresso-shot.webp', '/images/recipes/cold-brew.webp', '/images/recipes/coffee-beans-macro.webp',
+    '/images/recipes/cupping-flight.webp', '/images/recipes/origami-dripper.webp', '/images/methods/french-press.webp',
+    '/images/methods/siphon.webp', '/images/roasters/la-cabra.webp'
   ];
 
   i int;

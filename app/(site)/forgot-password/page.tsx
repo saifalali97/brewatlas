@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/app/components/ui/page-header";
+import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { SurfaceCard } from "@/app/components/ui/surface-card";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
@@ -26,7 +28,8 @@ export default async function ForgotPasswordPage() {
 
   return (
     <SectionFrame id="forgot-password-page" ariaLabelledBy="forgot-password-page-heading" padding="compact">
-<PageHeader headingId="forgot-password-page-heading"
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.authRecovery} alt="" />
+      <PageHeader headingId="forgot-password-page-heading"
         eyebrow={dictionary.auth.accountRecoveryEyebrow}
         title={dictionary.auth.forgotPasswordTitle}
         description={dictionary.auth.forgotPasswordDescription}

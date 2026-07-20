@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
@@ -27,6 +29,16 @@ export default async function SiteNotFound() {
       id="main-content"
       className="flex min-h-[70svh] flex-col items-center justify-center bg-ac-limestone px-6 py-24 text-center"
     >
+      <div className="relative mb-10 aspect-[16/10] w-full max-w-lg overflow-hidden rounded-sm">
+        <OptimizedImage
+          src={PAGE_EDITORIAL_IMAGES.notFound}
+          alt=""
+          fill
+          sizes="512px"
+          className="object-cover object-center"
+          priority
+        />
+      </div>
       <p className={acTypography.eyebrow}>404</p>
       <h1 className={`${acTypography.displayLg} mt-6 max-w-lg`}>{e.notFoundTitle}</h1>
       <p className={`${acTypography.body} mx-auto mt-6 max-w-md`}>{e.notFoundDescription}</p>

@@ -46,7 +46,7 @@ export default async function DevicesPage() {
       <div className="mb-16 grid gap-8 lg:grid-cols-12 lg:items-center">
         <div className="relative aspect-[4/3] overflow-hidden lg:col-span-5">
           <Image
-            src={content.brewMethods[0]?.image ?? "/images/methods/pour-over.svg"}
+            src={content.brewMethods[0]?.image ?? "/images/methods/pour-over.webp"}
             alt={p.xbloomCalloutTitle}
             fill
             sizes="(min-width: 1024px) 40vw, 100vw"

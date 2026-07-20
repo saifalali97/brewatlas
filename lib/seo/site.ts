@@ -32,7 +32,7 @@ export const siteConfig = {
   locale: "en_US",
   themeColor: "#1c1612",
   ogImage: {
-    url: "/images/recipes/ethiopian-pour-over.png",
+    url: "/images/methods/pour-over.webp",
     width: 1536,
     height: 1024,
     alt: "Ethiopian pour-over specialty coffee recipe on BrewAtlas",

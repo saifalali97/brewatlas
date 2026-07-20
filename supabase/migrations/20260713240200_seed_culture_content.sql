@@ -11,7 +11,7 @@ values
     'Heritage',
     'UAE Coffee Culture',
     $$Coffee has shaped hospitality, ritual, and daily life across the United Arab Emirates for centuries. From the Bedouin encampment to the modern majlis, a shared cup of qahwa has always meant welcome, respect, and belonging. Explore the history, etiquette, and heritage behind every pour.$$,
-    '/images/culture/uae-coffee-culture-hero.png',
+    '/images/culture/uae-coffee-culture-hero.webp',
     'UAE Coffee Culture: History, Hospitality & Heritage',
     'Discover the history of coffee in the UAE, Emirati hospitality traditions, Arabic coffee etiquette, and the role of qahwa in majlis culture and national heritage.',
     1
@@ -21,7 +21,7 @@ values
     'Qahwa',
     'Arabic Coffee',
     $$Qahwa, or Arabic coffee, is far more than a beverage — it is a ritual built around specific tools, spices, and roast styles passed down through generations. Learn about the dallah, the finjan, the cardamom and saffron that flavor every pot, and the customs that govern how it is roasted, brewed, and served.$$,
-    '/images/culture/arabic-coffee-hero.png',
+    '/images/culture/arabic-coffee-hero.webp',
     'Arabic Coffee (Qahwa): Tools, Spices & Traditions',
     'A complete guide to traditional Arabic coffee — the dallah, the finjan, cardamom, saffron and cloves, roast levels, serving customs, and classic brewing methods.',
     2
@@ -31,7 +31,7 @@ values
     'Chai & Karak',
     'Tea',
     $$From roadside karak stalls to the family majlis, tea culture in the UAE is every bit as rich and layered as its coffee traditions. Discover the history and character of karak, black tea, saffron tea, milk tea, Adani tea, and traditional Emirati tea.$$,
-    '/images/culture/tea-hero.png',
+    '/images/culture/tea-hero.webp',
     'Tea in the UAE: Karak, Saffron Tea & Emirati Traditions',
     'Explore the UAE''s tea culture, from spiced karak and Adani tea to saffron tea, milk tea, and the traditional Emirati tea served across the Emirates.',
     3
@@ -49,7 +49,7 @@ values
 In the desert and coastal communities that would become the UAE, coffee was never simply a commodity — it arrived alongside a code of conduct. Roasting beans over an open flame, grinding them by hand with a mortar and pestle, and brewing them in a long-spouted dallah became a daily task performed for guests as much as for the household. Archaeological and oral history both point to coffee gatherings as one of the oldest continuous social institutions in the region, predating oil, cities, and modern infrastructure by generations.
 
 Today, that history is preserved deliberately. Heritage villages, national museums, and UNESCO's recognition of Arabic coffee as an Intangible Cultural Heritage of Humanity (shared with Saudi Arabia, Oman, and Qatar) all treat the qahwa ritual as a living artifact of Gulf identity — not a museum piece, but a custom still practiced every day in homes and majlis sittings across the seven emirates.$$,
-    '/images/culture/heritage-fort.png',
+    '/images/culture/heritage-fort.webp',
     'The History of Coffee in the UAE',
     'Trace the history of coffee in the UAE, from Yemeni trade routes and Bedouin camps to its recognition as an Intangible Cultural Heritage tradition.',
     1
@@ -64,7 +64,7 @@ Today, that history is preserved deliberately. Heritage villages, national museu
 This tradition, known broadly as "diyafa," treats generosity toward guests as a measure of a household's character. Declining a first cup can be seen as unusual, and it is customary to accept at least one serving before gently signaling that no more is needed by shaking the empty finjan slightly from side to side when handing it back. Refilling continues automatically until that signal is given — hosts rarely wait to be asked.
 
 Dates are almost always served alongside the coffee, their sweetness balancing the drink's bitterness and cardamom spice. Together, the pairing of dates and qahwa has become an unofficial symbol of Emirati generosity, appearing at everything from small family visits to state receptions, weddings, and National Day celebrations. Understanding this ritual is often the fastest way for a visitor to understand how deeply hospitality is woven into daily Emirati life.$$,
-    '/images/culture/majlis-gathering.png',
+    '/images/culture/majlis-gathering.webp',
     'Emirati Hospitality Traditions',
     'Learn how Emirati hospitality traditions center on coffee and dates, the etiquette of accepting a cup, and why diyafa remains central to UAE culture.',
     2
@@ -79,7 +79,7 @@ Dates are almost always served alongside the coffee, their sweetness balancing t
 Seating order matters: coffee is typically served beginning with the most senior guest or the person seated closest to the host's right, moving around the room from there. Accepting the first cup is expected, and it is polite to hold the finjan in the right hand as well. When a guest has had enough, the customary signal is a gentle side-to-side wiggle of the empty cup as it is handed back, rather than a verbal refusal — this avoids any implication that the coffee itself was unwanted.
 
 Conversation during service tends to stay light and unhurried; the pause for coffee is itself part of the visit, not an interruption to it. Rushing through the ritual, refusing the very first cup outright, or reaching for the finjan with the left hand are the etiquette missteps most likely to be noticed by an Emirati host.$$,
-    '/images/culture/coffee-etiquette.png',
+    '/images/culture/coffee-etiquette.webp',
     'Arabic Coffee Etiquette',
     'Understand Arabic coffee etiquette in the UAE: how qahwa is served, the right-hand custom, seating order, and how to politely decline more coffee.',
     3
@@ -94,7 +94,7 @@ Conversation during service tends to stay light and unhurried; the pause for cof
 Unlike a formal meeting, the majlis operates on an open-door principle: guests, relatives, and even strangers seeking counsel can traditionally be received, and coffee is the mechanism that opens every conversation regardless of its purpose. Elders are usually served first, and the person responsible for pouring — historically a role of some honor — moves methodically around the room, reading who has finished and who would like more.
 
 Modern majlis spaces, from private homes to government diwans, still follow this same rhythm. Business deals, family announcements, and community decisions in the UAE are still commonly made — or at least opened — over a finjan of coffee, making the majlis one of the clearest surviving links between contemporary Emirati life and its Bedouin-era origins.$$,
-    '/images/culture/majlis-gathering.png',
+    '/images/culture/majlis-gathering.webp',
     'Coffee in Majlis Culture',
     'Discover how the traditional Emirati majlis uses coffee service to structure hospitality, seating order, and conversation across generations.',
     4
@@ -109,7 +109,7 @@ Modern majlis spaces, from private homes to government diwans, still follow this
 In 2015, Arabic coffee was inscribed on UNESCO's Representative List of the Intangible Cultural Heritage of Humanity, a joint nomination between the UAE, Saudi Arabia, Oman, and Qatar that formally recognized the ritual — its preparation, its etiquette, and its symbolism of generosity — as a shared Gulf tradition worth actively protecting for future generations.
 
 That recognition shows up in everyday civic life: government receptions, National Day events, and school heritage programs across the Emirates routinely include a coffee-serving ceremony, teaching younger generations the same gestures once used in Bedouin tents. For many Emiratis, the dallah has become a visual shorthand for heritage itself, appearing in logos, monuments, and currency alongside falcons and palm trees as an emblem of who the country is and where it came from.$$,
-    '/images/culture/heritage-fort.png',
+    '/images/culture/heritage-fort.webp',
     'Coffee and UAE Heritage',
     'See how Arabic coffee became a symbol of UAE national heritage, from UNESCO Intangible Cultural Heritage status to heritage villages and National Day.',
     5
@@ -124,7 +124,7 @@ That recognition shows up in everyday civic life: government receptions, Nationa
 What most distinguishes qahwa is its spicing. Freshly crushed green cardamom pods are the near-universal addition, added either during brewing or steeped afterward, giving the coffee its signature floral, slightly sweet aroma. Depending on the household or region, saffron and cloves are sometimes added for extra depth and a subtle golden hue, and sugar is rarely used — the coffee is meant to be savored unsweetened, often alongside dates.
 
 The result is a coffee that behaves less like a caffeinated beverage and more like a social pacing mechanism: a small, quickly finished cup that invites another, keeps hands occupied during conversation, and gets refilled as long as a guest remains seated. It is this combination of light spice, small portions, and continuous hospitality that makes qahwa immediately recognizable across the UAE and the wider Gulf.$$,
-    '/images/culture/dallah-pour.png',
+    '/images/culture/dallah-pour.webp',
     'Traditional Arabic Coffee (Qahwa)',
     'What makes traditional Arabic coffee (qahwa) unique — its light roast, cardamom spicing, and the hospitality customs that shape how it is served.',
     1
@@ -139,7 +139,7 @@ The result is a coffee that behaves less like a caffeinated beverage and more li
 Its shape is entirely functional. The narrow spout allows the coffee to be poured in a thin, controlled stream directly into a finjan without disturbing the fine sediment that naturally settles at the bottom of the pot, while the tall body keeps the liquid hot over an extended serving period. In more traditional settings, the dallah sits directly on hot coals or a small stove throughout a gathering, being topped up and reheated rather than brewed fresh for every round.
 
 Beyond its practical role, the dallah has become one of the most recognizable visual symbols of the UAE and the wider Gulf. It appears on currency, government seals, hotel logos, and public art, standing in for hospitality itself in the same way a teapot might elsewhere — a single object that instantly communicates welcome.$$,
-    '/images/culture/dallah-pour.png',
+    '/images/culture/dallah-pour.webp',
     'The Dallah: Traditional Arabic Coffee Pot',
     'Learn about the dallah, the long-spouted brass or copper pot used to brew and serve Arabic coffee, and its role as a symbol of Gulf hospitality.',
     2
@@ -154,7 +154,7 @@ Beyond its practical role, the dallah has become one of the most recognizable vi
 Traditional finjans are often porcelain or metal, sometimes finished in gold trim or set within a matching metal holder called a "zarf," which protects the drinker's fingers from the heat of the cup and adds a decorative flourish to the coffee service. Sets of finjans are commonly gifted for weddings or displayed as part of a formal majlis coffee setting, reflecting their significance beyond simple tableware.
 
 The finjan is also the instrument of one of the ritual's key etiquette signals: because verbally refusing more coffee can be considered impolite, a guest instead gently shakes the empty cup from side to side while returning it to the host or server, a small gesture that communicates "no more, thank you" without a word being exchanged.$$,
-    '/images/culture/finjan-cups.png',
+    '/images/culture/finjan-cups.webp',
     'The Finjan: Traditional Arabic Coffee Cup',
     'Discover the finjan, the small handleless cup used to serve Arabic coffee, and the etiquette gesture used to politely decline another pour.',
     3
@@ -169,7 +169,7 @@ The finjan is also the instrument of one of the ritual's key etiquette signals: 
 The exact ratio of cardamom to coffee varies by household, region, and personal taste — some brews use just a pod or two per pot for a subtle background note, while others lean heavily on cardamom until it becomes the dominant aroma, with the coffee itself playing a supporting role. In many recipes, the pods are added directly to the simmering pot and left in during serving, occasionally finding their way into the finjan itself.
 
 Beyond flavor, cardamom carries practical and cultural weight: it has long been valued in Gulf cuisine as a digestive aid and a marker of a well-stocked, generous household, since good cardamom was historically an imported luxury. Its presence in a pot of qahwa is a small but unmistakable signal of care taken in preparing a drink meant to honor a guest.$$,
-    '/images/culture/arabic-coffee-spices.png',
+    '/images/culture/arabic-coffee-spices.webp',
     'Cardamom in Arabic Coffee',
     'Why green cardamom defines the taste of Arabic coffee, how much is used, and what it signals about hospitality and preparation.',
     4
@@ -184,7 +184,7 @@ Beyond flavor, cardamom carries practical and cultural weight: it has long been 
 Because true saffron has historically been one of the most expensive spices in the world by weight, its use in coffee has often carried a social signal similar to serving a particularly fine roast or an ornate dallah — a sign of hospitality taken a step further for an honored guest or a special occasion such as a wedding, Eid gathering, or the reception of a particularly senior visitor.
 
 Regional preferences vary: households along the UAE's coast and in areas with stronger historical trade ties to Iran and South Asia, where saffron cultivation and trade are more prominent, tend to use it more liberally in both coffee and tea. Elsewhere it remains an occasional flourish rather than an everyday ingredient, reserved for the pots poured on days that call for something extra.$$,
-    '/images/culture/arabic-coffee-spices.png',
+    '/images/culture/arabic-coffee-spices.webp',
     'Saffron in Arabic Coffee',
     'Discover how saffron is used in Arabic coffee to add color, fragrance, and a sense of occasion to the traditional qahwa recipe.',
     5
@@ -199,7 +199,7 @@ Regional preferences vary: households along the UAE's coast and in areas with st
 The exact tradition of adding cloves tends to vary more by family and region than cardamom does — some households consider it essential to a properly spiced pot, while others leave it out entirely in favor of a purer cardamom-forward cup. Where it is used, cloves are almost always a background note rather than the dominant flavor, meant to round out the coffee's aroma rather than announce themselves individually.
 
 Because cloves have a stronger, more assertive flavor than cardamom, they are usually used sparingly — often just two or three cloves per pot — since too many can quickly overwhelm the coffee's other qualities. Getting that balance right is considered a small mark of a skilled coffee preparer within the household.$$,
-    '/images/culture/arabic-coffee-spices.png',
+    '/images/culture/arabic-coffee-spices.webp',
     'Cloves in Arabic Coffee',
     'Learn how cloves are used as a secondary spice in some Arabic coffee traditions, adding warmth and depth alongside cardamom.',
     6
@@ -214,7 +214,7 @@ Because cloves have a stronger, more assertive flavor than cardamom, they are us
 This lighter approach is deliberate. A lighter roast preserves more of the bean's natural acidity and lets the added spices, particularly cardamom, come through clearly rather than competing with heavy roast bitterness. It also produces a noticeably lighter-bodied, more tea-like cup than the thick, syrupy coffee associated with darker roast traditions elsewhere in the world.
 
 Darker roasts do exist within Gulf coffee culture and are sometimes preferred in certain households or regions, producing a heavier, more bittersweet cup closer to what many international drinkers expect from "coffee." But the lighter, spice-forward roast remains the signature style most closely associated with traditional Emirati and wider Gulf hospitality, and it is what most visitors encounter first when offered a finjan of qahwa.$$,
-    '/images/culture/roast-levels.png',
+    '/images/culture/roast-levels.webp',
     'Understanding Arabic Coffee Roast Levels',
     'Why Arabic coffee (qahwa) is typically roasted lighter than espresso or filter coffee, and how roast level changes the flavor of the cup.',
     7
@@ -229,7 +229,7 @@ Darker roasts do exist within Gulf coffee culture and are sometimes preferred in
 Each cup is poured only partially full, a light pour that is refilled as soon as it is emptied rather than served in one large serving. This constant, attentive refilling is itself part of the hospitality being offered: an empty cup left unfilled for too long can be read as inattentiveness, so servers stay close and watch for cues throughout the gathering.
 
 The serving itself is typically accompanied by dates or occasionally other sweets, offered from a separate tray either just before or alongside the coffee. In more formal or ceremonial settings — weddings, official receptions, National Day events — the coffee service can become almost choreographed, with servers dressed in traditional attire moving in a set pattern that itself becomes part of the occasion's presentation.$$,
-    '/images/culture/finjan-cups.png',
+    '/images/culture/finjan-cups.webp',
     'Arabic Coffee Serving Traditions',
     'Explore the serving customs behind Arabic coffee — pouring order, portion size, continuous refilling, and the role of dates in the ritual.',
     8
@@ -244,7 +244,7 @@ The serving itself is typically accompanied by dates or occasionally other sweet
 The ground coffee is added to water in the dallah along with crushed cardamom (and, depending on the household, saffron or cloves) and brought to a slow simmer rather than a hard boil, which would make the coffee bitter and disturb the fine sediment. Some methods bring the pot just to the point of foaming at the rim several times, removing it from the heat each time, before letting it settle.
 
 Once brewed, the coffee is typically left to steep briefly so the grounds settle toward the bottom, allowing it to be poured cleanly through the dallah's narrow spout without needing a separate filter. The pot is then kept warm — traditionally over hot coals — so it can be poured continuously throughout a visit rather than brewed fresh cup by cup.$$,
-    '/images/culture/dallah-pour.png',
+    '/images/culture/dallah-pour.webp',
     'Traditional Arabic Coffee Brewing Methods',
     'A step-by-step look at how traditional Arabic coffee is brewed, from roasting green beans to simmering qahwa with cardamom in a dallah.',
     9
@@ -259,7 +259,7 @@ Once brewed, the coffee is typically left to steep briefly so the grounds settle
 Its popularity in the UAE owes much to the country's South Asian communities, who brought the tea-making traditions of the Indian subcontinent with them and adapted them into what is now a distinctly Emirati staple. Small karak stalls and cafeterias — often just a window and a few plastic chairs — are found on nearly every street corner, serving the tea in small disposable cups at almost any hour, day or night.
 
 Karak has become something of a social equalizer in the UAE: unlike the more ceremonial qahwa service, it is an inexpensive, unpretentious drink enjoyed by laborers, office workers, and tourists alike, often shared during a short break rather than a formal sitting. That accessibility, combined with its rich, spiced flavor, has made karak arguably the single most consumed hot beverage in the country today.$$,
-    '/images/culture/karak-tea-pour.png',
+    '/images/culture/karak-tea-pour.webp',
     'Karak Tea: The UAE''s Favorite Tea',
     'Discover karak, the strong, spiced, condensed-milk tea found at street stalls across the UAE, and how it became a beloved everyday drink.',
     1
@@ -274,7 +274,7 @@ Karak has become something of a social equalizer in the UAE: unlike the more cer
 Preparation is usually simple: loose black tea leaves steeped in boiling water, sometimes with a stick of cinnamon, a few mint leaves, or a light touch of sugar, though sweetness levels vary widely by household preference. Unlike karak, milk is optional rather than essential, and many Emiratis prefer their everyday black tea served plain, allowing the tea itself to be the focus rather than a canvas for spice and dairy.
 
 Black tea's role is largely social and rhythmic rather than ceremonial — it is the drink that fills the gaps between more formal coffee servings, offered casually to family, neighbors, and coworkers throughout the day. Its simplicity and constant presence make it one of the most quietly consistent threads running through daily Emirati life.$$,
-    '/images/culture/emirati-tea-gathering.png',
+    '/images/culture/emirati-tea-gathering.webp',
     'Black Tea Traditions in the UAE',
     'Learn about everyday black tea (chai) traditions in the UAE — how it is brewed, when it is served, and its role alongside Arabic coffee.',
     2
@@ -289,7 +289,7 @@ Black tea's role is largely social and rhythmic rather than ceremonial — it is
 Because saffron remains one of the most expensive spices by weight, saffron tea tends to appear on occasions that call for a little extra care — hosting an important guest, celebrating Eid, or marking a family milestone — in much the same spirit as adding saffron to a pot of qahwa. Its preparation is simple, but its presence at the table signals that the gathering is a special one.
 
 Saffron tea is also valued for qualities beyond flavor in many households, where it has long been associated in folk tradition with soothing and warming properties, often served toward the end of a meal or during colder winter evenings. Whether served for its taste, its symbolism, or both, it remains one of the more luxurious entries in the UAE's everyday tea repertoire.$$,
-    '/images/culture/karak-tea-pour.png',
+    '/images/culture/karak-tea-pour.webp',
     'Saffron Tea Traditions in the UAE',
     'Explore saffron tea, a golden, fragrant tea served on special occasions across the UAE, and why saffron makes it a luxury addition.',
     3
@@ -304,7 +304,7 @@ Saffron tea is also valued for qualities beyond flavor in many households, where
 Many households adjust the milk-to-water ratio to taste, and a light dusting of cardamom or a small piece of ginger is a common addition, though the spicing is typically kept subtle compared to karak's bolder profile. Sweetness levels vary as well, with sugar often added directly to the pot during simmering rather than stirred in afterward, allowing it to dissolve evenly and blend with the milk.
 
 Milk tea is frequently the everyday choice for children and for anyone who prefers a softer, less intense drink than karak while still wanting something more substantial than a plain cup of black tea — making it one of the most commonly brewed teas in Emirati kitchens on an ordinary day.$$,
-    '/images/culture/karak-tea-pour.png',
+    '/images/culture/karak-tea-pour.webp',
     'Milk Tea Traditions in the UAE',
     'Discover milk tea, the creamy, lightly spiced everyday tea served across Emirati households as a gentler alternative to karak.',
     4
@@ -319,7 +319,7 @@ Milk tea is frequently the everyday choice for children and for anyone who prefe
 Preparation usually involves simmering the spice blend directly in water before adding tea leaves and milk, allowing the spices to fully infuse the liquid rather than sitting as a light garnish. The result is a tea that leans closer to a spiced chai in character, with a warmth and complexity that many drinkers describe as more "peppery" or "earthy" than the sweeter, milk-forward profile of karak.
 
 Adani tea's presence in the UAE speaks to the broader story of Gulf tea culture as a crossroads tradition, shaped by Yemeni, South Asian, and East African influences arriving together through historic trade routes. It remains a favorite among those who enjoy a stronger, more heavily spiced cup than the UAE's more familiar everyday teas.$$,
-    '/images/culture/emirati-tea-gathering.png',
+    '/images/culture/emirati-tea-gathering.webp',
     'Adani Tea Traditions',
     'Learn about Adani tea, a heavily spiced black tea named after the port city of Aden, and its roots in Yemeni-Gulf trade traditions.',
     5
@@ -334,7 +334,7 @@ Adani tea's presence in the UAE speaks to the broader story of Gulf tea culture 
 Traditional Emirati tea draws on a wide range of influences absorbed through centuries of trade — Indian and Pakistani spicing techniques, Yemeni blends like Adani tea, Iranian saffron traditions, and the UAE's own preference for cardamom — resulting in a tea culture that is genuinely varied rather than built around a single fixed recipe. What ties it together is less a specific formula and more a shared role: tea as the warm, unhurried companion to conversation.
 
 Whether it is a glass of karak from a corner stall, a pot of saffron tea served for a special guest, or plain black tea offered throughout an ordinary afternoon, tea in the UAE functions the same way coffee does — as a small, repeated gesture of welcome that keeps a gathering going long after the first cup has been poured.$$,
-    '/images/culture/emirati-tea-gathering.png',
+    '/images/culture/emirati-tea-gathering.webp',
     'Traditional Emirati Tea Culture',
     'Explore how traditional Emirati tea culture developed alongside Arabic coffee, blending Indian, Yemeni, and Iranian influences into daily hospitality.',
     6

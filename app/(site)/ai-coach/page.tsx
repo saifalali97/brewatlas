@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/app/components/ui/page-header";
+import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { SectionFrame } from "@/app/components/ui/section-frame";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { acTypography } from "@/lib/design-system/atlas-canon";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -27,6 +29,7 @@ export default async function AiCoachComingSoonPage() {
 
   return (
     <SectionFrame id="ai-coach-coming-soon" ariaLabelledBy="ai-coach-coming-soon-heading" padding="compact">
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.aiCoach} alt={p.title} />
       <PageHeader
         headingId="ai-coach-coming-soon-heading"
         eyebrow={p.comingSoonEyebrow}

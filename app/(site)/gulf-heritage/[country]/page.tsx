@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { EmptyState } from "@/app/components/ui/empty-state";
+import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { GulfHeritageBackLink } from "@/app/components/gulf-heritage/gulf-heritage-back-link";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { GulfHeritageCategoryCard } from "@/app/components/gulf-heritage/gulf-heritage-category-card";
 import {
   GULF_HERITAGE_COUNTRIES,
@@ -68,10 +70,14 @@ export default async function GulfHeritageCountryPage({ params }: GulfHeritageCo
 
   const copy = getGulfHeritageCountryCopy(dictionary, country.slug as GulfHeritageCountrySlug);
   const categories = getGulfHeritageCountryCategories(country.slug);
+  const countryHero =
+    "heroImageUrl" in country && country.heroImageUrl ? country.heroImageUrl : PAGE_EDITORIAL_IMAGES.emptyGulfHeritage;
 
   return (
     <SectionFrame id="gulf-heritage-country" ariaLabelledBy="gulf-heritage-country-heading" padding="compact">
       <GulfHeritageBackLink href={GULF_HERITAGE_HUB_PATH} label={gh.backToHub} />
+
+      <PageEditorialPhoto src={countryHero} alt={copy.name} priority />
 
       <PageHeader
         headingId="gulf-heritage-country-heading"
@@ -84,6 +90,8 @@ export default async function GulfHeritageCountryPage({ params }: GulfHeritageCo
         <EmptyState
           title={gh.comingSoonTitle}
           description={interpolate(gh.comingSoonCountryDescription, { name: copy.name })}
+          imageSrc={countryHero}
+          imageAlt={copy.name}
         />
       ) : (
         <div className="grid gap-6 sm:gap-7 lg:grid-cols-3 lg:gap-8">

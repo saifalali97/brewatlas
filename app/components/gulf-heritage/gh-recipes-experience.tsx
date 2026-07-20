@@ -40,8 +40,6 @@ type GhRecipesExperienceProps = {
   };
   presentationLabels: {
     stepTemplate: string;
-    imagePlaceholderTitle: string;
-    imagePlaceholderDescription: string;
   };
 };
 
@@ -89,8 +87,6 @@ export function GhRecipesExperience({
               verifiedContentComingSoon={verifiedContentComingSoon}
               statusLabels={statusLabels}
               fieldLabels={fieldLabels}
-              imagePlaceholderTitle={presentationLabels.imagePlaceholderTitle}
-              imagePlaceholderDescription={presentationLabels.imagePlaceholderDescription}
               selected={activeRecipe?.slug === recipe.slug}
               onSelect={isRecipeVerified(recipe) ? () => setActiveSlug(recipe.slug) : undefined}
             />

@@ -44,8 +44,6 @@ type GhRecipeDetailProps = {
   };
   presentationLabels: {
     stepTemplate: string;
-    imagePlaceholderTitle: string;
-    imagePlaceholderDescription: string;
   };
 };
 
@@ -108,8 +106,6 @@ export function GhRecipeDetail({
         title={fieldLabels.steps}
         steps={recipe.steps}
         stepLabelTemplate={presentationLabels.stepTemplate}
-        imagePlaceholderTitle={presentationLabels.imagePlaceholderTitle}
-        imagePlaceholderDescription={presentationLabels.imagePlaceholderDescription}
       />
 
       <GhRecipeTipsSection title={fieldLabels.tips} tips={recipe.tips} />

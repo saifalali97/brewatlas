@@ -1,11 +1,12 @@
 import { Clock, ShieldCheck, Users } from "lucide-react";
-import { GhImagePlaceholder } from "@/app/components/gulf-heritage/gh-image-placeholder";
 import { GhPendingContent } from "@/app/components/gulf-heritage/gh-pending-content";
+import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import { ghMotion, ghSurfaces, ghTypography } from "@/app/components/gulf-heritage/shared/gh-styles";
 import { resolveGulfHeritageImageUrl } from "@/types/gulf-heritage-images";
 import { isRecipeVerified } from "@/types/gulf-heritage-recipe";
 import type { GulfHeritageRecipeReference } from "@/types/gulf-heritage-recipe";
 import type { GulfHeritageEditorialStatus } from "@/types/gulf-heritage-editorial";
+import { CULTURE_IMAGE_PLACEHOLDER } from "@/types/culture";
 
 type GhRecipeCardProps = {
   recipe: GulfHeritageRecipeReference;
@@ -16,8 +17,6 @@ type GhRecipeCardProps = {
     preparationTime: string;
     servingSize: string;
   };
-  imagePlaceholderTitle: string;
-  imagePlaceholderDescription: string;
   onSelect?: () => void;
   selected?: boolean;
 };
@@ -28,13 +27,12 @@ export function GhRecipeCard({
   verifiedContentComingSoon,
   statusLabels,
   fieldLabels,
-  imagePlaceholderTitle,
-  imagePlaceholderDescription,
   onSelect,
   selected = false,
 }: GhRecipeCardProps) {
   const verified = isRecipeVerified(recipe);
-  const heroImage = recipe.images[0] ?? resolveGulfHeritageImageUrl(recipe.stepImages[0] ?? null);
+  const heroImage =
+    recipe.images[0] ?? resolveGulfHeritageImageUrl(recipe.stepImages[0] ?? null) ?? CULTURE_IMAGE_PLACEHOLDER;
 
   return (
     <article
@@ -43,12 +41,14 @@ export function GhRecipeCard({
       }`}
     >
       <div className="relative aspect-[16/10] overflow-hidden border-b border-ba-espresso/6 bg-ba-sand/30">
-        {heroImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={heroImage} alt="" className="h-full w-full object-cover" loading="lazy" />
-        ) : (
-          <GhImagePlaceholder title={imagePlaceholderTitle} description={imagePlaceholderDescription} compact />
-        )}
+        <OptimizedImage
+          src={heroImage}
+          alt={recipe.title}
+          fill
+          loading="lazy"
+          sizes="(min-width: 640px) 320px, 80vw"
+          className="object-cover object-center"
+        />
         {verified ? (
           <span className="absolute start-3 top-3 inline-flex items-center gap-1 rounded-full border border-emerald-700/15 bg-emerald-50/90 px-2.5 py-1 text-[0.625rem] font-semibold uppercase tracking-[0.1em] text-emerald-900/80 backdrop-blur-sm">
             <ShieldCheck aria-hidden className="h-3 w-3" strokeWidth={2} />

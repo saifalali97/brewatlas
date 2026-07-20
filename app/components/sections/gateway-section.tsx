@@ -3,9 +3,9 @@ import { acTypography } from "@/lib/design-system/atlas-canon";
 import type { Dictionary } from "@/lib/i18n/types";
 
 const GATEWAY_IMAGES = {
-  coffee: "/images/recipes/espresso-shot.png",
-  gulfHeritage: "/images/culture/arabic-coffee-hero.png",
-  aiCoach: "/images/culture/tea-hero.png",
+  coffee: "/images/recipes/espresso-shot.webp",
+  gulfHeritage: "/images/culture/arabic-coffee-hero.webp",
+  aiCoach: "/images/culture/tea-hero.webp",
 } as const;
 
 type GatewaySectionProps = {

@@ -38,8 +38,6 @@ export function RecipeEditorialHero({
   overlay,
   actions,
   blurDataUrl,
-  imageWidth,
-  imageHeight,
 }: RecipeEditorialHeroProps) {
   return (
     <article>
@@ -60,8 +58,7 @@ export function RecipeEditorialHero({
           src={imageSrc}
           alt={imageAlt}
           blurDataUrl={blurDataUrl ?? undefined}
-          width={imageWidth ?? undefined}
-          height={imageHeight ?? undefined}
+          fill
           sizes={IMAGE_SIZE_PRESETS.recipeDetailCover}
           priority
           className="object-cover object-center photo-grade-library"

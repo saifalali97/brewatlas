@@ -235,4 +235,4 @@ export type RecipeFullDetail = {
   tagIds: string[];
 };
 
-export const RECIPE_IMAGE_PLACEHOLDER = "/images/coffee-placeholder.svg";
+export const RECIPE_IMAGE_PLACEHOLDER = "/images/fallback/coffee-placeholder.webp";

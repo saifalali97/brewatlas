@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/app/components/ui/page-header";
+import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { SurfaceCard } from "@/app/components/ui/surface-card";
 import { OAuthButtons } from "@/app/components/auth/oauth-buttons";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
@@ -32,7 +34,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <SectionFrame id="login-page" ariaLabelledBy="login-page-heading" padding="compact">
-<PageHeader headingId="login-page-heading" eyebrow={dictionary.auth.welcomeBackEyebrow} title={dictionary.auth.login} />
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.authLogin} alt="" priority />
+      <PageHeader headingId="login-page-heading" eyebrow={dictionary.auth.welcomeBackEyebrow} title={dictionary.auth.login} />
 
       <SurfaceCard>
         <LoginForm redirectTo={redirectTo} initialError={error} />

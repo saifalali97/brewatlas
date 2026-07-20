@@ -11,6 +11,7 @@ import { getUserRecipes } from "@/lib/data/db-recipes";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
+import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -64,6 +65,8 @@ export default async function DashboardRecipesPage() {
           description={r.noRecipesYetDescription}
           actionLabel={r.newRecipeCta}
           actionHref="/account/recipes/new"
+          imageSrc={PAGE_EDITORIAL_IMAGES.emptyRecipes}
+          imageAlt={r.noRecipesYetTitle}
         />
       ) : (
         <ol className="mt-2 list-none space-y-0 p-0">
