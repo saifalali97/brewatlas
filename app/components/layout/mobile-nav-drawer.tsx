@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, type ReactNode, type TouchEvent } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { LanguageSwitcher } from "@/app/components/layout/language-switcher";
 import { TextLink } from "@/app/components/ui/text-link";
@@ -27,6 +28,21 @@ function joinClasses(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
 }
 
+function drawerLinkClass(isActive: boolean) {
+  return joinClasses(
+    "flex min-h-11 items-center rounded-lg px-3 py-2 text-lg font-medium touch-manipulation transition-all duration-300 active:scale-[0.98]",
+    isActive
+      ? "bg-ba-gold/15 text-ba-espresso border-s-2 border-ac-copper ps-[calc(0.75rem-2px)]"
+      : "text-ac-espresso hover:bg-ba-sand/40 hover:text-ba-espresso",
+    dsFocus.ring,
+  );
+}
+
+function isActivePath(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 /** Full-screen mobile navigation drawer — portaled to body for iOS Safari hit-testing. */
 export function MobileNavDrawer({
   open,
@@ -38,6 +54,7 @@ export function MobileNavDrawer({
   isAdmin = false,
   notificationsSlot = null,
 }: MobileNavDrawerProps) {
+  const pathname = usePathname();
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const backdropTouchRef = useRef(false);
@@ -168,12 +185,8 @@ export function MobileNavDrawer({
                 <Link
                   href={link.href}
                   onClick={onClose}
-                  className={joinClasses(
-                    "flex min-h-11 items-center py-2 text-lg font-medium text-ac-espresso touch-manipulation",
-                    dsMotion.transition,
-                    "hover:text-ba-espresso",
-                    dsFocus.ring,
-                  )}
+                  aria-current={isActivePath(pathname, link.href) ? "page" : undefined}
+                  className={drawerLinkClass(isActivePath(pathname, link.href))}
                 >
                   {link.label}
                 </Link>
@@ -188,10 +201,8 @@ export function MobileNavDrawer({
               <Link
                 href="/recipes"
                 onClick={onClose}
-                className={joinClasses(
-                  "flex min-h-11 items-center py-2 text-lg font-medium text-ba-espresso touch-manipulation",
-                  dsFocus.ring,
-                )}
+                aria-current={isActivePath(pathname, "/recipes") ? "page" : undefined}
+                className={drawerLinkClass(isActivePath(pathname, "/recipes"))}
               >
                 {nav.recipes}
               </Link>
@@ -200,10 +211,8 @@ export function MobileNavDrawer({
               <Link
                 href="/premium"
                 onClick={onClose}
-                className={joinClasses(
-                  "flex min-h-11 items-center py-2 text-lg font-medium text-ac-espresso touch-manipulation",
-                  dsFocus.ring,
-                )}
+                aria-current={isActivePath(pathname, "/premium") ? "page" : undefined}
+                className={drawerLinkClass(isActivePath(pathname, "/premium"))}
               >
                 {nav.pricing}
               </Link>
@@ -213,10 +222,8 @@ export function MobileNavDrawer({
                 <Link
                   href="/admin"
                   onClick={onClose}
-                  className={joinClasses(
-                    "flex min-h-11 items-center py-2 text-lg font-medium text-ba-espresso touch-manipulation",
-                    dsFocus.ring,
-                  )}
+                  aria-current={isActivePath(pathname, "/admin") ? "page" : undefined}
+                  className={drawerLinkClass(isActivePath(pathname, "/admin"))}
                 >
                   {nav.admin}
                 </Link>

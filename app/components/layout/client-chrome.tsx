@@ -13,3 +13,8 @@ export const ClientFloatingActions = dynamic(
 );
 
 export { ClientFloatingActions as FloatingActions };
+
+export const MobileBottomNav = dynamic(
+  () => import("@/app/components/layout/mobile-bottom-nav").then((mod) => mod.MobileBottomNav),
+  { ssr: false },
+);

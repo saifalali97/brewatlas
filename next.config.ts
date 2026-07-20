@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
+  allowedDevOrigins: ["192.168.31.186"],
   turbopack: {
     // Pin the workspace root so Turbopack doesn't fall back to a parent
     // directory when it finds another lockfile above this project.

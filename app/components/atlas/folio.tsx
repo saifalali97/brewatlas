@@ -57,11 +57,11 @@ export function FolioItem({
   const imageSizes = imageSize === "large" ? "96px" : "80px";
   return (
     <li className={joinClasses("ac-folio-divider", className)}>
-      <div className="group flex items-center gap-6 py-7 sm:gap-10 sm:py-8">
+      <div className="group flex items-center gap-4 py-5 sm:gap-8 sm:py-7 md:py-8">
         <Link
           href={href}
           className={joinClasses(
-            "flex min-w-0 flex-1 items-center gap-6 sm:gap-8",
+            "flex min-w-0 flex-1 items-center gap-4 touch-manipulation sm:gap-8",
             acFocus.ring,
             acMotion.transition,
           )}
@@ -89,7 +89,7 @@ export function FolioItem({
           ) : null}
 
           <div className="min-w-0 flex-1">
-            <h3 className={acTypography.folioTitle}>{title}</h3>
+            <h3 className={`${acTypography.folioTitle} text-[1.125rem] leading-snug sm:text-xl`}>{title}</h3>
             {meta ? <div className="mt-2">{meta}</div> : null}
             {description ? (
               <p className={joinClasses(acTypography.folioMeta, "mt-2 line-clamp-2")}>{description}</p>

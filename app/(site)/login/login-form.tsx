@@ -22,7 +22,7 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
   );
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form action={formAction} className="space-y-4 sm:space-y-5">
       <input type="hidden" name="redirectTo" value={redirectTo ?? "/account"} />
 
       <div>
@@ -35,7 +35,7 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
           type="email"
           required
           autoComplete="email"
-          className={forms.input}
+          className={`${forms.input} min-h-12 py-3.5 text-base touch-manipulation`}
           placeholder={t("auth.emailPlaceholder")}
         />
       </div>
@@ -47,10 +47,11 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
         placeholder={t("auth.passwordPlaceholderDots")}
         required
         autoComplete="current-password"
+        inputClassName="min-h-12 py-3.5 text-base touch-manipulation"
         labelAside={
           <Link
             href="/forgot-password"
-            className={`${acTypography.nav} text-xs text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
+            className={`${acTypography.nav} inline-flex min-h-11 items-center text-sm text-ac-espresso hover:text-ba-bronze ${acFocus.ring}`}
           >
             {t("auth.forgotPassword")}
           </Link>
@@ -59,7 +60,11 @@ export function LoginForm({ redirectTo, initialError }: LoginFormProps) {
 
       <FormMessage error={state?.error} success={state?.success} />
 
-      <button type="submit" disabled={pending} className={`${buttons.primary} w-full disabled:opacity-70`}>
+      <button
+        type="submit"
+        disabled={pending}
+        className={`${buttons.primary} h-12 min-h-[3rem] w-full touch-manipulation disabled:opacity-70`}
+      >
         {pending ? t("auth.signingIn") : t("common.continue")}
       </button>
     </form>

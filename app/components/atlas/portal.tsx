@@ -43,6 +43,8 @@ export type PortalProps = {
   minimal?: boolean;
   /** Optional overlay badge (e.g. Coming Soon) */
   badge?: string;
+  /** Pill-style enter action for primary destinations (e.g. homepage hero) */
+  emphasizeEnter?: boolean;
 };
 
 function joinClasses(...parts: Array<string | false | undefined>) {
@@ -67,6 +69,7 @@ export function Portal({
   className = "",
   minimal = false,
   badge,
+  emphasizeEnter = false,
 }: PortalProps) {
   const heightClass =
     size === "gateway"
@@ -132,8 +135,9 @@ export function Portal({
         ) : null}
         <span
           className={joinClasses(
-            acTypography.nav,
-            "mt-6 inline-flex items-center gap-2 text-ac-gold",
+            emphasizeEnter
+              ? "mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-ba-gold/45 bg-ba-pearl/95 px-6 py-2.5 text-sm font-medium tracking-[0.04em] text-ac-espresso shadow-[0_8px_28px_-10px_rgba(28,22,18,0.35)] backdrop-blur-md transition-all duration-300 group-hover:border-ba-gold/65 group-hover:bg-ba-pearl group-active:scale-[0.98] motion-reduce:transform-none"
+              : joinClasses(acTypography.nav, "mt-6 inline-flex min-h-11 items-center gap-2 text-ac-gold"),
           )}
         >
           {enterLabel}

@@ -33,8 +33,8 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const dictionary = await getDictionary(locale);
 
   return (
-    <SectionFrame id="login-page" ariaLabelledBy="login-page-heading" padding="compact">
-      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.authLogin} alt="" priority />
+    <SectionFrame id="login-page" ariaLabelledBy="login-page-heading" padding="compact" className="max-lg:!py-12">
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.authLogin} alt="" priority variant="compact" />
       <PageHeader headingId="login-page-heading" eyebrow={dictionary.auth.welcomeBackEyebrow} title={dictionary.auth.login} />
 
       <SurfaceCard>

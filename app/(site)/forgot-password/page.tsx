@@ -27,8 +27,8 @@ export default async function ForgotPasswordPage() {
   const dictionary = await getDictionary(locale);
 
   return (
-    <SectionFrame id="forgot-password-page" ariaLabelledBy="forgot-password-page-heading" padding="compact">
-      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.authRecovery} alt="" />
+    <SectionFrame id="forgot-password-page" ariaLabelledBy="forgot-password-page-heading" padding="compact" className="max-lg:!py-12">
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.authRecovery} alt="" variant="compact" />
       <PageHeader headingId="forgot-password-page-heading"
         eyebrow={dictionary.auth.accountRecoveryEyebrow}
         title={dictionary.auth.forgotPasswordTitle}

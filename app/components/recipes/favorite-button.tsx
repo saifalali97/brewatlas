@@ -26,7 +26,7 @@ export function FavoriteButton({
 }: FavoriteButtonProps) {
   const { t } = useTranslations();
   const action = isFavorited ? removeFavoriteAction : addFavoriteAction;
-  const dimension = size === "lg" ? "h-11 w-11" : "h-9 w-9";
+  const dimension = size === "lg" ? "h-11 w-11" : "h-11 w-11 sm:h-9 sm:w-9";
   const iconSize = size === "lg" ? "h-[18px] w-[18px]" : "h-4 w-4";
 
   return (
@@ -37,7 +37,7 @@ export function FavoriteButton({
         type="submit"
         aria-label={isFavorited ? t("recipes.removeFromFavoritesAria") : t("recipes.addToFavoritesAria")}
         aria-pressed={isFavorited}
-        className={`flex ${dimension} items-center justify-center rounded-full border backdrop-blur-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95 ${
+        className={`flex ${dimension} items-center justify-center rounded-full border backdrop-blur-xl transition-all duration-300 ease-out hover:scale-110 active:scale-95 touch-manipulation ${
           isFavorited
             ? "border-amber-500/50 bg-amber-950/70 text-amber-400"
             : "border-white/[0.14] bg-[#0a0705]/55 text-stone-200 hover:border-amber-500/40 hover:text-amber-100"
