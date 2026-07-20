@@ -28,8 +28,8 @@ export default async function SignupPage() {
   const dictionary = await getDictionary(locale);
 
   return (
-    <SectionFrame id="signup-page" ariaLabelledBy="signup-page-heading" padding="compact">
-      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.authSignup} alt="" priority />
+    <SectionFrame id="signup-page" ariaLabelledBy="signup-page-heading" padding="compact" className="max-lg:!py-12">
+      <PageEditorialPhoto src={PAGE_EDITORIAL_IMAGES.authSignup} alt="" priority variant="compact" />
       <PageHeader headingId="signup-page-heading" eyebrow={dictionary.auth.joinBrewAtlasEyebrow} title={dictionary.auth.createYourAccountTitle} />
 
       <SurfaceCard>

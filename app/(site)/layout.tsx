@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { SiteNav } from "@/app/components/layout/site-nav";
-import { FloatingActions } from "@/app/components/layout/client-chrome";
+import { FloatingActions, MobileBottomNav } from "@/app/components/layout/client-chrome";
 import { SiteFooter } from "@/lib/dynamic-sections";
 import { getNotifications, getUnreadNotificationCount } from "@/lib/data/community";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -70,8 +70,14 @@ export default async function SiteLayout({
         notificationsSlot={notificationsSlot}
       />
 
-      <main id="main-content" className="pb-[env(safe-area-inset-bottom,0px)]">{children}</main>
+      <main
+        id="main-content"
+        className="pb-[calc(4.25rem+env(safe-area-inset-bottom,0px))] lg:pb-[env(safe-area-inset-bottom,0px)]"
+      >
+        {children}
+      </main>
 
+      <MobileBottomNav isAuthenticated={Boolean(authData.user)} />
       <FloatingActions />
       <SiteFooter
         footer={dictionary.homeFooter}

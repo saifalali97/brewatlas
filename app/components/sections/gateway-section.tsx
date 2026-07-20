@@ -26,14 +26,14 @@ export function GatewaySection({ copy }: GatewaySectionProps) {
       aria-label={copy.sectionAriaLabel}
       className="relative flex min-h-[calc(100svh-4.5rem)] flex-col bg-ac-limestone"
     >
-      <header className="shrink-0 px-6 pb-10 pt-16 text-center sm:px-8 sm:pb-12 sm:pt-20 lg:px-12 lg:pb-14 lg:pt-24">
+      <header className="shrink-0 px-6 pb-6 pt-12 text-center sm:px-8 sm:pb-10 sm:pt-16 lg:px-12 lg:pb-14 lg:pt-24">
         <h1 className={joinClasses(acTypography.displayLg, "tracking-[-0.04em]")}>{copy.title}</h1>
-        <p className={joinClasses(acTypography.body, "mx-auto mt-5 max-w-md text-ac-espresso")}>
+        <p className={joinClasses(acTypography.body, "mx-auto mt-4 max-w-md text-ac-espresso sm:mt-5")}>
           {copy.subtitle}
         </p>
       </header>
 
-      <div className="grid flex-1 grid-cols-1 gap-1 sm:gap-1.5 md:grid-cols-3 md:gap-1.5 lg:gap-2">
+      <div className="grid flex-1 grid-cols-1 gap-2 sm:gap-1.5 md:grid-cols-3 md:gap-1.5 lg:gap-2">
         <Portal
           href="/recipes"
           eyebrow="01"
@@ -45,6 +45,7 @@ export function GatewaySection({ copy }: GatewaySectionProps) {
           size="gateway"
           priority
           minimal
+          emphasizeEnter
         />
         <Portal
           href="/gulf-heritage"

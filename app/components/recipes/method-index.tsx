@@ -40,8 +40,8 @@ export function MethodIndex({
   filterByAria,
 }: MethodIndexProps) {
   return (
-    <nav aria-label="Recipe methods" className="mt-14 border-b border-ac-espresso/[0.08] pb-4">
-      <ul className="flex flex-wrap gap-x-6 gap-y-3">
+    <nav aria-label="Recipe methods" className="mt-10 border-b border-ac-espresso/[0.08] pb-3 sm:mt-14 sm:pb-4">
+      <ul className="flex flex-wrap gap-x-4 gap-y-2 sm:gap-x-6 sm:gap-y-3">
         {filters.map((filter) => {
           const isActive = activeFilter === filter;
           const label = getLabel(methodFilterLabelKeys[filter]);
@@ -54,10 +54,10 @@ export function MethodIndex({
                 onClick={() => onFilterChange(filter)}
                 className={[
                   acTypography.nav,
-                  "relative pb-1 transition-colors duration-300",
+                  "relative inline-flex min-h-11 items-center px-1 py-2 transition-all duration-300 touch-manipulation active:scale-[0.98]",
                   isActive
-                    ? "text-ac-espresso after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-ac-copper"
-                    : "text-ac-espresso hover:text-ba-bronze",
+                    ? "text-ac-espresso after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:rounded-full after:bg-ac-copper"
+                    : "text-ac-espresso/75 hover:text-ba-bronze",
                   acFocus.ring,
                 ].join(" ")}
               >

@@ -5,7 +5,6 @@ import { Search } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { SearchFiltersPanel } from "@/app/components/search/search-filters";
 import { SearchResultsView } from "@/app/components/search/search-results";
-import { SearchSkeleton } from "@/app/components/search/search-skeleton";
 import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import { forms, dsFocus } from "@/lib/constants/styles";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
@@ -171,10 +170,10 @@ export function SearchExplorer({
                   onClick={() => patchFilters({ category, page: 1 })}
                   className={[
                     acTypography.nav,
-                    "relative pb-1 transition-colors duration-300",
+                    "relative inline-flex min-h-11 items-center px-1 py-2 transition-all duration-300 touch-manipulation active:scale-[0.98]",
                     isActive
-                      ? "text-ac-espresso after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-ac-copper"
-                      : "text-ac-espresso hover:text-ac-espresso",
+                      ? "text-ac-espresso after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:rounded-full after:bg-ac-copper"
+                      : "text-ac-espresso/75 hover:text-ba-bronze",
                     acFocus.ring,
                   ].join(" ")}
                 >
@@ -242,14 +241,23 @@ export function SearchExplorer({
           ) : null}
 
           {isPending ? (
-            <SearchSkeleton />
+            <div className="animate-content-fade-in opacity-60 motion-reduce:opacity-100" aria-busy="true">
+              <SearchResultsView
+                results={results}
+                favoritedRecipeIds={favoritedRecipeIds}
+                isAuthenticated={isAuthenticated}
+                showAllSections={initialFilters.category === "all"}
+              />
+            </div>
           ) : (
-            <SearchResultsView
-              results={results}
-              favoritedRecipeIds={favoritedRecipeIds}
-              isAuthenticated={isAuthenticated}
-              showAllSections={initialFilters.category === "all"}
-            />
+            <div className="animate-content-fade-in">
+              <SearchResultsView
+                results={results}
+                favoritedRecipeIds={favoritedRecipeIds}
+                isAuthenticated={isAuthenticated}
+                showAllSections={initialFilters.category === "all"}
+              />
+            </div>
           )}
 
           {showPagination && (

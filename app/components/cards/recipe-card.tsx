@@ -94,12 +94,12 @@ function RecipeCardBody({ recipe, featured, labels }: RecipeCardBodyProps) {
         )}
       </div>
 
-      <div className={`relative flex flex-1 flex-col ${featured ? "p-8 lg:p-10" : "p-7 lg:p-8"}`}>
+      <div className={`relative flex flex-1 flex-col ${featured ? "p-6 sm:p-8 lg:p-10" : "p-5 sm:p-7 lg:p-8"}`}>
         <div className="flex-1">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-ac-espresso">{recipe.country}</p>
           <h3
             className={`font-display mt-2 leading-snug tracking-[-0.02em] text-ba-espresso transition-colors duration-300 group-hover:text-ba-bronze ${
-              featured ? "text-xl lg:text-2xl" : "text-lg"
+              featured ? "text-xl sm:text-2xl lg:text-2xl" : "text-xl sm:text-lg"
             }`}
           >
             {recipe.name}

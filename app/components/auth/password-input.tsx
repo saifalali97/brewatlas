@@ -15,6 +15,7 @@ type PasswordInputProps = {
   minLength?: number;
   autoComplete?: string;
   labelAside?: ReactNode;
+  inputClassName?: string;
 };
 
 export function PasswordInput({
@@ -26,6 +27,7 @@ export function PasswordInput({
   minLength,
   autoComplete,
   labelAside,
+  inputClassName = "",
 }: PasswordInputProps) {
   const { t } = useTranslations();
   const generatedId = useId();
@@ -49,7 +51,7 @@ export function PasswordInput({
           minLength={minLength}
           autoComplete={autoComplete}
           placeholder={placeholder}
-          className={`${forms.input} pe-11`}
+          className={`${forms.input} pe-11 ${inputClassName}`.trim()}
         />
         <button
           type="button"

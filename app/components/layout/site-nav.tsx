@@ -212,7 +212,7 @@ export function SiteNav({
             </div>
           </div>
 
-          <div className="pointer-events-none flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 lg:pointer-events-none">
             <div className="pointer-events-auto hidden items-center gap-3 lg:flex">
               {notificationsSlot}
               <LanguageSwitcher
