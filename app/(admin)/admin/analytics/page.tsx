@@ -5,6 +5,8 @@ import { buildAdminMetadata } from "@/lib/admin/metadata";
 import { requireAdmin } from "@/lib/auth/is-admin";
 import { BrewingSetupStatsPanel } from "@/app/components/admin/brewing-setup-stats-panel";
 import { getAdminAuditLogPage } from "@/lib/data/admin-audit";
+import { BrewSessionStatsPanel } from "@/app/components/admin/brew-session-stats-panel";
+import { getAdminBrewSessionAnalytics } from "@/lib/data/brew-sessions";
 import { getAdminBrewingSetupStats } from "@/lib/data/brewing-setup";
 import { getOwnerAnalyticsOverview } from "@/lib/data/owner-analytics";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -26,10 +28,11 @@ export default async function AdminAnalyticsPage({ searchParams }: PageProps) {
   const auditPage = Math.max(1, Number.parseInt(params.auditPage ?? "1", 10) || 1);
 
   const { supabase } = await requireAdmin("/admin/analytics");
-  const [overview, auditLog, setupStats] = await Promise.all([
+  const [overview, auditLog, setupStats, brewSessionStats] = await Promise.all([
     getOwnerAnalyticsOverview(supabase),
     getAdminAuditLogPage(supabase, auditPage),
     getAdminBrewingSetupStats(supabase, 12),
+    getAdminBrewSessionAnalytics(supabase, 10),
   ]);
 
   return (
@@ -45,6 +48,11 @@ export default async function AdminAnalyticsPage({ searchParams }: PageProps) {
         stats={setupStats}
         title="Coffee setup statistics"
         description="Most popular grinders and brewers saved in My Coffee Setup."
+      />
+      <BrewSessionStatsPanel
+        analytics={brewSessionStats}
+        title="Brew session analytics"
+        description="Anonymous aggregate statistics across all brew sessions. No user notes or private content is exposed."
       />
     </div>
   );

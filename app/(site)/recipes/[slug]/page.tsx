@@ -64,11 +64,14 @@ import { canAccessFullRecipeContent } from "@/lib/membership/premium";
 import { recordRecipeView } from "@/lib/data/recipe-analytics";
 import { getMembershipSummary } from "@/lib/data/membership";
 import { createClient } from "@/lib/supabase/server";
+import { getBrewSessionRecipeStats } from "@/lib/data/brew-sessions";
 import { getUserBrewingSetup } from "@/lib/data/brewing-setup";
 import { evaluateRecipeSetupCompatibility } from "@/lib/recipes/setup-compatibility";
+import { BrewSessionRecipePanel } from "@/app/components/recipes/brew-session-recipe-panel";
 import { RecipeSetupCompatibilityPanel } from "@/app/components/recipes/recipe-setup-compatibility";
 import { OfficialRecipeDetailPanel } from "@/app/components/recipes/official-recipe-detail-panel";
 import type { RecipeSetupCompatibility } from "@/types/brewing-setup";
+import type { BrewSessionRecipeStats } from "@/types/brew-sessions";
 import { RecipePremiumPaywall } from "@/app/components/recipes/recipe-premium-paywall";
 import type { FeaturedRecipe } from "@/types/homepage";
 import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
@@ -228,7 +231,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   const viewerId = authData.user?.id ?? null;
 
-  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview, membership, guestRecipeIndex, userSetup] =
+  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview, membership, guestRecipeIndex, userSetup, brewSessionStats] =
     await Promise.all([
       getFavoritesCount(supabase, recipe.id),
       viewerId ? getUserFavoriteRecipeIds(supabase, viewerId) : Promise.resolve(new Set<string>()),
@@ -248,6 +251,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
             return allSlugs.indexOf(slug);
           })(),
       viewerId ? getUserBrewingSetup(supabase, viewerId) : Promise.resolve(null),
+      viewerId ? getBrewSessionRecipeStats(supabase, viewerId, recipe.id) : Promise.resolve(null),
     ]);
 
   const setupCompatibility =
@@ -290,6 +294,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
       viewerId={viewerId}
       reviewJsonLd={reviewJsonLd}
       setupCompatibility={setupCompatibility}
+      brewSessionStats={brewSessionStats}
     />
   );
 }
@@ -393,6 +398,7 @@ type DbRecipeViewProps = {
   viewerId: string | null;
   reviewJsonLd: Record<string, unknown>;
   setupCompatibility: RecipeSetupCompatibility | null;
+  brewSessionStats: BrewSessionRecipeStats | null;
 };
 
 function DbRecipeView({
@@ -412,6 +418,7 @@ function DbRecipeView({
   viewerId,
   reviewJsonLd,
   setupCompatibility,
+  brewSessionStats,
 }: DbRecipeViewProps) {
   const d = dictionary.recipeDetail;
   const coverImage = recipe.coverImageUrl ?? RECIPE_IMAGE_PLACEHOLDER;
@@ -663,6 +670,25 @@ function DbRecipeView({
 
           <OfficialRecipeDetailPanel recipe={recipe} />
           {setupCompatibility ? <RecipeSetupCompatibilityPanel compatibility={setupCompatibility} /> : null}
+          {viewerId && brewSessionStats ? (
+            <BrewSessionRecipePanel
+              recipeSlug={slug}
+              stats={brewSessionStats}
+              compatibility={setupCompatibility}
+              labels={{
+                title: dictionary.brewSessionsPage.compatibilityTitle,
+                sessionCountTemplate: dictionary.brewSessionsPage.sessionCountTemplate,
+                averageRatingLabel: dictionary.brewSessionsPage.averageRatingLabel,
+                mostRecentBrewLabel: dictionary.brewSessionsPage.mostRecentBrewLabel,
+                personalNotesLabel: dictionary.brewSessionsPage.personalNotesLabel,
+                previousBrewsTitle: dictionary.brewSessionsPage.previousBrewsTitle,
+                compatibilityTitle: dictionary.brewSessionsPage.compatibilityTitle,
+                viewCta: dictionary.brewSessionsPage.viewCta,
+                ratingOutOfFive: dictionary.brewSessionsPage.ratingOutOfFive,
+                notSet: dictionary.brewSessionsPage.notSetOption,
+              }}
+            />
+          ) : null}
 
           {recipe.instructions && (
             <RecipeEditorialSection title={dictionary.recipes.instructions} className="mt-14">
