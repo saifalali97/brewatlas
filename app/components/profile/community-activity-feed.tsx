@@ -46,6 +46,22 @@ function activityLabel(item: ActivityFeedItem, dictionary: Dictionary): string {
       return recipe
         ? translate(dictionary, "communityPage.activityCollectionTemplate", { actor, recipe, collection: collectionName })
         : translate(dictionary, "communityPage.activityCollectionGeneric", { actor, collection: collectionName });
+    case "liked_recipe":
+      return recipe
+        ? translate(dictionary, "communityPage.activityLikedTemplate", { actor, recipe })
+        : translate(dictionary, "communityPage.activityLikedGeneric", { actor });
+    case "commented_recipe":
+      return recipe
+        ? translate(dictionary, "communityPage.activityCommentedTemplate", { actor, recipe })
+        : translate(dictionary, "communityPage.activityCommentedGeneric", { actor });
+    case "completed_brew_session":
+      return translate(dictionary, "communityPage.activityBrewSessionTemplate", { actor });
+    case "official_recipe_published":
+      return translate(dictionary, "communityPage.activityOfficialTemplate", { actor });
+    case "admin_featured_recipe":
+      return recipe
+        ? translate(dictionary, "communityPage.activityFeaturedTemplate", { actor, recipe })
+        : translate(dictionary, "communityPage.activityGeneric", { actor });
     default:
       return translate(dictionary, "communityPage.activityGeneric", { actor });
   }

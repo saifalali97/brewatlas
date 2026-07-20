@@ -58,6 +58,7 @@ import {
   getRecipeReviewsPage,
   getUserRecipeReview,
   parseReviewSort,
+  getRecipeLikeCount,
 } from "@/lib/data/community";
 import { isRecipePubliclyVisible } from "@/lib/recipes/recipe-status";
 import { canAccessFullRecipeContent } from "@/lib/membership/premium";
@@ -70,6 +71,9 @@ import { evaluateRecipeSetupCompatibility } from "@/lib/recipes/setup-compatibil
 import { BrewSessionRecipePanel } from "@/app/components/recipes/brew-session-recipe-panel";
 import { RecipeSetupCompatibilityPanel } from "@/app/components/recipes/recipe-setup-compatibility";
 import { OfficialRecipeDetailPanel } from "@/app/components/recipes/official-recipe-detail-panel";
+import { LikeButton } from "@/app/components/recipes/like-button";
+import { RecipeCommentsPanel } from "@/app/components/community/recipe-comments-panel";
+import { getRecipeComments, hasUserLikedRecipe } from "@/lib/data/community-platform";
 import type { RecipeSetupCompatibility } from "@/types/brewing-setup";
 import type { BrewSessionRecipeStats } from "@/types/brew-sessions";
 import { RecipePremiumPaywall } from "@/app/components/recipes/recipe-premium-paywall";
@@ -81,6 +85,12 @@ import type {
   RecipeReview,
   RecipeReviewsResult,
 } from "@/types/community";
+import type { RecipeComment, RecipeCommentSort } from "@/types/community-platform";
+
+function parseCommentSort(value: string | undefined): RecipeCommentSort {
+  if (value === "oldest" || value === "top") return value;
+  return "newest";
+}
 
 function CompatibleDevices({ hasXBloom, dictionary }: { hasXBloom: boolean; dictionary: Dictionary }) {
   return (
@@ -106,7 +116,7 @@ function CompatibleDevices({ hasXBloom, dictionary }: { hasXBloom: boolean; dict
 
 type RecipePageProps = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ reviewSort?: string; reviewPage?: string }>;
+  searchParams: Promise<{ reviewSort?: string; reviewPage?: string; commentSort?: string }>;
 };
 
 export function generateStaticParams() {
@@ -174,6 +184,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
   const resolvedSearchParams = await searchParams;
   const reviewSort = parseReviewSort(resolvedSearchParams.reviewSort);
   const reviewPage = Math.max(1, Number.parseInt(resolvedSearchParams.reviewPage ?? "1", 10) || 1);
+  const commentSort = parseCommentSort(resolvedSearchParams.commentSort);
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
   const staticIndex = getStaticRecipeIndexBySlug(slug);
@@ -231,7 +242,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   const viewerId = authData.user?.id ?? null;
 
-  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview, membership, guestRecipeIndex, userSetup, brewSessionStats] =
+  const [favoritesCount, favoriteIds, hasXBloomProfile, ratingSummary, ratingDistribution, reviewsResult, userReview, membership, guestRecipeIndex, userSetup, brewSessionStats, likeCount, isLiked, comments] =
     await Promise.all([
       getFavoritesCount(supabase, recipe.id),
       viewerId ? getUserFavoriteRecipeIds(supabase, viewerId) : Promise.resolve(new Set<string>()),
@@ -252,6 +263,9 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
           })(),
       viewerId ? getUserBrewingSetup(supabase, viewerId) : Promise.resolve(null),
       viewerId ? getBrewSessionRecipeStats(supabase, viewerId, recipe.id) : Promise.resolve(null),
+      getRecipeLikeCount(supabase, recipe.id),
+      viewerId ? hasUserLikedRecipe(supabase, viewerId, recipe.id) : Promise.resolve(false),
+      getRecipeComments(supabase, recipe.id, { sort: commentSort, viewerId }),
     ]);
 
   const setupCompatibility =
@@ -295,6 +309,10 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
       reviewJsonLd={reviewJsonLd}
       setupCompatibility={setupCompatibility}
       brewSessionStats={brewSessionStats}
+      likeCount={likeCount}
+      isLiked={isLiked}
+      comments={comments}
+      commentSort={commentSort}
     />
   );
 }
@@ -399,6 +417,10 @@ type DbRecipeViewProps = {
   reviewJsonLd: Record<string, unknown>;
   setupCompatibility: RecipeSetupCompatibility | null;
   brewSessionStats: BrewSessionRecipeStats | null;
+  likeCount: number;
+  isLiked: boolean;
+  comments: RecipeComment[];
+  commentSort: RecipeCommentSort;
 };
 
 function DbRecipeView({
@@ -419,6 +441,10 @@ function DbRecipeView({
   reviewJsonLd,
   setupCompatibility,
   brewSessionStats,
+  likeCount,
+  isLiked,
+  comments,
+  commentSort,
 }: DbRecipeViewProps) {
   const d = dictionary.recipeDetail;
   const coverImage = recipe.coverImageUrl ?? RECIPE_IMAGE_PLACEHOLDER;
@@ -483,8 +509,21 @@ function DbRecipeView({
               {favoritesCount}
             </span>
             {isAuthenticated ? (
-              <FavoriteButton recipeId={recipe.id} isFavorited={isFavorited} currentPath={`/recipes/${slug}`} />
-            ) : null}
+              <>
+                <LikeButton
+                  recipeId={recipe.id}
+                  isLiked={isLiked}
+                  likeCount={likeCount}
+                  currentPath={`/recipes/${slug}${commentSort !== "newest" ? `?commentSort=${commentSort}` : ""}`}
+                />
+                <FavoriteButton recipeId={recipe.id} isFavorited={isFavorited} currentPath={`/recipes/${slug}`} />
+              </>
+            ) : (
+              <span className={`${acTypography.folioMeta} flex items-center gap-1.5 tabular-nums`}>
+                <Heart className="h-3.5 w-3.5 text-ac-copper" aria-hidden />
+                {likeCount}
+              </span>
+            )}
           </div>
         }
       />
@@ -736,6 +775,14 @@ function DbRecipeView({
         viewerId={viewerId}
         isAuthenticated={isAuthenticated}
         reviewLabels={dictionary.recipeReviews}
+      />
+
+      <RecipeCommentsPanel
+        recipeId={recipe.id}
+        currentPath={`/recipes/${slug}${commentSort !== "newest" ? `?commentSort=${commentSort}` : ""}`}
+        comments={comments}
+        viewerId={viewerId}
+        sort={commentSort}
       />
     </SectionFrame>
   );

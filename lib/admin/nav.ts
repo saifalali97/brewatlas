@@ -13,6 +13,7 @@ import {
   Store,
   Users,
   Wallet,
+  MessageSquare,
 } from "lucide-react";
 import { adminCopy } from "@/lib/admin/copy";
 import { ADMIN_CMS_PATHS } from "@/lib/admin/cms-paths";
@@ -30,6 +31,7 @@ export type AdminNavItemId =
   | "origins"
   | "roasters"
   | "reviews"
+  | "community"
   | "subscriptions"
   | "analytics"
   | "aiCoach";
@@ -56,6 +58,7 @@ export function buildAdminNavItems(): AdminNavItem[] {
     { id: "roasters", href: ADMIN_CMS_PATHS.roasters, label: labels.roasters, icon: Store },
     { id: "users", href: ADMIN_CMS_PATHS.users, label: labels.users, icon: Users },
     { id: "reviews", href: ADMIN_CMS_PATHS.reviews, label: labels.reviews, icon: Star },
+    { id: "community", href: ADMIN_CMS_PATHS.community, label: labels.community, icon: MessageSquare },
     { id: "subscriptions", href: ADMIN_CMS_PATHS.subscriptions, label: labels.subscriptions, icon: Wallet },
     { id: "aiCoach", href: ADMIN_CMS_PATHS.aiCoach, label: labels.aiCoach, icon: Sparkles },
     { id: "analytics", href: ADMIN_CMS_PATHS.analytics, label: labels.analytics, icon: BarChart3 },

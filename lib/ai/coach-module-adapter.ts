@@ -92,9 +92,11 @@ export class OpenAICoachModuleAdapter implements AiCoachModuleAdapter {
       typeof request.context?.officialRecipes === "string" ? request.context.officialRecipes : undefined;
     const brewingContext =
       typeof request.context?.brewingSetup === "string" ? request.context.brewingSetup : undefined;
+    const communityContext =
+      typeof request.context?.community === "string" ? request.context.community : undefined;
     const content = await client.createResponse({
       model: client.model,
-      instructions: buildCoachSystemPrompt(this.preferences, request.mode ?? "chat", officialContext, brewingContext),
+      instructions: buildCoachSystemPrompt(this.preferences, request.mode ?? "chat", officialContext, brewingContext, communityContext),
       input: buildOpenAiInputMessages(request.history, request.message),
     });
 
@@ -118,6 +120,7 @@ export class OpenAICoachModuleAdapter implements AiCoachModuleAdapter {
         request.mode ?? "chat",
         typeof request.context?.officialRecipes === "string" ? request.context.officialRecipes : undefined,
         typeof request.context?.brewingSetup === "string" ? request.context.brewingSetup : undefined,
+        typeof request.context?.community === "string" ? request.context.community : undefined,
       ),
       input: buildOpenAiInputMessages(request.history, request.message),
     })) {

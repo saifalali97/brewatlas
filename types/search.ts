@@ -4,6 +4,8 @@ import type { CoffeeOrigin, TopRoaster } from "@/types/homepage";
 export const SEARCH_CATEGORIES = [
   "all",
   "recipes",
+  "users",
+  "collections",
   "roasters",
   "origins",
   "devices",
@@ -91,8 +93,29 @@ export type FlavorSearchHit = {
   tags: string[];
 };
 
+export type UserSearchHit = {
+  id: string;
+  fullName: string | null;
+  avatarUrl: string | null;
+  country: string | null;
+  bio: string | null;
+  followersCount: number;
+  brewScore: number;
+};
+
+export type CollectionSearchHit = {
+  id: string;
+  name: string;
+  description: string | null;
+  shareSlug: string | null;
+  ownerName: string | null;
+  recipeCount: number;
+};
+
 export type SearchResults = {
   recipes: RecipeListItem[];
+  users: UserSearchHit[];
+  collections: CollectionSearchHit[];
   roasters: TopRoaster[];
   origins: CoffeeOrigin[];
   devices: DeviceSearchHit[];

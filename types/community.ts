@@ -266,6 +266,11 @@ export const ACTIVITY_TYPES = [
   "followed_user",
   "saved_recipe",
   "added_to_collection",
+  "liked_recipe",
+  "commented_recipe",
+  "completed_brew_session",
+  "official_recipe_published",
+  "admin_featured_recipe",
 ] as const;
 export type ActivityType = (typeof ACTIVITY_TYPES)[number];
 
