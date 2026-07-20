@@ -20,15 +20,26 @@ const loaders: Record<Locale, () => Promise<Dictionary>> = {
   ar: () => import("@/lib/i18n/dictionaries/ar").then((m) => m.default),
 };
 
+/**
+ * Bump when dictionary namespaces/keys change so `unstable_cache` does not
+ * serve a stale object missing newly added sections (e.g. aiCoachModule).
+ */
+const DICTIONARY_CACHE_VERSION = "2";
+
 const DICTIONARY_CACHE_TTL = 3600;
 
 async function loadDictionary(locale: Locale): Promise<Dictionary> {
+  const loader = loaders[locale] ?? loaders.en;
+
+  // Skip persistent cache in development so new dictionary keys (e.g.
+  // aiCoachModule) are picked up without stale unstable_cache entries.
+  if (process.env.NODE_ENV === "development") {
+    return loader();
+  }
+
   return unstable_cache(
-    async () => {
-      const loader = loaders[locale] ?? loaders.en;
-      return loader();
-    },
-    ["dictionary", locale],
+    async () => loader(),
+    ["dictionary", DICTIONARY_CACHE_VERSION, locale],
     { revalidate: DICTIONARY_CACHE_TTL, tags: ["dictionary", `dictionary-${locale}`] },
   )();
 }

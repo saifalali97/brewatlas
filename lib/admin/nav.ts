@@ -31,7 +31,8 @@ export type AdminNavItemId =
   | "roasters"
   | "reviews"
   | "subscriptions"
-  | "analytics";
+  | "analytics"
+  | "aiCoach";
 
 export type AdminNavItem = {
   id: AdminNavItemId;
@@ -56,6 +57,7 @@ export function buildAdminNavItems(): AdminNavItem[] {
     { id: "users", href: ADMIN_CMS_PATHS.users, label: labels.users, icon: Users },
     { id: "reviews", href: ADMIN_CMS_PATHS.reviews, label: labels.reviews, icon: Star },
     { id: "subscriptions", href: ADMIN_CMS_PATHS.subscriptions, label: labels.subscriptions, icon: Wallet },
+    { id: "aiCoach", href: ADMIN_CMS_PATHS.aiCoach, label: labels.aiCoach, icon: Sparkles },
     { id: "analytics", href: ADMIN_CMS_PATHS.analytics, label: labels.analytics, icon: BarChart3 },
   ];
 }

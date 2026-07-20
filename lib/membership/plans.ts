@@ -21,6 +21,7 @@ export const FREE_PLAN_LIMITS: Partial<Record<FeatureKey, number>> = {
   unlimited_favorites: 10,
   unlimited_brew_logs: 20,
   recipe_collections: 1,
+  ai_coach: 5,
 };
 
 type KnownFeatureKeyLike = (typeof KNOWN_FEATURE_KEYS)[number];
@@ -29,7 +30,7 @@ type KnownFeatureKeyLike = (typeof KNOWN_FEATURE_KEYS)[number];
 export const DEFAULT_PLAN_PERMISSIONS: Record<MembershipPlan, Record<KnownFeatureKeyLike, PlanPermissionDefault>> = {
   free: {
     premium_recipes: { isEnabled: false, usageLimit: null },
-    ai_coach: { isEnabled: false, usageLimit: null },
+    ai_coach: { isEnabled: true, usageLimit: FREE_PLAN_LIMITS.ai_coach ?? 5 },
     unlimited_favorites: { isEnabled: true, usageLimit: FREE_PLAN_LIMITS.unlimited_favorites ?? null },
     unlimited_brew_logs: { isEnabled: true, usageLimit: FREE_PLAN_LIMITS.unlimited_brew_logs ?? null },
     advanced_analytics: { isEnabled: false, usageLimit: null },

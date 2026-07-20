@@ -28,6 +28,7 @@ export const adminCopy = {
     reviews: "Reviews",
     subscriptions: "Subscriptions",
     analytics: "Analytics",
+    aiCoach: "AI Coach",
   },
   dashboard: {
     eyebrow: "Admin Dashboard",
@@ -290,6 +291,21 @@ export const adminCopy = {
       title: "Images",
       description: "Upload, organize, and manage the BrewAtlas media library.",
     },
+  },
+  aiCoach: {
+    title: "AI Coach",
+    description: "Global feature flag, free-tier limits, and usage statistics.",
+    settingsTitle: "Feature flag & limits",
+    settingsDescription: "Disable AI Coach globally or adjust the free-tier daily request limit.",
+    enabledLabel: "AI Coach enabled",
+    freeDailyLimitLabel: "Free daily request limit",
+    saveButton: "Save settings",
+    statsTitle: "Usage statistics",
+    statsDescription: "Aggregate analytics from AI Coach events (placeholder — grows as users interact).",
+    statChatStarted: "Chats started",
+    statRecipesGenerated: "Recipes generated",
+    statBrewsAnalyzed: "Brews analyzed",
+    statTotalEvents: "Total events",
   },
 } as const;
 

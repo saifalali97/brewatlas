@@ -33,5 +33,6 @@ export const ADMIN_CMS_PATHS = {
   reviews: adminCmsPath("reviews"),
   subscriptions: adminCmsPath("subscriptions"),
   analytics: adminCmsPath("analytics"),
+  aiCoach: adminCmsPath("ai-coach"),
   settings: adminCmsPath("settings"),
 } as const;
