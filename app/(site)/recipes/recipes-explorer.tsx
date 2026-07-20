@@ -14,6 +14,7 @@ import {
   type MethodFilter,
 } from "@/app/components/recipes/method-index";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
+import { OfficialRecipeBadge } from "@/app/components/recipes/official-recipe-badge";
 import { acTypography } from "@/lib/design-system/atlas-canon";
 import { MotionReveal } from "@/lib/design-system/motion";
 import { GUEST_RECIPE_LIMIT } from "@/lib/membership/premium";
@@ -234,6 +235,16 @@ export function RecipesExplorer({
                       description={recipe.notes}
                       meta={
                         <p className={acTypography.folioMeta}>
+                          {recipe.isVerifiedOfficial ? (
+                            <>
+                              <OfficialRecipeBadge
+                                verificationStatus={recipe.verificationStatus ?? "verified"}
+                                versionLabel={recipe.versionLabel}
+                                compact
+                              />
+                              {" · "}
+                            </>
+                          ) : null}
                           {recipe.country} · {labels.brewMethodLabel}
                           {recipe.ratio ? ` · ${recipe.ratio}` : ""}
                         </p>

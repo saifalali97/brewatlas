@@ -85,6 +85,9 @@ export async function POST(request: Request) {
           conversationId: prepared.conversation.id,
           mode,
           history: prepared.history,
+          context: {
+            officialRecipes: prepared.officialRecipesContext,
+          },
         })) {
           if (chunk.type === "delta") {
             fullText += chunk.content;

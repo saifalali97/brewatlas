@@ -88,9 +88,11 @@ export class OpenAICoachModuleAdapter implements AiCoachModuleAdapter {
 
   async chat(request: AiCoachChatRequest & { history: AiCoachMessage[] }): Promise<AiCoachChatResponse> {
     const client = this.assertConfigured();
+    const officialContext =
+      typeof request.context?.officialRecipes === "string" ? request.context.officialRecipes : undefined;
     const content = await client.createResponse({
       model: client.model,
-      instructions: buildCoachSystemPrompt(this.preferences, request.mode ?? "chat"),
+      instructions: buildCoachSystemPrompt(this.preferences, request.mode ?? "chat", officialContext),
       input: buildOpenAiInputMessages(request.history, request.message),
     });
 
@@ -109,7 +111,11 @@ export class OpenAICoachModuleAdapter implements AiCoachModuleAdapter {
 
     for await (const delta of client.streamResponse({
       model: client.model,
-      instructions: buildCoachSystemPrompt(this.preferences, request.mode ?? "chat"),
+      instructions: buildCoachSystemPrompt(
+        this.preferences,
+        request.mode ?? "chat",
+        typeof request.context?.officialRecipes === "string" ? request.context.officialRecipes : undefined,
+      ),
       input: buildOpenAiInputMessages(request.history, request.message),
     })) {
       fullText += delta;
@@ -128,6 +134,20 @@ export class OpenAICoachModuleAdapter implements AiCoachModuleAdapter {
   }
 
   async generateRecipe(input: Parameters<AiCoachModuleAdapter["generateRecipe"]>[0]): Promise<GeneratedRecipe> {
+    const { createClient } = await import("@/lib/supabase/server");
+    const { findOfficialRecipesForCoach } = await import("@/lib/data/official-recipes");
+    const { officialRecipeToGenerated } = await import("@/lib/ai/official-recipe-coach");
+    const supabase = await createClient();
+    const matches = await findOfficialRecipesForCoach(supabase, {
+      method: input.method,
+      process: input.processing,
+      roastLevel: input.roast,
+      flavorPreference: input.flavorPreference ?? input.coffee ?? undefined,
+      limit: 1,
+    });
+    if (matches.length > 0) {
+      return officialRecipeToGenerated(matches[0]!);
+    }
     return this.ruleBasedFallback.generateRecipe(input);
   }
 

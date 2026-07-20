@@ -14,6 +14,7 @@ import {
   type RecipeFullDetail,
   type RecipeListItem,
 } from "@/types/recipe";
+import { isVerifiedOfficialRecipe } from "@/types/official-recipe";
 
 export const RECIPE_SELECT = `
   id, title, slug, description, video_url, difficulty, estimated_brew_time,
@@ -25,6 +26,10 @@ export const RECIPE_SELECT = `
   featured, premium_only, published,
   status, scheduled_publish_at, archived_at,
   seo_title, seo_description, canonical_url,
+  recipe_kind, verification_status, version_label,
+  recipe_science, why_it_works, common_mistakes, adjustments, faq,
+  pour_structure, finish_notes, grinder_recommendation, water_recommendation, equipment_notes,
+  verified_at, verified_by,
   created_at, updated_at,
   brewing_methods ( id, name ),
   devices ( id, name ),
@@ -97,6 +102,13 @@ export function mapDbRecipeToListItem(row: DbRecipeRow, dictionary: Dictionary):
       hasXBloomProfile ? "xBloom" : null,
       ...tags,
     ].filter((value): value is string => Boolean(value)),
+    recipeKind: row.recipe_kind ?? "community",
+    verificationStatus: row.verification_status ?? "draft",
+    versionLabel: row.version_label ?? "1.0",
+    isVerifiedOfficial: isVerifiedOfficialRecipe(
+      row.recipe_kind ?? "community",
+      row.verification_status ?? "draft",
+    ),
   };
 }
 
@@ -192,6 +204,21 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
     tagIds: toSafeArray(row.recipe_tags)
       .map((rt) => rt.tags?.id)
       .filter((id): id is string => Boolean(id)),
+
+    recipeKind: row.recipe_kind ?? "community",
+    verificationStatus: row.verification_status ?? "draft",
+    versionLabel: row.version_label ?? "1.0",
+    recipeScience: row.recipe_science ?? null,
+    whyItWorks: row.why_it_works ?? null,
+    commonMistakes: row.common_mistakes ?? null,
+    adjustments: row.adjustments ?? null,
+    faq: row.faq ?? [],
+    pourStructure: row.pour_structure ?? null,
+    finishNotes: row.finish_notes ?? null,
+    grinderRecommendation: row.grinder_recommendation ?? null,
+    waterRecommendation: row.water_recommendation ?? null,
+    equipmentNotes: row.equipment_notes ?? null,
+    verifiedAt: row.verified_at ?? null,
   };
 }
 

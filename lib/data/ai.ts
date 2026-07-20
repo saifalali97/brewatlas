@@ -3,7 +3,9 @@ import { blendExplicitAndBehavioral, blendWeightedVectors, buildRecipeSensoryVec
 import { parseDiscoveryQuery, rankDiscoveryResults, type DiscoveryCandidate } from "@/lib/ai/discovery-engine";
 import { RECOMMENDATION_WEIGHTS, rankRecommendations, type RecipeCandidate, type RecommendationContext } from "@/lib/ai/recommendation-engine";
 import { rankSimilarRecipes, type SimilarityCandidate } from "@/lib/ai/similarity-engine";
+import { officialRecipeBoost } from "@/lib/data/official-recipes";
 import { toSafeArray } from "@/lib/utils/arrays";
+import type { RecipeKind, RecipeVerificationStatus } from "@/types/official-recipe";
 import type {
   AiUserProfile,
   DbAiUserProfileRow,
@@ -32,7 +34,7 @@ import { NEUTRAL_SENSORY_VECTOR } from "@/types/ai";
 
 const RECIPE_FEATURE_SELECT = `
   id, title, slug, cover_image_url, published, difficulty, sweetness, acidity, body, bitterness, tasting_notes,
-  brewing_method_id, grinder_id, device_id,
+  brewing_method_id, grinder_id, device_id, recipe_kind, verification_status,
   coffees ( process, roast_level, origin_id, origins ( country ) ),
   recipe_insights ( expected_acidity, expected_sweetness, expected_body, expected_clarity, brew_ratio_value, difficulty_score ),
   recipe_tags ( tags ( name ) ),
@@ -54,6 +56,8 @@ type RecipeFeatureSourceRow = {
   brewing_method_id: string | null;
   grinder_id: string | null;
   device_id: string | null;
+  recipe_kind: string | null;
+  verification_status: string | null;
   coffees: { process: string | null; roast_level: string | null; origin_id: string | null; origins: { country: string } | null } | null;
   // Both recipe_insights.recipe_id and xbloom_profiles.recipe_id are
   // `unique`, so PostgREST infers a to-one relationship here (a plain
@@ -551,6 +555,26 @@ export async function getRecommendations(
   }
 
   const vectors = await getAllRecipeFeatureVectors(supabase, excludeRecipeIds);
+  const recipeIds = vectors.map(({ vector }) => vector.recipeId);
+  const boostById = new Map<string, number>();
+
+  if (recipeIds.length > 0) {
+    const { data: kindRows } = await supabase
+      .from("recipes")
+      .select("id, recipe_kind, verification_status")
+      .in("id", recipeIds);
+
+    for (const row of kindRows ?? []) {
+      boostById.set(
+        row.id as string,
+        officialRecipeBoost(
+          (row.recipe_kind ?? "community") as RecipeKind,
+          (row.verification_status ?? "draft") as RecipeVerificationStatus,
+        ),
+      );
+    }
+  }
+
   const candidates: RecipeCandidate[] = vectors.map(({ vector }) => ({
     recipeId: vector.recipeId,
     vector: vector.vector,
@@ -562,6 +586,7 @@ export async function getRecommendations(
     deviceId: vector.deviceId,
     hasXbloomProfile: vector.hasXbloomProfile,
     difficultyLabel: vector.difficultyLabel,
+    officialBoost: boostById.get(vector.recipeId) ?? 0,
   }));
 
   const ranked = rankRecommendations(context, candidates, options.limit ?? 10);

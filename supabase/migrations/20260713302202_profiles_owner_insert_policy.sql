@@ -4,6 +4,8 @@
 -- ensureProfile() upserts with auth.uid() = id; without this policy
 -- Postgres returns 42501 (RLS violation) on insert.
 
+drop policy if exists "Users can insert their own profile" on public.profiles;
+
 create policy "Users can insert their own profile"
   on public.profiles
   for insert

@@ -339,6 +339,43 @@ function FiltersForm({
         {t("searchPage.filterFeatured")}
       </label>
 
+      <FilterField label={t("searchPage.filterRecipeKind")}>
+        <select
+          value={filters.recipeKind}
+          onChange={(event) => patch({ recipeKind: event.target.value })}
+          className={forms.select}
+        >
+          <option value="">{t("searchPage.filterAny")}</option>
+          <option value="official">{t("searchPage.filterKindOfficial")}</option>
+          <option value="community">{t("searchPage.filterKindCommunity")}</option>
+          <option value="competition">{t("searchPage.filterKindCompetition")}</option>
+          <option value="imported">{t("searchPage.filterKindImported")}</option>
+        </select>
+      </FilterField>
+
+      <FilterField label={t("searchPage.filterVerification")}>
+        <select
+          value={filters.verificationStatus}
+          onChange={(event) => patch({ verificationStatus: event.target.value })}
+          className={forms.select}
+        >
+          <option value="">{t("searchPage.filterAny")}</option>
+          <option value="verified">{t("searchPage.filterVerificationVerified")}</option>
+          <option value="competition_tested">{t("searchPage.filterVerificationCompetition")}</option>
+          <option value="testing">{t("searchPage.filterVerificationTesting")}</option>
+        </select>
+      </FilterField>
+
+      <label className={forms.checkboxRow}>
+        <input
+          type="checkbox"
+          checked={filters.verifiedOnly}
+          onChange={(event) => patch({ verifiedOnly: event.target.checked })}
+          className={forms.checkbox}
+        />
+        {t("searchPage.filterVerifiedOnly")}
+      </label>
+
       {onDone && (
         <button type="button" onClick={onDone} className={`${buttons.primary} w-full`}>
           {t("searchPage.applyFilters")}

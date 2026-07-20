@@ -49,9 +49,17 @@ export function OwnerRecipeVersionsPanel({ recipeId, recipeTitle, versions }: Ow
                 <li key={version.id} className="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
                   <div>
                     <p className="font-medium text-stone-100">
-                      {t("ownerRecipePublishing.versionLabel")} {version.versionNumber}
+                      {version.versionLabel
+                        ? `${t("ownerRecipePublishing.versionLabel")} ${version.versionLabel}`
+                        : `${t("ownerRecipePublishing.versionLabel")} ${version.versionNumber}`}
                     </p>
                     <p className="mt-1 text-sm text-stone-300">{version.title}</p>
+                    {version.changeReason ? (
+                      <p className="mt-1 text-xs text-stone-400">{version.changeReason}</p>
+                    ) : null}
+                    {version.brewingChanges ? (
+                      <p className="mt-1 text-xs text-amber-200/70">{version.brewingChanges}</p>
+                    ) : null}
                     <p className="mt-1 text-xs text-stone-500">
                       {version.editorName ?? version.authorName ?? "—"} · {new Date(version.createdAt).toLocaleString()}
                     </p>

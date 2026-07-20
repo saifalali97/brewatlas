@@ -418,6 +418,10 @@ export type RecipeVersionInput = {
   authorId: string | null;
   status: RecipePublishStatus | null;
   scheduledPublishAt: string | null;
+  versionLabel?: string | null;
+  changeReason?: string | null;
+  brewingChanges?: string | null;
+  versionAuthorId?: string | null;
   metadata: Record<string, unknown>;
   snapshot: Record<string, unknown>;
 };
@@ -440,6 +444,10 @@ export async function saveRecipeVersion(
   await supabase.from("recipe_versions").insert({
     recipe_id: recipeId,
     version_number: versionNumber,
+    version_label: input.versionLabel ?? null,
+    change_reason: input.changeReason ?? null,
+    brewing_changes: input.brewingChanges ?? null,
+    version_author_id: input.versionAuthorId ?? editorId,
     snapshot: input.snapshot,
     editor_id: editorId,
     title: input.title,

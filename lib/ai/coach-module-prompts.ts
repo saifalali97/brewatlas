@@ -54,8 +54,11 @@ function modeHint(mode: AiCoachMode | undefined): string {
 export function buildCoachSystemPrompt(
   preferences: AiCoachPreferences | null,
   mode: AiCoachMode = "chat",
+  officialRecipeContext?: string,
 ): string {
-  return BASE_SYSTEM_PROMPT + formatPreferencesBlock(preferences) + modeHint(mode);
+  const base = BASE_SYSTEM_PROMPT + formatPreferencesBlock(preferences) + modeHint(mode);
+  if (!officialRecipeContext?.trim()) return base;
+  return `${base}\n\n## BrewAtlas Official Recipe Library\n${officialRecipeContext}`;
 }
 
 /** Map BrewAtlas conversation history to OpenAI Responses `input` messages. */

@@ -64,9 +64,10 @@ import { canAccessFullRecipeContent } from "@/lib/membership/premium";
 import { recordRecipeView } from "@/lib/data/recipe-analytics";
 import { getMembershipSummary } from "@/lib/data/membership";
 import { createClient } from "@/lib/supabase/server";
-import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
+import { OfficialRecipeDetailPanel } from "@/app/components/recipes/official-recipe-detail-panel";
 import { RecipePremiumPaywall } from "@/app/components/recipes/recipe-premium-paywall";
 import type { FeaturedRecipe } from "@/types/homepage";
+import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
 import type {
   RatingDistributionBucket,
   RecipeRatingSummary,
@@ -648,6 +649,8 @@ function DbRecipeView({
               ))}
             </div>
           )}
+
+          <OfficialRecipeDetailPanel recipe={recipe} />
 
           {recipe.instructions && (
             <RecipeEditorialSection title={dictionary.recipes.instructions} className="mt-14">

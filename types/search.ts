@@ -13,7 +13,7 @@ export const SEARCH_CATEGORIES = [
 
 export type SearchCategory = (typeof SEARCH_CATEGORIES)[number];
 
-export const SEARCH_SORTS = ["popular", "rated", "newest", "fastest", "alphabetical"] as const;
+export const SEARCH_SORTS = ["popular", "rated", "newest", "fastest", "alphabetical", "official"] as const;
 
 export type SearchSort = (typeof SEARCH_SORTS)[number];
 
@@ -42,6 +42,9 @@ export type SearchFilters = {
   tempMax: string;
   premiumOnly: boolean;
   featuredOnly: boolean;
+  recipeKind: string;
+  verificationStatus: string;
+  verifiedOnly: boolean;
   page: number;
 };
 

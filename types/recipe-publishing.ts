@@ -13,6 +13,9 @@ export type RecipePublishIntent =
 export type RecipeVersionListItem = {
   id: string;
   versionNumber: number;
+  versionLabel: string | null;
+  changeReason: string | null;
+  brewingChanges: string | null;
   title: string;
   description: string | null;
   seoTitle: string | null;

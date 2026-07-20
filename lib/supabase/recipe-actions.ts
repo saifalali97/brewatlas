@@ -66,6 +66,7 @@ export async function createRecipeAction(
       ...recipeUpdatePayload(parsed.values, coffeeId),
       slug,
       author_id: authData.user.id,
+      recipe_kind: "community",
       cover_image_url: coverImageUrl,
       ...coverColumns,
     })
