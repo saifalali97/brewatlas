@@ -48,6 +48,15 @@ export type GulfHeritageRecipeReference = {
   warnings: readonly string[];
   references: readonly GulfHeritageReference[];
   stepImages: readonly GulfHeritageImageAsset[];
+  whyItWorks?: string | null;
+  brewingScience?: string | null;
+  adjustmentGuide?: string | null;
+  faq?: readonly { question: string; answer: string }[];
+  storageTips?: string | null;
+  commonMistakes?: readonly string[];
+  whenToChoose?: string | null;
+  bestFor?: string | null;
+  waterRecommendations?: string | null;
   /** Legacy flat fields — retained for migration and specialty-coffee parity. */
   country: string | null;
   region: string | null;

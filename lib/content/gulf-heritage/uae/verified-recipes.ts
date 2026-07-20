@@ -148,10 +148,45 @@ export const SMITHSONIAN_KARAK_CHAI_RECIPE: GulfHeritageRecipeReference = {
   tips: [
     "Increase the amount of milk for a creamier tea.",
     "Add a few sprigs of saffron to the carafe, teapot, or tea glasses for optional saffron karak.",
+    "Crush cardamom pods lightly — not to powder — so oils release without bitterness.",
+    "Serve in small glasses; karak is meant for sharing and conversation.",
   ],
   notes:
     "Recipe by Ahmed Al Bawardi and Hanan Sayed Worrell, from Table Tales: The Global Nomad Cuisine of Abu Dhabi (Rizzoli, 2018), republished on the Smithsonian Folklife Festival blog (2022).",
   warnings: ["Do not let the milk boil after adding it."],
+  whyItWorks:
+    "Karak is everyday hospitality in the UAE — not a café novelty. This Smithsonian-transcribed recipe exists because it is one of the few published, attributable versions from Emirati authors rather than generic 'Middle Eastern chai' on the internet. The structure — hard boil the spice and tea, then gentle milk — matches how karak is actually made in homes and roadside cafés.",
+  brewingScience:
+    "Tannins from black tea extract quickly at a rolling boil. Adding milk too early protects proteins but prevents spice penetration; adding it late lets cardamom open in water first. Evaporated milk is concentrated — less water dilutes the tea less than fresh milk would.",
+  adjustmentGuide:
+    "Bitter or dry → you boiled milk or steeped too long; next time lower heat after adding dairy. Thin or weak → extend the first boil two minutes or add one teaspoon of tea. Too sweet → reduce sugar before service, not after — karak is traditionally sweet but not syrupy.",
+  whenToChoose:
+    "When you want to understand Gulf tea culture through a documented home recipe, or when guests expect karak with conversation rather than a quick mug.",
+  bestFor:
+    "Beginners — one pot, no special gear. Also useful for diaspora cooks who want the Table Tales version that matches Smithsonian Folklife documentation.",
+  waterRecommendations:
+    "Use water you would drink plain. Karak is forgiving on minerals but chlorine shows through in a thin cup.",
+  faq: [
+    {
+      question: "Can I use teabags instead of loose leaf?",
+      answer: "Yes — cut open teabags to use loose tea as the Smithsonian recipe notes. One strong teabag per cup is a reasonable substitute.",
+    },
+    {
+      question: "Is karak the same as masala chai?",
+      answer: "Karak is Gulf-style milk tea, typically cardamom-forward and served in small glasses. Masala chai uses a wider spice blend and is more common in South Asia.",
+    },
+    {
+      question: "Can I make karak without evaporated milk?",
+      answer: "Whole milk works, but use more and heat gently. Evaporated milk gives the classic Gulf body and sweetness balance.",
+    },
+  ],
+  storageTips:
+    "Best served fresh. Refrigerated karak keeps 24 hours in a sealed container; reheat gently without boiling the milk.",
+  commonMistakes: [
+    "Boiling milk after adding it, which scalds proteins and flattens sweetness.",
+    "Skipping the 5-minute rest — flavors stay sharp and disjointed.",
+    "Using pre-ground cardamom only — whole crushed pods give cleaner spice.",
+  ],
   references: [SMITHSONIAN_KARAK_REF],
   stepImages: [KARAK_HERO, KARAK_STEP_SIMMER, KARAK_STEP_MILK, KARAK_STEP_STRAIN],
   country: "United Arab Emirates",
