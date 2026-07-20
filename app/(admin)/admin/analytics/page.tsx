@@ -3,7 +3,9 @@ import { OwnerAnalyticsDashboard } from "@/app/components/owner/analytics/owner-
 import { adminCopy } from "@/lib/admin/copy";
 import { buildAdminMetadata } from "@/lib/admin/metadata";
 import { requireAdmin } from "@/lib/auth/is-admin";
+import { BrewingSetupStatsPanel } from "@/app/components/admin/brewing-setup-stats-panel";
 import { getAdminAuditLogPage } from "@/lib/data/admin-audit";
+import { getAdminBrewingSetupStats } from "@/lib/data/brewing-setup";
 import { getOwnerAnalyticsOverview } from "@/lib/data/owner-analytics";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import type { Metadata } from "next";
@@ -24,9 +26,10 @@ export default async function AdminAnalyticsPage({ searchParams }: PageProps) {
   const auditPage = Math.max(1, Number.parseInt(params.auditPage ?? "1", 10) || 1);
 
   const { supabase } = await requireAdmin("/admin/analytics");
-  const [overview, auditLog] = await Promise.all([
+  const [overview, auditLog, setupStats] = await Promise.all([
     getOwnerAnalyticsOverview(supabase),
     getAdminAuditLogPage(supabase, auditPage),
+    getAdminBrewingSetupStats(supabase, 12),
   ]);
 
   return (
@@ -37,6 +40,11 @@ export default async function AdminAnalyticsPage({ searchParams }: PageProps) {
         auditLog={auditLog}
         labels={dictionary.ownerAnalyticsPage}
         locale="en"
+      />
+      <BrewingSetupStatsPanel
+        stats={setupStats}
+        title="Coffee setup statistics"
+        description="Most popular grinders and brewers saved in My Coffee Setup."
       />
     </div>
   );
