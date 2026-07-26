@@ -42,7 +42,7 @@ export function RecipeConverterButton({ currentDevice, sourceRecipe, className }
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className={`${buttons.secondary} w-full gap-2 sm:w-auto ${className ?? ""}`}
+        className={`${buttons.ghostCta}${buttons.ghostCtaAutoWidth} h-11 min-w-0 gap-2 px-5 sm:min-h-12 ${className ?? ""}`}
       >
         <RefreshCw className="h-4 w-4" aria-hidden />
         {t("recipeConverter.convertButtonLabel")}
