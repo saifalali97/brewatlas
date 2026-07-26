@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
-import { Cover } from "@/app/components/atlas/cover";
 import { Folio, FolioItem } from "@/app/components/atlas/folio";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { EmptyState } from "@/app/components/ui/empty-state";
@@ -15,11 +15,10 @@ import {
 } from "@/app/components/recipes/method-index";
 import { FavoriteButton } from "@/app/components/recipes/favorite-button";
 import { OfficialRecipeBadge } from "@/app/components/recipes/official-recipe-badge";
-import { acTypography } from "@/lib/design-system/atlas-canon";
+import { acFocus, acMotion, acTypography } from "@/lib/design-system/atlas-canon";
 import { MotionReveal } from "@/lib/design-system/motion";
 import { GUEST_RECIPE_LIMIT } from "@/lib/membership/premium";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
-import { interpolate } from "@/lib/i18n/format";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import type { DictionaryKey } from "@/lib/i18n/types";
 import type { RecipeListItem } from "@/types/recipe";
@@ -76,16 +75,126 @@ function recipeLabels(
   return {
     difficultyLabel: t(difficultyLabelKey(recipe.difficulty)),
     brewMethodLabel: brewMethodKey ? t(brewMethodKey) : recipe.brewMethod,
-    imageAlt: interpolate(t("homeFeaturedRecipes.imageAltTemplate"), {
-      name: recipe.name,
-      country: recipe.country,
-      brewMethod: recipe.brewMethod,
-      roastLevel: recipe.roastLevel,
-    }),
   };
 }
 
-/** The Archive — cover feature, folio index, method navigation, invitation paywall. */
+type RecipeListMetaProps = {
+  recipe: RecipeListItem;
+  brewMethodLabel: string;
+  ratioLabel: string;
+};
+
+function RecipeListMeta({ recipe, brewMethodLabel, ratioLabel }: RecipeListMetaProps) {
+  const detailParts = [
+    recipe.origin,
+    recipe.country,
+    brewMethodLabel,
+    recipe.ratio ? `${ratioLabel} ${recipe.ratio}` : null,
+  ].filter(Boolean);
+
+  return (
+    <>
+      {detailParts.length > 0 ? (
+        <p className={`${acTypography.folioMeta} text-ac-espresso/62`}>{detailParts.join(" · ")}</p>
+      ) : null}
+      {recipe.isVerifiedOfficial ? (
+        <div className="pt-0.5">
+          <OfficialRecipeBadge
+            verificationStatus={recipe.verificationStatus ?? "verified"}
+            versionLabel={recipe.versionLabel}
+            compact
+            listTone
+          />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+type RecipesArchiveLeadProps = {
+  recipe: RecipeListItem;
+  brewMethodLabel: string;
+  difficultyLabel: string;
+  ratioLabel: string;
+  timeLabel: string;
+  editorsChoiceLabel: string;
+  ctaLabel: string;
+};
+
+/** Text-only featured entry — editorial lead, no photography. */
+function RecipesArchiveLead({
+  recipe,
+  brewMethodLabel,
+  difficultyLabel,
+  ratioLabel,
+  timeLabel,
+  editorsChoiceLabel,
+  ctaLabel,
+}: RecipesArchiveLeadProps) {
+  const eyebrow = recipe.featured
+    ? editorsChoiceLabel
+    : `${recipe.country} · ${brewMethodLabel}`;
+
+  return (
+    <Link
+      href={`/recipes/${recipe.slug}`}
+      className={`group block border-b border-ac-espresso/[0.08] pb-12 sm:pb-16 ${acFocus.ring} ${acMotion.transitionReveal}`}
+    >
+      <p className={acTypography.eyebrow}>{eyebrow}</p>
+      <div className="mt-6 lg:mt-8">
+        <h2 className={`max-w-3xl ${acTypography.displayLg}`}>{recipe.name}</h2>
+        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+          {recipe.isVerifiedOfficial ? (
+            <OfficialRecipeBadge
+              verificationStatus={recipe.verificationStatus ?? "verified"}
+              versionLabel={recipe.versionLabel}
+              compact
+            />
+          ) : null}
+          {recipe.origin ? (
+            <p className="text-sm font-medium tracking-wide text-ac-palm">{recipe.origin}</p>
+          ) : null}
+        </div>
+        {recipe.notes ? (
+          <p className={`mt-5 max-w-2xl ${acTypography.body} leading-[1.75]`}>{recipe.notes}</p>
+        ) : null}
+        <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-ac-espresso/[0.06] pt-8 text-sm text-ac-espresso/80">
+          <span className="font-medium text-ac-espresso">{brewMethodLabel}</span>
+          {recipe.ratio ? (
+            <span>
+              {ratioLabel}{" "}
+              <strong className="font-medium text-ac-espresso">{recipe.ratio}</strong>
+            </span>
+          ) : null}
+          <DifficultyIndicator
+            level={recipe.difficulty}
+            label={difficultyLabel}
+            labelClassName="text-sm text-ac-espresso/80"
+          />
+          {recipe.time ? (
+            <span>
+              {timeLabel}{" "}
+              <strong className="font-medium text-ac-espresso">{recipe.time}</strong>
+            </span>
+          ) : null}
+        </div>
+        <span
+          className={`${acTypography.nav} mt-8 inline-flex items-center gap-2 text-ac-espresso ${acMotion.transition}`}
+        >
+          {ctaLabel}
+          <span
+            aria-hidden
+            className="inline-block transition-transform duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1 rtl:-scale-x-100 rtl:group-hover:-translate-x-1 motion-reduce:transform-none"
+          >
+            →
+          </span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+/** The Archive — folio index, method navigation, invitation paywall. */
 export function RecipesExplorer({
   recipes,
   favoritedRecipeIds = [],
@@ -100,6 +209,8 @@ export function RecipesExplorer({
   const [search, setSearch] = useState(initialQuery);
   const favoritedSet = useMemo(() => new Set(favoritedRecipeIds), [favoritedRecipeIds]);
   const normalizedSearch = search.trim().toLowerCase();
+  const ratioLabel = t("homeFeaturedRecipes.ratioLabel");
+  const timeLabel = t("homeFeaturedRecipes.timeLabel");
 
   const filteredRecipes = recipes.filter((recipe) => {
     if (activeFilter !== "All" && recipe.brewMethod !== activeFilter) {
@@ -165,43 +276,18 @@ export function RecipesExplorer({
       />
 
       {coverRecipe && (
-        <MotionReveal className="mt-16">
+        <MotionReveal className="mt-14 sm:mt-16">
           {(() => {
             const labels = recipeLabels(coverRecipe, t);
             return (
-              <Cover
-                href={`/recipes/${coverRecipe.slug}`}
-                title={coverRecipe.name}
-                eyebrow={
-                  coverRecipe.featured
-                    ? t("homeFeaturedRecipes.editorsChoice")
-                    : `${coverRecipe.country} · ${labels.brewMethodLabel}`
-                }
-                imageSrc={coverRecipe.image}
-                imageAlt={labels.imageAlt}
+              <RecipesArchiveLead
+                recipe={coverRecipe}
+                brewMethodLabel={labels.brewMethodLabel}
+                difficultyLabel={labels.difficultyLabel}
+                ratioLabel={ratioLabel}
+                timeLabel={timeLabel}
+                editorsChoiceLabel={t("homeFeaturedRecipes.editorsChoice")}
                 ctaLabel={t("homeDiscover.enterLabel")}
-                grade="library"
-                priority
-                meta={
-                  <div className="space-y-4">
-                    <p className={acTypography.body}>{coverRecipe.notes}</p>
-                    <div className="flex flex-wrap items-center gap-6 text-sm text-ac-espresso">
-                      <DifficultyIndicator
-                        level={coverRecipe.difficulty}
-                        label={labels.difficultyLabel}
-                        labelClassName="text-sm text-ac-espresso"
-                      />
-                      <span>
-                        {t("homeFeaturedRecipes.ratioLabel")}{" "}
-                        <strong className="text-ac-espresso">{coverRecipe.ratio}</strong>
-                      </span>
-                      <span>
-                        {t("homeFeaturedRecipes.timeLabel")}{" "}
-                        <strong className="text-ac-espresso">{coverRecipe.time}</strong>
-                      </span>
-                    </div>
-                  </div>
-                }
               />
             );
           })()}
@@ -209,20 +295,22 @@ export function RecipesExplorer({
       )}
 
       {folioRecipes.length > 0 && (
-        <div className="mt-20">
+        <div className="mt-14 sm:mt-20">
           {folioEntries.map(({ letter, items }) => (
-            <section key={letter || "all"} className={letter ? "mt-12 first:mt-0" : undefined}>
+            <section key={letter || "all"} className={letter ? "mt-14 first:mt-0 sm:mt-16" : undefined}>
               {letter ? (
-                <p className={acTypography.eyebrow} aria-hidden>
+                <p className={`${acTypography.eyebrow} text-ac-espresso/50`} aria-hidden>
                   {letter}
                 </p>
               ) : null}
               <Folio
                 ariaLabel={t("recipesPage.title")}
-                className={letter ? "mt-4" : undefined}
+                className={letter ? "mt-3 sm:mt-4" : undefined}
               >
                 {items.map(({ recipe, indexLabel }) => {
                   const labels = recipeLabels(recipe, t);
+                  const isFavorited =
+                    Boolean(recipe.id) && favoritedSet.has(recipe.id as string);
 
                   return (
                     <FolioItem
@@ -230,32 +318,31 @@ export function RecipesExplorer({
                       href={`/recipes/${recipe.slug}`}
                       title={recipe.name}
                       index={indexLabel}
-                      imageSrc={recipe.image}
-                      imageAlt={labels.imageAlt}
                       description={recipe.notes}
+                      editorialInteractive
                       meta={
-                        <p className={acTypography.folioMeta}>
-                          {recipe.isVerifiedOfficial ? (
-                            <>
-                              <OfficialRecipeBadge
-                                verificationStatus={recipe.verificationStatus ?? "verified"}
-                                versionLabel={recipe.versionLabel}
-                                compact
-                              />
-                              {" · "}
-                            </>
-                          ) : null}
-                          {recipe.country} · {labels.brewMethodLabel}
-                          {recipe.ratio ? ` · ${recipe.ratio}` : ""}
-                        </p>
+                        <RecipeListMeta
+                          recipe={recipe}
+                          brewMethodLabel={labels.brewMethodLabel}
+                          ratioLabel={ratioLabel}
+                        />
                       }
                       trailing={
                         isAuthenticated && recipe.source === "db" && recipe.id ? (
-                          <FavoriteButton
-                            recipeId={recipe.id}
-                            isFavorited={favoritedSet.has(recipe.id)}
-                            currentPath={currentPath}
-                          />
+                          <div
+                            className={[
+                              "transition-opacity duration-200 ease-out",
+                              isFavorited
+                                ? "opacity-100"
+                                : "opacity-100 lg:opacity-0 lg:group-hover/row:opacity-100 lg:group-focus-within/row:opacity-100",
+                            ].join(" ")}
+                          >
+                            <FavoriteButton
+                              recipeId={recipe.id}
+                              isFavorited={isFavorited}
+                              currentPath={currentPath}
+                            />
+                          </div>
                         ) : undefined
                       }
                     />
