@@ -3,10 +3,11 @@ import { Skeleton } from "@/app/components/ui/skeleton";
 
 function FolioRowSkeleton() {
   return (
-    <div className="flex items-center gap-4 border-b border-ac-espresso/[0.08] py-5 sm:gap-6 sm:py-7">
-      <Skeleton className="h-16 w-16 shrink-0 rounded-none sm:h-20 sm:w-20" />
-      <div className="min-w-0 flex-1 space-y-2">
-        <Skeleton className="h-5 w-2/3 max-w-sm sm:h-6" />
+    <div className="flex items-start gap-5 border-b border-ac-espresso/[0.08] py-7 sm:gap-8 sm:py-9 md:py-10">
+      <Skeleton className="h-6 w-10 shrink-0 rounded-none sm:h-7 sm:w-11" />
+      <div className="min-w-0 flex-1 space-y-3">
+        <Skeleton className="h-6 w-2/3 max-w-md sm:h-7" />
+        <Skeleton className="h-3.5 w-full max-w-lg" />
         <Skeleton className="h-3.5 w-1/2 max-w-xs" />
       </div>
     </div>
@@ -29,12 +30,11 @@ export default function RecipesLoading() {
           <Skeleton key={index} className="h-4 w-14" />
         ))}
       </div>
-      <div className="mt-10 hidden gap-8 lg:grid lg:grid-cols-12">
-        <Skeleton className="min-h-[20rem] lg:col-span-7" />
-        <div className="space-y-4 lg:col-span-5">
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-10 w-full max-w-sm" />
-        </div>
+      <div className="mt-10 space-y-4 border-b border-ac-espresso/[0.08] pb-12 sm:mt-14 sm:pb-16">
+        <Skeleton className="h-4 w-28" />
+        <Skeleton className="h-10 w-full max-w-xl sm:h-12" />
+        <Skeleton className="h-4 w-2/5 max-w-xs" />
+        <Skeleton className="h-16 w-full max-w-2xl" />
       </div>
       <div className="mt-10 sm:mt-14">
         {Array.from({ length: 3 }).map((_, index) => (
