@@ -31,6 +31,9 @@ export type PourRow = {
   water_amount: number | null;
   time_label: string | null;
   notes: string | null;
+  duration_seconds?: number | null;
+  agitation?: string | null;
+  pour_target?: string | null;
 };
 
 export type RecipeImageRow = {
@@ -117,9 +120,20 @@ export type DbRecipeRow = {
   equipment_notes: string | null;
   verified_at: string | null;
   verified_by: string | null;
+  roaster_id: string | null;
+  serving_style: "hot" | "iced";
+  grinder_setting: string | null;
+  agitation_instructions: string | null;
+  drawdown_target: string | null;
+  source_url: string | null;
+  source_verification_status: "unverified" | "pending" | "verified" | "rejected";
+  source_verified_at: string | null;
+  source_verified_by: string | null;
+  recipe_author_name: string | null;
   created_at: string;
   updated_at: string;
-  brewing_methods: { id: string; name: string } | null;
+  brewing_methods: { id: string; name: string; slug?: string | null } | null;
+  roasters?: { id: string; name: string; slug: string | null; country: string | null } | null;
   devices: { id: string; name: string } | null;
   grinders: { id: string; name: string } | null;
   filter_types: { id: string; name: string } | null;
@@ -272,6 +286,15 @@ export type RecipeFullDetail = {
   waterRecommendation?: string | null;
   equipmentNotes?: string | null;
   verifiedAt?: string | null;
+  servingStyle?: "hot" | "iced";
+  grinderSetting?: string | null;
+  agitationInstructions?: string | null;
+  drawdownTarget?: string | null;
+  sourceUrl?: string | null;
+  sourceVerificationStatus?: "unverified" | "pending" | "verified" | "rejected";
+  sourceVerifiedAt?: string | null;
+  recipeAuthorName?: string | null;
+  brewingMethodSlug?: string | null;
 };
 
 export const RECIPE_IMAGE_PLACEHOLDER = "/images/fallback/coffee-placeholder.webp";

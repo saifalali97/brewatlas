@@ -68,6 +68,7 @@ export function parseSearchParams(
     recipeKind: single("kind") ?? "",
     verificationStatus: single("vstatus") ?? "",
     verifiedOnly: parseBool(single("verified")),
+    servingStyle: single("style") ?? "",
     page: parsePage(single("page")),
   };
 }
@@ -103,6 +104,7 @@ export function serializeSearchFilters(filters: SearchFilters): URLSearchParams 
   if (filters.recipeKind) params.set("kind", filters.recipeKind);
   if (filters.verificationStatus) params.set("vstatus", filters.verificationStatus);
   if (filters.verifiedOnly) params.set("verified", "1");
+  if (filters.servingStyle) params.set("style", filters.servingStyle);
   if (filters.page > 1) params.set("page", String(filters.page));
 
   return params;
@@ -131,5 +133,6 @@ export function countActiveFilters(filters: SearchFilters): number {
   if (filters.recipeKind) count += 1;
   if (filters.verificationStatus) count += 1;
   if (filters.verifiedOnly) count += 1;
+  if (filters.servingStyle) count += 1;
   return count;
 }

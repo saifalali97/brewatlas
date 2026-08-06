@@ -122,6 +122,7 @@ export function SearchExplorer({
       recipeKind: "",
       verificationStatus: "",
       verifiedOnly: false,
+      servingStyle: "",
       page: 1,
       q: debouncedQuery,
     });

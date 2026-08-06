@@ -47,6 +47,7 @@ export type SearchFilters = {
   recipeKind: string;
   verificationStatus: string;
   verifiedOnly: boolean;
+  servingStyle: string;
   page: number;
 };
 
