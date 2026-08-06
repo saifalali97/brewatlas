@@ -1,4 +1,3 @@
-import type { FeaturedRecipe } from "@/types/homepage";
 import type { RecipeFullDetail } from "@/types/recipe";
 import type { RecipeReview } from "@/types/community";
 import { parseBrewDurationToIso } from "@/lib/seo/duration";
@@ -141,46 +140,6 @@ export function buildRecipeReviewJsonLd(input: {
   }
 
   graph.push(buildBreadcrumbJsonLd(input.breadcrumbs, locale));
-
-  return {
-    "@context": "https://schema.org",
-    "@graph": graph,
-  };
-}
-
-export function buildStaticRecipeJsonLd(input: {
-  recipe: FeaturedRecipe;
-  slug: string;
-  breadcrumbs: BreadcrumbItem[];
-  locale?: Locale;
-}) {
-  const siteUrl = getSiteUrl();
-  const recipeUrl = `${siteUrl}/recipes/${input.slug}`;
-  const locale = input.locale ?? "en";
-  const ingredients = [`${input.recipe.origin} coffee`, `Coffee-to-water ratio ${input.recipe.ratio}`];
-  const totalTime = parseBrewDurationToIso(input.recipe.time);
-
-  const graph: Record<string, unknown>[] = [
-    {
-      "@type": "Recipe",
-      "@id": `${recipeUrl}#recipe`,
-      name: input.recipe.name,
-      description: input.recipe.notes,
-      image: resolveAbsoluteAssetUrl(input.recipe.image),
-      url: recipeUrl,
-      author: {
-        "@type": "Organization",
-        name: siteConfig.name,
-        url: siteUrl,
-      },
-      recipeCategory: input.recipe.brewMethod,
-      recipeCuisine: input.recipe.country,
-      recipeIngredient: ingredients,
-      recipeYield: "1 serving",
-      ...(totalTime ? { totalTime } : {}),
-    },
-    buildBreadcrumbJsonLd(input.breadcrumbs, locale),
-  ];
 
   return {
     "@context": "https://schema.org",

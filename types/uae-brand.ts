@@ -46,7 +46,7 @@ export type DbUaeHeritageHighlightRow = {
   position: number;
 };
 
-/** `public.roasters`, extended with the UAE brand columns (slug, emirate, city, description, featured, is_uae) added in `20260713280200_create_uae_brand_foundation.sql`. `logoUrl` is intentionally a generic placeholder path, never a real trademark. */
+/** `public.roasters`, extended with Gulf directory columns (slug, emirate, city, description, featured, is_uae, instagram, verified, banner_image_url) and UAE brand fields from prior migrations. `logoUrl` is intentionally a generic placeholder path, never a real trademark. */
 export type UaeRoaster = {
   id: string;
   name: string;
@@ -55,10 +55,13 @@ export type UaeRoaster = {
   emirate: string | null;
   city: string | null;
   website: string | null;
+  instagram: string | null;
   logoUrl: string | null;
+  bannerImageUrl: string | null;
   description: string | null;
   featured: boolean;
   isUae: boolean;
+  verified: boolean;
 };
 
 export type DbUaeRoasterRow = {
@@ -69,10 +72,14 @@ export type DbUaeRoasterRow = {
   emirate: string | null;
   city: string | null;
   website: string | null;
+  instagram: string | null;
   logo_url: string | null;
+  banner_image_url: string | null;
   description: string | null;
   featured: boolean;
   is_uae: boolean;
+  verified: boolean;
+  updated_at: string;
 };
 
 export const UAE_MAP_LOCATION_TYPES = ["roaster", "cafe", "majlis", "roastery_cafe"] as const;

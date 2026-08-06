@@ -33,21 +33,18 @@ import { FavoriteButton } from "@/app/components/recipes/favorite-button";
 import { RecipeEditorialHero, RecipeEditorialSection } from "@/app/components/recipes/recipe-editorial-hero";
 import { acTypography } from "@/lib/design-system/atlas-canon";
 import { badges, buttons } from "@/lib/constants/styles";
-import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getCachedPublishedDbRecipes } from "@/lib/data/cached-public-data";
-import { getAllRecipeSlugs, getRecipeSlug, getStaticRecipeIndexBySlug } from "@/lib/data/recipes";
 import { getDbRecipeDetailBySlug, getFavoritesCount, getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
 import { recipeHasXBloomProfile } from "@/lib/data/xbloom";
-import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
+import { difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { translate, interpolate } from "@/lib/i18n/format";
 import { getLocale } from "@/lib/i18n/locale";
 import type { Dictionary } from "@/lib/i18n/types";
 import { buildLocalizedMetadata } from "@/lib/seo/localized-metadata";
 import { resolveSitePathname } from "@/lib/seo/path-utils";
-import { buildRecipeReviewJsonLd, buildStaticRecipeJsonLd } from "@/lib/seo/recipe-review-json-ld";
-import { RecipeGuideSections, RecipeTextExtrasSections } from "@/app/components/recipes/recipe-guide-sections";
+import { buildRecipeReviewJsonLd } from "@/lib/seo/recipe-review-json-ld";
+import { RecipeTextExtrasSections } from "@/app/components/recipes/recipe-guide-sections";
 import {
   RecipeBrewSpecGrid,
   RecipeDetailActionBar,
@@ -57,7 +54,6 @@ import {
   RecipeProseContent,
   recipeDetailSectionSpacing,
 } from "@/app/components/recipes/recipe-detail-ui";
-import { getStaticRecipeDetail } from "@/lib/data/static-recipe-details";
 import { getRecipeTranslation, localizeRecipe } from "@/lib/data/translations";
 import { RecipeReviewsPanel } from "@/lib/dynamic-sections";
 import { RecipeRatingBadge } from "@/app/components/reviews/recipe-rating-badge";
@@ -86,7 +82,6 @@ import { getRecipeComments, hasUserLikedRecipe } from "@/lib/data/community-plat
 import type { RecipeSetupCompatibility } from "@/types/brewing-setup";
 import type { BrewSessionRecipeStats } from "@/types/brew-sessions";
 import { RecipePremiumPaywall } from "@/app/components/recipes/recipe-premium-paywall";
-import type { FeaturedRecipe } from "@/types/homepage";
 import { RECIPE_IMAGE_PLACEHOLDER, type RecipeFullDetail } from "@/types/recipe";
 import type {
   RatingDistributionBucket,
@@ -128,27 +123,9 @@ type RecipePageProps = {
   searchParams: Promise<{ reviewSort?: string; reviewPage?: string; commentSort?: string }>;
 };
 
-export function generateStaticParams() {
-  return getAllRecipeSlugs().map((slug) => ({ slug }));
-}
-
 export async function generateMetadata({ params }: RecipePageProps): Promise<Metadata> {
   const { slug } = await params;
   const locale = await getLocale();
-  const staticIndex = getStaticRecipeIndexBySlug(slug);
-
-  if (staticIndex !== -1) {
-    const content = await getHomeContent(locale);
-    const recipe = content.featuredRecipes[staticIndex];
-    return buildLocalizedMetadata({
-      pathname: `/recipes/${slug}`,
-      locale,
-      title: recipe.name,
-      description: recipe.notes,
-      ogImage: { url: recipe.image },
-    });
-  }
-
   const supabase = await createClient();
   const dictionary = await getDictionary(locale);
   const dbRecipe = await getDbRecipeDetailBySlug(supabase, slug);
@@ -196,47 +173,6 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
   const commentSort = parseCommentSort(resolvedSearchParams.commentSort);
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const staticIndex = getStaticRecipeIndexBySlug(slug);
-
-  if (staticIndex !== -1) {
-    const content = await getHomeContent(locale);
-    const supabase = await createClient();
-    const { data: authData } = await supabase.auth.getUser();
-    const membership = authData.user ? await getMembershipSummary(supabase, authData.user.id) : null;
-    const recipe = content.featuredRecipes[staticIndex];
-    const canAccessFull = canAccessFullRecipeContent(
-      membership,
-      { premiumOnly: Boolean(recipe.premium) },
-      authData.user ? undefined : { guestRecipeIndex: staticIndex },
-    );
-    const staticJsonLd = buildStaticRecipeJsonLd({
-      recipe,
-      slug,
-      locale,
-      breadcrumbs: [
-        { name: dictionary.nav.home, path: "/" },
-        { name: dictionary.nav.recipes, path: "/recipes" },
-        { name: recipe.name, path: `/recipes/${slug}` },
-      ],
-    });
-
-    return (
-      <>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(staticJsonLd) }}
-        />
-        <StaticRecipeView
-          recipe={recipe}
-          slug={slug}
-          dictionary={dictionary}
-          isAuthenticated={Boolean(authData.user)}
-          canAccessFull={canAccessFull}
-          detail={getStaticRecipeDetail(slug)}
-        />
-      </>
-    );
-  }
 
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
@@ -264,11 +200,8 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
       viewerId
         ? Promise.resolve(undefined)
         : (async () => {
-            const content = await getHomeContent(locale);
-            const staticSlugs = content.featuredRecipes.map((_entry, index) => getRecipeSlug(staticRecipesEn[index]));
             const dbRecipes = await getCachedPublishedDbRecipes(locale);
-            const allSlugs = [...staticSlugs, ...dbRecipes.map((entry) => entry.slug)];
-            return allSlugs.indexOf(slug);
+            return dbRecipes.findIndex((entry) => entry.slug === slug);
           })(),
       viewerId ? getUserBrewingSetup(supabase, viewerId) : Promise.resolve(null),
       viewerId ? getBrewSessionRecipeStats(supabase, viewerId, recipe.id) : Promise.resolve(null),
@@ -323,112 +256,6 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
       comments={comments}
       commentSort={commentSort}
     />
-  );
-}
-
-function StaticRecipeView({
-  recipe,
-  slug,
-  dictionary,
-  isAuthenticated,
-  canAccessFull,
-  detail,
-}: {
-  recipe: FeaturedRecipe;
-  slug: string;
-  dictionary: Dictionary;
-  isAuthenticated: boolean;
-  canAccessFull: boolean;
-  detail?: ReturnType<typeof getStaticRecipeDetail>;
-}) {
-  const d = dictionary.recipeDetail;
-  const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
-  const brewMethodLabel = brewMethodKey ? translate(dictionary, brewMethodKey) : recipe.brewMethod;
-
-  return (
-    <SectionFrame id="recipe-detail" ariaLabelledBy="recipe-detail-heading" padding="compact" wide>
-      <RecipeEditorialHero
-        backHref="/recipes"
-        backLabel={d.backToAllRecipes}
-        imageSrc={recipe.image}
-        imageAlt={`${recipe.name} ${recipe.country} ${recipe.brewMethod} ${recipe.roastLevel}`}
-        eyebrow={recipe.country}
-        title={recipe.name}
-        facts={
-          <RecipeHeroFactLine
-            items={[brewMethodLabel, recipe.ratio, recipe.time, recipe.roastLevel]}
-          />
-        }
-        badge={
-          recipe.premium ? (
-            <span className={badges.premium}>{dictionary.common.premiumBadge}</span>
-          ) : undefined
-        }
-        overlay={
-          <span className={`${acTypography.caption} inline-flex items-center gap-1.5 rounded-full border border-ac-espresso/10 bg-ac-pearl/90 px-3 py-1 text-ac-espresso backdrop-blur-sm`}>
-            <MapPin className="h-3 w-3 text-ac-copper" aria-hidden />
-            {recipe.origin}
-          </span>
-        }
-      />
-
-      <div className="mx-auto max-w-3xl">
-        <div className="mt-8 md:mt-10">
-          <DifficultyIndicator
-            level={recipe.difficulty}
-            label={translate(dictionary, difficultyLabelKey(recipe.difficulty))}
-            labelClassName={`${acTypography.folioMeta} text-sm text-ac-espresso/70`}
-            className="flex items-center gap-2.5"
-          />
-        </div>
-
-        {canAccessFull && detail ? (
-          <>
-            <RecipeBrewSpecGrid
-              ariaLabel={d.brewingDetailsTitle}
-              specs={[
-                { icon: Scale, label: d.coffeeDoseLabel, value: `${detail.coffeeDoseG}g` },
-                { icon: Droplets, label: d.waterLabel, value: `${detail.waterAmountG}g` },
-                { icon: Settings2, label: d.grindSizeLabel, value: detail.grindSize },
-                { icon: Thermometer, label: d.waterTempLabel, value: `${detail.waterTemperatureC}°C` },
-                { icon: Clock, label: d.brewTimeLabel, value: recipe.time },
-                { icon: Scale, label: d.ratioLabel, value: recipe.ratio },
-              ]}
-            />
-          </>
-        ) : (
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-4">
-            <MetaTile icon={Coffee} label={d.brewMethodLabel} value={brewMethodLabel} />
-            <MetaTile icon={Scale} label={d.ratioLabel} value={recipe.ratio} />
-            <MetaTile icon={Clock} label={d.brewTimeLabel} value={recipe.time} />
-            <MetaTile icon={MapPin} label={d.roastLevelLabel} value={recipe.roastLevel} />
-          </div>
-        )}
-
-        <CompatibleDevices hasXBloom={false} dictionary={dictionary} />
-
-        {!recipe.premium && canAccessFull ? (
-          <RecipeDetailActionBar
-            primary={
-              <RippleLink href="/recipes" className={`${buttons.primary} w-full sm:w-auto`}>
-                {d.browseMoreRecipes}
-              </RippleLink>
-            }
-            secondary={
-              <RecipeConverterButton currentDevice={brewMethodLabel} sourceRecipe={{ brewTime: recipe.time }} />
-            }
-          />
-        ) : null}
-      </div>
-
-      {!canAccessFull && (
-        <RecipePremiumPaywall dictionary={dictionary} isAuthenticated={isAuthenticated} recipeSlug={slug} />
-      )}
-
-      {canAccessFull && detail ? (
-        <RecipeGuideSections detail={detail} recipe={recipe} dictionary={dictionary} />
-      ) : null}
-    </SectionFrame>
   );
 }
 

@@ -4,7 +4,6 @@ import {
   getCultureTopicSitemapEntries,
 } from "@/lib/data/culture-sitemap";
 import { listGulfHeritageSitemapPaths } from "@/lib/content/gulf-heritage";
-import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { getPublishedRecipeSlugs } from "@/lib/data/recipe-publishing";
 import { buildHreflangAlternates } from "@/lib/seo/localized-metadata";
 import { getSiteUrl } from "@/lib/seo/site";
@@ -68,26 +67,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  const staticSlugs = new Set(getAllRecipeSlugs());
-
-  const recipeEntries = [
-    ...getAllRecipeSlugs().map((slug) => ({
-      url: `${baseUrl}/recipes/${slug}`,
-      lastModified,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-      alternates: { languages: buildHreflangAlternates(`/recipes/${slug}`) },
-    })),
-    ...dbPublished
-      .filter(({ slug }) => !staticSlugs.has(slug))
-      .map(({ slug, updatedAt }) => ({
-        url: `${baseUrl}/recipes/${slug}`,
-        lastModified: new Date(updatedAt),
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-        alternates: { languages: buildHreflangAlternates(`/recipes/${slug}`) },
-      })),
-  ];
+  const recipeEntries = dbPublished.map(({ slug, updatedAt }) => ({
+    url: `${baseUrl}/recipes/${slug}`,
+    lastModified: new Date(updatedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+    alternates: { languages: buildHreflangAlternates(`/recipes/${slug}`) },
+  }));
 
   const cultureSectionEntries = cultureSections.map(({ slug, lastModified: sectionUpdatedAt }) => {
     const path = `/culture/${slug}`;

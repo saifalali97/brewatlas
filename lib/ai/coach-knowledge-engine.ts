@@ -15,7 +15,7 @@ Origins shape flavor through **altitude, varietal, and processing**:
 
 - **Ethiopia/Kenya:** Floral, citrus, bright acidity — often washed or natural
 - **Colombia/Brazil:** Nutty, chocolate, caramel — versatile for espresso and filter
-- **Panama (Geisha):** Jasmine, bergamot, tea-like — highly sought after
+- **Panama:** Floral, tropical fruit, tea-like clarity — often high-elevation washed lots
 - **Sumatra/Indonesia:** Herbal, earthy, full body — often wet-hulled
 
 Higher altitude generally means slower cherry development and more complex acidity. I can't recommend specific competition recipes, but I can help you dial in any origin you're brewing.`,

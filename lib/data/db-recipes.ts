@@ -1,6 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Locale } from "@/types/i18n";
-import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { processScheduledRecipePublishes } from "@/lib/data/recipe-publishing";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
@@ -477,8 +476,7 @@ export async function createCoffee(
 
 /**
  * Builds a URL-safe slug for a new/renamed recipe that doesn't collide with
- * either another DB recipe or one of the static catalog's slugs (both are
- * resolved through the same `/recipes/[slug]` route).
+ * another DB recipe on the shared `/recipes/[slug]` route.
  */
 export async function generateUniqueRecipeSlug(
   supabase: SupabaseClient,
@@ -486,16 +484,13 @@ export async function generateUniqueRecipeSlug(
   excludeId?: string,
 ): Promise<string> {
   const base = slugify(title) || "recipe";
-  const staticSlugs = new Set(getAllRecipeSlugs());
 
   let candidate = base;
   for (let suffix = 2; suffix <= 51; suffix += 1) {
-    if (!staticSlugs.has(candidate)) {
-      let query = supabase.from("recipes").select("id").eq("slug", candidate).limit(1);
-      if (excludeId) query = query.neq("id", excludeId);
-      const { data } = await query.maybeSingle();
-      if (!data) return candidate;
-    }
+    let query = supabase.from("recipes").select("id").eq("slug", candidate).limit(1);
+    if (excludeId) query = query.neq("id", excludeId);
+    const { data } = await query.maybeSingle();
+    if (!data) return candidate;
     candidate = `${base}-${suffix}`;
   }
 

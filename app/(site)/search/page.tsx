@@ -4,9 +4,7 @@ import { PageHeader } from "@/app/components/ui/page-header";
 import { PageEditorialPhoto } from "@/app/components/ui/page-editorial-photo";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { PAGE_EDITORIAL_IMAGES } from "@/lib/media/page-images";
-import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
 import { getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
-import { getRecipeSlug } from "@/lib/data/recipes";
 import { getSearchFilterOptions, runGlobalSearch } from "@/lib/data/search";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getHomeContent } from "@/lib/i18n/get-home-content";
@@ -18,7 +16,6 @@ import { getSiteUrl } from "@/lib/seo/site";
 import { createClient } from "@/lib/supabase/server";
 import type { Dictionary } from "@/lib/i18n/types";
 import type { DeviceSearchHit, SearchFilters } from "@/types/search";
-import type { RecipeListItem } from "@/types/recipe";
 
 function buildSearchTitle(dictionary: Dictionary, filters: SearchFilters): string {
   const parts: string[] = [];
@@ -102,12 +99,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
 
-  const staticRecipes: RecipeListItem[] = content.featuredRecipes.map((recipe, index) => ({
-    ...recipe,
-    slug: getRecipeSlug(staticRecipesEn[index]),
-    source: "static",
-  }));
-
   const staticDevices: DeviceSearchHit[] = content.brewMethods.map((method, index) => {
     const deviceNameKey = deviceNameKeys[index];
     const deviceName = deviceNameKey ? dictionary.devicesPage[deviceNameKey] : method.name;
@@ -127,7 +118,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     runGlobalSearch({
       supabase,
       filters,
-      staticRecipes,
       staticRoasters: content.topRoasters,
       staticOrigins: content.coffeeOrigins,
       staticDevices,
