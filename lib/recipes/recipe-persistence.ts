@@ -35,6 +35,9 @@ export type PourInput = {
   waterAmount: number | null;
   timeLabel: string | null;
   notes: string | null;
+  durationSeconds?: number | null;
+  agitation?: string | null;
+  pourTarget?: string | null;
 };
 
 export function parsePours(formData: FormData): PourInput[] {
@@ -46,8 +49,13 @@ export function parsePours(formData: FormData): PourInput[] {
     const waterAmount = optionalNumber(formData, `pourWater_${i}`);
     const timeLabel = optionalString(formData, `pourTime_${i}`);
     const notes = optionalString(formData, `pourNotes_${i}`);
-    if (waterAmount === null && !timeLabel && !notes) continue;
-    pours.push({ pourNumber, waterAmount, timeLabel, notes });
+    const durationSeconds = optionalNumber(formData, `pourDuration_${i}`);
+    const agitation = optionalString(formData, `pourAgitation_${i}`);
+    const pourTarget = optionalString(formData, `pourTarget_${i}`);
+    if (waterAmount === null && !timeLabel && !notes && durationSeconds === null && !agitation && !pourTarget) {
+      continue;
+    }
+    pours.push({ pourNumber, waterAmount, timeLabel, notes, durationSeconds, agitation, pourTarget });
     pourNumber += 1;
   }
 
@@ -267,6 +275,9 @@ export async function replacePours(supabase: SupabaseClient, recipeId: string, p
       water_amount: pour.waterAmount,
       time_label: pour.timeLabel,
       notes: pour.notes,
+      duration_seconds: pour.durationSeconds ?? null,
+      agitation: pour.agitation ?? null,
+      pour_target: pour.pourTarget ?? null,
     })),
   );
 }

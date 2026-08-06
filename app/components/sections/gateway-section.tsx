@@ -4,7 +4,7 @@ import type { Dictionary } from "@/lib/i18n/types";
 
 const GATEWAY_IMAGES = {
   coffee: "/images/recipes/espresso-shot.webp",
-  gulfHeritage: "/images/culture/arabic-coffee-hero.webp",
+  gulfDirectory: "/images/culture/arabic-coffee-hero.webp",
   aiCoach: "/images/culture/tea-hero.webp",
 } as const;
 
@@ -53,13 +53,13 @@ export function GatewaySection({ copy }: GatewaySectionProps) {
           emphasizeEnter
         />
         <Portal
-          href="/gulf-heritage"
+          href="/recipes"
           eyebrow="02"
-          title={destinations.gulfHeritage.title}
-          tagline={destinations.gulfHeritage.tagline}
+          title={destinations.gulfDirectory.title}
+          tagline={destinations.gulfDirectory.tagline}
           enterLabel={copy.enterLabel}
-          imageSrc={GATEWAY_IMAGES.gulfHeritage}
-          imageAlt={destinations.gulfHeritage.imageAlt}
+          imageSrc={GATEWAY_IMAGES.gulfDirectory}
+          imageAlt={destinations.gulfDirectory.imageAlt}
           tone="earth"
           size="gateway"
           minimal

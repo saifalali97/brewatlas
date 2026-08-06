@@ -36,6 +36,14 @@ export type OfficialRecipeContent = {
   equipmentNotes: string | null;
   verifiedAt: string | null;
   verifiedBy: string | null;
+  servingStyle: "hot" | "iced";
+  grinderSetting: string | null;
+  agitationInstructions: string | null;
+  drawdownTarget: string | null;
+  sourceUrl: string | null;
+  sourceVerificationStatus: "unverified" | "pending" | "verified" | "rejected";
+  sourceVerifiedAt: string | null;
+  recipeAuthorName: string | null;
 };
 
 export type OfficialRecipeVersionMeta = {
@@ -55,6 +63,7 @@ export type OfficialRecipeListFilters = {
   brewingMethodId?: string;
   process?: string;
   roasterId?: string;
+  servingStyle?: "hot" | "iced";
   difficulty?: string;
   country?: string;
   search?: string;
@@ -76,6 +85,7 @@ export type OfficialRecipeSummary = {
   roasterName: string | null;
   difficulty: string | null;
   tastingNotes: string | null;
+  servingStyle: "hot" | "iced";
   updatedAt: string;
 };
 

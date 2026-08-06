@@ -67,6 +67,7 @@ export async function searchPublishedRecipesPaginated(
       p_recipe_kind: filters.recipeKind || null,
       p_verification_status: filters.verificationStatus || null,
       p_verified_only: filters.verifiedOnly,
+      p_serving_style: filters.servingStyle || null,
       p_sort: filters.sort,
       p_limit: 1,
       p_offset: 0,
@@ -101,9 +102,10 @@ export async function searchPublishedRecipesPaginated(
     p_featured_only: filters.featuredOnly,
     p_recipe_kind: filters.recipeKind || null,
     p_verification_status: filters.verificationStatus || null,
-    p_verified_only: filters.verifiedOnly,
-    p_sort: filters.sort,
-    p_limit: dbLimit,
+      p_verified_only: filters.verifiedOnly,
+      p_serving_style: filters.servingStyle || null,
+      p_sort: filters.sort,
+      p_limit: dbLimit,
     p_offset: dbOffset,
   });
 

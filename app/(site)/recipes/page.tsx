@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Chapter } from "@/app/components/atlas/chapter";
-import { getCachedPublishedDbRecipes } from "@/lib/data/cached-public-data";
-import { getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
-import { getMembershipSummary } from "@/lib/data/membership";
+import Link from "next/link";
+import { GulfCountryGrid } from "@/app/components/recipes/gulf-country-grid";
+import { RecipesHubHero } from "@/app/components/recipes/recipes-hub-hero";
+import {
+  getGulfDirectoryCountrySummaries,
+  getGulfDirectoryGlobalStats,
+} from "@/lib/data/gulf-directory";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
-import { getHiddenRecipeCount, isPremium } from "@/lib/membership/premium";
 import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
 import { buildCollectionPageJsonLd } from "@/lib/seo/json-ld";
 import { createClient } from "@/lib/supabase/server";
-import { RecipesExplorer } from "./recipes-explorer";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -17,30 +18,21 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildLocalizedMetadata({
     pathname: "/recipes",
     locale,
-    title: dictionary.metadata.recipesTitle,
-    description: dictionary.metadata.recipesDescription,
+    title: dictionary.recipesDirectory.metaTitle,
+    description: dictionary.recipesDirectory.metaDescription,
   });
 }
 
-type RecipesPageProps = {
-  searchParams: Promise<{ q?: string }>;
-};
-
-export default async function RecipesPage({ searchParams }: RecipesPageProps) {
-  const { q } = await searchParams;
+export default async function RecipesHubPage() {
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
+  const copy = dictionary.recipesDirectory;
   const supabase = await createClient();
-  const { data: authData } = await supabase.auth.getUser();
 
-  const [dbRecipes, favoritedRecipeIds, membership] = await Promise.all([
-    getCachedPublishedDbRecipes(locale),
-    authData.user ? getUserFavoriteRecipeIds(supabase, authData.user.id) : Promise.resolve(new Set<string>()),
-    authData.user ? getMembershipSummary(supabase, authData.user.id) : Promise.resolve(null),
+  const [countries, stats] = await Promise.all([
+    getGulfDirectoryCountrySummaries(supabase),
+    getGulfDirectoryGlobalStats(supabase),
   ]);
-
-  const isAuthenticated = Boolean(authData.user);
-  const hiddenRecipeCount = getHiddenRecipeCount(dbRecipes.length, membership, isAuthenticated);
 
   return (
     <>
@@ -50,30 +42,39 @@ export default async function RecipesPage({ searchParams }: RecipesPageProps) {
           __html: JSON.stringify(
             buildCollectionPageJsonLd({
               url: localizedPathUrl("/recipes", locale),
-              name: dictionary.recipesPage.title,
-              description: dictionary.recipesPage.description,
-              itemCount: dbRecipes.length,
+              name: copy.heroTitle,
+              description: copy.metaDescription,
+              itemCount: countries.length,
             }),
           ),
         }}
       />
-      <Chapter
-        id="recipes-archive"
-        rhythm="dawn"
-        padding="compact"
-        wide
-        ariaLabelledBy="recipes-archive-heading"
-      >
-        <RecipesExplorer
-          recipes={dbRecipes}
-          favoritedRecipeIds={Array.from(favoritedRecipeIds)}
-          isAuthenticated={isAuthenticated}
-          isPremium={isPremium(membership)}
-          hiddenRecipeCount={hiddenRecipeCount}
-          currentPath="/recipes"
-          initialQuery={q ?? ""}
+
+      <div className="min-h-screen bg-[#FDFCF8] pb-12">
+        <RecipesHubHero
+          eyebrow={copy.eyebrow}
+          title={copy.heroTitle}
+          subtitle={copy.heroSubtitle}
+          verifiedRoastersLabel={copy.verifiedRoasteriesLabel}
+          testedRecipesLabel={copy.testedRecipesLabel}
+          brewedWithLoveLabel={copy.brewedWithLoveLabel}
+          imageAlt={copy.heroImageAlt}
         />
-      </Chapter>
+
+        <div className="mx-auto max-w-[1200px] px-6 sm:px-8 lg:px-10">
+          <GulfCountryGrid countries={countries} dictionary={dictionary} stats={stats} />
+
+          <div className="mt-10 text-center">
+            <Link
+              href="/recipes/browse"
+              className="inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-[#A67B4A] hover:text-[#8B6914]"
+            >
+              {copy.browseAllRecipes}
+              <span aria-hidden>→</span>
+            </Link>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

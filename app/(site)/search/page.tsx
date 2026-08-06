@@ -140,7 +140,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         [
           { name: dictionary.nav.recipes, path: "/recipes" },
           { name: dictionary.nav.culture, path: "/culture" },
-          { name: dictionary.nav.gulfHeritage, path: "/gulf-heritage" },
+          { name: dictionary.nav.recipes, path: "/recipes" },
           { name: dictionary.nav.origins, path: "/origins" },
           { name: dictionary.nav.roasters, path: "/roasters" },
           { name: dictionary.nav.methods, path: "/methods" },

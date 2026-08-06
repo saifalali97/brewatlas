@@ -13,7 +13,7 @@ import { isVerifiedOfficialRecipe } from "@/types/official-recipe";
 
 const OFFICIAL_SUMMARY_SELECT = `
   id, title, slug, recipe_kind, verification_status, version_label,
-  featured, premium_only, cover_image_url, difficulty, tasting_notes, updated_at,
+  featured, premium_only, cover_image_url, difficulty, tasting_notes, serving_style, updated_at,
   brewing_methods ( name ),
   devices ( name ),
   coffees (
@@ -34,6 +34,7 @@ type OfficialSummaryRow = {
   cover_image_url: string | null;
   difficulty: string | null;
   tasting_notes: string | null;
+  serving_style: "hot" | "iced";
   updated_at: string;
   brewing_methods: { name: string } | null;
   devices: { name: string } | null;
@@ -61,6 +62,7 @@ function mapOfficialSummary(row: OfficialSummaryRow): OfficialRecipeSummary {
     roasterName: row.coffees?.roasters?.name ?? null,
     difficulty: row.difficulty,
     tastingNotes: row.tasting_notes,
+    servingStyle: row.serving_style ?? "hot",
     updatedAt: row.updated_at,
   };
 }
@@ -92,13 +94,19 @@ export async function listOfficialRecipes(
   if (filters.brewingMethodId) {
     query = query.eq("brewing_method_id", filters.brewingMethodId);
   }
+  if (filters.servingStyle) {
+    query = query.eq("serving_style", filters.servingStyle);
+  }
+  if (filters.roasterId) {
+    query = query.eq("roaster_id", filters.roasterId);
+  }
   if (filters.difficulty) {
     query = query.eq("difficulty", filters.difficulty);
   }
   if (filters.search?.trim()) {
     query = query.ilike("title", `%${filters.search.trim()}%`);
   }
-  if (filters.originId || filters.process || filters.roasterId) {
+  if (filters.originId || filters.process) {
     query = query.not("coffee_id", "is", null);
   }
 
@@ -114,12 +122,12 @@ export async function listOfficialRecipes(
 
   let items = (data as unknown as OfficialSummaryRow[]).map(mapOfficialSummary);
 
-  if (filters.originId || filters.process || filters.roasterId) {
+  if (filters.originId || filters.process) {
     const ids = items.map((item) => item.id);
     if (ids.length > 0) {
       const { data: coffeeRows } = await supabase
         .from("recipes")
-        .select("id, coffees ( origin_id, process, roaster_id )")
+        .select("id, coffees ( origin_id, process )")
         .in("id", ids);
 
       const allowed = new Set(
@@ -128,12 +136,10 @@ export async function listOfficialRecipes(
             const coffee = row.coffees as {
               origin_id?: string | null;
               process?: string | null;
-              roaster_id?: string | null;
             } | null;
             if (!coffee) return false;
             if (filters.originId && coffee.origin_id !== filters.originId) return false;
             if (filters.process && coffee.process !== filters.process) return false;
-            if (filters.roasterId && coffee.roaster_id !== filters.roasterId) return false;
             return true;
           })
           .map((row) => row.id as string),
