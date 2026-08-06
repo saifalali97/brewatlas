@@ -20,7 +20,6 @@ import {
 import type { Dictionary } from "@/lib/i18n/types";
 import type { StaticRecipeDetail } from "@/types/static-recipe-detail";
 import type { FeaturedRecipe } from "@/types/homepage";
-import { getRecipeBySlug } from "@/lib/data/recipes";
 
 type RecipeGuideSectionsProps = {
   detail: StaticRecipeDetail;
@@ -247,17 +246,13 @@ export function RecipeGuideSections({ detail, recipe, dictionary }: RecipeGuideS
       {detail.relatedRecipeSlugs.length > 0 ? (
         <RecipeEditorialSection title={d.relatedRecipesTitle} className={recipeDetailSectionSpacing}>
           <ul className="space-y-2">
-            {detail.relatedRecipeSlugs.map((relatedSlug) => {
-              const related = getRecipeBySlug(relatedSlug);
-              if (!related) return null;
-              return (
-                <li key={relatedSlug}>
-                  <RippleLink href={`/recipes/${relatedSlug}`} className="text-sm font-medium text-ba-bronze hover:text-ac-espresso">
-                    {related.name}
-                  </RippleLink>
-                </li>
-              );
-            })}
+            {detail.relatedRecipeSlugs.map((relatedSlug) => (
+              <li key={relatedSlug}>
+                <RippleLink href={`/recipes/${relatedSlug}`} className="text-sm font-medium text-ba-bronze hover:text-ac-espresso">
+                  {relatedSlug.replace(/-/g, " ")}
+                </RippleLink>
+              </li>
+            ))}
           </ul>
         </RecipeEditorialSection>
       ) : null}

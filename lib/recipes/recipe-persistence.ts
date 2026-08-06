@@ -1,7 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { RecipePublishStatus } from "@/types/recipe-publishing";
 import { createCoffee, generateUniqueRecipeSlug } from "@/lib/data/db-recipes";
-import { getAllRecipeSlugs } from "@/lib/data/recipes";
 import { translate } from "@/lib/i18n/format";
 import type { Dictionary } from "@/lib/i18n/types";
 import { slugify } from "@/lib/utils/slugify";
@@ -389,12 +388,7 @@ export async function resolveRecipeSlug(
   values: RecipeFormValues,
   options: { existingTitle?: string; recipeId?: string },
 ): Promise<{ slug: string } | { error: string }> {
-  const staticSlugs = new Set(getAllRecipeSlugs());
-
   if (values.slug) {
-    if (staticSlugs.has(values.slug)) {
-      return { error: "slug-conflict" };
-    }
     let query = supabase.from("recipes").select("id").eq("slug", values.slug).limit(1);
     if (options.recipeId) query = query.neq("id", options.recipeId);
     const { data } = await query.maybeSingle();

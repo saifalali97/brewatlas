@@ -21,15 +21,13 @@ import { Folio, FolioItem } from "@/app/components/atlas/folio";
 import { PageHeader } from "@/app/components/ui/page-header";
 import { SectionFrame } from "@/app/components/ui/section-frame";
 import { acFocus, acSurface, acTypography } from "@/lib/design-system/atlas-canon";
-import { featuredRecipes as staticRecipesEn } from "@/data/homepage";
-import { getRecipeSlug } from "@/lib/data/recipes";
 import { getUserFavoriteRecipes, getUserRecipes } from "@/lib/data/db-recipes";
+import { getCachedPublishedDbRecipes } from "@/lib/data/cached-public-data";
 import { AccountSubscriptionSummary } from "@/app/components/subscription/account-subscription-summary";
 import { BrewSessionDashboardWidgets } from "@/app/components/personal/brew-session-dashboard-widgets";
 import { getBrewSessionUserAnalytics } from "@/lib/data/brew-sessions";
 import { getMembershipSummary } from "@/lib/data/membership";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { getHomeContent } from "@/lib/i18n/get-home-content";
 import { brewMethodLabelKey, difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { getLocale } from "@/lib/i18n/locale";
 import { translate } from "@/lib/i18n/format";
@@ -66,7 +64,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DashboardPage() {
   const locale = await getLocale();
-  const [dictionary, content] = await Promise.all([getDictionary(locale), getHomeContent(locale)]);
+  const dictionary = await getDictionary(locale);
   const d = dictionary.dashboardPage;
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
@@ -79,7 +77,7 @@ export default async function DashboardPage() {
 
   await ensureProfile(supabase, data.user);
 
-  const [{ data: profile }, favoriteRecipes, ownRecipes, membership, brewAnalytics] = await Promise.all([
+  const [{ data: profile }, favoriteRecipes, ownRecipes, membership, brewAnalytics, publishedRecipes] = await Promise.all([
     supabase
       .from("profiles")
       .select("full_name, avatar_url, country, bio, role, brewing_methods(name), devices(name)")
@@ -89,19 +87,14 @@ export default async function DashboardPage() {
     getUserRecipes(supabase, data.user.id),
     getMembershipSummary(supabase, data.user.id),
     getBrewSessionUserAnalytics(supabase, data.user.id),
+    getCachedPublishedDbRecipes(locale),
   ]);
 
   const displayName = profile?.full_name || data.user.email || dictionary.communityPage.anonymousBrewer;
   const isAdmin = roleIsAdmin(profile?.role);
   const favoriteMethodName =
     (profile as { brewing_methods?: { name: string } | null } | null)?.brewing_methods?.name ?? d.notSet;
-  // Display uses the locale's translated copy, but the slug is always
-  // derived from the English name at the same array index so URLs never
-  // change across locales.
-  const recentRecipes = content.featuredRecipes.slice(0, 3).map((recipe, index) => ({
-    recipe,
-    slug: getRecipeSlug(staticRecipesEn[index]),
-  }));
+  const recentRecipes = publishedRecipes.slice(0, 3);
 
   const stats = [
     { icon: Heart, label: d.savedRecipesLabel, value: String(favoriteRecipes.length) },
@@ -302,10 +295,10 @@ export default async function DashboardPage() {
       <div className="mt-16">
         <h2 className={acTypography.h2}>{d.continueBrewing}</h2>
         <Folio ariaLabel={d.continueBrewing} className="mt-6">
-          {recentRecipes.map(({ recipe, slug }, index) => (
+          {recentRecipes.map((recipe, index) => (
             <FolioItem
-              key={slug}
-              href={`/recipes/${slug}`}
+              key={recipe.slug}
+              href={`/recipes/${recipe.slug}`}
               index={String(index + 1).padStart(2, "0")}
               title={recipe.name}
               imageSrc={recipe.image}

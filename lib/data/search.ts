@@ -16,151 +16,13 @@ import type {
   SearchFilterOptions,
   SearchFilters,
   SearchResults,
-  SearchSort,
   VarietySearchHit,
 } from "@/types/search";
 import { toSafeArray } from "@/lib/utils/arrays";
 
-type RatingRow = { recipe_id: string; average_rating: number; review_count: number };
-type FavoriteRow = { recipe_id: string };
-
-function parseNumber(value: string): number | null {
-  if (!value.trim()) return null;
-  const parsed = Number.parseFloat(value);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function parseBrewTimeMinutes(time: string | null | undefined): number {
-  if (!time) return Number.POSITIVE_INFINITY;
-  const colon = time.match(/(\d+)\s*:\s*(\d+)/);
-  if (colon) return Number.parseInt(colon[1], 10) * 60 + Number.parseInt(colon[2], 10);
-  const minutes = time.match(/(\d+)\s*min/i);
-  if (minutes) return Number.parseInt(minutes[1], 10);
-  const digits = Number.parseInt(time, 10);
-  return Number.isFinite(digits) ? digits : Number.POSITIVE_INFINITY;
-}
-
 function matchesQuery(haystack: string, query: string): boolean {
   if (!query) return true;
   return haystack.toLowerCase().includes(query.toLowerCase());
-}
-
-function buildRecipeHaystack(recipe: RecipeListItem): string {
-  return [
-    recipe.name,
-    recipe.roasterName,
-    recipe.origin,
-    recipe.country,
-    recipe.brewMethod,
-    recipe.deviceName,
-    recipe.roastLevel,
-    recipe.difficulty,
-    recipe.notes,
-    ...(recipe.tags ?? []),
-    ...(recipe.searchableExtras ?? []),
-  ]
-    .filter(Boolean)
-    .join(" ");
-}
-
-function recipePassesFilters(recipe: RecipeListItem, filters: SearchFilters): boolean {
-  if (filters.country && recipe.country !== filters.country) return false;
-  if (filters.region && !recipe.origin.toLowerCase().includes(filters.region.toLowerCase())) return false;
-  if (filters.roastLevel && recipe.roastLevel !== filters.roastLevel) return false;
-  if (filters.difficulty && recipe.difficulty !== filters.difficulty) return false;
-  if (filters.premiumOnly && !recipe.premium) return false;
-  if (filters.featuredOnly && !recipe.featured) return false;
-
-  const brewTimeMax = parseNumber(filters.brewTimeMax);
-  if (brewTimeMax !== null && parseBrewTimeMinutes(recipe.time) > brewTimeMax) return false;
-
-  if (filters.process) {
-    const haystack = buildRecipeHaystack(recipe).toLowerCase();
-    if (!haystack.includes(filters.process.toLowerCase())) return false;
-  }
-
-  if (filters.tastingNotes && !matchesQuery(recipe.notes ?? "", filters.tastingNotes)) return false;
-
-  if (filters.q && !matchesQuery(buildRecipeHaystack(recipe), filters.q)) return false;
-
-  return true;
-}
-
-async function loadRecipeSortMaps(supabase: SupabaseClient) {
-  const [{ data: ratings }, { data: favorites }] = await Promise.all([
-    supabase.from("recipe_rating_summary").select("recipe_id, average_rating, review_count"),
-    supabase.from("favorites").select("recipe_id"),
-  ]);
-
-  const ratingById = new Map<string, RatingRow>();
-  for (const row of (ratings ?? []) as RatingRow[]) {
-    ratingById.set(row.recipe_id, row);
-  }
-
-  const favoriteCounts = new Map<string, number>();
-  for (const row of (favorites ?? []) as FavoriteRow[]) {
-    favoriteCounts.set(row.recipe_id, (favoriteCounts.get(row.recipe_id) ?? 0) + 1);
-  }
-
-  return { ratingById, favoriteCounts };
-}
-
-function sortRecipes(
-  recipes: RecipeListItem[],
-  sort: SearchSort,
-  ratingById: Map<string, RatingRow>,
-  favoriteCounts: Map<string, number>,
-): RecipeListItem[] {
-  const sorted = [...recipes];
-
-  sorted.sort((a, b) => {
-    if (sort === "alphabetical") return a.name.localeCompare(b.name);
-    if (sort === "fastest") {
-      return parseBrewTimeMinutes(a.time) - parseBrewTimeMinutes(b.time);
-    }
-    if (sort === "rated") {
-      const aRating = a.id ? ratingById.get(a.id)?.average_rating ?? 0 : 0;
-      const bRating = b.id ? ratingById.get(b.id)?.average_rating ?? 0 : 0;
-      return bRating - aRating;
-    }
-    if (sort === "popular") {
-      const aPop = a.id ? favoriteCounts.get(a.id) ?? 0 : 0;
-      const bPop = b.id ? favoriteCounts.get(b.id) ?? 0 : 0;
-      return bPop - aPop;
-    }
-    return 0;
-  });
-
-  return sorted;
-}
-
-function filterStaticRecipes(recipes: RecipeListItem[], filters: SearchFilters): RecipeListItem[] {
-  return recipes.filter((recipe) => {
-    if (
-      filters.brewingMethodId ||
-      filters.deviceId ||
-      filters.grinderId ||
-      filters.originId ||
-      filters.roasterId ||
-      filters.tagId
-    ) {
-      return false;
-    }
-    if (filters.premiumOnly && !recipe.premium) return false;
-    if (filters.featuredOnly && !recipe.featured) return false;
-
-    const doseMin = parseNumber(filters.doseMin);
-    const doseMax = parseNumber(filters.doseMax);
-    const waterMin = parseNumber(filters.waterMin);
-    const waterMax = parseNumber(filters.waterMax);
-    const tempMin = parseNumber(filters.tempMin);
-    const tempMax = parseNumber(filters.tempMax);
-    if (doseMin !== null || doseMax !== null || waterMin !== null || waterMax !== null || tempMin !== null || tempMax !== null) {
-      return false;
-    }
-
-    return recipePassesFilters(recipe, filters);
-  });
 }
 
 function filterStaticRoasters(roasters: TopRoaster[], q: string, country: string): TopRoaster[] {
@@ -390,7 +252,6 @@ export async function getSearchFilterOptions(supabase: SupabaseClient): Promise<
 export type RunGlobalSearchInput = {
   supabase: SupabaseClient;
   filters: SearchFilters;
-  staticRecipes: RecipeListItem[];
   staticRoasters: TopRoaster[];
   staticOrigins: CoffeeOrigin[];
   staticDevices: DeviceSearchHit[];
@@ -398,7 +259,7 @@ export type RunGlobalSearchInput = {
 
 /** Runs a unified global search across recipes, roasters, origins, devices, varieties, and flavor notes. */
 export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<SearchResults> {
-  const { supabase, filters, staticRecipes, staticRoasters, staticOrigins, staticDevices } = input;
+  const { supabase, filters, staticRoasters, staticOrigins, staticDevices } = input;
   const { category, page } = filters;
   const previewLimit = category === "all" ? 6 : SEARCH_PAGE_SIZE;
 
@@ -412,7 +273,6 @@ export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<Sear
   const needsCollections = category === "all" || category === "collections";
 
   const [
-    staticFiltered,
     dbRoasters,
     staticRoastersFiltered,
     dbOrigins,
@@ -420,11 +280,9 @@ export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<Sear
     dbDevices,
     varieties,
     flavors,
-    sortMaps,
     users,
     collections,
   ] = await Promise.all([
-    needsRecipes ? Promise.resolve(filterStaticRecipes(staticRecipes, filters)) : Promise.resolve([]),
     needsRoasters ? searchDbRoasters(supabase, filters.q, filters.country) : Promise.resolve([]),
     needsRoasters ? Promise.resolve(filterStaticRoasters(staticRoasters, filters.q, filters.country)) : Promise.resolve([]),
     needsOrigins ? searchDbOrigins(supabase, filters) : Promise.resolve([]),
@@ -432,7 +290,6 @@ export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<Sear
     needsDevices ? searchDbDevices(supabase, filters.q) : Promise.resolve([]),
     needsVarieties ? searchVarieties(supabase, filters) : Promise.resolve([]),
     needsFlavors ? searchFlavors(supabase, filters) : Promise.resolve([]),
-    needsRecipes ? loadRecipeSortMaps(supabase) : Promise.resolve({ ratingById: new Map(), favoriteCounts: new Map() }),
     needsUsers ? searchCommunityUsers(supabase, filters.q, previewLimit) : Promise.resolve([]),
     needsCollections ? searchPublicCollections(supabase, filters.q, previewLimit) : Promise.resolve([]),
   ]);
@@ -441,40 +298,14 @@ export async function runGlobalSearch(input: RunGlobalSearchInput): Promise<Sear
   let totalRecipes = 0;
 
   if (needsRecipes) {
-    const sortedStatic = sortRecipes(
-      staticFiltered,
-      filters.sort,
-      sortMaps.ratingById,
-      sortMaps.favoriteCounts,
-    );
+    const paginated = await searchPublishedRecipesPaginated(supabase, filters, {
+      page: category === "all" ? 1 : page,
+      pageSize: category === "all" ? previewLimit : SEARCH_PAGE_SIZE,
+      staticCount: 0,
+    });
 
-    if (category === "all") {
-      const staticSlice = sortedStatic.slice(0, previewLimit);
-      const remaining = Math.max(0, previewLimit - staticSlice.length);
-      const paginated = await searchPublishedRecipesPaginated(supabase, filters, {
-        page: 1,
-        pageSize: remaining > 0 ? remaining : 1,
-        staticCount: 0,
-      });
-
-      recipes = remaining > 0 ? [...staticSlice, ...paginated.recipes] : staticSlice;
-      totalRecipes = sortedStatic.length + paginated.dbTotalCount;
-    } else {
-      const paginated = await searchPublishedRecipesPaginated(supabase, filters, {
-        page,
-        pageSize: SEARCH_PAGE_SIZE,
-        staticCount: sortedStatic.length,
-      });
-
-      if (page === 1) {
-        const staticSlice = sortedStatic.slice(0, Math.min(sortedStatic.length, SEARCH_PAGE_SIZE));
-        recipes = [...staticSlice, ...paginated.recipes];
-      } else {
-        recipes = paginated.recipes;
-      }
-
-      totalRecipes = sortedStatic.length + paginated.dbTotalCount;
-    }
+    recipes = paginated.recipes;
+    totalRecipes = paginated.dbTotalCount;
   }
 
   const roasterNames = new Set<string>();

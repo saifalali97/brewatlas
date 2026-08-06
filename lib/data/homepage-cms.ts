@@ -282,7 +282,7 @@ export async function getMergedHomeContent(supabase: SupabaseClient, locale: Loc
 
     return {
       heroImage: heroImage ?? staticContent.heroImage,
-      featuredRecipes: cmsFeatured.length > 0 ? cmsFeatured : staticContent.featuredRecipes,
+      featuredRecipes: cmsFeatured,
       brewMethods:
         (sectionMap.get("brew_methods") as HomeContent["brewMethods"] | undefined) ?? staticContent.brewMethods,
       coffeeOrigins:

@@ -24,7 +24,7 @@ const DEFAULT_LOCALE = "en";
 const HERITAGE_FIELDS =
   "id, slug, category, title, summary, icon_key, related_section_slug, related_topic_slug, position";
 const ROASTER_FIELDS =
-  "id, name, slug, country, emirate, city, website, logo_url, description, featured, is_uae";
+  "id, name, slug, country, emirate, city, website, instagram, logo_url, banner_image_url, description, featured, is_uae, verified";
 const MAP_LOCATION_FIELDS =
   "id, slug, name, location_type, emirate, city, address, latitude, longitude, description, website, roaster_id, featured";
 
@@ -51,10 +51,13 @@ function mapRoaster(row: DbUaeRoasterRow): UaeRoaster {
     emirate: row.emirate,
     city: row.city,
     website: row.website,
+    instagram: row.instagram,
     logoUrl: row.logo_url,
+    bannerImageUrl: row.banner_image_url,
     description: row.description,
     featured: row.featured,
     isUae: row.is_uae,
+    verified: row.verified,
   };
 }
 
