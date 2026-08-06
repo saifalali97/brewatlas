@@ -96,7 +96,7 @@ const en: Dictionary = {
   homeGateway: {
     sectionAriaLabel: "Choose your brewing world",
     title: "BrewAtlas",
-    subtitle: "Choose your brewing world.",
+    subtitle: "Recipes, heritage, and brewing craft — choose where to begin.",
     enterLabel: "Enter",
     comingSoonBadge: "Coming Soon",
     destinations: {

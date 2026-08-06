@@ -96,7 +96,7 @@ const ar: Dictionary = {
   homeGateway: {
     sectionAriaLabel: "اختر عالم التحضير",
     title: "بريو أطلس",
-    subtitle: "اختر عالم التحضير.",
+    subtitle: "وصفات وتراث وتحضير — اختر من أين تبدأ.",
     enterLabel: "ادخل",
     comingSoonBadge: "قريباً",
     destinations: {

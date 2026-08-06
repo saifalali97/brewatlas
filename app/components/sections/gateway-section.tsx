@@ -24,16 +24,21 @@ export function GatewaySection({ copy }: GatewaySectionProps) {
     <section
       id="gateway"
       aria-label={copy.sectionAriaLabel}
-      className="relative flex min-h-[calc(100svh-4.5rem)] flex-col bg-ac-limestone"
+      className="relative flex min-h-[calc(100svh-4.5rem)] flex-col bg-ac-limestone lg:min-h-[calc(100svh-env(safe-area-inset-top,0px))]"
     >
-      <header className="shrink-0 px-6 pb-6 pt-12 text-center sm:px-8 sm:pb-10 sm:pt-16 lg:px-12 lg:pb-14 lg:pt-24">
+      <header className="mx-auto w-full max-w-3xl shrink-0 px-6 pb-8 pt-12 text-center sm:px-8 sm:pb-10 sm:pt-16 lg:px-12 lg:pb-12 lg:pt-20">
         <h1 className={joinClasses(acTypography.displayLg, "tracking-[-0.04em]")}>{copy.title}</h1>
-        <p className={joinClasses(acTypography.body, "mx-auto mt-4 max-w-md text-ac-espresso sm:mt-5")}>
+        <p
+          className={joinClasses(
+            acTypography.body,
+            "mx-auto mt-4 max-w-lg text-balance text-ac-espresso/72 sm:mt-5",
+          )}
+        >
           {copy.subtitle}
         </p>
       </header>
 
-      <div className="grid flex-1 grid-cols-1 gap-2 sm:gap-1.5 md:grid-cols-3 md:gap-1.5 lg:gap-2">
+      <div className="grid flex-1 grid-cols-1 gap-1.5 md:grid-cols-3 md:gap-2 lg:gap-2.5">
         <Portal
           href="/recipes"
           eyebrow="01"
