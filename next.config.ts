@@ -46,6 +46,12 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "20mb",
     },
   },
+  async redirects() {
+    return [
+      { source: "/gulf-heritage", destination: "/recipes", permanent: true },
+      { source: "/gulf-heritage/:path*", destination: "/recipes", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

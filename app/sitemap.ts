@@ -3,7 +3,7 @@ import {
   getCultureSectionSitemapEntries,
   getCultureTopicSitemapEntries,
 } from "@/lib/data/culture-sitemap";
-import { listGulfHeritageSitemapPaths } from "@/lib/content/gulf-heritage";
+import { GULF_DIRECTORY_COUNTRIES, gulfCountryPath, gulfRoasterPath } from "@/lib/gulf-directory/countries";
 import { getPublishedRecipeSlugs } from "@/lib/data/recipe-publishing";
 import { buildHreflangAlternates } from "@/lib/seo/localized-metadata";
 import { getSiteUrl } from "@/lib/seo/site";
@@ -28,7 +28,7 @@ const publicPages: Array<{
   { path: "/premium", changeFrequency: "monthly", priority: 0.8 },
   { path: "/culture", changeFrequency: "monthly", priority: 0.7 },
   { path: "/culture/guide", changeFrequency: "monthly", priority: 0.6 },
-  { path: "/gulf-heritage", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/recipes/browse", changeFrequency: "weekly", priority: 0.85 },
   { path: "/about", changeFrequency: "yearly", priority: 0.5 },
   { path: "/contact", changeFrequency: "yearly", priority: 0.5 },
   { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
@@ -48,7 +48,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getCultureSectionSitemapEntries(supabase),
   ]);
 
-  const gulfHeritagePaths = listGulfHeritageSitemapPaths().filter(({ path }) => path !== "/gulf-heritage");
+  const { data: gulfRoasters } = await supabase
+    .from("roasters")
+    .select("slug")
+    .eq("published", true)
+    .eq("verified", true)
+    .not("slug", "is", null);
+
+  const gulfDirectoryPaths = [
+    ...GULF_DIRECTORY_COUNTRIES.map((country) => ({
+      path: gulfCountryPath(country.slug),
+      priority: 0.75,
+    })),
+    ...(gulfRoasters ?? [])
+      .filter((row) => row.slug)
+      .map((row) => ({
+        path: gulfRoasterPath(row.slug as string),
+        priority: 0.7,
+      })),
+  ];
 
   const staticEntries = [
     ...publicPages.map(({ path, changeFrequency, priority }) => ({
@@ -58,7 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority,
       alternates: { languages: buildHreflangAlternates(path) },
     })),
-    ...gulfHeritagePaths.map(({ path, priority }) => ({
+    ...gulfDirectoryPaths.map(({ path, priority }) => ({
       url: `${baseUrl}${path}`,
       lastModified,
       changeFrequency: "monthly" as const,
