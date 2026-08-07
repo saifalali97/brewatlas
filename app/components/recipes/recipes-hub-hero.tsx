@@ -1,5 +1,5 @@
+import Image from "next/image";
 import { FlaskConical, Heart, ShieldCheck } from "lucide-react";
-import { RecipesDirectoryHeroIllustration } from "@/app/components/recipes/recipes-directory-hero-illustration";
 
 type RecipesHubHeroProps = {
   eyebrow: string;
@@ -17,7 +17,7 @@ const featureIcons = {
   love: Heart,
 } as const;
 
-/** Hero — reference layout: copy left, Gulf illustration right, feature icons under subtitle. */
+/** Hero — fixed two-column layout: copy left, artwork right. */
 export function RecipesHubHero({
   eyebrow,
   title,
@@ -34,25 +34,50 @@ export function RecipesHubHero({
   ] as const;
 
   return (
-    <section aria-labelledby="recipes-hub-heading" className="bg-[#FDFCF8]">
-      <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-10 px-6 pb-10 pt-8 sm:px-8 lg:grid-cols-2 lg:gap-12 lg:px-10 lg:pb-12 lg:pt-10">
-        <div>
-          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-[#A67B4A]">
+    <section
+      aria-labelledby="recipes-hub-heading"
+      className="mx-auto max-w-[1400px] px-8 py-8"
+    >
+      <div
+        className="grid items-center gap-[40px]"
+        style={{ gridTemplateColumns: "540px 1fr" }}
+      >
+        <div
+          className="w-[540px] shrink-0"
+          style={{ marginLeft: 56 }}
+        >
+          <p className="mb-[22px] text-[14px] font-semibold uppercase tracking-[0.22em] text-[#A67B4A]">
             {eyebrow}
           </p>
           <h1
             id="recipes-hub-heading"
-            className="mt-3 font-display text-[2.5rem] leading-[1.04] tracking-[-0.03em] text-[#1A1410] sm:text-[2.875rem] lg:text-[3rem]"
+            style={{
+              fontFamily: "Arial, Helvetica, sans-serif",
+              fontWeight: 700,
+              fontSize: 76,
+              lineHeight: 0.95,
+              letterSpacing: "-0.04em",
+              color: "#000",
+            }}
           >
             {title}
           </h1>
-          <p className="mt-4 max-w-md text-[0.9375rem] leading-[1.65] text-[#1A1410]/68 sm:text-base">
+          <p
+            className="mt-4 text-[#1A1410]/68"
+            style={{ width: 420, fontSize: 18, lineHeight: 1.7 }}
+          >
             {subtitle}
           </p>
 
-          <ul className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <ul
+            className="flex items-center"
+            style={{ marginTop: 34, gap: 32 }}
+          >
             {features.map(({ icon: Icon, label }) => (
-              <li key={label} className="inline-flex items-center gap-2 text-[0.8125rem] text-[#1A1410]/75">
+              <li
+                key={label}
+                className="inline-flex items-center gap-2 whitespace-nowrap text-[0.8125rem] text-[#1A1410]/75"
+              >
                 <Icon className="h-4 w-4 shrink-0 text-[#A67B4A]" strokeWidth={1.75} aria-hidden />
                 {label}
               </li>
@@ -60,10 +85,18 @@ export function RecipesHubHero({
           </ul>
         </div>
 
-        <div className="flex items-center justify-center lg:justify-end">
-          <div className="relative w-full max-w-[460px]" role="img" aria-label={imageAlt}>
-            <RecipesDirectoryHeroIllustration className="h-auto w-full" />
-          </div>
+        <div
+          className="relative min-w-0"
+          style={{ transform: "translate(-40px, -10px)" }}
+        >
+          <Image
+            src="/images/hero/gulf-recipes-hero-transparent.png"
+            alt={imageAlt}
+            width={760}
+            height={400}
+            priority
+            className="h-auto w-[760px] max-w-[760px] object-contain"
+          />
         </div>
       </div>
     </section>
