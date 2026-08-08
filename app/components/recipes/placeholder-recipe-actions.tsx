@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { Bookmark, Check, Printer, Share2 } from "lucide-react";
 import { buttons } from "@/lib/constants/styles";
 
@@ -13,8 +13,38 @@ type PlaceholderRecipeActionsProps = {
   printLabel: string;
 };
 
+const SAVE_CHANGE_EVENT = "brewatlas:saved-recipe-change";
+
 function storageKey(slug: string) {
   return `brewatlas:saved-recipe:${slug}`;
+}
+
+function readSaved(slug: string): boolean {
+  try {
+    return window.localStorage.getItem(storageKey(slug)) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function subscribeToSavedRecipes(onStoreChange: () => void) {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key == null || event.key.startsWith("brewatlas:saved-recipe:")) {
+      onStoreChange();
+    }
+  };
+  const onLocalChange = () => onStoreChange();
+
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(SAVE_CHANGE_EVENT, onLocalChange);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(SAVE_CHANGE_EVENT, onLocalChange);
+  };
+}
+
+function getServerSavedSnapshot() {
+  return false;
 }
 
 /** Client-only save / share / print controls for placeholder recipe pages. */
@@ -26,25 +56,23 @@ export function PlaceholderRecipeActions({
   shareLabel,
   printLabel,
 }: PlaceholderRecipeActionsProps) {
-  const [saved, setSaved] = useState(false);
+  const getSavedSnapshot = useCallback(() => readSaved(recipeSlug), [recipeSlug]);
 
-  useEffect(() => {
-    try {
-      setSaved(window.localStorage.getItem(storageKey(recipeSlug)) === "1");
-    } catch {
-      setSaved(false);
-    }
-  }, [recipeSlug]);
+  const saved = useSyncExternalStore(
+    subscribeToSavedRecipes,
+    getSavedSnapshot,
+    getServerSavedSnapshot,
+  );
 
   const toggleSave = () => {
     const next = !saved;
-    setSaved(next);
     try {
       if (next) window.localStorage.setItem(storageKey(recipeSlug), "1");
       else window.localStorage.removeItem(storageKey(recipeSlug));
     } catch {
       /* ignore quota / private mode */
     }
+    window.dispatchEvent(new Event(SAVE_CHANGE_EVENT));
   };
 
   const share = async () => {
