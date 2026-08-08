@@ -1672,6 +1672,31 @@ export type Dictionary = {
     verifiedCuratedDescription: string;
     verifiedCuratedCardDescription: string;
     countryCardImageAltTemplate: string;
+    countryPage: {
+      citiesCoveredLabel: string;
+      totalRoastersLabel: string;
+      totalRecipesLabel: string;
+      roastersSectionTitle: string;
+      filtersAriaLabel: string;
+      filterCity: string;
+      filterBrewMethod: string;
+      filterRoaster: string;
+      filterDifficulty: string;
+      filterAny: string;
+      specialtyLabel: string;
+      exploreRoasterLabel: string;
+      noMatchingRoasters: string;
+      featuredRecipesTitle: string;
+      featuredRecipesDescription: string;
+      featuredRecipeImageAltTemplate: string;
+      bottomCtaTitleTemplate: string;
+      bottomCtaDescriptionTemplate: string;
+      bottomCtaButtonTemplate: string;
+      coverImageAltTemplate: string;
+      roasterPlaceholderDescription: string;
+      recipePlaceholderDescription: string;
+      recipePlaceholderEyebrow: string;
+    };
     countries: {
       uae: { name: string; description: string };
       "saudi-arabia": { name: string; description: string };

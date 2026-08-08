@@ -1748,10 +1748,39 @@ const en: Dictionary = {
     verifiedCuratedCardDescription:
       "All roasters are verified and recipes are curated for quality, accuracy, and consistency.",
     countryCardImageAltTemplate: "{country} specialty coffee",
+    countryPage: {
+      citiesCoveredLabel: "Cities Covered",
+      totalRoastersLabel: "Total Roasters",
+      totalRecipesLabel: "Total Recipes",
+      roastersSectionTitle: "Specialty Roasters",
+      filtersAriaLabel: "Filter roasters",
+      filterCity: "City",
+      filterBrewMethod: "Brewing Method",
+      filterRoaster: "Roaster",
+      filterDifficulty: "Difficulty",
+      filterAny: "Any",
+      specialtyLabel: "Specialty",
+      exploreRoasterLabel: "Explore",
+      noMatchingRoasters: "No roasters match these filters.",
+      featuredRecipesTitle: "Featured Recipes",
+      featuredRecipesDescription: "Standout brew guides from verified specialty roasters in this country.",
+      featuredRecipeImageAltTemplate: "{name} recipe",
+      bottomCtaTitleTemplate: "Browse every {country} roaster",
+      bottomCtaDescriptionTemplate:
+        "Explore verified specialty roasteries across {country} and open their curated brew guides.",
+      bottomCtaButtonTemplate: "Browse all {country} roasters",
+      coverImageAltTemplate: "{country} skyline",
+      roasterPlaceholderDescription:
+        "This roastery page is ready for BrewAtlas recipes. Full brew guides will appear here once published.",
+      recipePlaceholderDescription:
+        "This recipe page is ready. The full brew guide will appear here once published.",
+      recipePlaceholderEyebrow: "Recipe",
+    },
     countries: {
       uae: {
         name: "United Arab Emirates",
-        description: "Verified specialty roasteries across Dubai and the Emirates.",
+        description:
+          "Discover verified specialty roasteries across Dubai, Abu Dhabi, and the Emirates — with curated brew guides ready for your next cup.",
       },
       "saudi-arabia": {
         name: "Saudi Arabia",

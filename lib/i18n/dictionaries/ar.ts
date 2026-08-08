@@ -1743,10 +1743,39 @@ const ar: Dictionary = {
     verifiedCuratedCardDescription:
       "جميع المحمصات موثّقة والوصفات مختارة للجودة والدقة والاتساق.",
     countryCardImageAltTemplate: "قهوة مختصة في {country}",
+    countryPage: {
+      citiesCoveredLabel: "المدن المشمولة",
+      totalRoastersLabel: "إجمالي المحمصات",
+      totalRecipesLabel: "إجمالي الوصفات",
+      roastersSectionTitle: "محمصات مختصة",
+      filtersAriaLabel: "تصفية المحمصات",
+      filterCity: "المدينة",
+      filterBrewMethod: "طريقة التحضير",
+      filterRoaster: "المحمصة",
+      filterDifficulty: "المستوى",
+      filterAny: "الكل",
+      specialtyLabel: "التخصص",
+      exploreRoasterLabel: "استكشف",
+      noMatchingRoasters: "لا توجد محمصات مطابقة لهذه التصفية.",
+      featuredRecipesTitle: "وصفات مميزة",
+      featuredRecipesDescription: "أدلة تحضير بارزة من محمصات مختصة موثّقة في هذه الدولة.",
+      featuredRecipeImageAltTemplate: "وصفة {name}",
+      bottomCtaTitleTemplate: "تصفّح كل محمصات {country}",
+      bottomCtaDescriptionTemplate:
+        "استكشف محمصات مختصة موثّقة في {country} وافتح أدلة التحضير المختارة لديها.",
+      bottomCtaButtonTemplate: "تصفّح كل محمصات {country}",
+      coverImageAltTemplate: "أفق مدينة {country}",
+      roasterPlaceholderDescription:
+        "صفحة هذه المحمصة جاهزة لوصفات BrewAtlas. ستظهر أدلة التحضير الكاملة هنا عند نشرها.",
+      recipePlaceholderDescription:
+        "صفحة هذه الوصفة جاهزة. سيظهر دليل التحضير الكامل هنا عند نشره.",
+      recipePlaceholderEyebrow: "وصفة",
+    },
     countries: {
       uae: {
         name: "الإمارات العربية المتحدة",
-        description: "محمصات مختصة موثّقة في دبي وإمارات الدولة.",
+        description:
+          "اكتشف محمصات مختصة موثّقة في دبي وأبوظبي وإمارات الدولة — مع أدلة تحضير مختارة لكأسك القادم.",
       },
       "saudi-arabia": {
         name: "السعودية",

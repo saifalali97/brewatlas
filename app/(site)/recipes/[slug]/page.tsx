@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { notFound } from "next/navigation";
+import { GulfDirectoryPlaceholder } from "@/app/components/recipes/gulf-directory-placeholder";
+import {
+  gulfCountryPath,
+  gulfRoasterPath,
+} from "@/lib/gulf-directory/countries";
+import { findGulfCountryPageRecipe } from "@/lib/gulf-directory/country-page-data";
 import {
   Calendar,
   Clock,
@@ -131,6 +137,16 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<Met
   const dbRecipe = await getDbRecipeDetailBySlug(supabase, slug);
 
   if (!dbRecipe) {
+    const placeholderRecipe = findGulfCountryPageRecipe(slug);
+    if (placeholderRecipe) {
+      return buildLocalizedMetadata({
+        pathname: `/recipes/${slug}`,
+        locale,
+        title: placeholderRecipe.name,
+        description: dictionary.recipesDirectory.countryPage.recipePlaceholderDescription,
+        noIndex: true,
+      });
+    }
     return buildLocalizedMetadata({
       pathname: `/recipes/${slug}`,
       locale,
@@ -179,6 +195,34 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
   const recipe = await getDbRecipeDetailBySlug(supabase, slug);
 
   if (!recipe) {
+    const placeholderRecipe = findGulfCountryPageRecipe(slug);
+    if (placeholderRecipe) {
+      const countryName =
+        dictionary.recipesDirectory.countries[placeholderRecipe.countrySlug]?.name ??
+        placeholderRecipe.countrySlug;
+      return (
+        <GulfDirectoryPlaceholder
+          headingId="recipe-placeholder-heading"
+          eyebrow={dictionary.recipesDirectory.countryPage.recipePlaceholderEyebrow}
+          title={placeholderRecipe.name}
+          description={dictionary.recipesDirectory.countryPage.recipePlaceholderDescription}
+          crumbs={[
+            { href: "/recipes", label: dictionary.recipesDirectory.backToCountries },
+            {
+              href: gulfCountryPath(placeholderRecipe.countrySlug),
+              label: countryName,
+            },
+            {
+              href: gulfRoasterPath(
+                placeholderRecipe.countrySlug,
+                placeholderRecipe.roasterSlug,
+              ),
+              label: placeholderRecipe.roasterName,
+            },
+          ]}
+        />
+      );
+    }
     notFound();
   }
 

@@ -1,22 +1,46 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Chapter } from "@/app/components/atlas/chapter";
-import { Folio, FolioItem } from "@/app/components/atlas/folio";
-import { PageHeader } from "@/app/components/ui/page-header";
-import { TextLink } from "@/app/components/ui/text-link";
-import { acTypography } from "@/lib/design-system/atlas-canon";
-import { getGulfDirectoryRoastersByCountry } from "@/lib/data/gulf-directory";
-import { findGulfCountryBySlug, gulfRoasterPath } from "@/lib/gulf-directory/countries";
+import { GulfCountryCta } from "@/app/components/recipes/gulf-country-cta";
+import { GulfCountryExplorer } from "@/app/components/recipes/gulf-country-explorer";
+import { GulfCountryFeaturedRecipes } from "@/app/components/recipes/gulf-country-featured-recipes";
+import { GulfCountryHero } from "@/app/components/recipes/gulf-country-hero";
+import { GulfCountryStats } from "@/app/components/recipes/gulf-country-stats";
+import {
+  GULF_DIRECTORY_COUNTRIES,
+  findGulfCountryBySlug,
+  gulfCountryPath,
+  type GulfDirectoryCountrySlug,
+} from "@/lib/gulf-directory/countries";
+import { getGulfCountryPageData } from "@/lib/gulf-directory/country-page-data";
+import { getGulfCountryCopy } from "@/lib/gulf-directory/localize";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { interpolate } from "@/lib/i18n/format";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
 import { buildCollectionPageJsonLd } from "@/lib/seo/json-ld";
-import { createClient } from "@/lib/supabase/server";
+import type { Difficulty } from "@/types/homepage";
 
 type CountryPageProps = {
   params: Promise<{ countrySlug: string }>;
 };
+
+const BREW_METHOD_LABELS: Record<
+  string,
+  "v60" | "espresso" | "chemex" | "aeropress" | "coldBrew" | "mokaPot"
+> = {
+  V60: "v60",
+  Espresso: "espresso",
+  Chemex: "chemex",
+  Aeropress: "aeropress",
+  "Cold Brew": "coldBrew",
+  "Moka Pot": "mokaPot",
+};
+
+export function generateStaticParams() {
+  return GULF_DIRECTORY_COUNTRIES.map((country) => ({
+    countrySlug: country.slug,
+  }));
+}
 
 export async function generateMetadata({ params }: CountryPageProps): Promise<Metadata> {
   const { countrySlug } = await params;
@@ -27,30 +51,57 @@ export async function generateMetadata({ params }: CountryPageProps): Promise<Me
 
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const countryName = dictionary.recipesDirectory.countries[countrySlug as keyof typeof dictionary.recipesDirectory.countries]?.name ?? country.dbCountry;
+  const countryName =
+    dictionary.recipesDirectory.countries[
+      countrySlug as keyof typeof dictionary.recipesDirectory.countries
+    ]?.name ?? country.dbCountry;
 
   return buildLocalizedMetadata({
     pathname: `/recipes/countries/${countrySlug}`,
     locale,
-    title: interpolate(dictionary.recipesDirectory.countryMetaTitleTemplate, { country: countryName }),
-    description: interpolate(dictionary.recipesDirectory.countryMetaDescriptionTemplate, { country: countryName }),
+    title: interpolate(dictionary.recipesDirectory.countryMetaTitleTemplate, {
+      country: countryName,
+    }),
+    description: interpolate(dictionary.recipesDirectory.countryMetaDescriptionTemplate, {
+      country: countryName,
+    }),
   });
 }
 
-export default async function GulfCountryRoastersPage({ params }: CountryPageProps) {
+export default async function GulfCountryPage({ params }: CountryPageProps) {
   const { countrySlug } = await params;
   const country = findGulfCountryBySlug(countrySlug);
   if (!country) notFound();
 
+  const slug = country.slug as GulfDirectoryCountrySlug;
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const supabase = await createClient();
-  const roasters = await getGulfDirectoryRoastersByCountry(supabase, country.dbCountry);
+  const copy = dictionary.recipesDirectory;
+  const pageCopy = copy.countryPage;
+  const countryCopy = getGulfCountryCopy(dictionary, slug);
+  const pageData = getGulfCountryPageData(slug);
 
-  const countryCopy =
-    dictionary.recipesDirectory.countries[countrySlug as keyof typeof dictionary.recipesDirectory.countries];
-  const countryName = countryCopy?.name ?? country.dbCountry;
-  const countryDescription = countryCopy?.description ?? "";
+  const difficultyLabels = {
+    Beginner: dictionary.homeDifficulty.beginner,
+    Intermediate: dictionary.homeDifficulty.intermediate,
+    Advanced: dictionary.homeDifficulty.advanced,
+  } satisfies Record<Difficulty, string>;
+
+  const labelForBrewMethod = (method: string) => {
+    const key = BREW_METHOD_LABELS[method];
+    return key ? dictionary.homeFilters[key] : method;
+  };
+
+  const brewMethodLabels = Object.fromEntries(
+    pageData.brewMethods.map((method) => [method, labelForBrewMethod(method)]),
+  );
+
+  const featuredBrewMethodLabels = Object.fromEntries(
+    pageData.featuredRecipes.map((recipe) => [
+      recipe.brewMethod,
+      labelForBrewMethod(recipe.brewMethod),
+    ]),
+  );
 
   return (
     <>
@@ -60,55 +111,82 @@ export default async function GulfCountryRoastersPage({ params }: CountryPagePro
           __html: JSON.stringify(
             buildCollectionPageJsonLd({
               url: localizedPathUrl(`/recipes/countries/${countrySlug}`, locale),
-              name: countryName,
-              description: countryDescription,
-              itemCount: roasters.length,
+              name: countryCopy.name,
+              description: countryCopy.description,
+              itemCount: pageData.totalRoasters,
             }),
           ),
         }}
       />
-      <Chapter id="country-roasters" rhythm="dawn" padding="compact" wide ariaLabelledBy="country-roasters-heading">
-        <div className="mb-8">
-          <TextLink href="/recipes" variant="nav">
-            {dictionary.recipesDirectory.backToCountries}
-          </TextLink>
-        </div>
 
-        <PageHeader
-          headingId="country-roasters-heading"
-          eyebrow={dictionary.recipesDirectory.eyebrow}
-          title={countryName}
-          description={countryDescription}
+      <div className="min-h-screen bg-[#FDFCF8] pb-16">
+        <GulfCountryHero
+          flag={pageData.flag}
+          name={countryCopy.name}
+          description={countryCopy.description}
+          coverImage={pageData.coverImage}
+          imageAlt={interpolate(pageCopy.coverImageAltTemplate, { country: countryCopy.name })}
+          backHref="/recipes"
+          backLabel={copy.backToCountries}
         />
 
-        {roasters.length > 0 ? (
-          <Folio ariaLabel={countryName} className="mt-10">
-            {roasters.map((roaster, index) => (
-              <FolioItem
-                key={roaster.id}
-                href={roaster.slug ? gulfRoasterPath(roaster.slug) : "/recipes/browse"}
-                index={String(index + 1).padStart(2, "0")}
-                title={roaster.name}
-                description={roaster.description ?? undefined}
-                meta={
-                  <p className={acTypography.folioMeta}>
-                    {[roaster.city, roaster.emirate].filter(Boolean).join(", ")}
-                    {roaster.recipeCount > 0
-                      ? ` · ${interpolate(dictionary.recipesDirectory.recipeCountTemplate, {
-                          count: String(roaster.recipeCount),
-                        })}`
-                      : ` · ${dictionary.recipesDirectory.noRecipesYet}`}
-                  </p>
-                }
-              />
-            ))}
-          </Folio>
-        ) : (
-          <p className={`mt-10 ${acTypography.body} text-ac-espresso/75`}>
-            {dictionary.recipesDirectory.noRoastersInCountry}
-          </p>
-        )}
-      </Chapter>
+        <div className="mt-8 space-y-14 sm:mt-10 sm:space-y-16">
+          <GulfCountryStats
+            totalRoasters={pageData.totalRoasters}
+            totalRecipes={pageData.totalRecipes}
+            citiesCovered={pageData.citiesCovered}
+            totalRoastersLabel={pageCopy.totalRoastersLabel}
+            totalRecipesLabel={pageCopy.totalRecipesLabel}
+            citiesCoveredLabel={pageCopy.citiesCoveredLabel}
+          />
+
+          <GulfCountryExplorer
+            countrySlug={slug}
+            roasters={pageData.roasters}
+            cities={pageData.cities}
+            brewMethods={pageData.brewMethods}
+            difficulties={pageData.difficulties}
+            labels={{
+              sectionTitle: pageCopy.roastersSectionTitle,
+              filtersAriaLabel: pageCopy.filtersAriaLabel,
+              filterCity: pageCopy.filterCity,
+              filterBrewMethod: pageCopy.filterBrewMethod,
+              filterRoaster: pageCopy.filterRoaster,
+              filterDifficulty: pageCopy.filterDifficulty,
+              filterAny: pageCopy.filterAny,
+              specialtyLabel: pageCopy.specialtyLabel,
+              exploreLabel: pageCopy.exploreRoasterLabel,
+              recipeCountTemplate: copy.recipeCountTemplate,
+              noMatchingRoasters: pageCopy.noMatchingRoasters,
+              noRoastersInCountry: copy.noRoastersInCountry,
+              difficultyLabels,
+              brewMethodLabels,
+            }}
+          />
+
+          <GulfCountryFeaturedRecipes
+            title={pageCopy.featuredRecipesTitle}
+            description={pageCopy.featuredRecipesDescription}
+            recipes={pageData.featuredRecipes}
+            hotLabel={copy.hotBadge}
+            icedLabel={copy.icedBadge}
+            difficultyLabels={difficultyLabels}
+            brewMethodLabels={featuredBrewMethodLabels}
+            imageAltTemplate={pageCopy.featuredRecipeImageAltTemplate}
+          />
+
+          <GulfCountryCta
+            title={interpolate(pageCopy.bottomCtaTitleTemplate, { country: countryCopy.name })}
+            description={interpolate(pageCopy.bottomCtaDescriptionTemplate, {
+              country: countryCopy.name,
+            })}
+            buttonLabel={interpolate(pageCopy.bottomCtaButtonTemplate, {
+              country: countryCopy.name,
+            })}
+            href={`${gulfCountryPath(slug)}#gulf-country-roasters-heading`}
+          />
+        </div>
+      </div>
     </>
   );
 }

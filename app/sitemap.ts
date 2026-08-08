@@ -3,7 +3,13 @@ import {
   getCultureSectionSitemapEntries,
   getCultureTopicSitemapEntries,
 } from "@/lib/data/culture-sitemap";
-import { GULF_DIRECTORY_COUNTRIES, gulfCountryPath, gulfRoasterPath } from "@/lib/gulf-directory/countries";
+import {
+  GULF_DIRECTORY_COUNTRIES,
+  findGulfCountryByDbCountry,
+  gulfCountryPath,
+  gulfRoasterPath,
+} from "@/lib/gulf-directory/countries";
+import { getGulfCountryPageData } from "@/lib/gulf-directory/country-page-data";
 import { getPublishedRecipeSlugs } from "@/lib/data/recipe-publishing";
 import { buildHreflangAlternates } from "@/lib/seo/localized-metadata";
 import { getSiteUrl } from "@/lib/seo/site";
@@ -50,22 +56,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const { data: gulfRoasters } = await supabase
     .from("roasters")
-    .select("slug")
+    .select("slug, country")
     .eq("published", true)
     .eq("verified", true)
     .not("slug", "is", null);
+
+  const placeholderRoasterPaths = GULF_DIRECTORY_COUNTRIES.flatMap((country) =>
+    getGulfCountryPageData(country.slug).roasters.map((roaster) => ({
+      path: gulfRoasterPath(country.slug, roaster.slug),
+      priority: 0.7,
+    })),
+  );
+
+  const dbRoasterPaths = (gulfRoasters ?? [])
+    .map((row) => {
+      if (!row.slug || !row.country) return null;
+      const country = findGulfCountryByDbCountry(row.country);
+      if (!country) return null;
+      return {
+        path: gulfRoasterPath(country.slug, row.slug as string),
+        priority: 0.7,
+      };
+    })
+    .filter((entry): entry is { path: string; priority: number } => entry != null);
 
   const gulfDirectoryPaths = [
     ...GULF_DIRECTORY_COUNTRIES.map((country) => ({
       path: gulfCountryPath(country.slug),
       priority: 0.75,
     })),
-    ...(gulfRoasters ?? [])
-      .filter((row) => row.slug)
-      .map((row) => ({
-        path: gulfRoasterPath(row.slug as string),
-        priority: 0.7,
-      })),
+    ...placeholderRoasterPaths,
+    ...dbRoasterPaths,
   ];
 
   const staticEntries = [
