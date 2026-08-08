@@ -1697,6 +1697,45 @@ export type Dictionary = {
       recipePlaceholderDescription: string;
       recipePlaceholderEyebrow: string;
     };
+    roasterPage: {
+      coverImageAltTemplate: string;
+      aboutTitle: string;
+      statsAriaLabel: string;
+      totalRecipesLabel: string;
+      foundedYearLabel: string;
+      locationStatLabel: string;
+      brewingStylesStatLabel: string;
+      recipesTitle: string;
+      recipesDescription: string;
+      brewTimeLabel: string;
+      exploreRecipeLabel: string;
+      featuredTitle: string;
+      featuredDescription: string;
+      relatedTitle: string;
+      relatedDescription: string;
+      relatedEmpty: string;
+      backToCountryTemplate: string;
+    };
+    recipePage: {
+      saveCta: string;
+      savedCta: string;
+      shareCta: string;
+      printCta: string;
+      recipeInfoTitle: string;
+      brewRecipeTitle: string;
+      stepsTitle: string;
+      timelineTitle: string;
+      flavorWheelTitle: string;
+      tastingNotesTitle: string;
+      equipmentTitle: string;
+      similarTitle: string;
+      beansLabel: string;
+      originLabel: string;
+      processLabel: string;
+      brewerLabel: string;
+      totalBrewTimeLabel: string;
+      ratingLabel: string;
+    };
     countries: {
       uae: { name: string; description: string };
       "saudi-arabia": { name: string; description: string };

@@ -4,3 +4,4 @@
 
 export * from "./atlas-canon";
 export * from "./tokens";
+export * from "./recipes-directory";

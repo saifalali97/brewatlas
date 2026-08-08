@@ -16,6 +16,7 @@ import { getGulfCountryCopy } from "@/lib/gulf-directory/localize";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { interpolate } from "@/lib/i18n/format";
 import { getLocale } from "@/lib/i18n/locale";
+import { rdLayout, rdSurface } from "@/lib/design-system/recipes-directory";
 import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
 import { buildCollectionPageJsonLd } from "@/lib/seo/json-ld";
 import type { Difficulty } from "@/types/homepage";
@@ -79,7 +80,7 @@ export default async function GulfCountryPage({ params }: CountryPageProps) {
   const copy = dictionary.recipesDirectory;
   const pageCopy = copy.countryPage;
   const countryCopy = getGulfCountryCopy(dictionary, slug);
-  const pageData = getGulfCountryPageData(slug);
+  const pageData = await getGulfCountryPageData(slug);
 
   const difficultyLabels = {
     Beginner: dictionary.homeDifficulty.beginner,
@@ -119,7 +120,7 @@ export default async function GulfCountryPage({ params }: CountryPageProps) {
         }}
       />
 
-      <div className="min-h-screen bg-[#FDFCF8] pb-16">
+      <div className={`min-h-screen ${rdSurface.page} pb-16`}>
         <GulfCountryHero
           flag={pageData.flag}
           name={countryCopy.name}
@@ -130,7 +131,7 @@ export default async function GulfCountryPage({ params }: CountryPageProps) {
           backLabel={copy.backToCountries}
         />
 
-        <div className="mt-8 space-y-14 sm:mt-10 sm:space-y-16">
+        <div className={rdLayout.sectionStack}>
           <GulfCountryStats
             totalRoasters={pageData.totalRoasters}
             totalRecipes={pageData.totalRecipes}

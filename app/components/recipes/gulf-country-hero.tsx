@@ -1,6 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { acFocus } from "@/lib/design-system/atlas-canon";
+import {
+  rdButton,
+  rdLayout,
+  rdRadius,
+  rdBorder,
+  rdShadow,
+} from "@/lib/design-system/recipes-directory";
 
 type GulfCountryHeroProps = {
   flag: string;
@@ -24,18 +30,17 @@ export function GulfCountryHero({
 }: GulfCountryHeroProps) {
   return (
     <section className="relative overflow-hidden">
-      <div className="mx-auto max-w-[1200px] px-6 pt-8 sm:px-8 lg:px-10">
-        <Link
-          href={backHref}
-          className={`inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-[#A67B4A] transition-colors hover:text-[#8B6914] ${acFocus.ring}`}
-        >
+      <div className={`${rdLayout.container} pt-8`}>
+        <Link href={backHref} className={rdButton.navLink}>
           <span aria-hidden className="rtl:rotate-180">
             ←
           </span>
           {backLabel}
         </Link>
 
-        <div className="relative mt-6 overflow-hidden rounded-[24px] border border-[#C4A574]/22 shadow-[0_8px_40px_rgba(26,20,16,0.08)]">
+        <div
+          className={`relative mt-6 overflow-hidden ${rdRadius.card} ${rdBorder.gold22} ${rdShadow.hero}`}
+        >
           <div className="relative min-h-[300px] w-full sm:min-h-[380px] lg:min-h-[440px]">
             <Image
               src={coverImage}

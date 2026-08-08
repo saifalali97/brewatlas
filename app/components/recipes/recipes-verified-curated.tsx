@@ -1,5 +1,6 @@
 import { Coffee, FlaskConical, Heart, ShieldCheck } from "lucide-react";
 import type { GulfDirectoryGlobalStats } from "@/lib/data/gulf-directory";
+import { rdCard } from "@/lib/design-system/recipes-directory";
 
 type RecipesVerifiedCuratedProps = {
   title: string;
@@ -38,7 +39,7 @@ export function RecipesVerifiedCurated({
   return (
     <article
       aria-labelledby="recipes-verified-curated-heading"
-      className="relative flex h-full flex-col overflow-hidden rounded-[24px] border border-[#C4A574]/22 bg-[#F7F1E8] shadow-[0_4px_24px_rgba(26,20,16,0.045)]"
+      className={rdCard.verified}
     >
       {/* Header */}
       <div className="relative flex flex-1 items-start gap-5 px-8 pb-8 pt-8">

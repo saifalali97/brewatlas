@@ -9,7 +9,7 @@ import {
   gulfCountryPath,
   gulfRoasterPath,
 } from "@/lib/gulf-directory/countries";
-import { getGulfCountryPageData } from "@/lib/gulf-directory/country-page-data";
+import { getPlaceholderGulfCountryPageData } from "@/lib/gulf-directory/country-page-data";
 import { getPublishedRecipeSlugs } from "@/lib/data/recipe-publishing";
 import { buildHreflangAlternates } from "@/lib/seo/localized-metadata";
 import { getSiteUrl } from "@/lib/seo/site";
@@ -62,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .not("slug", "is", null);
 
   const placeholderRoasterPaths = GULF_DIRECTORY_COUNTRIES.flatMap((country) =>
-    getGulfCountryPageData(country.slug).roasters.map((roaster) => ({
+    getPlaceholderGulfCountryPageData(country.slug).roasters.map((roaster) => ({
       path: gulfRoasterPath(country.slug, roaster.slug),
       priority: 0.7,
     })),

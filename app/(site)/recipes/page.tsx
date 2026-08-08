@@ -3,14 +3,14 @@ import Link from "next/link";
 import { GulfCountryGrid } from "@/app/components/recipes/gulf-country-grid";
 import { RecipesHubHero } from "@/app/components/recipes/recipes-hub-hero";
 import {
-  getGulfDirectoryCountrySummaries,
-  getGulfDirectoryGlobalStats,
-} from "@/lib/data/gulf-directory";
+  getCachedGulfDirectoryCountrySummaries,
+  getCachedGulfDirectoryGlobalStats,
+} from "@/lib/data/cached-directory";
+import { rdButton, rdLayout, rdSurface } from "@/lib/design-system/recipes-directory";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
 import { buildCollectionPageJsonLd } from "@/lib/seo/json-ld";
-import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -27,11 +27,10 @@ export default async function RecipesHubPage() {
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
   const copy = dictionary.recipesDirectory;
-  const supabase = await createClient();
 
   const [countries, stats] = await Promise.all([
-    getGulfDirectoryCountrySummaries(supabase),
-    getGulfDirectoryGlobalStats(supabase),
+    getCachedGulfDirectoryCountrySummaries(),
+    getCachedGulfDirectoryGlobalStats(),
   ]);
 
   return (
@@ -50,7 +49,7 @@ export default async function RecipesHubPage() {
         }}
       />
 
-      <div className="min-h-screen bg-[#FDFCF8] pb-12">
+      <div className={`min-h-screen ${rdSurface.page} pb-12`}>
         <RecipesHubHero
           eyebrow={copy.eyebrow}
           title={copy.heroTitle}
@@ -61,14 +60,11 @@ export default async function RecipesHubPage() {
           imageAlt={copy.heroImageAlt}
         />
 
-        <div className="mx-auto max-w-[1200px] px-6 sm:px-8 lg:px-10">
+        <div className={rdLayout.container}>
           <GulfCountryGrid countries={countries} dictionary={dictionary} stats={stats} />
 
           <div className="mt-10 text-center">
-            <Link
-              href="/recipes/browse"
-              className="inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-[#A67B4A] hover:text-[#8B6914]"
-            >
+            <Link href="/recipes/browse" className={rdButton.navLink}>
               {copy.browseAllRecipes}
               <span aria-hidden>→</span>
             </Link>
