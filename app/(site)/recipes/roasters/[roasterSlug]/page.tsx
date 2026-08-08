@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
+import { getCachedDirectoryRoasterBySlug } from "@/lib/data/cached-directory";
 import {
   findGulfCountryByDbCountry,
   gulfRoasterPath,
 } from "@/lib/gulf-directory/countries";
-import { findGulfCountrySlugForRoaster } from "@/lib/gulf-directory/country-page-data";
-import { getGulfDirectoryRoasterBySlug } from "@/lib/data/gulf-directory";
-import { createClient } from "@/lib/supabase/server";
+import { findPlaceholderGulfCountrySlugForRoaster } from "@/lib/gulf-directory/country-page-data";
 
 type RoasteryRedirectProps = {
   params: Promise<{ roasterSlug: string }>;
@@ -15,16 +14,21 @@ type RoasteryRedirectProps = {
 export default async function LegacyRoasteryRedirect({ params }: RoasteryRedirectProps) {
   const { roasterSlug } = await params;
 
-  const placeholderCountry = findGulfCountrySlugForRoaster(roasterSlug);
-  if (placeholderCountry) {
-    redirect(gulfRoasterPath(placeholderCountry, roasterSlug));
+  const dbRoaster = await getCachedDirectoryRoasterBySlug(roasterSlug);
+  if (dbRoaster?.countrySlug) {
+    redirect(gulfRoasterPath(dbRoaster.countrySlug, roasterSlug));
   }
 
-  const supabase = await createClient();
-  const roaster = await getGulfDirectoryRoasterBySlug(supabase, roasterSlug);
-  const country = roaster?.country ? findGulfCountryByDbCountry(roaster.country) : null;
-  if (country) {
-    redirect(gulfRoasterPath(country.slug, roasterSlug));
+  if (dbRoaster?.country) {
+    const country = findGulfCountryByDbCountry(dbRoaster.country);
+    if (country) {
+      redirect(gulfRoasterPath(country.slug, roasterSlug));
+    }
+  }
+
+  const placeholderCountry = findPlaceholderGulfCountrySlugForRoaster(roasterSlug);
+  if (placeholderCountry) {
+    redirect(gulfRoasterPath(placeholderCountry, roasterSlug));
   }
 
   redirect("/recipes");

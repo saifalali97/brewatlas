@@ -1,10 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  EmptyState,
+  FilterBar,
+  SectionTitle,
+  type FilterBarField,
+} from "@/app/components/recipes/directory";
 import { GulfCountryRoasterCard } from "@/app/components/recipes/gulf-country-roaster-card";
-import { forms } from "@/lib/constants/styles";
+import { rdLayout } from "@/lib/design-system/recipes-directory";
 import type { GulfDirectoryCountrySlug } from "@/lib/gulf-directory/countries";
-import type { GulfCountryPageRoaster } from "@/lib/gulf-directory/country-page-data";
+import type { GulfCountryPageRoaster } from "@/lib/gulf-directory/country-page-types";
 import { interpolate } from "@/lib/i18n/format";
 import type { Difficulty } from "@/types/homepage";
 
@@ -32,8 +38,6 @@ type GulfCountryExplorerProps = {
   };
 };
 
-const selectClass = `${forms.select} mt-1.5`;
-
 /** Client filters + roaster grid for a Gulf country page. */
 export function GulfCountryExplorer({
   countrySlug,
@@ -58,98 +62,62 @@ export function GulfCountryExplorer({
     });
   }, [roasters, city, brewMethod, roasterId, difficulty]);
 
+  const fields: FilterBarField[] = [
+    {
+      id: "city",
+      label: labels.filterCity,
+      value: city,
+      onChange: setCity,
+      anyLabel: labels.filterAny,
+      options: cities.map((value) => ({ value, label: value })),
+    },
+    {
+      id: "brewMethod",
+      label: labels.filterBrewMethod,
+      value: brewMethod,
+      onChange: setBrewMethod,
+      anyLabel: labels.filterAny,
+      options: brewMethods.map((value) => ({
+        value,
+        label: labels.brewMethodLabels[value] ?? value,
+      })),
+    },
+    {
+      id: "roaster",
+      label: labels.filterRoaster,
+      value: roasterId,
+      onChange: setRoasterId,
+      anyLabel: labels.filterAny,
+      options: roasters.map((roaster) => ({ value: roaster.id, label: roaster.name })),
+    },
+    {
+      id: "difficulty",
+      label: labels.filterDifficulty,
+      value: difficulty,
+      onChange: setDifficulty,
+      anyLabel: labels.filterAny,
+      options: difficulties.map((value) => ({
+        value,
+        label: labels.difficultyLabels[value],
+      })),
+    },
+  ];
+
   return (
     <section
       aria-labelledby="gulf-country-roasters-heading"
-      className="mx-auto max-w-[1200px] px-6 sm:px-8 lg:px-10"
+      className={rdLayout.container}
     >
-      <h2
-        id="gulf-country-roasters-heading"
-        className="font-display text-[1.75rem] font-bold tracking-[-0.03em] text-[#1A1410] sm:text-[2rem]"
-      >
-        {labels.sectionTitle}
-      </h2>
+      <SectionTitle id="gulf-country-roasters-heading">{labels.sectionTitle}</SectionTitle>
 
-      <div
-        role="search"
-        aria-label={labels.filtersAriaLabel}
-        className="mt-6 grid grid-cols-1 gap-3 rounded-[20px] border border-[#C4A574]/20 bg-white/80 p-4 shadow-[0_4px_20px_rgba(26,20,16,0.03)] sm:grid-cols-2 lg:grid-cols-4"
-      >
-        <label className="block text-[0.75rem] font-medium uppercase tracking-[0.06em] text-[#1A1410]/45">
-          {labels.filterCity}
-          <select
-            value={city}
-            onChange={(event) => setCity(event.target.value)}
-            className={selectClass}
-          >
-            <option value="">{labels.filterAny}</option>
-            {cities.map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="block text-[0.75rem] font-medium uppercase tracking-[0.06em] text-[#1A1410]/45">
-          {labels.filterBrewMethod}
-          <select
-            value={brewMethod}
-            onChange={(event) => setBrewMethod(event.target.value)}
-            className={selectClass}
-          >
-            <option value="">{labels.filterAny}</option>
-            {brewMethods.map((value) => (
-              <option key={value} value={value}>
-                {labels.brewMethodLabels[value] ?? value}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="block text-[0.75rem] font-medium uppercase tracking-[0.06em] text-[#1A1410]/45">
-          {labels.filterRoaster}
-          <select
-            value={roasterId}
-            onChange={(event) => setRoasterId(event.target.value)}
-            className={selectClass}
-          >
-            <option value="">{labels.filterAny}</option>
-            {roasters.map((roaster) => (
-              <option key={roaster.id} value={roaster.id}>
-                {roaster.name}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="block text-[0.75rem] font-medium uppercase tracking-[0.06em] text-[#1A1410]/45">
-          {labels.filterDifficulty}
-          <select
-            value={difficulty}
-            onChange={(event) => setDifficulty(event.target.value)}
-            className={selectClass}
-          >
-            <option value="">{labels.filterAny}</option>
-            {difficulties.map((value) => (
-              <option key={value} value={value}>
-                {labels.difficultyLabels[value]}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <FilterBar ariaLabel={labels.filtersAriaLabel} fields={fields} />
 
       {roasters.length === 0 ? (
-        <p className="mt-10 text-[0.9375rem] leading-relaxed text-[#1A1410]/60">
-          {labels.noRoastersInCountry}
-        </p>
+        <EmptyState>{labels.noRoastersInCountry}</EmptyState>
       ) : filtered.length === 0 ? (
-        <p className="mt-10 text-[0.9375rem] leading-relaxed text-[#1A1410]/60">
-          {labels.noMatchingRoasters}
-        </p>
+        <EmptyState>{labels.noMatchingRoasters}</EmptyState>
       ) : (
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div className={`${rdLayout.gridGap} ${rdLayout.cardGrid}`}>
           {filtered.map((roaster) => (
             <GulfCountryRoasterCard
               key={roaster.id}

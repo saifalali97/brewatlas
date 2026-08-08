@@ -2,12 +2,8 @@ import type { Metadata } from "next";
 import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { notFound } from "next/navigation";
-import { GulfDirectoryPlaceholder } from "@/app/components/recipes/gulf-directory-placeholder";
-import {
-  gulfCountryPath,
-  gulfRoasterPath,
-} from "@/lib/gulf-directory/countries";
-import { findGulfCountryPageRecipe } from "@/lib/gulf-directory/country-page-data";
+import { PlaceholderRecipeDetailView } from "@/app/components/recipes/placeholder-recipe-detail-view";
+import { getPlaceholderRecipeDetail } from "@/lib/gulf-directory/placeholder-recipe-detail";
 import {
   Calendar,
   Clock,
@@ -132,21 +128,24 @@ type RecipePageProps = {
 export async function generateMetadata({ params }: RecipePageProps): Promise<Metadata> {
   const { slug } = await params;
   const locale = await getLocale();
-  const supabase = await createClient();
   const dictionary = await getDictionary(locale);
+
+  const placeholderDetail = getPlaceholderRecipeDetail(slug);
+  if (placeholderDetail) {
+    return buildLocalizedMetadata({
+      pathname: `/recipes/${slug}`,
+      locale,
+      title: placeholderDetail.name,
+      description: placeholderDetail.lead,
+      ogImage: { url: placeholderDetail.image, alt: placeholderDetail.name },
+      noIndex: true,
+    });
+  }
+
+  const supabase = await createClient();
   const dbRecipe = await getDbRecipeDetailBySlug(supabase, slug);
 
   if (!dbRecipe) {
-    const placeholderRecipe = findGulfCountryPageRecipe(slug);
-    if (placeholderRecipe) {
-      return buildLocalizedMetadata({
-        pathname: `/recipes/${slug}`,
-        locale,
-        title: placeholderRecipe.name,
-        description: dictionary.recipesDirectory.countryPage.recipePlaceholderDescription,
-        noIndex: true,
-      });
-    }
     return buildLocalizedMetadata({
       pathname: `/recipes/${slug}`,
       locale,
@@ -190,39 +189,51 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
 
+  const placeholderDetail = getPlaceholderRecipeDetail(slug);
+  if (placeholderDetail) {
+    const countryName =
+      dictionary.recipesDirectory.countries[placeholderDetail.countrySlug]?.name ??
+      placeholderDetail.countrySlug;
+    const difficultyLabel =
+      dictionary.homeDifficulty[
+        placeholderDetail.difficulty === "Advanced"
+          ? "advanced"
+          : placeholderDetail.difficulty === "Intermediate"
+            ? "intermediate"
+            : "beginner"
+      ];
+    const brewMethodKey =
+      placeholderDetail.brewMethod === "V60"
+        ? "v60"
+        : placeholderDetail.brewMethod === "Espresso"
+          ? "espresso"
+          : placeholderDetail.brewMethod === "Cold Brew"
+            ? "coldBrew"
+            : placeholderDetail.brewMethod === "Chemex"
+              ? "chemex"
+              : placeholderDetail.brewMethod === "Aeropress"
+                ? "aeropress"
+                : placeholderDetail.brewMethod === "Moka Pot"
+                  ? "mokaPot"
+                  : null;
+    return (
+      <PlaceholderRecipeDetailView
+        recipe={placeholderDetail}
+        dictionary={dictionary}
+        countryName={countryName}
+        difficultyLabel={difficultyLabel}
+        brewMethodLabel={
+          brewMethodKey ? dictionary.homeFilters[brewMethodKey] : placeholderDetail.brewMethod
+        }
+      />
+    );
+  }
+
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
   const recipe = await getDbRecipeDetailBySlug(supabase, slug);
 
   if (!recipe) {
-    const placeholderRecipe = findGulfCountryPageRecipe(slug);
-    if (placeholderRecipe) {
-      const countryName =
-        dictionary.recipesDirectory.countries[placeholderRecipe.countrySlug]?.name ??
-        placeholderRecipe.countrySlug;
-      return (
-        <GulfDirectoryPlaceholder
-          headingId="recipe-placeholder-heading"
-          eyebrow={dictionary.recipesDirectory.countryPage.recipePlaceholderEyebrow}
-          title={placeholderRecipe.name}
-          description={dictionary.recipesDirectory.countryPage.recipePlaceholderDescription}
-          crumbs={[
-            { href: "/recipes", label: dictionary.recipesDirectory.backToCountries },
-            {
-              href: gulfCountryPath(placeholderRecipe.countrySlug),
-              label: countryName,
-            },
-            {
-              href: gulfRoasterPath(
-                placeholderRecipe.countrySlug,
-                placeholderRecipe.roasterSlug,
-              ),
-              label: placeholderRecipe.roasterName,
-            },
-          ]}
-        />
-      );
-    }
     notFound();
   }
 

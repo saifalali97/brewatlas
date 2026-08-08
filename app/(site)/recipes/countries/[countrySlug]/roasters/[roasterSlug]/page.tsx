@@ -1,40 +1,47 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  GulfDirectoryPlaceholder,
-  PlaceholderRecipeLink,
-} from "@/app/components/recipes/gulf-directory-placeholder";
-import { Chapter } from "@/app/components/atlas/chapter";
-import { PageHeader } from "@/app/components/ui/page-header";
-import { TextLink } from "@/app/components/ui/text-link";
-import { RoasteryAboutSection } from "@/app/components/recipes/roastery-about-section";
-import { RoasteryRecipeCard } from "@/app/components/recipes/roastery-recipe-card";
-import {
-  getGulfDirectoryRoasterBySlug,
-  getRoasteryRecipes,
-} from "@/lib/data/gulf-directory";
+import { GulfRoasterAbout } from "@/app/components/recipes/gulf-roaster-about";
+import { GulfRoasterFeaturedRecipe } from "@/app/components/recipes/gulf-roaster-featured-recipe";
+import { GulfRoasterHero } from "@/app/components/recipes/gulf-roaster-hero";
+import { GulfRoasterRecipes } from "@/app/components/recipes/gulf-roaster-recipes";
+import { GulfRoasterRelated } from "@/app/components/recipes/gulf-roaster-related";
+import { GulfRoasterStats } from "@/app/components/recipes/gulf-roaster-stats";
+import { rdLayout, rdSurface } from "@/lib/design-system/recipes-directory";
 import {
   findGulfCountryBySlug,
   gulfCountryPath,
-  gulfRecipePath,
   type GulfDirectoryCountrySlug,
 } from "@/lib/gulf-directory/countries";
 import {
-  findGulfCountryPageRoaster,
-  getGulfCountryPageRecipesForRoaster,
-} from "@/lib/gulf-directory/country-page-data";
+  getGulfRoasterPageData,
+  listGulfRoasterPageParams,
+} from "@/lib/gulf-directory/roaster-page-data";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
-import { brewMethodLabelKey } from "@/lib/i18n/home-labels";
 import { interpolate } from "@/lib/i18n/format";
 import { getLocale } from "@/lib/i18n/locale";
-import { imageAlt } from "@/lib/seo/image-alt";
 import { buildLocalizedMetadata, localizedPathUrl } from "@/lib/seo/localized-metadata";
 import { buildCollectionPageJsonLd } from "@/lib/seo/json-ld";
-import { createClient } from "@/lib/supabase/server";
+import type { Difficulty } from "@/types/homepage";
 
 type RoasteryPageProps = {
   params: Promise<{ countrySlug: string; roasterSlug: string }>;
 };
+
+const BREW_METHOD_LABELS: Record<
+  string,
+  "v60" | "espresso" | "chemex" | "aeropress" | "coldBrew" | "mokaPot"
+> = {
+  V60: "v60",
+  Espresso: "espresso",
+  Chemex: "chemex",
+  Aeropress: "aeropress",
+  "Cold Brew": "coldBrew",
+  "Moka Pot": "mokaPot",
+};
+
+export function generateStaticParams() {
+  return listGulfRoasterPageParams();
+}
 
 export async function generateMetadata({ params }: RoasteryPageProps): Promise<Metadata> {
   const { countrySlug, roasterSlug } = await params;
@@ -45,11 +52,8 @@ export async function generateMetadata({ params }: RoasteryPageProps): Promise<M
 
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const placeholderRoaster = findGulfCountryPageRoaster(country.slug, roasterSlug);
-  const supabase = placeholderRoaster ? null : await createClient();
-  const dbRoaster =
-    supabase != null ? await getGulfDirectoryRoasterBySlug(supabase, roasterSlug) : null;
-  const roasterName = dbRoaster?.name ?? placeholderRoaster?.name ?? roasterSlug;
+  const pageData = getGulfRoasterPageData(country.slug, roasterSlug);
+  const roasterName = pageData?.name ?? roasterSlug;
 
   return buildLocalizedMetadata({
     pathname: `/recipes/countries/${countrySlug}/roasters/${roasterSlug}`,
@@ -58,7 +62,7 @@ export async function generateMetadata({ params }: RoasteryPageProps): Promise<M
       roaster: roasterName,
     }),
     description:
-      dbRoaster?.description ??
+      pageData?.about ??
       interpolate(dictionary.recipesDirectory.roasteryMetaDescriptionTemplate, {
         roaster: roasterName,
       }),
@@ -71,153 +75,143 @@ export default async function GulfCountryRoasterPage({ params }: RoasteryPagePro
   if (!country) notFound();
 
   const slug = country.slug as GulfDirectoryCountrySlug;
+  const pageData = getGulfRoasterPageData(slug, roasterSlug);
+  if (!pageData) notFound();
+
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
   const copy = dictionary.recipesDirectory;
+  const pageCopy = copy.roasterPage;
   const countryName = copy.countries[slug]?.name ?? country.dbCountry;
-  const placeholderRoaster = findGulfCountryPageRoaster(slug, roasterSlug);
-  // Prefer directory placeholder while Supabase Gulf data is empty; fall back to DB.
-  const supabase = placeholderRoaster ? null : await createClient();
-  const dbRoaster =
-    supabase != null ? await getGulfDirectoryRoasterBySlug(supabase, roasterSlug) : null;
 
-  if (dbRoaster) {
-    const recipes = await getRoasteryRecipes(supabase!, dbRoaster.id, { locale });
-    const cardLabels = {
-      hot: copy.hotBadge,
-      iced: copy.icedBadge,
-      deviceLabel: copy.deviceLabel,
-      coffeeLabel: copy.coffeeLabel,
-      ratingLabel: copy.ratingLabel,
-      noRating: copy.noRating,
-      imageAltTemplate: imageAlt.recipeTemplate,
-      difficultyLabel: "",
-      brewMethodLabel: "",
-    };
+  const difficultyLabels = {
+    Beginner: dictionary.homeDifficulty.beginner,
+    Intermediate: dictionary.homeDifficulty.intermediate,
+    Advanced: dictionary.homeDifficulty.advanced,
+  } satisfies Record<Difficulty, string>;
 
-    return (
-      <>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(
-              buildCollectionPageJsonLd({
-                url: localizedPathUrl(
-                  `/recipes/countries/${countrySlug}/roasters/${roasterSlug}`,
-                  locale,
-                ),
-                name: dbRoaster.name,
-                description: dbRoaster.description ?? `${dbRoaster.name} recipes`,
-                itemCount: recipes.length,
-              }),
-            ),
-          }}
-        />
-        <Chapter
-          id="roastery-recipes"
-          rhythm="dawn"
-          padding="compact"
-          wide
-          ariaLabelledBy="roastery-recipes-heading"
-        >
-          <div className="mb-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-            <TextLink href="/recipes" variant="nav">
-              {copy.backToCountries}
-            </TextLink>
-            <span className="text-ac-espresso/40" aria-hidden>
-              /
-            </span>
-            <TextLink href={gulfCountryPath(slug)} variant="nav">
-              {countryName}
-            </TextLink>
-          </div>
+  const labelForBrewMethod = (method: string) => {
+    const key = BREW_METHOD_LABELS[method];
+    return key ? dictionary.homeFilters[key] : method;
+  };
 
-          <PageHeader
-            headingId="roastery-recipes-heading"
-            eyebrow={copy.roasteryEyebrow}
-            title={dbRoaster.name}
-            description={
-              dbRoaster.city
-                ? `${[dbRoaster.city, dbRoaster.emirate, dbRoaster.country].filter(Boolean).join(", ")}`
-                : (dbRoaster.country ?? undefined)
-            }
-          />
+  const brewMethodLabels = Object.fromEntries(
+    [...new Set(pageData.recipes.map((recipe) => recipe.brewMethod))].map((method) => [
+      method,
+      labelForBrewMethod(method),
+    ]),
+  );
 
-          {recipes.length > 0 ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {recipes.map((recipe) => {
-                const brewMethodKey = brewMethodLabelKey(recipe.brewMethod);
-                return (
-                  <RoasteryRecipeCard
-                    key={recipe.slug}
-                    recipe={recipe}
-                    href={gulfRecipePath(recipe.slug)}
-                    labels={{
-                      ...cardLabels,
-                      brewMethodLabel: brewMethodKey
-                        ? dictionary.homeFilters[
-                            brewMethodKey as keyof typeof dictionary.homeFilters
-                          ]
-                        : recipe.brewMethod,
-                      difficultyLabel: dictionary.homeDifficulty[
-                        recipe.difficulty === "Advanced"
-                          ? "advanced"
-                          : recipe.difficulty === "Intermediate"
-                            ? "intermediate"
-                            : "beginner"
-                      ],
-                    }}
-                  />
-                );
-              })}
-            </div>
-          ) : (
-            <p className="mt-10 text-ac-espresso/75">{copy.noRecipesForRoastery}</p>
-          )}
+  const featuredRecipe =
+    pageData.featuredRecipeSlug != null
+      ? (pageData.recipes.find((recipe) => recipe.slug === pageData.featuredRecipeSlug) ?? null)
+      : null;
 
-          <RoasteryAboutSection
-            roaster={dbRoaster}
-            title={copy.aboutRoasteryTitle}
-            websiteLabel={copy.websiteLabel}
-            instagramLabel={copy.instagramLabel}
-          />
-        </Chapter>
-      </>
-    );
-  }
-
-  const roasterName = placeholderRoaster?.name ?? roasterSlug;
-  const placeholderRecipes = getGulfCountryPageRecipesForRoaster(slug, roasterSlug);
-  const description =
-    placeholderRoaster != null
-      ? `${placeholderRoaster.city} · ${placeholderRoaster.specialty}`
-      : copy.countryPage.roasterPlaceholderDescription;
+  const brewingStylesLabel =
+    pageData.brewingStyles.length > 0
+      ? pageData.brewingStyles.map(labelForBrewMethod).join(" · ")
+      : "—";
 
   return (
-    <GulfDirectoryPlaceholder
-      headingId="roastery-placeholder-heading"
-      eyebrow={copy.roasteryEyebrow}
-      title={roasterName}
-      description={description}
-      crumbs={[
-        { href: "/recipes", label: copy.backToCountries },
-        { href: gulfCountryPath(slug), label: countryName },
-      ]}
-    >
-      {placeholderRecipes.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {placeholderRecipes.map((recipe) => (
-            <PlaceholderRecipeLink
-              key={recipe.id}
-              href={gulfRecipePath(recipe.slug)}
-              name={recipe.name}
-              meta={`${recipe.brewMethod} · ${recipe.difficulty}`}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            buildCollectionPageJsonLd({
+              url: localizedPathUrl(
+                `/recipes/countries/${countrySlug}/roasters/${roasterSlug}`,
+                locale,
+              ),
+              name: pageData.name,
+              description: pageData.about,
+              itemCount: pageData.totalRecipes,
+            }),
+          ),
+        }}
+      />
+
+      <div className={`min-h-screen ${rdSurface.page} pb-16`}>
+        <GulfRoasterHero
+          name={pageData.name}
+          city={pageData.city}
+          countryName={countryName}
+          specialty={pageData.specialty}
+          coverImage={pageData.coverImage}
+          coverImageAlt={interpolate(pageCopy.coverImageAltTemplate, {
+            roaster: pageData.name,
+          })}
+          logoUrl={pageData.logoUrl}
+          website={pageData.website}
+          instagram={pageData.instagram}
+          websiteLabel={copy.websiteLabel}
+          instagramLabel={copy.instagramLabel}
+          specialtyLabel={copy.countryPage.specialtyLabel}
+          backHref={gulfCountryPath(slug)}
+          backLabel={interpolate(pageCopy.backToCountryTemplate, { country: countryName })}
+        />
+
+        <div className={rdLayout.sectionStack}>
+          <GulfRoasterAbout title={pageCopy.aboutTitle} description={pageData.about} />
+
+          <GulfRoasterStats
+            ariaLabel={pageCopy.statsAriaLabel}
+            totalRecipes={pageData.totalRecipes}
+            foundedYear={pageData.foundedYear}
+            locationLabel={pageData.locationLabel}
+            brewingStylesLabel={brewingStylesLabel}
+            totalRecipesLabel={pageCopy.totalRecipesLabel}
+            foundedYearLabel={pageCopy.foundedYearLabel}
+            locationStatLabel={pageCopy.locationStatLabel}
+            brewingStylesStatLabel={pageCopy.brewingStylesStatLabel}
+          />
+
+          <GulfRoasterRecipes
+            title={pageCopy.recipesTitle}
+            description={pageCopy.recipesDescription}
+            recipes={pageData.recipes}
+            hotLabel={copy.hotBadge}
+            icedLabel={copy.icedBadge}
+            coffeeLabel={copy.coffeeLabel}
+            brewTimeLabel={pageCopy.brewTimeLabel}
+            ratingLabel={copy.ratingLabel}
+            exploreLabel={pageCopy.exploreRecipeLabel}
+            emptyLabel={copy.noRecipesForRoastery}
+            difficultyLabels={difficultyLabels}
+            brewMethodLabels={brewMethodLabels}
+            imageAltTemplate={copy.countryPage.featuredRecipeImageAltTemplate}
+          />
+
+          {featuredRecipe ? (
+            <GulfRoasterFeaturedRecipe
+              title={pageCopy.featuredTitle}
+              description={pageCopy.featuredDescription}
+              recipe={featuredRecipe}
+              hotLabel={copy.hotBadge}
+              icedLabel={copy.icedBadge}
+              exploreLabel={pageCopy.exploreRecipeLabel}
+              brewMethodLabel={
+                brewMethodLabels[featuredRecipe.brewMethod] ?? featuredRecipe.brewMethod
+              }
+              difficultyLabel={difficultyLabels[featuredRecipe.difficulty]}
+              imageAltTemplate={copy.countryPage.featuredRecipeImageAltTemplate}
             />
-          ))}
+          ) : null}
+
+          <GulfRoasterRelated
+            countrySlug={slug}
+            title={pageCopy.relatedTitle}
+            description={pageCopy.relatedDescription}
+            roasters={pageData.relatedRoasters}
+            specialtyLabel={copy.countryPage.specialtyLabel}
+            exploreLabel={copy.countryPage.exploreRoasterLabel}
+            recipeCountTemplate={(count) =>
+              interpolate(copy.recipeCountTemplate, { count: String(count) })
+            }
+            emptyLabel={pageCopy.relatedEmpty}
+          />
         </div>
-      ) : (
-        <p className="text-ac-espresso/75">{copy.countryPage.roasterPlaceholderDescription}</p>
-      )}
-    </GulfDirectoryPlaceholder>
+      </div>
+    </>
   );
 }

@@ -1,51 +1,21 @@
+import { getCachedSupabaseGulfCountryPageData } from "@/lib/data/cached-directory";
 import { resolveGulfCountryBanner } from "@/lib/gulf-directory/country-images";
 import {
   findGulfCountryBySlug,
   type GulfDirectoryCountrySlug,
 } from "@/lib/gulf-directory/countries";
+import type {
+  GulfCountryPageData,
+  GulfCountryPageRecipe,
+  GulfCountryPageRoaster,
+} from "@/lib/gulf-directory/country-page-types";
 import type { Difficulty } from "@/types/homepage";
 
-/** Placeholder roaster card for Gulf country pages (replace with Supabase later). */
-export type GulfCountryPageRoaster = {
-  id: string;
-  name: string;
-  slug: string;
-  city: string;
-  logoUrl: string | null;
-  recipeCount: number;
-  specialty: string;
-  brewMethods: string[];
-  difficulties: Difficulty[];
-};
-
-/** Placeholder featured recipe for Gulf country pages. */
-export type GulfCountryPageRecipe = {
-  id: string;
-  slug: string;
-  name: string;
-  brewMethod: string;
-  difficulty: Difficulty;
-  image: string;
-  roasterName: string;
-  roasterSlug: string;
-  countrySlug: GulfDirectoryCountrySlug;
-  isIced: boolean;
-};
-
-export type GulfCountryPageData = {
-  slug: GulfDirectoryCountrySlug;
-  flag: string;
-  dbCountry: string;
-  coverImage: string;
-  totalRoasters: number;
-  totalRecipes: number;
-  citiesCovered: number;
-  cities: string[];
-  brewMethods: string[];
-  difficulties: Difficulty[];
-  roasters: GulfCountryPageRoaster[];
-  featuredRecipes: GulfCountryPageRecipe[];
-};
+export type {
+  GulfCountryPageData,
+  GulfCountryPageRecipe,
+  GulfCountryPageRoaster,
+} from "@/lib/gulf-directory/country-page-types";
 
 const UAE_ROASTERS: GulfCountryPageRoaster[] = [
   {
@@ -209,22 +179,45 @@ function buildUaePageData(): GulfCountryPageData {
   };
 }
 
-/** Placeholder country page payload — swap for Supabase loaders later. */
-export function getGulfCountryPageData(slug: GulfDirectoryCountrySlug): GulfCountryPageData {
+/** Sync placeholder payload — used only when Supabase has no roasters for the country. */
+export function getPlaceholderGulfCountryPageData(
+  slug: GulfDirectoryCountrySlug,
+): GulfCountryPageData {
   if (slug === "uae") {
     return buildUaePageData();
   }
   return emptyCountryPage(slug);
 }
 
-export function findGulfCountryPageRoaster(
+/**
+ * Country page payload: live Supabase data when roasters exist,
+ * otherwise identical placeholder/empty shells.
+ */
+export async function getGulfCountryPageData(
+  slug: GulfDirectoryCountrySlug,
+): Promise<GulfCountryPageData> {
+  const live = await getCachedSupabaseGulfCountryPageData(slug);
+  if (live) return live;
+  return getPlaceholderGulfCountryPageData(slug);
+}
+
+export function findPlaceholderGulfCountryPageRoaster(
   countrySlug: GulfDirectoryCountrySlug,
   roasterSlug: string,
 ): GulfCountryPageRoaster | null {
   return (
-    getGulfCountryPageData(countrySlug).roasters.find((roaster) => roaster.slug === roasterSlug) ??
-    null
+    getPlaceholderGulfCountryPageData(countrySlug).roasters.find(
+      (roaster) => roaster.slug === roasterSlug,
+    ) ?? null
   );
+}
+
+/** @deprecated Prefer async country page loader + directory roaster queries. */
+export function findGulfCountryPageRoaster(
+  countrySlug: GulfDirectoryCountrySlug,
+  roasterSlug: string,
+): GulfCountryPageRoaster | null {
+  return findPlaceholderGulfCountryPageRoaster(countrySlug, roasterSlug);
 }
 
 export function findGulfCountryPageRecipe(recipeSlug: string): GulfCountryPageRecipe | null {
@@ -236,7 +229,7 @@ export function findGulfCountryPageRecipe(recipeSlug: string): GulfCountryPageRe
     "bahrain",
     "oman",
   ] as const) {
-    const match = getGulfCountryPageData(country).featuredRecipes.find(
+    const match = getPlaceholderGulfCountryPageData(country).featuredRecipes.find(
       (recipe) => recipe.slug === recipeSlug,
     );
     if (match) return match;
@@ -244,7 +237,7 @@ export function findGulfCountryPageRecipe(recipeSlug: string): GulfCountryPageRe
   return null;
 }
 
-export function findGulfCountrySlugForRoaster(
+export function findPlaceholderGulfCountrySlugForRoaster(
   roasterSlug: string,
 ): GulfDirectoryCountrySlug | null {
   for (const country of [
@@ -255,18 +248,25 @@ export function findGulfCountrySlugForRoaster(
     "bahrain",
     "oman",
   ] as const) {
-    if (findGulfCountryPageRoaster(country, roasterSlug)) {
+    if (findPlaceholderGulfCountryPageRoaster(country, roasterSlug)) {
       return country;
     }
   }
   return null;
 }
 
+/** @deprecated Prefer directory roaster countrySlug. */
+export function findGulfCountrySlugForRoaster(
+  roasterSlug: string,
+): GulfDirectoryCountrySlug | null {
+  return findPlaceholderGulfCountrySlugForRoaster(roasterSlug);
+}
+
 export function getGulfCountryPageRecipesForRoaster(
   countrySlug: GulfDirectoryCountrySlug,
   roasterSlug: string,
 ): GulfCountryPageRecipe[] {
-  return getGulfCountryPageData(countrySlug).featuredRecipes.filter(
+  return getPlaceholderGulfCountryPageData(countrySlug).featuredRecipes.filter(
     (recipe) => recipe.roasterSlug === roasterSlug,
   );
 }
