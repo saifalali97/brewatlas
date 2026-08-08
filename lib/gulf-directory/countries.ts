@@ -38,8 +38,15 @@ export function gulfCountryPath(countrySlug: GulfDirectoryCountrySlug): string {
   return `/recipes/countries/${countrySlug}`;
 }
 
-export function gulfRoasterPath(roasterSlug: string): string {
-  return `/recipes/roasters/${roasterSlug}`;
+export function gulfRoasterPath(
+  countrySlug: GulfDirectoryCountrySlug,
+  roasterSlug: string,
+): string {
+  return `/recipes/countries/${countrySlug}/roasters/${roasterSlug}`;
+}
+
+export function gulfRecipePath(recipeSlug: string): string {
+  return `/recipes/${recipeSlug}`;
 }
 
 export function findGulfCountryBySlug(slug: string) {
