@@ -1,6 +1,11 @@
 "use client";
 
 import {
+  passwordPolicyMessage,
+  validatePassword,
+  type PasswordPolicyMessages,
+} from "@/lib/auth/password-policy";
+import {
   buildAuthCallbackUrl,
   buildAuthCallbackUrlFromOrigin,
 } from "@/lib/auth/redirect-url";
@@ -13,9 +18,8 @@ export type SignUpInput = {
   confirmPassword: string;
 };
 
-export type SignUpValidationMessages = {
+export type SignUpValidationMessages = PasswordPolicyMessages & {
   enterEmailAndPassword: string;
-  passwordTooShort: string;
   passwordsDoNotMatch: string;
 };
 
@@ -32,8 +36,9 @@ export function validateSignUpInput(
   if (!input.email || !input.password) {
     return messages.enterEmailAndPassword;
   }
-  if (input.password.length < 8) {
-    return messages.passwordTooShort;
+  const policyFailure = validatePassword(input.password);
+  if (policyFailure) {
+    return passwordPolicyMessage(policyFailure, messages);
   }
   if (input.password !== input.confirmPassword) {
     return messages.passwordsDoNotMatch;

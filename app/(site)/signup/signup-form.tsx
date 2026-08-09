@@ -6,6 +6,7 @@ import { PasswordInput } from "@/app/components/auth/password-input";
 import { acSurface, acTypography } from "@/lib/design-system/atlas-canon";
 import { buttons, forms } from "@/lib/constants/styles";
 import { useTranslations } from "@/lib/i18n/translation-context";
+import { PASSWORD_MIN_LENGTH } from "@/lib/auth/password-policy";
 import { signUpWithEmail, validateSignUpInput } from "@/lib/supabase/browser-auth";
 
 type SignupFormStatus = "idle" | "submitting" | "success";
@@ -29,7 +30,9 @@ export function SignupForm() {
 
     const validationError = validateSignUpInput(input, {
       enterEmailAndPassword: t("auth.enterEmailAndPassword"),
-      passwordTooShort: t("forms.passwordTooShort"),
+      tooShort: t("auth.passwordTooWeakLength"),
+      missingLetter: t("auth.passwordMissingLetter"),
+      missingDigit: t("auth.passwordMissingDigit"),
       passwordsDoNotMatch: t("forms.passwordsDoNotMatch"),
     });
 
@@ -115,7 +118,7 @@ export function SignupForm() {
         label={t("auth.password")}
         placeholder={t("auth.passwordPlaceholderMin")}
         required
-        minLength={8}
+        minLength={PASSWORD_MIN_LENGTH}
         autoComplete="new-password"
       />
 
@@ -125,9 +128,11 @@ export function SignupForm() {
         label={t("forms.confirmPassword")}
         placeholder={t("auth.passwordPlaceholderDots")}
         required
-        minLength={8}
+        minLength={PASSWORD_MIN_LENGTH}
         autoComplete="new-password"
       />
+
+      <p className="text-xs leading-relaxed text-ac-espresso/65">{t("auth.passwordRequirementsHint")}</p>
 
       <FormMessage error={error ?? undefined} />
 

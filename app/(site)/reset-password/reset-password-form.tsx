@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { PasswordInput } from "@/app/components/auth/password-input";
+import { PASSWORD_MIN_LENGTH } from "@/lib/auth/password-policy";
 import { buttons } from "@/lib/constants/styles";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { updatePasswordAction, type AuthActionState } from "@/lib/supabase/actions";
@@ -22,7 +23,7 @@ export function ResetPasswordForm() {
         label={t("auth.newPasswordLabel")}
         placeholder={t("auth.passwordPlaceholderMin")}
         required
-        minLength={8}
+        minLength={PASSWORD_MIN_LENGTH}
         autoComplete="new-password"
       />
 
@@ -32,9 +33,11 @@ export function ResetPasswordForm() {
         label={t("auth.confirmNewPasswordLabel")}
         placeholder={t("auth.passwordPlaceholderDots")}
         required
-        minLength={8}
+        minLength={PASSWORD_MIN_LENGTH}
         autoComplete="new-password"
       />
+
+      <p className="text-xs leading-relaxed text-ac-espresso/65">{t("auth.passwordRequirementsHint")}</p>
 
       <FormMessage error={state?.error} />
 

@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import { FormMessage } from "@/app/components/auth/form-message";
 import { PasswordInput } from "@/app/components/auth/password-input";
-import { STRONG_PASSWORD_MIN_LENGTH } from "@/lib/auth/password-policy";
+import { PASSWORD_MIN_LENGTH } from "@/lib/auth/password-policy";
 import { buttons } from "@/lib/constants/styles";
 import { useTranslations } from "@/lib/i18n/translation-context";
 import { changePasswordAction, type AuthActionState } from "@/lib/supabase/actions";
@@ -33,7 +33,7 @@ export function ChangePasswordForm() {
         label={t("auth.newPasswordLabel")}
         placeholder={t("auth.passwordPlaceholderStrong")}
         required
-        minLength={STRONG_PASSWORD_MIN_LENGTH}
+        minLength={PASSWORD_MIN_LENGTH}
         autoComplete="new-password"
       />
 
@@ -43,7 +43,7 @@ export function ChangePasswordForm() {
         label={t("auth.confirmNewPasswordLabel")}
         placeholder={t("auth.passwordPlaceholderDots")}
         required
-        minLength={STRONG_PASSWORD_MIN_LENGTH}
+        minLength={PASSWORD_MIN_LENGTH}
         autoComplete="new-password"
       />
 
