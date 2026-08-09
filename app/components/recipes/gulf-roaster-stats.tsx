@@ -3,7 +3,7 @@ import { StatsCard } from "@/app/components/recipes/directory";
 
 type GulfRoasterStatsProps = {
   totalRecipes: number;
-  foundedYear: number;
+  foundedYear: number | null;
   locationLabel: string;
   brewingStylesLabel: string;
   totalRecipesLabel: string;
@@ -30,7 +30,11 @@ export function GulfRoasterStats({
       ariaLabel={ariaLabel}
       items={[
         { icon: Coffee, value: totalRecipes, label: totalRecipesLabel },
-        { icon: CalendarDays, value: String(foundedYear), label: foundedYearLabel },
+        {
+          icon: CalendarDays,
+          value: foundedYear != null ? String(foundedYear) : "—",
+          label: foundedYearLabel,
+        },
         { icon: MapPin, value: locationLabel, label: locationStatLabel },
         { icon: FlaskConical, value: brewingStylesLabel, label: brewingStylesStatLabel },
       ]}

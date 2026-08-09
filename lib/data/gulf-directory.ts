@@ -4,6 +4,7 @@ import { getDictionary } from "@/lib/i18n/get-dictionary";
 import { getLocale } from "@/lib/i18n/locale";
 import type { Locale } from "@/types/i18n";
 import type { DbRecipeRow, RecipeListItem } from "@/types/recipe";
+import { listGulfRecipeDetails } from "@/lib/data/directory/seeds/recipe-library";
 import {
   GULF_DIRECTORY_COUNTRIES,
   type GulfDirectoryCountrySlug,
@@ -109,6 +110,7 @@ async function countRecipesForRoasterIds(
     .from("recipes")
     .select("id, roaster_id")
     .eq("status", "published")
+    .is("deleted_at", null)
     .in("roaster_id", roasterIds);
 
   if (directError) {
@@ -127,6 +129,7 @@ async function countRecipesForRoasterIds(
     .from("recipes")
     .select("id, coffees!inner ( roaster_id )")
     .eq("status", "published")
+    .is("deleted_at", null)
     .in("coffees.roaster_id", roasterIds);
 
   if (coffeeError) {
@@ -203,10 +206,24 @@ export async function getGulfDirectoryCountrySummaries(
   const allRoasterIds = (data ?? []).map((row) => row.id as string);
   const recipeCounts = await countRecipesForRoasterIds(supabase, allRoasterIds);
 
+  const seedRecipeCounts = new Map<GulfDirectoryCountrySlug, number>();
+  for (const recipe of listGulfRecipeDetails()) {
+    seedRecipeCounts.set(
+      recipe.countrySlug,
+      (seedRecipeCounts.get(recipe.countrySlug) ?? 0) + 1,
+    );
+  }
+
   return GULF_DIRECTORY_COUNTRIES.map((country) => {
     const roasterRows = roastersByCountry.get(country.dbCountry) ?? [];
     const roasterIds = roasterRows.map((row) => row.id);
-    const recipeCount = roasterIds.reduce((sum, id) => sum + (recipeCounts.get(id) ?? 0), 0);
+    const liveRecipeCount = roasterIds.reduce(
+      (sum, id) => sum + (recipeCounts.get(id) ?? 0),
+      0,
+    );
+    // Use seed recipe library counts until official recipes are in Supabase.
+    const recipeCount =
+      liveRecipeCount > 0 ? liveRecipeCount : (seedRecipeCounts.get(country.slug) ?? 0);
     return {
       slug: country.slug,
       dbCountry: country.dbCountry,
@@ -245,6 +262,7 @@ export async function getGulfDirectoryGlobalStats(
       .from("recipes")
       .select("id")
       .eq("status", "published")
+      .is("deleted_at", null)
       .in("roaster_id", roasterIds);
 
     for (const row of directRecipes ?? []) {
@@ -255,6 +273,7 @@ export async function getGulfDirectoryGlobalStats(
       .from("recipes")
       .select("id, coffees!inner ( roaster_id )")
       .eq("status", "published")
+      .is("deleted_at", null)
       .in("coffees.roaster_id", roasterIds);
 
     for (const row of coffeeRecipes ?? []) {
@@ -360,6 +379,7 @@ export async function getRoasteryRecipes(
     .from("recipes")
     .select(RECIPE_SELECT)
     .eq("status", "published")
+    .is("deleted_at", null)
     .in("coffee_id", coffeeIds)
     .order("featured", { ascending: false })
     .order("created_at", { ascending: false });

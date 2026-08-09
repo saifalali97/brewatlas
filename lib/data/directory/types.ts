@@ -34,6 +34,8 @@ export type DirectoryRoasterRow = {
   logo_url: string | null;
   banner_image_url: string | null;
   description: string | null;
+  specialty: string | null;
+  founded_year: number | null;
   featured: boolean;
   is_uae: boolean;
   verified: boolean;
@@ -71,13 +73,19 @@ export type DirectoryRoaster = {
   logoUrl: string | null;
   bannerImageUrl: string | null;
   description: string | null;
+  specialty: string | null;
+  foundedYear: number | null;
   featured: boolean;
   verified: boolean;
   recipeCount: number;
 };
 
 export const DIRECTORY_ROASTER_FIELDS =
-  "id, name, slug, country, country_id, emirate, city, city_id, website, instagram, logo_url, banner_image_url, description, featured, is_uae, verified, published" as const;
+  "id, name, slug, country, country_id, emirate, city, city_id, website, instagram, logo_url, banner_image_url, description, specialty, founded_year, featured, is_uae, verified, published" as const;
+
+/** Legacy select used before specialty/founded_year columns exist. */
+export const DIRECTORY_ROASTER_FIELDS_LEGACY =
+  "id, name, slug, country, emirate, city, website, instagram, logo_url, banner_image_url, description, featured, is_uae, verified, published" as const;
 
 export const DIRECTORY_COUNTRY_FIELDS =
   "id, slug, name, flag, sort_order, published" as const;

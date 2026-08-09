@@ -89,6 +89,8 @@ export function mapDirectoryRoaster(
     logoUrl: resolveDirectoryRoasterLogo(row.slug, row.logo_url),
     bannerImageUrl: row.banner_image_url,
     description: row.description,
+    specialty: row.specialty?.trim() || null,
+    foundedYear: row.founded_year,
     featured: row.featured,
     verified: row.verified,
     recipeCount,

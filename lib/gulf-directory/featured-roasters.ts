@@ -14,16 +14,16 @@ export const GULF_FEATURED_ROASTER_LOOKUP: Record<GulfDirectoryCountrySlug, Gulf
     fallbackLogoImage: "/images/gulf-heritage/raw-coffee-company.webp",
   },
   "saudi-arabia": {
-    nameMatch: "Nomad",
-    displayName: "Nomad Coffee",
+    nameMatch: "Camel Step",
+    displayName: "Camel Step",
   },
   kuwait: {
     nameMatch: "VOL.1",
     displayName: "VOL.1 Roastery",
   },
   qatar: {
-    nameMatch: "Flat White",
-    displayName: "Flat White",
+    nameMatch: "Vulcan",
+    displayName: "Vulcan Coffee Roastery",
   },
   bahrain: {
     nameMatch: "Crust",

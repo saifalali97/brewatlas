@@ -3,14 +3,13 @@ import { OptimizedImage } from "@/app/components/ui/optimized-image";
 import { IMAGE_SIZE_PRESETS } from "@/lib/media/responsive-image";
 import { notFound } from "next/navigation";
 import { PlaceholderRecipeDetailView } from "@/app/components/recipes/placeholder-recipe-detail-view";
-import { getPlaceholderRecipeDetail } from "@/lib/gulf-directory/placeholder-recipe-detail";
+import { getGulfRecipeDetailForPage } from "@/lib/gulf-directory/placeholder-recipe-detail";
 import {
   Calendar,
   Clock,
   Coffee,
   Cpu,
   Droplets,
-  Filter,
   FlaskConical,
   Hand,
   Heart,
@@ -19,12 +18,10 @@ import {
   Mountain,
   Percent,
   Scale,
-  Settings2,
-  Snowflake,
   Sprout,
-  Thermometer,
   Users,
 } from "lucide-react";
+import { PersonalizedDbBrew } from "@/app/components/recipes/personalization/personalized-db-brew";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { MetaTile } from "@/app/components/ui/meta-tile";
 import { SectionFrame } from "@/app/components/ui/section-frame";
@@ -48,11 +45,9 @@ import { resolveSitePathname } from "@/lib/seo/path-utils";
 import { buildRecipeReviewJsonLd } from "@/lib/seo/recipe-review-json-ld";
 import { RecipeTextExtrasSections } from "@/app/components/recipes/recipe-guide-sections";
 import {
-  RecipeBrewSpecGrid,
   RecipeDetailActionBar,
   RecipeFlavorNotesPanel,
   RecipeHeroFactLine,
-  RecipePourStepList,
   RecipeProseContent,
   recipeDetailSectionSpacing,
 } from "@/app/components/recipes/recipe-detail-ui";
@@ -122,7 +117,11 @@ function CompatibleDevices({ hasXBloom, dictionary }: { hasXBloom: boolean; dict
 
 type RecipePageProps = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ reviewSort?: string; reviewPage?: string; commentSort?: string }>;
+  searchParams: Promise<{
+    reviewSort?: string;
+    reviewPage?: string;
+    commentSort?: string;
+  }>;
 };
 
 export async function generateMetadata({ params }: RecipePageProps): Promise<Metadata> {
@@ -130,7 +129,7 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<Met
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
 
-  const placeholderDetail = getPlaceholderRecipeDetail(slug);
+  const placeholderDetail = await getGulfRecipeDetailForPage(slug);
   if (placeholderDetail) {
     return buildLocalizedMetadata({
       pathname: `/recipes/${slug}`,
@@ -189,7 +188,7 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
 
-  const placeholderDetail = getPlaceholderRecipeDetail(slug);
+  const placeholderDetail = await getGulfRecipeDetailForPage(slug);
   if (placeholderDetail) {
     const countryName =
       dictionary.recipesDirectory.countries[placeholderDetail.countrySlug]?.name ??
@@ -288,29 +287,31 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
   });
 
   return (
-    <DbRecipeView
-      recipe={localizedRecipe}
-      slug={slug}
-      favoritesCount={favoritesCount}
-      isFavorited={favoriteIds.has(recipe.id)}
-      isOwner={isOwner}
-      isAuthenticated={Boolean(viewerId)}
-      canAccessFull={canAccessFull}
-      hasXBloomProfile={hasXBloomProfile}
-      dictionary={dictionary}
-      ratingSummary={ratingSummary}
-      ratingDistribution={ratingDistribution}
-      reviewsResult={reviewsResult}
-      userReview={userReview}
-      viewerId={viewerId}
-      reviewJsonLd={reviewJsonLd}
-      setupCompatibility={setupCompatibility}
-      brewSessionStats={brewSessionStats}
-      likeCount={likeCount}
-      isLiked={isLiked}
-      comments={comments}
-      commentSort={commentSort}
-    />
+    <>
+      <DbRecipeView
+        recipe={localizedRecipe}
+        slug={slug}
+        favoritesCount={favoritesCount}
+        isFavorited={favoriteIds.has(recipe.id)}
+        isOwner={isOwner}
+        isAuthenticated={Boolean(viewerId)}
+        canAccessFull={canAccessFull}
+        hasXBloomProfile={hasXBloomProfile}
+        dictionary={dictionary}
+        ratingSummary={ratingSummary}
+        ratingDistribution={ratingDistribution}
+        reviewsResult={reviewsResult}
+        userReview={userReview}
+        viewerId={viewerId}
+        reviewJsonLd={reviewJsonLd}
+        setupCompatibility={setupCompatibility}
+        brewSessionStats={brewSessionStats}
+        likeCount={likeCount}
+        isLiked={isLiked}
+        comments={comments}
+        commentSort={commentSort}
+      />
+    </>
   );
 }
 
@@ -468,28 +469,59 @@ function DbRecipeView({
 
         {canAccessFull ? (
           <>
-            <RecipeBrewSpecGrid
-              ariaLabel={d.brewingDetailsTitle}
-              specs={[
-                {
-                  icon: Scale,
-                  label: d.coffeeDoseLabel,
-                  value: recipe.coffeeDose !== null ? `${recipe.coffeeDose}g` : null,
-                },
-                {
-                  icon: Droplets,
-                  label: d.waterLabel,
-                  value: recipe.waterAmount !== null ? `${recipe.waterAmount}g` : null,
-                },
-                { icon: Settings2, label: d.grindSizeLabel, value: recipe.grindSize },
-                {
-                  icon: Thermometer,
-                  label: d.waterTempLabel,
-                  value: recipe.waterTemperature !== null ? `${recipe.waterTemperature}°C` : null,
-                },
-                { icon: Clock, label: d.brewTimeLabel, value: brewTimeDisplay },
-                { icon: Scale, label: d.ratioLabel, value: recipe.ratio },
-              ]}
+            <PersonalizedDbBrew
+              recipe={recipe}
+              labels={{
+                servingStyleLabel: dictionary.recipePersonalization.servingStyleLabel,
+                hotOption: dictionary.recipePersonalization.hotOption,
+                icedOption: dictionary.recipePersonalization.icedOption,
+                officialBadge: dictionary.recipePersonalization.officialBadge,
+                personalizedBadge: dictionary.recipePersonalization.personalizedBadge,
+                roasterRecommendedBadge: dictionary.recipePersonalization.roasterRecommendedBadge,
+                resetCta: dictionary.recipePersonalization.resetCta,
+                brewMethodLabel: dictionary.recipePersonalization.brewMethodLabel,
+                coffeeDoseLabel: dictionary.recipePersonalization.coffeeDoseLabel,
+                brewRatioLabel: dictionary.recipePersonalization.brewRatioLabel,
+                customValue: dictionary.recipePersonalization.customValue,
+                guidanceTitle: dictionary.recipePersonalization.guidanceTitle,
+                saveMyRecipeCta: dictionary.recipePersonalization.saveMyRecipeCta,
+                duplicateRecipeCta: dictionary.recipePersonalization.duplicateRecipeCta,
+                shareRecipeCta: dictionary.recipePersonalization.shareRecipeCta,
+                resetToRoasterCta: dictionary.recipePersonalization.resetToRoasterCta,
+              }}
+              copy={{
+                hotWaterLabel: dictionary.recipePersonalization.hotWaterLabel,
+                iceLabel: d.iceLabel,
+                iceEquipmentName: dictionary.recipePersonalization.iceEquipmentName,
+                iceEquipmentDetailTemplate: dictionary.recipePersonalization.iceEquipmentDetailTemplate,
+                flashPrepNotesTemplate: dictionary.recipePersonalization.flashPrepNotesTemplate,
+                flashSwirlNotes: dictionary.recipePersonalization.flashSwirlNotes,
+                flashTipScale: dictionary.recipePersonalization.flashTipScale,
+                flashTipChill: dictionary.recipePersonalization.flashTipChill,
+                flashExtractionNote: dictionary.recipePersonalization.flashExtractionNote,
+                hotTipRestore: dictionary.recipePersonalization.hotTipRestore,
+                hotExtractionNote: dictionary.recipePersonalization.hotExtractionNote,
+              }}
+              detailLabels={{
+                brewingDetailsTitle: d.brewingDetailsTitle,
+                coffeeDoseLabel: d.coffeeDoseLabel,
+                waterLabel: d.waterLabel,
+                grindSizeLabel: d.grindSizeLabel,
+                waterTempLabel: d.waterTempLabel,
+                brewTimeLabel: d.brewTimeLabel,
+                ratioLabel: d.ratioLabel,
+                deviceLabel: d.deviceLabel,
+                grinderLabel: d.grinderLabel,
+                filterLabel: d.filterLabel,
+                waterRecipeLabel: d.waterRecipeLabel,
+                bloomLabel: d.bloomLabel,
+                iceLabel: d.iceLabel,
+                pourStructureTitle: d.pourStructureTitle,
+                pourPrefix: d.pourPrefix,
+                atTimeLabel: d.atTimeLabel,
+                tipsTitle: dictionary.recipePersonalization.tipsTitle,
+                extractionTitle: dictionary.recipePersonalization.extractionTitle,
+              }}
             />
             <RecipeFlavorNotesPanel title={d.flavorNotesTitle} notes={notes} />
           </>
@@ -584,43 +616,6 @@ function DbRecipeView({
 
       {canAccessFull && (
         <>
-          <RecipeEditorialSection title={d.brewingDetailsTitle} className={recipeDetailSectionSpacing}>
-            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
-              {recipe.deviceName && <MetaTile icon={Settings2} label={d.deviceLabel} value={recipe.deviceName} />}
-              {recipe.grinderName && <MetaTile icon={Settings2} label={d.grinderLabel} value={recipe.grinderName} />}
-              {recipe.filterTypeName && <MetaTile icon={Filter} label={d.filterLabel} value={recipe.filterTypeName} />}
-              {recipe.waterProfileName && (
-                <MetaTile icon={Droplets} label={d.waterRecipeLabel} value={recipe.waterProfileName} />
-              )}
-              {recipe.bloomAmount !== null && (
-                <MetaTile
-                  icon={Droplets}
-                  label={d.bloomLabel}
-                  value={`${recipe.bloomAmount}g${recipe.bloomTime ? ` / ${recipe.bloomTime}` : ""}`}
-                />
-              )}
-              {recipe.iceAmount !== null && recipe.iceAmount > 0 && (
-                <MetaTile icon={Snowflake} label={d.iceLabel} value={`${recipe.iceAmount}g`} />
-              )}
-            </div>
-          </RecipeEditorialSection>
-
-          {recipe.pours.length > 0 && (
-            <RecipeEditorialSection title={d.pourStructureTitle} className={recipeDetailSectionSpacing}>
-              <RecipePourStepList
-                pourPrefix={d.pourPrefix}
-                atTimeLabel={d.atTimeLabel}
-                steps={recipe.pours.map((pour) => ({
-                  id: pour.id,
-                  pourNumber: pour.pour_number,
-                  waterAmount: pour.water_amount !== null ? `${pour.water_amount}g` : null,
-                  timeLabel: pour.time_label,
-                  notes: pour.notes,
-                }))}
-              />
-            </RecipeEditorialSection>
-          )}
-
           {hasResults && (
             <RecipeEditorialSection title={d.resultsTitle} className={recipeDetailSectionSpacing}>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: RoasteryPageProps): Promise<M
 
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
-  const pageData = getGulfRoasterPageData(country.slug, roasterSlug);
+  const pageData = await getGulfRoasterPageData(country.slug, roasterSlug);
   const roasterName = pageData?.name ?? roasterSlug;
 
   return buildLocalizedMetadata({
@@ -75,7 +75,7 @@ export default async function GulfCountryRoasterPage({ params }: RoasteryPagePro
   if (!country) notFound();
 
   const slug = country.slug as GulfDirectoryCountrySlug;
-  const pageData = getGulfRoasterPageData(slug, roasterSlug);
+  const pageData = await getGulfRoasterPageData(slug, roasterSlug);
   if (!pageData) notFound();
 
   const locale = await getLocale();

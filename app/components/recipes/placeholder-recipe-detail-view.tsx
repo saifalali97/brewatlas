@@ -6,9 +6,7 @@ import {
   FlaskConical,
   Leaf,
   MapPin,
-  Scale,
   Settings2,
-  Thermometer,
   Timer,
 } from "lucide-react";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
@@ -17,16 +15,14 @@ import { SectionFrame } from "@/app/components/ui/section-frame";
 import { StarRatingDisplay } from "@/app/components/reviews/star-rating";
 import { RecipeEditorialHero, RecipeEditorialSection } from "@/app/components/recipes/recipe-editorial-hero";
 import {
-  RecipeBrewSpecGrid,
   RecipeFlavorNotesPanel,
   RecipeHeroFactLine,
-  RecipePourStepList,
   recipeDetailSectionSpacing,
 } from "@/app/components/recipes/recipe-detail-ui";
 import { GulfCountryFeaturedRecipes } from "@/app/components/recipes/gulf-country-featured-recipes";
 import { PlaceholderRecipeActions } from "@/app/components/recipes/placeholder-recipe-actions";
 import { PlaceholderRecipeFlavorWheel } from "@/app/components/recipes/placeholder-recipe-flavor-wheel";
-import { PlaceholderRecipeTimeline } from "@/app/components/recipes/placeholder-recipe-timeline";
+import { PersonalizedPlaceholderBrew } from "@/app/components/recipes/personalization/personalized-placeholder-brew";
 import {
   gulfCountryPath,
   gulfRecipePath,
@@ -74,15 +70,7 @@ export function PlaceholderRecipeDetailView({
     { icon: Filter, label: d.filterLabel, value: recipe.filter },
   ];
 
-  const brewSpecs = [
-    { icon: Scale, label: d.coffeeDoseLabel, value: recipe.dose },
-    { icon: Droplets, label: d.waterLabel, value: recipe.waterAmount },
-    { icon: Thermometer, label: d.waterTempLabel, value: recipe.temperature },
-    { icon: FlaskConical, label: d.ratioLabel, value: recipe.ratio },
-    { icon: Settings2, label: d.grindSizeLabel, value: recipe.grindSize },
-    { icon: Timer, label: d.bloomLabel, value: recipe.bloom },
-    { icon: Timer, label: page.totalBrewTimeLabel, value: recipe.totalBrewTime },
-  ];
+  const personalization = dictionary.recipePersonalization;
 
   return (
     <div className={`min-h-screen ${rdSurface.page} print:bg-white`}>
@@ -152,25 +140,60 @@ export function PlaceholderRecipeDetailView({
           </RecipeEditorialSection>
         </div>
 
-        <div className={recipeDetailSectionSpacing}>
-          <RecipeEditorialSection title={page.brewRecipeTitle}>
-            <RecipeBrewSpecGrid specs={brewSpecs} ariaLabel={page.brewRecipeTitle} />
-          </RecipeEditorialSection>
-        </div>
-
-        <div className={recipeDetailSectionSpacing}>
-          <RecipeEditorialSection title={page.stepsTitle}>
-            <RecipePourStepList
-              steps={recipe.steps}
-              pourPrefix={d.pourPrefix}
-              atTimeLabel={d.atTimeLabel}
-            />
-          </RecipeEditorialSection>
-        </div>
-
-        <div className={`${recipeDetailSectionSpacing} mx-auto max-w-3xl`}>
-          <PlaceholderRecipeTimeline title={page.timelineTitle} steps={recipe.steps} />
-        </div>
+        <PersonalizedPlaceholderBrew
+          recipe={recipe}
+          hasOfficialRecipe={recipe.lead.startsWith("Roaster Recommended")}
+          labels={{
+            servingStyleLabel: personalization.servingStyleLabel,
+            hotOption: personalization.hotOption,
+            icedOption: personalization.icedOption,
+            officialBadge: personalization.officialBadge,
+            personalizedBadge: personalization.personalizedBadge,
+            roasterRecommendedBadge: personalization.roasterRecommendedBadge,
+            resetCta: personalization.resetCta,
+            brewMethodLabel: personalization.brewMethodLabel,
+            coffeeDoseLabel: personalization.coffeeDoseLabel,
+            brewRatioLabel: personalization.brewRatioLabel,
+            customValue: personalization.customValue,
+            guidanceTitle: personalization.guidanceTitle,
+            saveMyRecipeCta: personalization.saveMyRecipeCta,
+            duplicateRecipeCta: personalization.duplicateRecipeCta,
+            shareRecipeCta: personalization.shareRecipeCta,
+            resetToRoasterCta: personalization.resetToRoasterCta,
+          }}
+          copy={{
+            hotWaterLabel: personalization.hotWaterLabel,
+            iceLabel: d.iceLabel,
+            iceEquipmentName: personalization.iceEquipmentName,
+            iceEquipmentDetailTemplate: personalization.iceEquipmentDetailTemplate,
+            flashPrepNotesTemplate: personalization.flashPrepNotesTemplate,
+            flashSwirlNotes: personalization.flashSwirlNotes,
+            flashTipScale: personalization.flashTipScale,
+            flashTipChill: personalization.flashTipChill,
+            flashExtractionNote: personalization.flashExtractionNote,
+            hotTipRestore: personalization.hotTipRestore,
+            hotExtractionNote: personalization.hotExtractionNote,
+          }}
+          sectionTitles={{
+            brewRecipeTitle: page.brewRecipeTitle,
+            stepsTitle: page.stepsTitle,
+            timelineTitle: page.timelineTitle,
+            equipmentTitle: page.equipmentTitle,
+            tipsTitle: personalization.tipsTitle,
+            extractionTitle: personalization.extractionTitle,
+          }}
+          detailLabels={{
+            coffeeDoseLabel: d.coffeeDoseLabel,
+            waterLabel: d.waterLabel,
+            waterTempLabel: d.waterTempLabel,
+            ratioLabel: d.ratioLabel,
+            grindSizeLabel: d.grindSizeLabel,
+            bloomLabel: d.bloomLabel,
+            totalBrewTimeLabel: page.totalBrewTimeLabel,
+            pourPrefix: d.pourPrefix,
+            atTimeLabel: d.atTimeLabel,
+          }}
+        />
 
         <div className={`${recipeDetailSectionSpacing} mx-auto max-w-3xl`}>
           <PlaceholderRecipeFlavorWheel
@@ -197,22 +220,6 @@ export function PlaceholderRecipeDetailView({
 
         <div className={`${recipeDetailSectionSpacing} mx-auto max-w-3xl`}>
           <RecipeFlavorNotesPanel title={page.tastingNotesTitle} notes={recipe.tastingNotes} />
-        </div>
-
-        <div className={recipeDetailSectionSpacing}>
-          <RecipeEditorialSection title={page.equipmentTitle}>
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {recipe.equipment.map((item) => (
-                <li
-                  key={item.name}
-                  className="rounded-2xl border border-ba-espresso/[0.08] bg-ba-pearl px-5 py-4"
-                >
-                  <p className="font-medium text-ac-espresso">{item.name}</p>
-                  <p className="mt-1 text-sm text-ac-espresso/65">{item.detail}</p>
-                </li>
-              ))}
-            </ul>
-          </RecipeEditorialSection>
         </div>
 
         {similar.length > 0 ? (
