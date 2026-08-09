@@ -36,8 +36,8 @@ export default async function AdminOriginsPage({ searchParams }: PageProps) {
         basePath={ADMIN_CMS_PATHS.origins}
         newPath={`${ADMIN_CMS_PATHS.origins}/new`}
         columns={[
-          { key: "country", header: labels.columnCountry, render: (item) => <span className="font-medium text-stone-100">{item.country}</span> },
-          { key: "region", header: labels.columnRegion, render: (item) => item.region },
+          { key: "country", header: labels.columnCountry, accessor: "country", format: "emphasis" },
+          { key: "region", header: labels.columnRegion, accessor: "region" },
         ]}
         labels={labels.table}
         filters={filters}

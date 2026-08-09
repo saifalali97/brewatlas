@@ -36,9 +36,9 @@ export default async function AdminRoastersPage({ searchParams }: PageProps) {
         basePath={ADMIN_CMS_PATHS.roasters}
         newPath={`${ADMIN_CMS_PATHS.roasters}/new`}
         columns={[
-          { key: "name", header: labels.columnName, render: (item) => <span className="font-medium text-stone-100">{item.name}</span> },
-          { key: "country", header: labels.columnCountry, render: (item) => item.country ?? "—" },
-          { key: "featured", header: labels.columnFeatured, render: (item) => (item.featured ? "Yes" : "—") },
+          { key: "name", header: labels.columnName, accessor: "name", format: "emphasis" },
+          { key: "country", header: labels.columnCountry, accessor: "country" },
+          { key: "featured", header: labels.columnFeatured, accessor: "featured", format: "yesNo" },
         ]}
         labels={labels.table}
         filters={filters}

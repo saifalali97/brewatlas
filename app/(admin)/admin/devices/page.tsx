@@ -38,9 +38,9 @@ export default async function AdminDevicesPage({ searchParams }: PageProps) {
         basePath={ADMIN_CMS_PATHS.devices}
         newPath={`${ADMIN_CMS_PATHS.devices}/new`}
         columns={[
-          { key: "name", header: labels.columnName, render: (item) => <span className="font-medium text-stone-100">{item.name}</span> },
-          { key: "slug", header: labels.columnSlug, render: (item) => <span className="font-mono text-xs">{item.slug}</span> },
-          { key: "manufacturer", header: labels.columnManufacturer, render: (item) => item.manufacturer ?? "—" },
+          { key: "name", header: labels.columnName, accessor: "name", format: "emphasis" },
+          { key: "slug", header: labels.columnSlug, accessor: "slug", format: "mono" },
+          { key: "manufacturer", header: labels.columnManufacturer, accessor: "manufacturer" },
         ]}
         labels={labels.table}
         filters={filters}

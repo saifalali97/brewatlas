@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useTransition } from "react";
+import { useCallback, useTransition, type ReactNode } from "react";
 import { buttons } from "@/lib/constants/styles";
 import type { AdminLookupPageResult, AdminLookupStatusFilter } from "@/lib/data/admin-lookups";
 
@@ -11,17 +11,54 @@ const inputClass =
 
 const selectClass = `${inputClass} appearance-none`;
 
-export type AdminLookupColumn<T> = {
+/** Serializable column config — must not include functions (RSC → client boundary). */
+export type AdminLookupColumn = {
   key: string;
   header: string;
-  render: (item: T) => React.ReactNode;
+  /** Property key on each row item. */
+  accessor: string;
+  format?: "text" | "emphasis" | "mono" | "flag" | "yesNo" | "number";
+  empty?: string;
 };
+
+function readAccessor(item: Record<string, unknown>, accessor: string): unknown {
+  return item[accessor];
+}
+
+function renderColumnCell(item: Record<string, unknown>, column: AdminLookupColumn): ReactNode {
+  const raw = readAccessor(item, column.accessor);
+  const empty = column.empty ?? "—";
+  const format = column.format ?? "text";
+
+  if (format === "yesNo") {
+    return raw ? "Yes" : empty;
+  }
+
+  if (raw == null || raw === "") {
+    return empty;
+  }
+
+  if (format === "emphasis") {
+    return <span className="font-medium text-stone-100">{String(raw)}</span>;
+  }
+  if (format === "mono") {
+    return <span className="font-mono text-xs">{String(raw)}</span>;
+  }
+  if (format === "flag") {
+    return <span className="text-lg">{String(raw)}</span>;
+  }
+  if (format === "number") {
+    return typeof raw === "number" ? raw : String(raw);
+  }
+
+  return String(raw);
+}
 
 type AdminLookupExplorerProps<T extends { id: string; published: boolean }> = {
   result: AdminLookupPageResult<T>;
   basePath: string;
   newPath: string;
-  columns: AdminLookupColumn<T>[];
+  columns: AdminLookupColumn[];
   labels: {
     searchPlaceholder: string;
     filterAll: string;
@@ -141,7 +178,7 @@ export function AdminLookupExplorer<T extends { id: string; published: boolean }
                 <tr key={item.id} className="border-b border-white/[0.05] text-stone-300">
                   {columns.map((col) => (
                     <td key={col.key} className="px-4 py-4">
-                      {col.render(item)}
+                      {renderColumnCell(item as Record<string, unknown>, col)}
                     </td>
                   ))}
                   <td className="px-4 py-4">
