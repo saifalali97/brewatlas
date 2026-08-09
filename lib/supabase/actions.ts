@@ -1,7 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { validateStrongPassword } from "@/lib/auth/password-policy";
+import {
+  passwordPolicyMessage,
+  validatePassword,
+} from "@/lib/auth/password-policy";
 import { buildAuthCallbackUrl } from "@/lib/auth/redirect-url";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/profile";
@@ -77,6 +80,15 @@ export async function requestPasswordResetAction(
   };
 }
 
+function authPasswordPolicyMessages(dictionary: Awaited<ReturnType<typeof getDictionary>>) {
+  return {
+    tooShort: dictionary.auth.passwordTooWeakLength,
+    missingLetter: dictionary.auth.passwordMissingLetter,
+    missingDigit: dictionary.auth.passwordMissingDigit,
+    sameAsCurrent: dictionary.auth.passwordSameAsCurrent,
+  };
+}
+
 export async function updatePasswordAction(
   _prevState: AuthActionState,
   formData: FormData,
@@ -85,8 +97,9 @@ export async function updatePasswordAction(
   const confirmPassword = String(formData.get("confirmPassword") ?? "");
   const dictionary = await getDictionary(await getLocale());
 
-  if (password.length < 8) {
-    return { error: dictionary.forms.passwordTooShort };
+  const policyFailure = validatePassword(password);
+  if (policyFailure) {
+    return { error: passwordPolicyMessage(policyFailure, authPasswordPolicyMessages(dictionary)) };
   }
   if (password !== confirmPassword) {
     return { error: dictionary.forms.passwordsDoNotMatch };
@@ -100,26 +113,6 @@ export async function updatePasswordAction(
   }
 
   redirect("/account");
-}
-
-function strongPasswordErrorMessage(
-  failure: NonNullable<ReturnType<typeof validateStrongPassword>>,
-  dictionary: Awaited<ReturnType<typeof getDictionary>>,
-): string {
-  switch (failure) {
-    case "too_short":
-      return dictionary.auth.passwordTooWeakLength;
-    case "missing_upper":
-      return dictionary.auth.passwordMissingUpper;
-    case "missing_lower":
-      return dictionary.auth.passwordMissingLower;
-    case "missing_digit":
-      return dictionary.auth.passwordMissingDigit;
-    case "missing_special":
-      return dictionary.auth.passwordMissingSpecial;
-    case "same_as_current":
-      return dictionary.auth.passwordSameAsCurrent;
-  }
 }
 
 /**
@@ -143,9 +136,11 @@ export async function changePasswordAction(
     return { error: dictionary.forms.passwordsDoNotMatch };
   }
 
-  const policyFailure = validateStrongPassword(newPassword, { currentPassword });
+  const policyFailure = validatePassword(newPassword, { currentPassword });
   if (policyFailure) {
-    return { error: strongPasswordErrorMessage(policyFailure, dictionary) };
+    return {
+      error: passwordPolicyMessage(policyFailure, authPasswordPolicyMessages(dictionary)),
+    };
   }
 
   const supabase = await createClient();

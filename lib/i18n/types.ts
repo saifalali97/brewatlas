@@ -490,10 +490,8 @@ export type Dictionary = {
     currentPasswordIncorrect: string;
     changePasswordSuccess: string;
     passwordTooWeakLength: string;
-    passwordMissingUpper: string;
-    passwordMissingLower: string;
+    passwordMissingLetter: string;
     passwordMissingDigit: string;
-    passwordMissingSpecial: string;
     passwordSameAsCurrent: string;
   };
   securityPage: {
