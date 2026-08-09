@@ -482,6 +482,27 @@ export type Dictionary = {
     appleSignInNotConfigured: string;
     showPassword: string;
     hidePassword: string;
+    currentPasswordLabel: string;
+    changePasswordCta: string;
+    passwordPlaceholderStrong: string;
+    passwordRequirementsHint: string;
+    changePasswordMissingFields: string;
+    currentPasswordIncorrect: string;
+    changePasswordSuccess: string;
+    passwordTooWeakLength: string;
+    passwordMissingUpper: string;
+    passwordMissingLower: string;
+    passwordMissingDigit: string;
+    passwordMissingSpecial: string;
+    passwordSameAsCurrent: string;
+  };
+  securityPage: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    backToAccount: string;
+    changePasswordHeading: string;
+    changePasswordDescription: string;
   };
   dashboard: {
     title: string;
@@ -540,6 +561,8 @@ export type Dictionary = {
     continueBrewing: string;
     subscriptionLabel: string;
     subscriptionDescription: string;
+    securityLabel: string;
+    securityDescription: string;
   };
   subscriptionPage: {
     eyebrow: string;
@@ -2575,6 +2598,8 @@ export type Dictionary = {
     forgotPasswordDescription: string;
     resetPasswordTitle: string;
     resetPasswordDescription: string;
+    securityTitle: string;
+    securityDescription: string;
     profileTitle: string;
     profileDescription: string;
     publicProfileTitleTemplate: string;
