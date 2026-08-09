@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Droplets,
   FlaskConical,
@@ -39,7 +39,7 @@ import {
   parseBrewMethodLabel,
 } from "@/lib/recipes/personalization/dynamic-brew";
 import {
-  adjustmentsFromSearchParams,
+  adjustmentsFromWindowLocation,
   personalRecipeShareUrl,
   savePersonalRecipe,
 } from "@/lib/recipes/personalization/personal-recipe-storage";
@@ -83,19 +83,16 @@ export function PersonalizedPlaceholderBrew({
   const officialMethod = parseBrewMethodLabel(recipe.brewMethod);
   const officialDose = official.coffeeDoseG && official.coffeeDoseG > 0 ? official.coffeeDoseG : 20;
   const officialRatio = extractRatioDenominator(official.ratioLabel) ?? 15;
+  const [fromUrl] = useState(adjustmentsFromWindowLocation);
 
-  const [servingStyle, setServingStyle] = useState<RecipeServingStyle>(official.servingStyle);
-  const [brewMethod, setBrewMethod] = useState<DynamicBrewMethod>(officialMethod);
-  const [coffeeDoseG, setCoffeeDoseG] = useState(officialDose);
-  const [brewRatio, setBrewRatio] = useState(officialRatio);
-
-  useEffect(() => {
-    const fromUrl = adjustmentsFromSearchParams(new URLSearchParams(window.location.search));
-    if (fromUrl.servingStyle) setServingStyle(fromUrl.servingStyle);
-    if (fromUrl.brewMethod) setBrewMethod(fromUrl.brewMethod);
-    if (fromUrl.coffeeDoseG) setCoffeeDoseG(fromUrl.coffeeDoseG);
-    if (fromUrl.brewRatio) setBrewRatio(fromUrl.brewRatio);
-  }, []);
+  const [servingStyle, setServingStyle] = useState<RecipeServingStyle>(
+    () => fromUrl.servingStyle ?? official.servingStyle,
+  );
+  const [brewMethod, setBrewMethod] = useState<DynamicBrewMethod>(
+    () => fromUrl.brewMethod ?? officialMethod,
+  );
+  const [coffeeDoseG, setCoffeeDoseG] = useState(() => fromUrl.coffeeDoseG ?? officialDose);
+  const [brewRatio, setBrewRatio] = useState(() => fromUrl.brewRatio ?? officialRatio);
 
   const adjustments = useMemo(
     () => ({

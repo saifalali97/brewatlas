@@ -88,3 +88,9 @@ export function adjustmentsFromSearchParams(
   if (Number.isFinite(ratio) && ratio > 0) next.brewRatio = ratio;
   return next;
 }
+
+/** Read shareable personalization query params in the browser; empty on the server. */
+export function adjustmentsFromWindowLocation(): PersonalizationAdjustments {
+  if (typeof window === "undefined") return {};
+  return adjustmentsFromSearchParams(new URLSearchParams(window.location.search));
+}

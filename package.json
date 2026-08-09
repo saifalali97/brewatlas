@@ -9,6 +9,7 @@
     "start": "next start",
     "start:lan": "next start -H 0.0.0.0",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "dependencies": {

@@ -33,8 +33,7 @@ import { RecipeEditorialHero, RecipeEditorialSection } from "@/app/components/re
 import { acTypography } from "@/lib/design-system/atlas-canon";
 import { badges, buttons } from "@/lib/constants/styles";
 import { getCachedPublishedDbRecipes } from "@/lib/data/cached-public-data";
-import { getFavoritesCount, getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
-import { resolveRecipeForPublicPage } from "@/lib/data/recipe-preview";
+import { getDbRecipeDetailBySlug, getFavoritesCount, getUserFavoriteRecipeIds } from "@/lib/data/db-recipes";
 import { recipeHasXBloomProfile } from "@/lib/data/xbloom";
 import { difficultyLabelKey } from "@/lib/i18n/home-labels";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
@@ -122,13 +121,11 @@ type RecipePageProps = {
     reviewSort?: string;
     reviewPage?: string;
     commentSort?: string;
-    preview?: string;
   }>;
 };
 
-export async function generateMetadata({ params, searchParams }: RecipePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: RecipePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const resolvedSearchParams = await searchParams;
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
 
@@ -145,7 +142,7 @@ export async function generateMetadata({ params, searchParams }: RecipePageProps
   }
 
   const supabase = await createClient();
-  const { recipe: dbRecipe, isPreview } = await resolveRecipeForPublicPage(slug, resolvedSearchParams.preview);
+  const dbRecipe = await getDbRecipeDetailBySlug(supabase, slug);
 
   if (!dbRecipe) {
     return buildLocalizedMetadata({
@@ -170,7 +167,7 @@ export async function generateMetadata({ params, searchParams }: RecipePageProps
   const description = descriptionBase ? `${descriptionBase}${ratingSuffix}` : undefined;
   const title = dbRecipe.seoTitle ?? dbRecipe.title;
   const pathname = resolveSitePathname(dbRecipe.canonicalUrl ?? `/recipes/${slug}`, `/recipes/${slug}`);
-  const indexable = !isPreview && isRecipePubliclyVisible({ status: dbRecipe.status });
+  const indexable = isRecipePubliclyVisible({ status: dbRecipe.status });
 
   return buildLocalizedMetadata({
     pathname,
@@ -191,57 +188,53 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
   const locale = await getLocale();
   const dictionary = await getDictionary(locale);
 
-  const { recipe: resolvedRecipe, isPreview } = await resolveRecipeForPublicPage(
-    slug,
-    resolvedSearchParams.preview,
-  );
-
-  if (!resolvedRecipe) {
-    const placeholderDetail = await getGulfRecipeDetailForPage(slug);
-    if (placeholderDetail) {
-      const countryName =
-        dictionary.recipesDirectory.countries[placeholderDetail.countrySlug]?.name ??
-        placeholderDetail.countrySlug;
-      const difficultyLabel =
-        dictionary.homeDifficulty[
-          placeholderDetail.difficulty === "Advanced"
-            ? "advanced"
-            : placeholderDetail.difficulty === "Intermediate"
-              ? "intermediate"
-              : "beginner"
-        ];
-      const brewMethodKey =
-        placeholderDetail.brewMethod === "V60"
-          ? "v60"
-          : placeholderDetail.brewMethod === "Espresso"
-            ? "espresso"
-            : placeholderDetail.brewMethod === "Cold Brew"
-              ? "coldBrew"
-              : placeholderDetail.brewMethod === "Chemex"
-                ? "chemex"
-                : placeholderDetail.brewMethod === "Aeropress"
-                  ? "aeropress"
-                  : placeholderDetail.brewMethod === "Moka Pot"
-                    ? "mokaPot"
-                    : null;
-      return (
-        <PlaceholderRecipeDetailView
-          recipe={placeholderDetail}
-          dictionary={dictionary}
-          countryName={countryName}
-          difficultyLabel={difficultyLabel}
-          brewMethodLabel={
-            brewMethodKey ? dictionary.homeFilters[brewMethodKey] : placeholderDetail.brewMethod
-          }
-        />
-      );
-    }
-    notFound();
+  const placeholderDetail = await getGulfRecipeDetailForPage(slug);
+  if (placeholderDetail) {
+    const countryName =
+      dictionary.recipesDirectory.countries[placeholderDetail.countrySlug]?.name ??
+      placeholderDetail.countrySlug;
+    const difficultyLabel =
+      dictionary.homeDifficulty[
+        placeholderDetail.difficulty === "Advanced"
+          ? "advanced"
+          : placeholderDetail.difficulty === "Intermediate"
+            ? "intermediate"
+            : "beginner"
+      ];
+    const brewMethodKey =
+      placeholderDetail.brewMethod === "V60"
+        ? "v60"
+        : placeholderDetail.brewMethod === "Espresso"
+          ? "espresso"
+          : placeholderDetail.brewMethod === "Cold Brew"
+            ? "coldBrew"
+            : placeholderDetail.brewMethod === "Chemex"
+              ? "chemex"
+              : placeholderDetail.brewMethod === "Aeropress"
+                ? "aeropress"
+                : placeholderDetail.brewMethod === "Moka Pot"
+                  ? "mokaPot"
+                  : null;
+    return (
+      <PlaceholderRecipeDetailView
+        recipe={placeholderDetail}
+        dictionary={dictionary}
+        countryName={countryName}
+        difficultyLabel={difficultyLabel}
+        brewMethodLabel={
+          brewMethodKey ? dictionary.homeFilters[brewMethodKey] : placeholderDetail.brewMethod
+        }
+      />
+    );
   }
 
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
-  const recipe = resolvedRecipe;
+  const recipe = await getDbRecipeDetailBySlug(supabase, slug);
+
+  if (!recipe) {
+    notFound();
+  }
 
   const translation = await getRecipeTranslation(supabase, recipe.id, locale);
   const localizedRecipe = localizeRecipe(recipe, translation);
@@ -295,11 +288,6 @@ export default async function RecipePage({ params, searchParams }: RecipePagePro
 
   return (
     <>
-      {isPreview || !isRecipePubliclyVisible({ status: recipe.status }) ? (
-        <div className="border-b border-amber-500/25 bg-amber-950/40 px-4 py-2 text-center text-xs font-medium text-amber-100">
-          Draft preview — not publicly published
-        </div>
-      ) : null}
       <DbRecipeView
         recipe={localizedRecipe}
         slug={slug}
