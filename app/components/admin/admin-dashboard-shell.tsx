@@ -169,6 +169,14 @@ export function AdminDashboardShell({ children, displayName }: AdminDashboardShe
                       {labels.myAccount}
                     </Link>
                     <Link
+                      href="/account/security"
+                      role="menuitem"
+                      className="block px-4 py-2.5 text-sm text-stone-300 hover:bg-white/[0.04] hover:text-stone-100"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      {labels.changePassword}
+                    </Link>
+                    <Link
                       href="/"
                       role="menuitem"
                       className="block px-4 py-2.5 text-sm text-stone-300 hover:bg-white/[0.04] hover:text-stone-100"

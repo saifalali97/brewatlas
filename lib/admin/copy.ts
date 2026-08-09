@@ -9,6 +9,7 @@ export const adminCopy = {
     closeMenuAria: "Close navigation menu",
     backToSite: "Back to public site",
     myAccount: "My account",
+    changePassword: "Change password",
     viewSite: "View public site",
     signOut: "Sign out",
     userMenuLabel: "Account",

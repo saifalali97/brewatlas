@@ -86,9 +86,14 @@ export default async function ProfilePage() {
       
 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <PageHeader headingId="profile-page-heading" eyebrow={p.eyebrow} title={p.title} description={p.description} centered={false} />
-        <Link href={`/users/${authData.user.id}`} className={`${buttons.secondary} shrink-0 text-sm`}>
-          {p.viewPublicProfileCta}
-        </Link>
+        <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+          <Link href="/account/security" className={`${buttons.secondary} text-sm`}>
+            {dictionary.dashboardPage.securityLabel}
+          </Link>
+          <Link href={`/users/${authData.user.id}`} className={`${buttons.secondary} text-sm`}>
+            {p.viewPublicProfileCta}
+          </Link>
+        </div>
       </div>
 
       <div className="max-w-2xl rounded-[1.5rem] border border-ba-espresso/10 bg-ba-pearl p-6 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.48)] backdrop-blur-2xl sm:p-8">

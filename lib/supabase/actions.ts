@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { validateStrongPassword } from "@/lib/auth/password-policy";
 import { buildAuthCallbackUrl } from "@/lib/auth/redirect-url";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfile } from "@/lib/supabase/profile";
@@ -99,4 +100,76 @@ export async function updatePasswordAction(
   }
 
   redirect("/account");
+}
+
+function strongPasswordErrorMessage(
+  failure: NonNullable<ReturnType<typeof validateStrongPassword>>,
+  dictionary: Awaited<ReturnType<typeof getDictionary>>,
+): string {
+  switch (failure) {
+    case "too_short":
+      return dictionary.auth.passwordTooWeakLength;
+    case "missing_upper":
+      return dictionary.auth.passwordMissingUpper;
+    case "missing_lower":
+      return dictionary.auth.passwordMissingLower;
+    case "missing_digit":
+      return dictionary.auth.passwordMissingDigit;
+    case "missing_special":
+      return dictionary.auth.passwordMissingSpecial;
+    case "same_as_current":
+      return dictionary.auth.passwordSameAsCurrent;
+  }
+}
+
+/**
+ * Authenticated password change for the currently signed-in user.
+ * Verifies the current password, then updates via Supabase Auth `updateUser()`.
+ */
+export async function changePasswordAction(
+  _prevState: AuthActionState,
+  formData: FormData,
+): Promise<AuthActionState> {
+  const currentPassword = String(formData.get("currentPassword") ?? "");
+  const newPassword = String(formData.get("newPassword") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+  const dictionary = await getDictionary(await getLocale());
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    return { error: dictionary.auth.changePasswordMissingFields };
+  }
+
+  if (newPassword !== confirmPassword) {
+    return { error: dictionary.forms.passwordsDoNotMatch };
+  }
+
+  const policyFailure = validateStrongPassword(newPassword, { currentPassword });
+  if (policyFailure) {
+    return { error: strongPasswordErrorMessage(policyFailure, dictionary) };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user?.email) {
+    redirect("/login?redirectTo=/account/security");
+  }
+
+  const { error: reauthError } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password: currentPassword,
+  });
+
+  if (reauthError) {
+    return { error: dictionary.auth.currentPasswordIncorrect };
+  }
+
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: dictionary.auth.changePasswordSuccess };
 }
