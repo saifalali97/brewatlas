@@ -102,26 +102,26 @@ export function SiteFooter({ footer, locale, switchLanguageAria, languageAriaLab
           <div className="grid gap-10 sm:col-span-1 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-3">
             <FooterColumn title={footer.exploreColumn}>
               {buildExploreLinks(footer).map((link) => (
-                <FooterLink key={link.href} {...link} />
+                <FooterLink key={`${link.href}:${link.label}`} {...link} />
               ))}
             </FooterColumn>
 
             <FooterColumn title={footer.productColumn}>
               {buildProductLinks(footer).map((link) => (
-                <FooterLink key={link.href} {...link} />
+                <FooterLink key={`${link.href}:${link.label}`} {...link} />
               ))}
             </FooterColumn>
 
             <div className="space-y-10">
               <FooterColumn title={footer.companyColumn}>
                 {buildCompanyLinks(footer).map((link) => (
-                  <FooterLink key={link.href} {...link} />
+                  <FooterLink key={`${link.href}:${link.label}`} {...link} />
                 ))}
               </FooterColumn>
 
               <FooterColumn title={footer.legalColumn}>
                 {buildLegalLinks(footer).map((link) => (
-                  <FooterLink key={link.href} {...link} />
+                  <FooterLink key={`${link.href}:${link.label}`} {...link} />
                 ))}
               </FooterColumn>
             </div>
