@@ -5,9 +5,27 @@ import { mapDirectoryRoaster } from "@/lib/data/directory/mappers";
 import { getDirectoryCountryBySlug } from "@/lib/data/directory/countries";
 import {
   DIRECTORY_ROASTER_FIELDS,
+  DIRECTORY_ROASTER_FIELDS_LEGACY,
   type DirectoryRoaster,
   type DirectoryRoasterRow,
 } from "@/lib/data/directory/types";
+
+function asDirectoryRoasterRow(
+  row: Omit<DirectoryRoasterRow, "country_id" | "city_id" | "specialty" | "founded_year"> & {
+    country_id?: string | null;
+    city_id?: string | null;
+    specialty?: string | null;
+    founded_year?: number | null;
+  },
+): DirectoryRoasterRow {
+  return {
+    ...row,
+    country_id: row.country_id ?? null,
+    city_id: row.city_id ?? null,
+    specialty: row.specialty ?? null,
+    founded_year: row.founded_year ?? null,
+  };
+}
 import {
   findGulfCountryBySlug,
   type GulfDirectoryCountrySlug,
@@ -26,6 +44,7 @@ async function countRecipesForRoasterIds(
     .from("recipes")
     .select("id, roaster_id")
     .eq("status", "published")
+    .is("deleted_at", null)
     .in("roaster_id", roasterIds);
 
   if (directError) {
@@ -44,6 +63,7 @@ async function countRecipesForRoasterIds(
     .from("recipes")
     .select("id, coffees!inner ( roaster_id )")
     .eq("status", "published")
+    .is("deleted_at", null)
     .in("coffees.roaster_id", roasterIds);
 
   if (coffeeError) {
@@ -96,6 +116,7 @@ export async function getDirectoryRoastersByCountrySlug(
     .select(DIRECTORY_ROASTER_FIELDS)
     .eq("published", true)
     .eq("verified", true)
+    .is("deleted_at", null)
     .order("name", { ascending: true });
 
   if (country?.id) {
@@ -109,11 +130,10 @@ export async function getDirectoryRoastersByCountrySlug(
   async function loadByCountryText(): Promise<DirectoryRoaster[]> {
     const legacy = await supabase
       .from("roasters")
-      .select(
-        "id, name, slug, country, emirate, city, website, instagram, logo_url, banner_image_url, description, featured, is_uae, verified, published",
-      )
+      .select(DIRECTORY_ROASTER_FIELDS_LEGACY)
       .eq("published", true)
       .eq("verified", true)
+      .is("deleted_at", null)
       .eq("country", dbCountry)
       .order("name", { ascending: true });
 
@@ -122,22 +142,22 @@ export async function getDirectoryRoastersByCountrySlug(
       return [];
     }
 
-    const legacyRows = (legacy.data ?? []).map((row) => ({
-      ...(row as Omit<DirectoryRoasterRow, "country_id" | "city_id">),
-      country_id: null,
-      city_id: null,
-    })) as DirectoryRoasterRow[];
+    const legacyRows = (legacy.data ?? []).map((row) =>
+      asDirectoryRoasterRow(
+        row as Omit<DirectoryRoasterRow, "country_id" | "city_id" | "specialty" | "founded_year">,
+      ),
+    );
 
     return withRecipeCounts(supabase, legacyRows);
   }
 
   if (error) {
-    // country_id column may be missing before migration — retry on legacy text.
+    // Newer columns / country_id may be missing before migration — retry legacy.
     console.error("getDirectoryRoastersByCountrySlug failed", error);
     return loadByCountryText();
   }
 
-  const rows = (data ?? []) as DirectoryRoasterRow[];
+  const rows = (data ?? []).map((row) => asDirectoryRoasterRow(row as DirectoryRoasterRow));
   if (rows.length === 0 && country?.id) {
     // FKs not backfilled yet — fall back to legacy text country match.
     return loadByCountryText();
@@ -156,6 +176,7 @@ export async function getDirectoryRoasterBySlug(
     .select(DIRECTORY_ROASTER_FIELDS)
     .eq("published", true)
     .eq("verified", true)
+    .is("deleted_at", null)
     .eq("slug", slug)
     .maybeSingle();
 
@@ -163,11 +184,10 @@ export async function getDirectoryRoasterBySlug(
     console.error("getDirectoryRoasterBySlug failed", error);
     const legacy = await supabase
       .from("roasters")
-      .select(
-        "id, name, slug, country, emirate, city, website, instagram, logo_url, banner_image_url, description, featured, is_uae, verified, published",
-      )
+      .select(DIRECTORY_ROASTER_FIELDS_LEGACY)
       .eq("published", true)
       .eq("verified", true)
+      .is("deleted_at", null)
       .eq("slug", slug)
       .maybeSingle();
 
@@ -176,16 +196,19 @@ export async function getDirectoryRoasterBySlug(
       return null;
     }
 
-    const row = {
-      ...(legacy.data as Omit<DirectoryRoasterRow, "country_id" | "city_id">),
-      country_id: null,
-      city_id: null,
-    } as DirectoryRoasterRow;
+    const row = asDirectoryRoasterRow(
+      legacy.data as Omit<
+        DirectoryRoasterRow,
+        "country_id" | "city_id" | "specialty" | "founded_year"
+      >,
+    );
     const [mapped] = await withRecipeCounts(supabase, [row]);
     return mapped ?? null;
   }
 
   if (!data) return null;
-  const [mapped] = await withRecipeCounts(supabase, [data as DirectoryRoasterRow]);
+  const [mapped] = await withRecipeCounts(supabase, [
+    asDirectoryRoasterRow(data as DirectoryRoasterRow),
+  ]);
   return mapped ?? null;
 }
