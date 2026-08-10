@@ -11,6 +11,16 @@ function brewVar(row: GulfRecipeRow, key: string, fallback = "—"): string {
   return match?.value?.trim() || fallback;
 }
 
+function formatGramsLabel(value: number | null | undefined): string | null {
+  if (value == null || !Number.isFinite(Number(value)) || Number(value) <= 0) return null;
+  return `${Number(value)} g`;
+}
+
+function formatCelsiusLabel(value: number | null | undefined): string | null {
+  if (value == null || !Number.isFinite(Number(value))) return null;
+  return `${Number(value)}°C`;
+}
+
 function asDifficulty(value: string | null | undefined): Difficulty {
   if (value === "Beginner" || value === "Advanced" || value === "Intermediate") {
     return value;
@@ -88,9 +98,9 @@ export function mapGulfRecipeRowToPlaceholderDetail(
     grinder: brewVar(row, "grinder", "Burr grinder"),
     brewer: brewVar(row, "brewer", row.equipment_notes ?? "—"),
     filter: brewVar(row, "filter", "—"),
-    dose: brewVar(row, "dose"),
-    waterAmount: brewVar(row, "waterAmount"),
-    temperature: brewVar(row, "temperature"),
+    dose: brewVar(row, "dose", formatGramsLabel(row.coffee_dose) ?? "—"),
+    waterAmount: brewVar(row, "waterAmount", formatGramsLabel(row.water_amount) ?? "—"),
+    temperature: brewVar(row, "temperature", formatCelsiusLabel(row.water_temperature) ?? "—"),
     ratio: brewVar(row, "ratio", row.ratio ?? "—"),
     grindSize: brewVar(row, "grindSize", row.grind_size ?? "—"),
     bloom: brewVar(row, "bloom"),
@@ -113,5 +123,6 @@ export function mapGulfRecipeRowToPlaceholderDetail(
     extractionYield: brewVar(row, "extractionYield", "") || null,
     brewingTips: row.brewing_tips,
     featured: row.featured,
+    sourceUrl: row.source_url ?? null,
   };
 }

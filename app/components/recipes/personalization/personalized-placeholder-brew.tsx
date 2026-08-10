@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Droplets,
   FlaskConical,
@@ -23,10 +23,12 @@ import {
 import type { PlaceholderRecipeDetail } from "@/lib/gulf-directory/placeholder-recipe-types";
 import {
   brewSnapshotFromPlaceholder,
+  DEFAULT_PERSONALIZATION_CONFIG,
   displayBloom,
   displayDose,
   displayTemperature,
   displayWater,
+  inferOfficialRatio,
   personalizeBrewSnapshot,
   poursForUi,
   type DynamicBrewMethod,
@@ -34,7 +36,6 @@ import {
   type RecipeServingStyle,
 } from "@/lib/recipes/personalization";
 import {
-  extractRatioDenominator,
   extractionGuidanceLabels,
   parseBrewMethodLabel,
 } from "@/lib/recipes/personalization/dynamic-brew";
@@ -42,6 +43,7 @@ import {
   adjustmentsFromWindowLocation,
   personalRecipeShareUrl,
   savePersonalRecipe,
+  syncPersonalizationSearchParams,
 } from "@/lib/recipes/personalization/personal-recipe-storage";
 
 type PersonalizedPlaceholderBrewProps = {
@@ -70,7 +72,18 @@ type PersonalizedPlaceholderBrewProps = {
   };
 };
 
-/** Client brew band for Gulf recipes — full Dynamic Recipe System personalization. */
+function isXbloomShareUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.toLowerCase().includes("xbloom")) return url;
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+/** Client brew band for Gulf recipes — Recipe Personalization Engine. */
 export function PersonalizedPlaceholderBrew({
   recipe,
   labels,
@@ -82,7 +95,7 @@ export function PersonalizedPlaceholderBrew({
   const official = useMemo(() => brewSnapshotFromPlaceholder(recipe), [recipe]);
   const officialMethod = parseBrewMethodLabel(recipe.brewMethod);
   const officialDose = official.coffeeDoseG && official.coffeeDoseG > 0 ? official.coffeeDoseG : 20;
-  const officialRatio = extractRatioDenominator(official.ratioLabel) ?? 15;
+  const officialRatio = inferOfficialRatio(official) ?? 15;
   const [fromUrl] = useState(adjustmentsFromWindowLocation);
 
   const [servingStyle, setServingStyle] = useState<RecipeServingStyle>(
@@ -105,13 +118,31 @@ export function PersonalizedPlaceholderBrew({
   );
 
   const result = useMemo(
-    () => personalizeBrewSnapshot(official, adjustments, copy),
+    () => personalizeBrewSnapshot(official, adjustments, copy, DEFAULT_PERSONALIZATION_CONFIG),
     [official, adjustments, copy],
   );
+
+  useEffect(() => {
+    syncPersonalizationSearchParams(adjustments, result.isPersonalized);
+  }, [adjustments, result.isPersonalized]);
 
   const brew = result.personalized;
   const pours = poursForUi(brew);
   const guidance = extractionGuidanceLabels(brewRatio).map((item) => item.label);
+  const icedPersonalizedTotal = (brew.hotWaterG ?? 0) + (brew.iceG ?? 0);
+  const totalWaterG =
+    brew.servingStyle === "iced"
+      ? icedPersonalizedTotal > 0
+        ? icedPersonalizedTotal
+        : null
+      : brew.hotWaterG;
+  const icedOfficialTotal = (official.hotWaterG ?? 0) + (official.iceG ?? 0);
+  const officialWater =
+    official.servingStyle === "iced"
+      ? icedOfficialTotal > 0
+        ? icedOfficialTotal
+        : null
+      : official.hotWaterG;
 
   const reset = () => {
     setServingStyle(official.servingStyle);
@@ -140,8 +171,26 @@ export function PersonalizedPlaceholderBrew({
           brewRatio={brewRatio}
           isPersonalized={result.isPersonalized}
           hasOfficialRecipe={hasOfficialRecipe}
+          showBrewMethod
+          officialSummary={{
+            doseG: official.coffeeDoseG,
+            waterG: officialWater && officialWater > 0 ? officialWater : null,
+            ratioLabel: official.ratioLabel,
+          }}
+          brewSummary={{
+            doseG: brew.coffeeDoseG,
+            totalWaterG,
+            ratioLabel: brew.ratioLabel,
+            hotWaterG: brew.hotWaterG,
+            iceG: brew.iceG,
+            temperatureLabel: displayTemperature(brew),
+            grindSize: brew.grindSize,
+            rpm: brew.rpm,
+            pours: brew.pours,
+          }}
           guidance={guidance}
           labels={labels}
+          xbloomShareUrl={isXbloomShareUrl(recipe.sourceUrl)}
           onServingStyleChange={setServingStyle}
           onBrewMethodChange={setBrewMethod}
           onCoffeeDoseChange={setCoffeeDoseG}
@@ -190,26 +239,30 @@ export function PersonalizedPlaceholderBrew({
         <PlaceholderRecipeTimeline title={sectionTitles.timelineTitle} steps={pours} />
       </div>
 
-      <div className={recipeDetailSectionSpacing}>
-        <RecipeEditorialSection title={sectionTitles.equipmentTitle}>
-          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {brew.equipment.map((item) => (
-              <li
-                key={`${item.name}-${item.detail}`}
-                className="rounded-2xl border border-ba-espresso/[0.08] bg-ba-pearl px-5 py-4"
-              >
-                <p className="font-medium text-ac-espresso">{item.name}</p>
-                <p className="mt-1 text-sm text-ac-espresso/65">{item.detail}</p>
-              </li>
-            ))}
-          </ul>
-        </RecipeEditorialSection>
-      </div>
+      {brew.equipment.length > 0 ? (
+        <div className={recipeDetailSectionSpacing}>
+          <RecipeEditorialSection title={sectionTitles.equipmentTitle}>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {brew.equipment.map((item) => (
+                <li
+                  key={`${item.name}-${item.detail}`}
+                  className="rounded-xl border border-ba-espresso/10 bg-ba-pearl/60 px-4 py-3"
+                >
+                  <p className="text-sm font-medium text-ac-espresso">{item.name}</p>
+                  {item.detail ? (
+                    <p className="mt-1 text-sm text-ac-espresso/70">{item.detail}</p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </RecipeEditorialSection>
+        </div>
+      ) : null}
 
       {brew.brewingTips.length > 0 ? (
-        <div className={`${recipeDetailSectionSpacing} mx-auto max-w-3xl`}>
+        <div className={recipeDetailSectionSpacing}>
           <RecipeEditorialSection title={sectionTitles.tipsTitle}>
-            <ul className="space-y-3 text-sm leading-relaxed text-ac-espresso/80">
+            <ul className="list-disc space-y-2 ps-5 text-sm text-ac-espresso/80">
               {brew.brewingTips.map((tip) => (
                 <li key={tip}>{tip}</li>
               ))}
@@ -219,9 +272,9 @@ export function PersonalizedPlaceholderBrew({
       ) : null}
 
       {brew.extractionNotes.length > 0 ? (
-        <div className={`${recipeDetailSectionSpacing} mx-auto max-w-3xl`}>
+        <div className={recipeDetailSectionSpacing}>
           <RecipeEditorialSection title={sectionTitles.extractionTitle}>
-            <ul className="space-y-3 text-sm leading-relaxed text-ac-espresso/80">
+            <ul className="list-disc space-y-2 ps-5 text-sm text-ac-espresso/80">
               {brew.extractionNotes.map((note) => (
                 <li key={note}>{note}</li>
               ))}

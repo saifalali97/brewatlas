@@ -130,10 +130,32 @@ export type DbRecipeRow = {
   source_verified_at: string | null;
   source_verified_by: string | null;
   recipe_author_name: string | null;
+  personalization_enabled?: boolean | null;
+  personalization_hot_supported?: boolean | null;
+  personalization_iced_supported?: boolean | null;
+  personalization_iced_water_percentage?: number | null;
+  personalization_dose_scalable?: boolean | null;
+  personalization_ratio_scalable?: boolean | null;
+  personalization_pours_scalable?: boolean | null;
+  brew_method?: string | null;
+  roast_level?: string | null;
+  bean_origin?: string | null;
+  process?: string | null;
+  coffee_beans?: string | null;
+  variety?: string | null;
+  rating?: number | null;
   created_at: string;
   updated_at: string;
   brewing_methods: { id: string; name: string; slug?: string | null } | null;
-  roasters?: { id: string; name: string; slug: string | null; country: string | null } | null;
+  roasters?: {
+    id: string;
+    name: string;
+    slug: string | null;
+    country: string | null;
+    city?: string | null;
+  } | null;
+  countries?: { id: string; name: string; slug: string } | { id: string; name: string; slug: string }[] | null;
+  cities?: { id: string; name: string; slug: string } | { id: string; name: string; slug: string }[] | null;
   devices: { id: string; name: string } | null;
   grinders: { id: string; name: string } | null;
   filter_types: { id: string; name: string } | null;
@@ -295,6 +317,13 @@ export type RecipeFullDetail = {
   sourceVerifiedAt?: string | null;
   recipeAuthorName?: string | null;
   brewingMethodSlug?: string | null;
+  personalizationEnabled?: boolean;
+  personalizationHotSupported?: boolean;
+  personalizationIcedSupported?: boolean;
+  personalizationIcedWaterPercentage?: number;
+  personalizationDoseScalable?: boolean;
+  personalizationRatioScalable?: boolean;
+  personalizationPoursScalable?: boolean;
 };
 
 export const RECIPE_IMAGE_PLACEHOLDER = "/images/fallback/coffee-placeholder.webp";

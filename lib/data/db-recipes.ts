@@ -31,13 +31,19 @@ export const RECIPE_SELECT = `
   verified_at, verified_by,
   roaster_id, serving_style, grinder_setting, agitation_instructions, drawdown_target,
   source_url, source_verification_status, source_verified_at, source_verified_by, recipe_author_name,
+  personalization_enabled, personalization_hot_supported, personalization_iced_supported,
+  personalization_iced_water_percentage, personalization_dose_scalable,
+  personalization_ratio_scalable, personalization_pours_scalable,
+  brew_method, roast_level, bean_origin, process, coffee_beans, variety, rating,
   created_at, updated_at,
   brewing_methods ( id, name, slug ),
   devices ( id, name ),
   grinders ( id, name ),
   filter_types ( id, name ),
   water_profiles ( id, name ),
-  roasters:roaster_id ( id, name, slug, country ),
+  roasters:roaster_id ( id, name, slug, country, city ),
+  countries:country_id ( id, name, slug ),
+  cities:city_id ( id, name, slug ),
   coffees (
     id, name, farm, producer, variety, process, altitude, roast_level, roast_date,
     roasters ( id, name ),
@@ -64,14 +70,24 @@ export function mapDbRecipeToListItem(row: DbRecipeRow, dictionary: Dictionary):
     .filter((name): name is string => Boolean(name));
   const hasXBloomProfile = toSafeArray(row.xbloom_profiles).length > 0;
 
+  const directoryCountry =
+    (row.countries && !Array.isArray(row.countries) ? row.countries.name : null) ??
+    row.roasters?.country ??
+    null;
+  const beanOrigin = row.bean_origin?.trim() || null;
+  const coffeeOrigin = row.coffees?.origins
+    ? `${row.coffees.origins.region}, ${row.coffees.origins.country}`
+    : null;
+
   return {
     name: row.title,
-    country: row.coffees?.origins?.country ?? dictionary.recipeDetail.dashValue,
-    origin: row.coffees?.origins
-      ? `${row.coffees.origins.region}, ${row.coffees.origins.country}`
-      : dictionary.recipesPage.originNotSpecified,
-    brewMethod: row.brewing_methods?.name ?? dictionary.recipeDetail.customValue,
-    roastLevel: row.coffees?.roast_level ?? dictionary.recipesPage.communityRoast,
+    country:
+      row.coffees?.origins?.country ?? directoryCountry ?? dictionary.recipeDetail.dashValue,
+    origin: beanOrigin ?? coffeeOrigin ?? dictionary.recipesPage.originNotSpecified,
+    brewMethod:
+      row.brew_method ?? row.brewing_methods?.name ?? dictionary.recipeDetail.customValue,
+    roastLevel:
+      row.roast_level ?? row.coffees?.roast_level ?? dictionary.recipesPage.communityRoast,
     difficulty: row.difficulty ?? "Intermediate",
     ratio: computeRatio(row),
     time: row.total_brew_time ?? row.estimated_brew_time ?? dictionary.recipeDetail.dashValue,
@@ -97,6 +113,12 @@ export function mapDbRecipeToListItem(row: DbRecipeRow, dictionary: Dictionary):
       row.coffees?.producer,
       row.coffees?.variety,
       row.coffees?.process,
+      row.coffee_beans,
+      row.bean_origin,
+      row.variety,
+      row.process,
+      row.roast_level,
+      row.roasters?.city,
       row.grinders?.name,
       row.filter_types?.name,
       row.water_profiles?.name,
@@ -231,6 +253,13 @@ export function mapDbRecipeToFullDetail(row: DbRecipeRow): RecipeFullDetail {
     sourceVerificationStatus: row.source_verification_status ?? "unverified",
     sourceVerifiedAt: row.source_verified_at ?? null,
     recipeAuthorName: row.recipe_author_name ?? null,
+    personalizationEnabled: row.personalization_enabled ?? true,
+    personalizationHotSupported: row.personalization_hot_supported ?? true,
+    personalizationIcedSupported: row.personalization_iced_supported ?? true,
+    personalizationIcedWaterPercentage: Number(row.personalization_iced_water_percentage ?? 50),
+    personalizationDoseScalable: row.personalization_dose_scalable ?? true,
+    personalizationRatioScalable: row.personalization_ratio_scalable ?? true,
+    personalizationPoursScalable: row.personalization_pours_scalable ?? true,
   };
 }
 
@@ -245,6 +274,7 @@ export async function getPublishedDbRecipes(
     .from("recipes")
     .select(RECIPE_SELECT)
     .eq("status", "published")
+    .is("deleted_at", null)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -266,6 +296,7 @@ export async function getUserRecipes(
     .from("recipes")
     .select(RECIPE_SELECT)
     .eq("author_id", userId)
+    .is("deleted_at", null)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -309,14 +340,16 @@ export async function getUserPublishedRecipes(
 export async function getDbRecipeDetailBySlug(
   supabase: SupabaseClient,
   slug: string,
+  options: { includeDeleted?: boolean } = {},
 ): Promise<RecipeFullDetail | null> {
   await processScheduledRecipePublishes(supabase);
 
-  const { data, error } = await supabase
-    .from("recipes")
-    .select(RECIPE_SELECT)
-    .eq("slug", slug)
-    .maybeSingle();
+  let query = supabase.from("recipes").select(RECIPE_SELECT).eq("slug", slug);
+  if (!options.includeDeleted) {
+    query = query.is("deleted_at", null);
+  }
+
+  const { data, error } = await query.maybeSingle();
 
   if (error || !data) return null;
   return mapDbRecipeToFullDetail(data as unknown as DbRecipeRow);
@@ -331,6 +364,7 @@ export async function getDbRecipeBySlug(
     .from("recipes")
     .select(RECIPE_SELECT)
     .eq("slug", slug)
+    .is("deleted_at", null)
     .maybeSingle();
 
   if (error || !data) return null;

@@ -94,3 +94,56 @@ export function adjustmentsFromWindowLocation(): PersonalizationAdjustments {
   if (typeof window === "undefined") return {};
   return adjustmentsFromSearchParams(new URLSearchParams(window.location.search));
 }
+
+/**
+ * Soft-sync personalization knobs into the URL without a navigation.
+ * Only writes params while personalized; clears them on reset so canonical
+ * recipe URLs stay clean.
+ */
+export function syncPersonalizationSearchParams(
+  adjustments: PersonalizationAdjustments,
+  isPersonalized = true,
+) {
+  if (typeof window === "undefined") return;
+  try {
+    const url = new URL(window.location.href);
+    const before = url.search;
+    if (!isPersonalized) {
+      url.searchParams.delete("style");
+      url.searchParams.delete("dose");
+      url.searchParams.delete("ratio");
+      url.searchParams.delete("method");
+    } else {
+      if (adjustments.servingStyle === "hot" || adjustments.servingStyle === "iced") {
+        url.searchParams.set("style", adjustments.servingStyle);
+      } else {
+        url.searchParams.delete("style");
+      }
+      if (
+        adjustments.coffeeDoseG != null &&
+        Number.isFinite(adjustments.coffeeDoseG) &&
+        adjustments.coffeeDoseG > 0
+      ) {
+        url.searchParams.set("dose", String(adjustments.coffeeDoseG));
+      } else {
+        url.searchParams.delete("dose");
+      }
+      if (
+        adjustments.brewRatio != null &&
+        Number.isFinite(adjustments.brewRatio) &&
+        adjustments.brewRatio > 0
+      ) {
+        url.searchParams.set("ratio", String(adjustments.brewRatio));
+      } else {
+        url.searchParams.delete("ratio");
+      }
+      if (adjustments.brewMethod) url.searchParams.set("method", adjustments.brewMethod);
+      else url.searchParams.delete("method");
+    }
+    if (url.search !== before) {
+      window.history.replaceState(window.history.state, "", url.toString());
+    }
+  } catch {
+    /* ignore */
+  }
+}

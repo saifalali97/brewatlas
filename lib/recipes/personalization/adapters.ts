@@ -61,6 +61,7 @@ export function brewSnapshotFromPlaceholder(recipe: PlaceholderRecipeDetail): Br
     brewingTips: tipsFromText(recipe.brewingTips),
     extractionNotes: tipsFromText(recipe.extractionYield),
     waterProfileLabel: recipe.water,
+    rpm: null,
   };
 }
 
@@ -109,6 +110,7 @@ export function brewSnapshotFromDbRecipe(recipe: RecipeFullDetail): BrewSnapshot
     brewingTips: tipsFromText(recipe.equipmentNotes),
     extractionNotes: tipsFromText(recipe.finishNotes),
     waterProfileLabel: recipe.waterProfileName,
+    rpm: null,
   };
 }
 

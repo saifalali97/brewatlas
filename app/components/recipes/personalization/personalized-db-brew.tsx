@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Clock,
   Droplets,
@@ -27,14 +27,15 @@ import {
   displayIce,
   displayTemperature,
   displayWater,
+  inferOfficialRatio,
   personalizeBrewSnapshot,
+  personalizationConfigFromRecipe,
   poursForUi,
   type DynamicBrewMethod,
   type PersonalizationCopy,
   type RecipeServingStyle,
 } from "@/lib/recipes/personalization";
 import {
-  extractRatioDenominator,
   extractionGuidanceLabels,
   parseBrewMethodLabel,
 } from "@/lib/recipes/personalization/dynamic-brew";
@@ -42,7 +43,9 @@ import {
   adjustmentsFromWindowLocation,
   personalRecipeShareUrl,
   savePersonalRecipe,
+  syncPersonalizationSearchParams,
 } from "@/lib/recipes/personalization/personal-recipe-storage";
+import { saveUserCustomRecipeAction } from "@/lib/supabase/personal-recipe-actions";
 import type { RecipeFullDetail } from "@/types/recipe";
 
 type PersonalizedDbBrewProps = {
@@ -71,12 +74,24 @@ type PersonalizedDbBrewProps = {
   };
 };
 
-/** Client brew band for DB recipes — Dynamic Recipe System personalization. */
+function isXbloomShareUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.toLowerCase().includes("xbloom")) return url;
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+/** Client brew band for DB recipes — Recipe Personalization Engine. */
 export function PersonalizedDbBrew({ recipe, labels, copy, detailLabels }: PersonalizedDbBrewProps) {
   const official = useMemo(() => brewSnapshotFromDbRecipe(recipe), [recipe]);
+  const config = useMemo(() => personalizationConfigFromRecipe(recipe), [recipe]);
   const officialMethod = parseBrewMethodLabel(recipe.brewingMethodName);
   const officialDose = official.coffeeDoseG && official.coffeeDoseG > 0 ? official.coffeeDoseG : 20;
-  const officialRatio = extractRatioDenominator(official.ratioLabel) ?? 15;
+  const officialRatio = inferOfficialRatio(official) ?? 15;
   const [fromUrl] = useState(adjustmentsFromWindowLocation);
 
   const [servingStyle, setServingStyle] = useState<RecipeServingStyle>(
@@ -99,9 +114,13 @@ export function PersonalizedDbBrew({ recipe, labels, copy, detailLabels }: Perso
   );
 
   const result = useMemo(
-    () => personalizeBrewSnapshot(official, adjustments, copy),
-    [official, adjustments, copy],
+    () => personalizeBrewSnapshot(official, adjustments, copy, config),
+    [official, adjustments, copy, config],
   );
+
+  useEffect(() => {
+    syncPersonalizationSearchParams(adjustments, result.isPersonalized);
+  }, [adjustments, result.isPersonalized]);
 
   const brew = result.personalized;
   const pours = poursForUi(brew);
@@ -111,12 +130,61 @@ export function PersonalizedDbBrew({ recipe, labels, copy, detailLabels }: Perso
       ? `${brew.bloomAmountG}g${brew.bloomTimeLabel ? ` / ${brew.bloomTimeLabel}` : ""}`
       : null;
 
+  const icedOfficialTotal = (official.hotWaterG ?? 0) + (official.iceG ?? 0);
+  const officialWater =
+    official.servingStyle === "iced"
+      ? icedOfficialTotal > 0
+        ? icedOfficialTotal
+        : null
+      : official.hotWaterG;
+  const icedPersonalizedTotal = (brew.hotWaterG ?? 0) + (brew.iceG ?? 0);
+  const totalWaterG =
+    brew.servingStyle === "iced"
+      ? icedPersonalizedTotal > 0
+        ? icedPersonalizedTotal
+        : null
+      : brew.hotWaterG;
+
   const reset = () => {
     setServingStyle(official.servingStyle);
     setBrewMethod(officialMethod);
     setCoffeeDoseG(officialDose);
     setBrewRatio(officialRatio);
   };
+
+  if (!config.enabled) {
+    return (
+      <>
+        <RecipeBrewSpecGrid
+          ariaLabel={detailLabels.brewingDetailsTitle}
+          specs={[
+            { icon: Scale, label: detailLabels.coffeeDoseLabel, value: displayDose(official) },
+            { icon: Droplets, label: detailLabels.waterLabel, value: displayWater(official, copy) },
+            { icon: Settings2, label: detailLabels.grindSizeLabel, value: official.grindSize },
+            {
+              icon: Thermometer,
+              label: detailLabels.waterTempLabel,
+              value: displayTemperature(official),
+            },
+            { icon: Clock, label: detailLabels.brewTimeLabel, value: official.brewTimeLabel },
+            { icon: Scale, label: detailLabels.ratioLabel, value: official.ratioLabel },
+          ]}
+        />
+        {poursForUi(official).length > 0 ? (
+          <RecipeEditorialSection
+            title={detailLabels.pourStructureTitle}
+            className={recipeDetailSectionSpacing}
+          >
+            <RecipePourStepList
+              pourPrefix={detailLabels.pourPrefix}
+              atTimeLabel={detailLabels.atTimeLabel}
+              steps={poursForUi(official)}
+            />
+          </RecipeEditorialSection>
+        ) : null}
+      </>
+    );
+  }
 
   return (
     <>
@@ -128,15 +196,63 @@ export function PersonalizedDbBrew({ recipe, labels, copy, detailLabels }: Perso
           brewRatio={brewRatio}
           isPersonalized={result.isPersonalized}
           hasOfficialRecipe={recipe.verificationStatus === "verified"}
+          showBrewMethod={Boolean(recipe.brewingMethodName)}
+          doseScalable={config.doseScalable}
+          ratioScalable={config.ratioScalable}
+          hotSupported={config.hotSupported}
+          icedSupported={config.icedSupported}
+          officialSummary={{
+            doseG: official.coffeeDoseG,
+            waterG: officialWater && officialWater > 0 ? officialWater : null,
+            ratioLabel: official.ratioLabel,
+          }}
+          brewSummary={{
+            doseG: brew.coffeeDoseG,
+            totalWaterG,
+            ratioLabel: brew.ratioLabel,
+            hotWaterG: brew.hotWaterG,
+            iceG: brew.iceG,
+            temperatureLabel: displayTemperature(brew),
+            grindSize: brew.grindSize,
+            rpm: brew.rpm,
+            pours: brew.pours,
+          }}
           guidance={guidance}
           labels={labels}
+          xbloomShareUrl={isXbloomShareUrl(recipe.sourceUrl)}
           onServingStyleChange={setServingStyle}
           onBrewMethodChange={setBrewMethod}
           onCoffeeDoseChange={setCoffeeDoseG}
           onBrewRatioChange={setBrewRatio}
           onReset={reset}
-          onSaveMyRecipe={() => savePersonalRecipe(recipe.slug, adjustments)}
-          onDuplicateRecipe={() => savePersonalRecipe(`${recipe.slug}-copy`, adjustments)}
+          onSaveMyRecipe={async () => {
+            // Always persist locally for guests; signed-in users also write preferences only.
+            savePersonalRecipe(recipe.slug, adjustments);
+            try {
+              await saveUserCustomRecipeAction({
+                baseRecipeId: recipe.id,
+                baseRecipeSlug: recipe.slug,
+                title: recipe.title,
+                adjustments,
+              });
+            } catch {
+              /* guest / network — localStorage already saved */
+            }
+          }}
+          onDuplicateRecipe={async () => {
+            savePersonalRecipe(`${recipe.slug}-copy`, adjustments);
+            try {
+              await saveUserCustomRecipeAction({
+                baseRecipeId: recipe.id,
+                baseRecipeSlug: recipe.slug,
+                title: `${recipe.title} (copy)`,
+                adjustments,
+                isDuplicate: true,
+              });
+            } catch {
+              /* guest / network — localStorage already saved */
+            }
+          }}
           onShareRecipe={async () => {
             const url = personalRecipeShareUrl(recipe.slug, adjustments);
             if (navigator.share) {
@@ -205,7 +321,7 @@ export function PersonalizedDbBrew({ recipe, labels, copy, detailLabels }: Perso
 
       {brew.brewingTips.length > 0 ? (
         <RecipeEditorialSection title={detailLabels.tipsTitle} className={recipeDetailSectionSpacing}>
-          <ul className="space-y-3 text-sm leading-relaxed text-ac-espresso/80">
+          <ul className="list-disc space-y-2 ps-5 text-sm text-ac-espresso/80">
             {brew.brewingTips.map((tip) => (
               <li key={tip}>{tip}</li>
             ))}
@@ -215,7 +331,7 @@ export function PersonalizedDbBrew({ recipe, labels, copy, detailLabels }: Perso
 
       {brew.extractionNotes.length > 0 ? (
         <RecipeEditorialSection title={detailLabels.extractionTitle} className={recipeDetailSectionSpacing}>
-          <ul className="space-y-3 text-sm leading-relaxed text-ac-espresso/80">
+          <ul className="list-disc space-y-2 ps-5 text-sm text-ac-espresso/80">
             {brew.extractionNotes.map((note) => (
               <li key={note}>{note}</li>
             ))}

@@ -472,6 +472,12 @@ function DbRecipeView({
             <PersonalizedDbBrew
               recipe={recipe}
               labels={{
+                customizeTitle: dictionary.recipePersonalization.customizeTitle,
+                roastersRecipeLabel: dictionary.recipePersonalization.roastersRecipeLabel,
+                yourBrewLabel: dictionary.recipePersonalization.yourBrewLabel,
+                yourCustomizedIcedBrewLabel:
+                  dictionary.recipePersonalization.yourCustomizedIcedBrewLabel,
+                originalRecipeLabel: dictionary.recipePersonalization.originalRecipeLabel,
                 servingStyleLabel: dictionary.recipePersonalization.servingStyleLabel,
                 hotOption: dictionary.recipePersonalization.hotOption,
                 icedOption: dictionary.recipePersonalization.icedOption,
@@ -488,6 +494,14 @@ function DbRecipeView({
                 duplicateRecipeCta: dictionary.recipePersonalization.duplicateRecipeCta,
                 shareRecipeCta: dictionary.recipePersonalization.shareRecipeCta,
                 resetToRoasterCta: dictionary.recipePersonalization.resetToRoasterCta,
+                totalWaterLabel: dictionary.recipePersonalization.totalWaterLabel,
+                hotWaterLabel: dictionary.recipePersonalization.hotWaterLabel,
+                iceLabel: dictionary.recipePersonalization.iceLabel,
+                pourPrefix: dictionary.recipePersonalization.pourPrefix,
+                temperatureLabel: dictionary.recipePersonalization.temperatureLabel,
+                grindSizeLabel: dictionary.recipePersonalization.grindSizeLabel,
+                rpmLabel: dictionary.recipePersonalization.rpmLabel,
+                openInXbloomCta: dictionary.recipePersonalization.openInXbloomCta,
               }}
               copy={{
                 hotWaterLabel: dictionary.recipePersonalization.hotWaterLabel,

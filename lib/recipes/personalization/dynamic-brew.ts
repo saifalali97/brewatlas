@@ -358,6 +358,7 @@ export function buildDynamicBrewSnapshot(input: {
     ],
     extractionNotes: extractionGuidanceLabels(input.ratio).map((g) => g.label),
     waterProfileLabel: "Soft mineral / Third Wave Water",
+    rpm: null,
   };
 }
 

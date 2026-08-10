@@ -207,6 +207,7 @@ export function convertServingStyle(
 export function cloneSnapshot(snapshot: BrewSnapshot): BrewSnapshot {
   return {
     ...snapshot,
+    rpm: snapshot.rpm ?? null,
     pours: snapshot.pours.map((pour) => ({ ...pour })),
     equipment: snapshot.equipment.map((item) => ({ ...item })),
     brewingTips: [...snapshot.brewingTips],

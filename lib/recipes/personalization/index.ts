@@ -2,7 +2,7 @@
  * BrewAtlas Recipe Personalization Engine / Dynamic Recipe System.
  *
  * Converts an official recipe into an in-memory personalized brew snapshot.
- * Dose, ratio, brew method, and hot/iced flash brew update live.
+ * Dose, ratio, and hot/iced flash brew update live — official recipes stay immutable.
  */
 
 export { personalizeBrewSnapshot } from "@/lib/recipes/personalization/apply";
@@ -24,10 +24,28 @@ export {
   DYNAMIC_BREW_METHODS,
   extractRatioDenominator,
   extractionGuidance,
+  extractionGuidanceLabels,
   methodLabel,
   parseBrewMethodLabel,
   RATIO_PRESETS,
 } from "@/lib/recipes/personalization/dynamic-brew";
+export {
+  calculateTotalWaterG,
+  DEFAULT_PERSONALIZATION_CONFIG,
+  extractRatioDenominator as extractOfficialRatioDenominator,
+  inferOfficialRatio,
+  personalizeBrewSnapshot as personalizeBrewSnapshotEngine,
+  roundBrewValue,
+  scalePoursProportionally,
+  splitHotAndIce,
+  validatePersonalizationInputs,
+} from "@/lib/recipes/personalization/engine";
+export {
+  buildPourGramReplacements,
+  rewriteBrewNoteGrams,
+  rewriteScaledPourNotes,
+} from "@/lib/recipes/personalization/scale-notes";
+export { personalizationConfigFromRecipe } from "@/lib/recipes/personalization/config";
 export {
   formatBeverageRatio,
   formatCelsius,
@@ -46,6 +64,7 @@ export type {
   BrewSnapshot,
   DynamicBrewMethod,
   PersonalizationAdjustments,
+  PersonalizationConfig,
   PersonalizationCopy,
   PersonalizationResult,
   PersonalizedEquipmentItem,
