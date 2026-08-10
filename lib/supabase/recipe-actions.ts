@@ -18,12 +18,12 @@ import {
   replaceTags,
   resolveCoffeeId,
   uploadRecipeImage,
-  type RecipeActionState,
 } from "@/lib/recipes/recipe-persistence";
+import type { RecipeActionState } from "@/lib/recipes/recipe-persistence";
 import { coverImageColumns, parseCoverImageMetadata, parseGalleryImageMetadata } from "@/lib/media/image-metadata";
 import { createClient } from "@/lib/supabase/server";
 
-export type { RecipeActionState };
+export type { RecipeActionState } from "@/lib/recipes/recipe-persistence";
 
 export async function createRecipeAction(
   _prevState: RecipeActionState,

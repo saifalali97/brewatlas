@@ -63,4 +63,6 @@ export type PlaceholderRecipeDetail = {
   extractionYield?: string | null;
   brewingTips?: string | null;
   featured?: boolean;
+  /** External recipe URL — used for gated CTAs such as Open in xBloom. */
+  sourceUrl?: string | null;
 };

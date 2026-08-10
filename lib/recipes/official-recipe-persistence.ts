@@ -1,5 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { optionalString } from "@/lib/forms/form-fields";
+import {
+  copyRecipeGulfChildren,
+  copyRecipeTranslations,
+} from "@/lib/recipes/recipe-gulf-children";
 import type { OfficialRecipeFaqItem, RecipeKind, RecipeVerificationStatus } from "@/types/official-recipe";
 import { RECIPE_KINDS, RECIPE_VERIFICATION_STATUSES } from "@/types/official-recipe";
 
@@ -19,7 +23,27 @@ export type OfficialRecipeFormValues = {
   equipmentNotes: string | null;
   versionChangeReason: string | null;
   versionBrewingChanges: string | null;
+  personalizationEnabled: boolean;
+  personalizationHotSupported: boolean;
+  personalizationIcedSupported: boolean;
+  personalizationIcedWaterPercentage: number;
+  personalizationDoseScalable: boolean;
+  personalizationRatioScalable: boolean;
+  personalizationPoursScalable: boolean;
 };
+
+function parseBoolSelect(formData: FormData, key: string, fallback = true): boolean {
+  const value = formData.get(key);
+  if (value === "true") return true;
+  if (value === "false") return false;
+  return fallback;
+}
+
+function parseIcedPercentage(formData: FormData): number {
+  const raw = Number(formData.get("personalizationIcedWaterPercentage"));
+  if (!Number.isFinite(raw)) return 50;
+  return Math.min(100, Math.max(0, raw));
+}
 
 function parseKind(value: string | null): RecipeKind {
   if (value && (RECIPE_KINDS as readonly string[]).includes(value)) {
@@ -63,6 +87,13 @@ export function parseOfficialRecipeForm(formData: FormData): OfficialRecipeFormV
     equipmentNotes: optionalString(formData, "equipmentNotes"),
     versionChangeReason: optionalString(formData, "versionChangeReason"),
     versionBrewingChanges: optionalString(formData, "versionBrewingChanges"),
+    personalizationEnabled: parseBoolSelect(formData, "personalizationEnabled", true),
+    personalizationHotSupported: parseBoolSelect(formData, "personalizationHotSupported", true),
+    personalizationIcedSupported: parseBoolSelect(formData, "personalizationIcedSupported", true),
+    personalizationIcedWaterPercentage: parseIcedPercentage(formData),
+    personalizationDoseScalable: parseBoolSelect(formData, "personalizationDoseScalable", true),
+    personalizationRatioScalable: parseBoolSelect(formData, "personalizationRatioScalable", true),
+    personalizationPoursScalable: parseBoolSelect(formData, "personalizationPoursScalable", true),
   };
 }
 
@@ -81,6 +112,13 @@ export function officialRecipePayload(values: OfficialRecipeFormValues): Record<
     grinder_recommendation: values.grinderRecommendation,
     water_recommendation: values.waterRecommendation,
     equipment_notes: values.equipmentNotes,
+    personalization_enabled: values.personalizationEnabled,
+    personalization_hot_supported: values.personalizationHotSupported,
+    personalization_iced_supported: values.personalizationIcedSupported,
+    personalization_iced_water_percentage: values.personalizationIcedWaterPercentage,
+    personalization_dose_scalable: values.personalizationDoseScalable,
+    personalization_ratio_scalable: values.personalizationRatioScalable,
+    personalization_pours_scalable: values.personalizationPoursScalable,
   };
 }
 
@@ -104,7 +142,8 @@ export async function verifyOfficialRecipe(
   return {};
 }
 
-export async function duplicateOfficialRecipe(
+/** Duplicates any recipe kind into a draft, copying Gulf children + translations. */
+export async function duplicateRecipe(
   supabase: SupabaseClient,
   recipeId: string,
   authorId: string,
@@ -127,6 +166,10 @@ export async function duplicateOfficialRecipe(
   delete rest.created_at;
   delete rest.updated_at;
   delete rest.slug;
+  delete rest.deleted_at;
+  delete rest.preview_token;
+  delete rest.preview_token_expires_at;
+  delete rest.archived_at;
 
   const { data: inserted, error } = await supabase
     .from("recipes")
@@ -137,13 +180,75 @@ export async function duplicateOfficialRecipe(
       author_id: authorId,
       status: "draft",
       published: false,
+      featured: false,
       verification_status: "draft",
       verified_at: null,
       verified_by: null,
+      deleted_at: null,
+      preview_token: null,
+      preview_token_expires_at: null,
+      scheduled_publish_at: null,
     })
     .select("id")
     .single();
 
   if (error || !inserted) return { error: error?.message ?? "Duplicate failed." };
-  return { id: inserted.id as string };
+
+  const newId = inserted.id as string;
+
+  const [{ data: pours }, { data: tags }, { data: images }] = await Promise.all([
+    supabase.from("recipe_pours").select("*").eq("recipe_id", recipeId),
+    supabase.from("recipe_tags").select("tag_id").eq("recipe_id", recipeId),
+    supabase.from("recipe_images").select("*").eq("recipe_id", recipeId).order("sort_order"),
+  ]);
+
+  if (pours?.length) {
+    await supabase.from("recipe_pours").insert(
+      pours.map((pour) => {
+        const row = { ...(pour as Record<string, unknown>) };
+        delete row.id;
+        delete row.created_at;
+        row.recipe_id = newId;
+        return row;
+      }),
+    );
+  }
+
+  if (tags?.length) {
+    await supabase.from("recipe_tags").insert(
+      tags.map((tag) => ({
+        recipe_id: newId,
+        tag_id: tag.tag_id,
+      })),
+    );
+  }
+
+  if (images?.length) {
+    await supabase.from("recipe_images").insert(
+      images.map((image) => {
+        const row = { ...(image as Record<string, unknown>) };
+        delete row.id;
+        delete row.created_at;
+        row.recipe_id = newId;
+        return row;
+      }),
+    );
+  }
+
+  const gulfCopy = await copyRecipeGulfChildren(supabase, recipeId, newId);
+  if (gulfCopy.error) return { error: gulfCopy.error };
+
+  const translationCopy = await copyRecipeTranslations(supabase, recipeId, newId);
+  if (translationCopy.error) return { error: translationCopy.error };
+
+  return { id: newId };
+}
+
+/** @deprecated Use duplicateRecipe — kept for existing imports. */
+export async function duplicateOfficialRecipe(
+  supabase: SupabaseClient,
+  recipeId: string,
+  authorId: string,
+): Promise<{ id?: string; error?: string }> {
+  return duplicateRecipe(supabase, recipeId, authorId);
 }

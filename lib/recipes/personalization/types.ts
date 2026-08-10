@@ -76,6 +76,22 @@ export type BrewSnapshot = {
   brewingTips: string[];
   extractionNotes: string[];
   waterProfileLabel: string | null;
+  /** xBloom / device RPM when the recipe provides it — never invented. */
+  rpm: number | null;
+};
+
+/** Per-recipe personalization policy (admin-configurable, safe defaults). */
+export type PersonalizationConfig = {
+  enabled: boolean;
+  hotSupported: boolean;
+  icedSupported: boolean;
+  /** Percent of total brew water that becomes ice in iced mode (0–100). */
+  icedWaterPercentage: number;
+  doseScalable: boolean;
+  ratioScalable: boolean;
+  poursScalable: boolean;
+  temperatureScalable: boolean;
+  grindScalable: boolean;
 };
 
 export type PersonalizationResult = {

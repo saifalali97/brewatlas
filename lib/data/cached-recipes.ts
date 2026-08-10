@@ -22,7 +22,7 @@ export async function getCachedRecipeDetail(
       const supabase = createPublicClient();
       return getRecipeWithFallback(supabase, slug);
     },
-    ["cached-gulf-recipe", slug],
+    ["cached-gulf-recipe-v2", slug],
     { revalidate: RECIPE_CACHE_TTL, tags: [...RECIPE_TAGS, `gulf-recipe-${slug}`] },
   )();
 }

@@ -70,6 +70,10 @@ export type GulfRecipeRow = {
   total_brew_time: string | null;
   grind_size: string | null;
   ratio: string | null;
+  coffee_dose: number | null;
+  water_amount: number | null;
+  water_temperature: number | null;
+  source_url: string | null;
   water_recommendation: string | null;
   equipment_notes: string | null;
   roaster_id: string | null;
@@ -111,6 +115,7 @@ export const GULF_RECIPE_SELECT = `
   flavor_sweetness, flavor_acidity, flavor_body, flavor_bitterness, flavor_finish,
   similar_slugs,
   estimated_brew_time, total_brew_time, grind_size, ratio,
+  coffee_dose, water_amount, water_temperature, source_url,
   water_recommendation, equipment_notes,
   roaster_id, country_id, city_id,
   roasters:roaster_id ( id, name, slug, city ),

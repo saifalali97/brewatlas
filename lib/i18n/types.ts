@@ -1866,6 +1866,11 @@ export type Dictionary = {
     resultsCount: string;
   };
   recipePersonalization: {
+    customizeTitle: string;
+    roastersRecipeLabel: string;
+    yourBrewLabel: string;
+    yourCustomizedIcedBrewLabel: string;
+    originalRecipeLabel: string;
     servingStyleLabel: string;
     hotOption: string;
     icedOption: string;
@@ -1882,7 +1887,14 @@ export type Dictionary = {
     duplicateRecipeCta: string;
     shareRecipeCta: string;
     resetToRoasterCta: string;
+    totalWaterLabel: string;
     hotWaterLabel: string;
+    iceLabel: string;
+    pourPrefix: string;
+    temperatureLabel: string;
+    grindSizeLabel: string;
+    rpmLabel: string;
+    openInXbloomCta: string;
     iceEquipmentName: string;
     iceEquipmentDetailTemplate: string;
     flashPrepNotesTemplate: string;

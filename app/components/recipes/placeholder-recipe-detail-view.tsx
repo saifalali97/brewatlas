@@ -144,6 +144,11 @@ export function PlaceholderRecipeDetailView({
           recipe={recipe}
           hasOfficialRecipe={recipe.lead.startsWith("Roaster Recommended")}
           labels={{
+            customizeTitle: personalization.customizeTitle,
+            roastersRecipeLabel: personalization.roastersRecipeLabel,
+            yourBrewLabel: personalization.yourBrewLabel,
+            yourCustomizedIcedBrewLabel: personalization.yourCustomizedIcedBrewLabel,
+            originalRecipeLabel: personalization.originalRecipeLabel,
             servingStyleLabel: personalization.servingStyleLabel,
             hotOption: personalization.hotOption,
             icedOption: personalization.icedOption,
@@ -160,6 +165,14 @@ export function PlaceholderRecipeDetailView({
             duplicateRecipeCta: personalization.duplicateRecipeCta,
             shareRecipeCta: personalization.shareRecipeCta,
             resetToRoasterCta: personalization.resetToRoasterCta,
+            totalWaterLabel: personalization.totalWaterLabel,
+            hotWaterLabel: personalization.hotWaterLabel,
+            iceLabel: personalization.iceLabel,
+            pourPrefix: personalization.pourPrefix,
+            temperatureLabel: personalization.temperatureLabel,
+            grindSizeLabel: personalization.grindSizeLabel,
+            rpmLabel: personalization.rpmLabel,
+            openInXbloomCta: personalization.openInXbloomCta,
           }}
           copy={{
             hotWaterLabel: personalization.hotWaterLabel,

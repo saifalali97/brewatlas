@@ -104,6 +104,57 @@ export function OfficialRecipeAdminFields({ initialValues }: OfficialRecipeAdmin
         <textarea id="finishNotes" name="finishNotes" defaultValue={initialValues?.finishNotes ?? ""} className={textareaClass} />
       </div>
 
+      <div className="space-y-4 rounded-xl border border-white/5 p-4">
+        <div>
+          <h3 className="text-sm font-medium text-stone-200">Recipe personalization</h3>
+          <p className="mt-1 text-xs text-stone-500">
+            Controls Customize your brew on the public recipe page. Existing recipes keep safe defaults.
+          </p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {(
+            [
+              ["personalizationEnabled", "Personalization enabled", initialValues?.personalizationEnabled ?? true],
+              ["personalizationHotSupported", "Hot supported", initialValues?.personalizationHotSupported ?? true],
+              ["personalizationIcedSupported", "Iced supported", initialValues?.personalizationIcedSupported ?? true],
+              ["personalizationDoseScalable", "Dose scalable", initialValues?.personalizationDoseScalable ?? true],
+              ["personalizationRatioScalable", "Ratio scalable", initialValues?.personalizationRatioScalable ?? true],
+              ["personalizationPoursScalable", "Pours scalable", initialValues?.personalizationPoursScalable ?? true],
+            ] as const
+          ).map(([name, label, value]) => (
+            <div key={name}>
+              <label htmlFor={name} className={labelClass}>
+                {label}
+              </label>
+              <select
+                id={name}
+                name={name}
+                defaultValue={value ? "true" : "false"}
+                className={fieldClass}
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+          ))}
+          <div>
+            <label htmlFor="personalizationIcedWaterPercentage" className={labelClass}>
+              Iced water percentage
+            </label>
+            <input
+              id="personalizationIcedWaterPercentage"
+              name="personalizationIcedWaterPercentage"
+              type="number"
+              min={0}
+              max={100}
+              step={1}
+              defaultValue={initialValues?.personalizationIcedWaterPercentage ?? 50}
+              className={fieldClass}
+            />
+          </div>
+        </div>
+      </div>
+
       <input type="hidden" name="faqCount" value={Math.max(faq.length, 3)} />
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-stone-200">FAQ</h3>
