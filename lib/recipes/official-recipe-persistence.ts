@@ -1,9 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { optionalString } from "@/lib/forms/form-fields";
-import {
-  copyRecipeGulfChildren,
-  copyRecipeTranslations,
-} from "@/lib/recipes/recipe-gulf-children";
 import type { OfficialRecipeFaqItem, RecipeKind, RecipeVerificationStatus } from "@/types/official-recipe";
 import { RECIPE_KINDS, RECIPE_VERIFICATION_STATUSES } from "@/types/official-recipe";
 
@@ -234,12 +230,6 @@ export async function duplicateRecipe(
       }),
     );
   }
-
-  const gulfCopy = await copyRecipeGulfChildren(supabase, recipeId, newId);
-  if (gulfCopy.error) return { error: gulfCopy.error };
-
-  const translationCopy = await copyRecipeTranslations(supabase, recipeId, newId);
-  if (translationCopy.error) return { error: translationCopy.error };
 
   return { id: newId };
 }
