@@ -6,7 +6,14 @@
  * Pours scale by original percentages; the last numeric pour absorbs rounding.
  */
 
+import { grindLabelForOffset, clampGrindOffset } from "@/lib/recipes/personalization/grind";
 import { formatBeverageRatio, formatGrams } from "@/lib/recipes/personalization/parse";
+import {
+  baselinePourCount,
+  buildPoursForCount,
+  clampPourCount,
+  countNumericPours,
+} from "@/lib/recipes/personalization/pours";
 import { rewriteScaledPourNotes } from "@/lib/recipes/personalization/scale-notes";
 import { cloneSnapshot } from "@/lib/recipes/personalization/serving-style";
 import type {
@@ -28,8 +35,8 @@ export const DEFAULT_PERSONALIZATION_CONFIG: PersonalizationConfig = {
   doseScalable: true,
   ratioScalable: true,
   poursScalable: true,
-  temperatureScalable: false,
-  grindScalable: false,
+  temperatureScalable: true,
+  grindScalable: true,
 };
 
 /** Round brew grams to one decimal without floating noise (112.5, not 112.499999). */
@@ -255,7 +262,24 @@ function hasActiveAdjustments(
   if (style !== official.servingStyle) return true;
   if (roundBrewValue(doseG) !== roundBrewValue(baselineDose)) return true;
   if (roundBrewValue(ratio) !== roundBrewValue(baselineRatio)) return true;
-  if (adjustments.brewTemperatureC !== undefined) return true;
+  if (adjustments.brewTemperatureC !== undefined) {
+    const officialTemp = official.temperatureC;
+    if (
+      officialTemp == null ||
+      Math.round(adjustments.brewTemperatureC) !== Math.round(officialTemp)
+    ) {
+      return true;
+    }
+  }
+  if (adjustments.pourCount !== undefined) {
+    const officialCount = countNumericPours(official.pours);
+    // Requesting derived pours on a no-pours recipe is always a personalization.
+    if (officialCount === 0) return true;
+    if (clampPourCount(adjustments.pourCount) !== officialCount) {
+      return true;
+    }
+  }
+  if (clampGrindOffset(adjustments.grindOffset) !== 0) return true;
   if (adjustments.grinderLabel !== undefined) return true;
   return false;
 }
@@ -331,10 +355,27 @@ export function personalizeBrewSnapshot(
     : { hotWaterG: totalWaterG, iceG: 0 };
 
   const sourcePourWater = officialPourWater(official);
+  const officialNumericCount = countNumericPours(stripIceOnlyPours(official.pours));
+  const requestedPourCount =
+    adjustments.pourCount !== undefined
+      ? clampPourCount(adjustments.pourCount)
+      : officialNumericCount > 0
+        ? officialNumericCount
+        : null;
+  const pourCountChanged =
+    requestedPourCount != null &&
+    (officialNumericCount === 0 || requestedPourCount !== officialNumericCount);
+
   let pours = stripIceOnlyPours(official.pours);
 
-  if (config.poursScalable && sourcePourWater > 0) {
-    pours = scalePoursProportionally(pours, sourcePourWater, split.hotWaterG);
+  if (config.poursScalable) {
+    if (pourCountChanged && requestedPourCount != null) {
+      pours = buildPoursForCount(split.hotWaterG, requestedPourCount, official);
+    } else if (sourcePourWater > 0 && pours.length > 0) {
+      pours = scalePoursProportionally(pours, sourcePourWater, split.hotWaterG);
+    } else if (officialNumericCount === 0 && adjustments.pourCount !== undefined) {
+      pours = buildPoursForCount(split.hotWaterG, requestedPourCount ?? baselinePourCount(official), official);
+    }
   }
 
   if (iced) {
@@ -354,9 +395,10 @@ export function personalizeBrewSnapshot(
     config.temperatureScalable && adjustments.brewTemperatureC !== undefined
       ? adjustments.brewTemperatureC
       : official.temperatureC;
+  const grindOffset = clampGrindOffset(adjustments.grindOffset);
   const grindSize =
-    config.grindScalable && adjustments.grinderLabel
-      ? adjustments.grinderLabel
+    config.grindScalable && (grindOffset !== 0 || adjustments.grinderLabel)
+      ? adjustments.grinderLabel ?? grindLabelForOffset(official.grindSize, grindOffset)
       : official.grindSize;
 
   const styleChanged = style !== official.servingStyle;
@@ -371,21 +413,24 @@ export function personalizeBrewSnapshot(
     }
   }
 
+  const temperatureLabel =
+    temperatureC != null
+      ? iced
+        ? `${Math.round(temperatureC)}°C → ice`
+        : `${Math.round(temperatureC)}°C`
+      : iced
+        ? official.temperatureLabel
+        : styleChanged
+          ? (official.temperatureLabel?.replace(/\s*→\s*ice/i, "") ?? null)
+          : official.temperatureLabel;
+
   const personalized: BrewSnapshot = {
     servingStyle: style,
     coffeeDoseG: doseG,
     hotWaterG: split.hotWaterG,
     iceG: iced ? split.iceG : null,
     temperatureC,
-    temperatureLabel: iced
-      ? temperatureC != null
-        ? `${Math.round(temperatureC)}°C → ice`
-        : official.temperatureLabel
-      : styleChanged
-        ? (official.temperatureLabel?.replace(/\s*→\s*ice/i, "") ??
-          (temperatureC != null ? `${Math.round(temperatureC)}°C` : null))
-        : official.temperatureLabel ??
-          (temperatureC != null ? `${Math.round(temperatureC)}°C` : null),
+    temperatureLabel,
     ratioLabel: formatBeverageRatio(doseG, totalWaterG),
     grindSize,
     bloomAmountG,
@@ -418,6 +463,9 @@ export function personalizeBrewSnapshot(
       servingStyle: style,
       coffeeDoseG: doseG,
       brewRatio: ratio,
+      brewTemperatureC: temperatureC ?? adjustments.brewTemperatureC,
+      pourCount: requestedPourCount ?? adjustments.pourCount,
+      grindOffset,
     },
     isPersonalized: true,
     activeServingStyle: style,

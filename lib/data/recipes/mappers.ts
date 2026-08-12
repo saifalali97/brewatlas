@@ -3,6 +3,7 @@ import {
   findGulfCountryBySlug,
   type GulfDirectoryCountrySlug,
 } from "@/lib/gulf-directory/countries";
+import { resolveRecipeCardImage } from "@/lib/gulf-directory/recipe-card-image";
 import type { PlaceholderRecipeDetail } from "@/lib/gulf-directory/placeholder-recipe-types";
 import type { Difficulty } from "@/types/homepage";
 
@@ -71,15 +72,30 @@ export function mapGulfRecipeRowToPlaceholderDetail(
     .sort((a, b) => a.sort_order - b.sort_order)
     .map((item) => ({ name: item.name, detail: item.detail }));
 
-  const flavorTags = [...(row.recipe_flavor_notes ?? [])]
+  const coffee = row.coffees;
+  const flavorTagsFromRecipe = [...(row.recipe_flavor_notes ?? [])]
     .sort((a, b) => a.sort_order - b.sort_order)
     .map((item) => item.note);
+  const flavorTags =
+    flavorTagsFromRecipe.length > 0
+      ? flavorTagsFromRecipe
+      : (coffee?.flavor_notes ?? []).filter(Boolean);
+  const process =
+    row.process?.trim() ||
+    coffee?.process?.trim() ||
+    "—";
+  const variety = row.variety?.trim() || coffee?.variety?.trim() || null;
+  const roastLevel = row.roast_level?.trim() || coffee?.roast_level?.trim() || "—";
 
   return {
     slug: row.slug,
     name: row.title,
     lead: row.description?.trim() || "",
-    image: row.cover_image_url ?? "/images/methods/pour-over.webp",
+    image: resolveRecipeCardImage({
+      productImageUrl: coffee?.product_image_url,
+      recipeImageUrl: row.cover_image_url,
+      fallbackImageUrl: "/images/methods/pour-over.webp",
+    }),
     roasterName: row.roasters?.name ?? "Roaster",
     roasterSlug,
     countrySlug,
@@ -89,10 +105,10 @@ export function mapGulfRecipeRowToPlaceholderDetail(
     rating: row.rating ?? 4.5,
     brewTime: brewVar(row, "brewTime", row.estimated_brew_time ?? "—"),
     isIced: row.is_iced,
-    coffeeBeans: row.coffee_beans ?? "—",
-    roastLevel: row.roast_level ?? "—",
+    coffeeBeans: row.coffee_beans ?? coffee?.name ?? "—",
+    roastLevel,
     origin: row.bean_origin ?? "—",
-    process: row.process ?? "—",
+    process: variety ? `${process} · ${variety}` : process,
     roastDate: row.roast_date_label ?? "Within 7–28 days",
     water: brewVar(row, "water", row.water_recommendation ?? "—"),
     grinder: brewVar(row, "grinder", "Burr grinder"),
@@ -118,7 +134,7 @@ export function mapGulfRecipeRowToPlaceholderDetail(
     equipment,
     similarSlugs: row.similar_slugs ?? [],
     producer: row.producer,
-    variety: row.variety,
+    variety,
     tds: brewVar(row, "tds", "") || null,
     extractionYield: brewVar(row, "extractionYield", "") || null,
     brewingTips: row.brewing_tips,

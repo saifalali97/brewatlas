@@ -10,6 +10,7 @@ import { GULF_RECIPE_SEEDS } from "@/lib/data/directory/seeds/gulf-recipes-data"
 import type { GulfRecipeSeed } from "@/lib/data/directory/seeds/gulf-recipe-types";
 import { GULF_METHOD_TEMPLATES } from "@/lib/data/directory/seeds/recipe-methods";
 import type { GulfDirectoryCountrySlug } from "@/lib/gulf-directory/countries";
+import { resolveRecipeCardImage } from "@/lib/gulf-directory/recipe-card-image";
 import type {
   PlaceholderRecipeDetail,
   PlaceholderRecipeStep,
@@ -118,7 +119,11 @@ function expandSeed(seed: GulfRecipeSeed): PlaceholderRecipeDetail | null {
   const catalog = findCatalogCoffee(seed);
   const official = catalog?.officialRecipe ?? null;
   const coffeeLabel = [seed.coffeeBeans, seed.producer].filter(Boolean).join(" · ");
-  const image = catalog?.productImageUrl || method.image;
+  const image = resolveRecipeCardImage({
+    productImageUrl: catalog?.productImageUrl,
+    recipeImageUrl: null,
+    fallbackImageUrl: method.image,
+  });
   const steps = (catalog && officialSteps(catalog, seed.slug)) || method.steps;
 
   return {

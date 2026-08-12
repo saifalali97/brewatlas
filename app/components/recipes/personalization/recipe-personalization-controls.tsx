@@ -1,6 +1,7 @@
 "use client";
 
 import { BadgeCheck, Minus, Plus, Sparkles } from "lucide-react";
+import { TasteDirectionPanel } from "@/app/components/recipes/personalization/taste-direction-panel";
 import { acFocus, acTypography } from "@/lib/design-system/atlas-canon";
 import {
   DYNAMIC_BREW_METHODS,
@@ -8,6 +9,14 @@ import {
   type DynamicBrewMethod,
 } from "@/lib/recipes/personalization/dynamic-brew";
 import { formatGrams } from "@/lib/recipes/personalization/parse";
+import {
+  MAX_GRIND_OFFSET,
+  MAX_POUR_COUNT,
+  MIN_GRIND_OFFSET,
+  MIN_POUR_COUNT,
+  type TasteDirectionResult,
+  type TemperatureBounds,
+} from "@/lib/recipes/personalization";
 import type { RecipeServingStyle } from "@/lib/recipes/personalization";
 
 export type RecipePersonalizationLabels = {
@@ -36,16 +45,59 @@ export type RecipePersonalizationLabels = {
   hotWaterLabel: string;
   iceLabel: string;
   pourPrefix: string;
+  poursLabel: string;
+  poursCountLabel: string;
   temperatureLabel: string;
+  officialTemperatureLabel: string;
+  resetTemperatureCta: string;
   grindSizeLabel: string;
+  grindFinerLabel: string;
+  grindCoarserLabel: string;
+  grindOfficialLabel: string;
   rpmLabel: string;
   openInXbloomCta: string;
+  tasteDirectionTitle: string;
+  tasteGuidanceNote: string;
+  tasteSweetness: string;
+  tasteAcidity: string;
+  tasteBody: string;
+  tasteBitterness: string;
+  tasteExtraction: string;
+  tasteSummaryFuller: string;
+  tasteSummaryBrighter: string;
+  tasteSummarySofter: string;
+  tasteSummaryBalanced: string;
+  tasteSummaryIced: string;
+  tasteTempUpExtraction: string;
+  tasteTempUpBody: string;
+  tasteTempUpBitterness: string;
+  tasteTempUpAcidity: string;
+  tasteTempDownExtraction: string;
+  tasteTempDownAcidity: string;
+  tasteTempDownBody: string;
+  tasteTempDownBitterness: string;
+  tastePoursUpAgitation: string;
+  tastePoursUpExtraction: string;
+  tastePoursDownAgitation: string;
+  tastePoursDownExtraction: string;
+  tasteRatioUpDilution: string;
+  tasteRatioUpClarity: string;
+  tasteRatioDownStrength: string;
+  tasteRatioDownIntensity: string;
+  tasteDoseUpStrength: string;
+  tasteDoseDownStrength: string;
+  tasteGrindFinerExtraction: string;
+  tasteGrindFinerBitterness: string;
+  tasteGrindCoarserExtraction: string;
+  tasteGrindCoarserAcidity: string;
+  tasteIcedDilution: string;
 };
 
 type OfficialSummary = {
   doseG: number | null;
   waterG: number | null;
   ratioLabel: string | null;
+  temperatureLabel?: string | null;
 };
 
 type BrewSummary = {
@@ -57,7 +109,14 @@ type BrewSummary = {
   temperatureLabel: string | null;
   grindSize: string | null;
   rpm: number | null;
-  pours: Array<{ id: string; pourNumber: number; waterAmountG: number | null; waterAmountLabel: string }>;
+  pourCount: number;
+  pourChainLabel: string | null;
+  pours: Array<{
+    id: string;
+    pourNumber: number;
+    waterAmountG: number | null;
+    waterAmountLabel: string;
+  }>;
 };
 
 type RecipePersonalizationControlsProps = {
@@ -65,22 +124,33 @@ type RecipePersonalizationControlsProps = {
   brewMethod: DynamicBrewMethod;
   coffeeDoseG: number;
   brewRatio: number;
+  pourCount: number;
+  brewTemperatureC: number | null;
+  temperatureBounds: TemperatureBounds | null;
+  grindOffset: number;
   isPersonalized: boolean;
   hasOfficialRecipe: boolean;
   showBrewMethod?: boolean;
   doseScalable?: boolean;
   ratioScalable?: boolean;
+  poursScalable?: boolean;
+  temperatureScalable?: boolean;
+  grindScalable?: boolean;
   hotSupported?: boolean;
   icedSupported?: boolean;
   officialSummary: OfficialSummary;
   brewSummary: BrewSummary;
-  guidance: string[];
+  tasteDirection: TasteDirectionResult | null;
   labels: RecipePersonalizationLabels;
   xbloomShareUrl?: string | null;
   onServingStyleChange: (style: RecipeServingStyle) => void;
   onBrewMethodChange: (method: DynamicBrewMethod) => void;
   onCoffeeDoseChange: (doseG: number) => void;
   onBrewRatioChange: (ratio: number) => void;
+  onPourCountChange: (count: number) => void;
+  onTemperatureChange: (tempC: number) => void;
+  onTemperatureReset: () => void;
+  onGrindOffsetChange: (offset: number) => void;
   onReset: () => void;
   onSaveMyRecipe?: () => void;
   onDuplicateRecipe?: () => void;
@@ -141,22 +211,33 @@ export function RecipePersonalizationControls({
   brewMethod,
   coffeeDoseG,
   brewRatio,
+  pourCount,
+  brewTemperatureC,
+  temperatureBounds,
+  grindOffset,
   isPersonalized,
   hasOfficialRecipe,
   showBrewMethod = true,
   doseScalable = true,
   ratioScalable = true,
+  poursScalable = true,
+  temperatureScalable = true,
+  grindScalable = true,
   hotSupported = true,
   icedSupported = true,
   officialSummary,
   brewSummary,
-  guidance,
+  tasteDirection,
   labels,
   xbloomShareUrl,
   onServingStyleChange,
   onBrewMethodChange,
   onCoffeeDoseChange,
   onBrewRatioChange,
+  onPourCountChange,
+  onTemperatureChange,
+  onTemperatureReset,
+  onGrindOffsetChange,
   onReset,
   onSaveMyRecipe,
   onDuplicateRecipe,
@@ -172,6 +253,7 @@ export function RecipePersonalizationControls({
     officialSummary.doseG != null ? formatGrams(officialSummary.doseG) : null,
     officialSummary.waterG != null ? formatGrams(officialSummary.waterG) : null,
     officialSummary.ratioLabel,
+    officialSummary.temperatureLabel,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -184,6 +266,13 @@ export function RecipePersonalizationControls({
     ...(icedSupported ? [{ id: "iced" as const, label: labels.icedOption }] : []),
   ];
 
+  const grindDisplay =
+    grindOffset === 0
+      ? labels.grindOfficialLabel
+      : grindOffset < 0
+        ? labels.grindFinerLabel
+        : labels.grindCoarserLabel;
+
   return (
     <div className="space-y-6 rounded-2xl border border-ba-espresso/10 bg-gradient-to-b from-ba-pearl to-white p-5 sm:p-6">
       <div className="space-y-2">
@@ -194,10 +283,7 @@ export function RecipePersonalizationControls({
         </p>
       </div>
 
-      <div
-        className="flex items-center justify-center text-ac-espresso/30"
-        aria-hidden
-      >
+      <div className="flex items-center justify-center text-ac-espresso/30" aria-hidden>
         <span className="inline-block text-lg leading-none">↓</span>
       </div>
 
@@ -258,6 +344,105 @@ export function RecipePersonalizationControls({
             />
           ) : null}
         </div>
+
+        {poursScalable ? (
+          <Stepper
+            label={labels.poursLabel}
+            value={pourCount}
+            display={labels.poursCountLabel.replace("{count}", String(pourCount))}
+            step={1}
+            min={MIN_POUR_COUNT}
+            max={MAX_POUR_COUNT}
+            onChange={onPourCountChange}
+          />
+        ) : null}
+
+        {temperatureScalable && temperatureBounds && brewTemperatureC != null ? (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <p className={acTypography.eyebrow}>{labels.temperatureLabel}</p>
+              <button
+                type="button"
+                onClick={onTemperatureReset}
+                className={`${acTypography.nav} text-ac-espresso/60 underline-offset-4 hover:text-ba-bronze hover:underline ${acFocus.ring}`}
+              >
+                {labels.resetTemperatureCta}
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                aria-label={`${labels.temperatureLabel} -`}
+                onClick={() =>
+                  onTemperatureChange(
+                    Math.max(temperatureBounds.min, brewTemperatureC - temperatureBounds.step),
+                  )
+                }
+                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ba-espresso/15 bg-ba-pearl text-ac-espresso ${acFocus.ring}`}
+              >
+                <Minus className="h-4 w-4" aria-hidden />
+              </button>
+              <div className="min-w-[7rem] flex-1 rounded-xl border border-ba-espresso/10 bg-white px-3 py-2 text-center text-sm tracking-[-0.01em] text-ac-espresso">
+                {Math.round(brewTemperatureC)}°C
+              </div>
+              <button
+                type="button"
+                aria-label={`${labels.temperatureLabel} +`}
+                onClick={() =>
+                  onTemperatureChange(
+                    Math.min(temperatureBounds.max, brewTemperatureC + temperatureBounds.step),
+                  )
+                }
+                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ba-espresso/15 bg-ba-pearl text-ac-espresso ${acFocus.ring}`}
+              >
+                <Plus className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
+            <input
+              type="range"
+              min={temperatureBounds.min}
+              max={temperatureBounds.max}
+              step={temperatureBounds.step}
+              value={brewTemperatureC}
+              onChange={(event) => onTemperatureChange(Number(event.target.value))}
+              aria-label={labels.temperatureLabel}
+              className="w-full accent-ba-bronze"
+            />
+            <p className="text-xs text-ac-espresso/55">
+              {labels.officialTemperatureLabel.replace(
+                "{temp}",
+                `${temperatureBounds.officialC}°C`,
+              )}
+            </p>
+          </div>
+        ) : null}
+
+        {grindScalable ? (
+          <div className="space-y-2">
+            <p className={acTypography.eyebrow}>{labels.grindSizeLabel}</p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                aria-label={labels.grindFinerLabel}
+                onClick={() => onGrindOffsetChange(Math.max(MIN_GRIND_OFFSET, grindOffset - 1))}
+                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ba-espresso/15 bg-ba-pearl text-ac-espresso ${acFocus.ring}`}
+              >
+                <Minus className="h-4 w-4" aria-hidden />
+              </button>
+              <div className="min-w-[7rem] flex-1 rounded-xl border border-ba-espresso/10 bg-white px-3 py-2 text-center text-sm tracking-[-0.01em] text-ac-espresso">
+                {grindDisplay}
+              </div>
+              <button
+                type="button"
+                aria-label={labels.grindCoarserLabel}
+                onClick={() => onGrindOffsetChange(Math.min(MAX_GRIND_OFFSET, grindOffset + 1))}
+                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ba-espresso/15 bg-ba-pearl text-ac-espresso ${acFocus.ring}`}
+              >
+                <Plus className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
+          </div>
+        ) : null}
 
         {styleOptions.length > 0 ? (
           <div className="space-y-2">
@@ -366,14 +551,14 @@ export function RecipePersonalizationControls({
             </dd>
           </div>
           <div>
+            <dt className="text-ac-espresso/55">{labels.brewRatioLabel}</dt>
+            <dd className="mt-0.5 text-ac-espresso">{brewSummary.ratioLabel ?? "—"}</dd>
+          </div>
+          <div>
             <dt className="text-ac-espresso/55">{labels.totalWaterLabel}</dt>
             <dd className="mt-0.5 text-ac-espresso">
               {brewSummary.totalWaterG != null ? formatGrams(brewSummary.totalWaterG) : "—"}
             </dd>
-          </div>
-          <div>
-            <dt className="text-ac-espresso/55">{labels.brewRatioLabel}</dt>
-            <dd className="mt-0.5 text-ac-espresso">{brewSummary.ratioLabel ?? "—"}</dd>
           </div>
           {servingStyle === "iced" && brewSummary.hotWaterG != null ? (
             <div>
@@ -399,6 +584,18 @@ export function RecipePersonalizationControls({
               <dd className="mt-0.5 text-ac-espresso">{brewSummary.grindSize}</dd>
             </div>
           ) : null}
+          <div>
+            <dt className="text-ac-espresso/55">{labels.poursLabel}</dt>
+            <dd className="mt-0.5 text-ac-espresso">
+              {labels.poursCountLabel.replace("{count}", String(brewSummary.pourCount))}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-ac-espresso/55">{labels.servingStyleLabel}</dt>
+            <dd className="mt-0.5 text-ac-espresso">
+              {servingStyle === "iced" ? labels.icedOption : labels.hotOption}
+            </dd>
+          </div>
           {brewSummary.rpm != null ? (
             <div>
               <dt className="text-ac-espresso/55">{labels.rpmLabel}</dt>
@@ -407,12 +604,19 @@ export function RecipePersonalizationControls({
           ) : null}
         </dl>
 
+        {brewSummary.pourChainLabel ? (
+          <p className="text-sm tracking-[-0.01em] text-ac-espresso/85">{brewSummary.pourChainLabel}</p>
+        ) : null}
+
         {brewSummary.pours.some((pour) => pour.waterAmountG != null) ? (
           <ul className="space-y-1.5 text-sm text-ac-espresso/85">
             {brewSummary.pours
               .filter((pour) => pour.waterAmountG != null)
               .map((pour) => (
-                <li key={pour.id} className="flex justify-between gap-3 border-b border-ba-espresso/5 py-1.5 last:border-0">
+                <li
+                  key={pour.id}
+                  className="flex justify-between gap-3 border-b border-ba-espresso/5 py-1.5 last:border-0"
+                >
                   <span>
                     {labels.pourPrefix} {pour.pourNumber}
                   </span>
@@ -423,20 +627,12 @@ export function RecipePersonalizationControls({
         ) : null}
       </div>
 
-      {guidance.length > 0 ? (
-        <div className="space-y-2">
-          <p className={acTypography.eyebrow}>{labels.guidanceTitle}</p>
-          <div className="flex flex-wrap gap-2">
-            {guidance.map((item) => (
-              <span
-                key={item}
-                className="rounded-full bg-ac-espresso/[0.05] px-3 py-1 text-xs tracking-[-0.01em] text-ac-espresso/75"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
+      {tasteDirection ? (
+        <TasteDirectionPanel
+          title={labels.tasteDirectionTitle}
+          guidanceNote={labels.tasteGuidanceNote}
+          result={tasteDirection}
+        />
       ) : null}
     </div>
   );

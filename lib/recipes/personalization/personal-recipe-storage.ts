@@ -62,6 +62,15 @@ export function personalRecipeShareUrl(
   if (adjustments.brewRatio != null) {
     url.searchParams.set("ratio", String(adjustments.brewRatio));
   }
+  if (adjustments.brewTemperatureC != null) {
+    url.searchParams.set("temp", String(adjustments.brewTemperatureC));
+  }
+  if (adjustments.pourCount != null) {
+    url.searchParams.set("pours", String(adjustments.pourCount));
+  }
+  if (adjustments.grindOffset != null && adjustments.grindOffset !== 0) {
+    url.searchParams.set("grind", String(adjustments.grindOffset));
+  }
   return url.toString();
 }
 
@@ -86,6 +95,16 @@ export function adjustmentsFromSearchParams(
   if (Number.isFinite(dose) && dose > 0) next.coffeeDoseG = dose;
   const ratio = Number(params.get("ratio"));
   if (Number.isFinite(ratio) && ratio > 0) next.brewRatio = ratio;
+  const temp = Number(params.get("temp"));
+  if (Number.isFinite(temp) && temp > 0) next.brewTemperatureC = Math.round(temp);
+  const pours = Number(params.get("pours"));
+  if (Number.isFinite(pours) && pours >= 1 && pours <= 5) {
+    next.pourCount = Math.round(pours);
+  }
+  const grind = Number(params.get("grind"));
+  if (Number.isFinite(grind) && grind !== 0 && grind >= -2 && grind <= 2) {
+    next.grindOffset = Math.round(grind);
+  }
   return next;
 }
 
@@ -113,6 +132,9 @@ export function syncPersonalizationSearchParams(
       url.searchParams.delete("dose");
       url.searchParams.delete("ratio");
       url.searchParams.delete("method");
+      url.searchParams.delete("temp");
+      url.searchParams.delete("pours");
+      url.searchParams.delete("grind");
     } else {
       if (adjustments.servingStyle === "hot" || adjustments.servingStyle === "iced") {
         url.searchParams.set("style", adjustments.servingStyle);
@@ -139,6 +161,32 @@ export function syncPersonalizationSearchParams(
       }
       if (adjustments.brewMethod) url.searchParams.set("method", adjustments.brewMethod);
       else url.searchParams.delete("method");
+      if (
+        adjustments.brewTemperatureC != null &&
+        Number.isFinite(adjustments.brewTemperatureC)
+      ) {
+        url.searchParams.set("temp", String(Math.round(adjustments.brewTemperatureC)));
+      } else {
+        url.searchParams.delete("temp");
+      }
+      if (
+        adjustments.pourCount != null &&
+        Number.isFinite(adjustments.pourCount) &&
+        adjustments.pourCount >= 1
+      ) {
+        url.searchParams.set("pours", String(Math.round(adjustments.pourCount)));
+      } else {
+        url.searchParams.delete("pours");
+      }
+      if (
+        adjustments.grindOffset != null &&
+        Number.isFinite(adjustments.grindOffset) &&
+        adjustments.grindOffset !== 0
+      ) {
+        url.searchParams.set("grind", String(Math.round(adjustments.grindOffset)));
+      } else {
+        url.searchParams.delete("grind");
+      }
     }
     if (url.search !== before) {
       window.history.replaceState(window.history.state, "", url.toString());

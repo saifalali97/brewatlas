@@ -36,6 +36,16 @@ const nextConfig: NextConfig = {
         hostname: "cdn.shopify.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "media.zid.store",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.salla.sa",
+        pathname: "/**",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 31,

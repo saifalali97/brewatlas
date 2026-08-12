@@ -39,6 +39,11 @@ export type GulfRoasterPageRecipe = {
   image: string;
   isIced: boolean;
   lead: string;
+  origin: string | null;
+  variety: string | null;
+  process: string | null;
+  roastLevel: string | null;
+  flavorNotes: string[];
 };
 
 export type GulfRoasterPageData = {
@@ -93,7 +98,21 @@ export function toCountryPageRecipe(recipe: PlaceholderRecipeDetail): GulfCountr
   };
 }
 
+function cleanCardMeta(value: string | null | undefined): string | null {
+  const trimmed = value?.trim();
+  if (!trimmed || trimmed === "—" || trimmed === "-") return null;
+  return trimmed;
+}
+
 export function toRoasterPageRecipe(recipe: PlaceholderRecipeDetail): GulfRoasterPageRecipe {
+  const processRaw = cleanCardMeta(recipe.process);
+  const variety = cleanCardMeta(recipe.variety);
+  // Process field sometimes already embeds variety ("Washed · Heirloom").
+  const process =
+    processRaw && variety && processRaw.includes(variety)
+      ? processRaw.split("·")[0]?.trim() || processRaw
+      : processRaw;
+
   return {
     id: `recipe-${recipe.slug}`,
     slug: recipe.slug,
@@ -106,6 +125,11 @@ export function toRoasterPageRecipe(recipe: PlaceholderRecipeDetail): GulfRoaste
     image: recipe.image,
     isIced: recipe.isIced,
     lead: recipe.lead,
+    origin: cleanCardMeta(recipe.origin),
+    variety,
+    process,
+    roastLevel: cleanCardMeta(recipe.roastLevel),
+    flavorNotes: recipe.flavorTags.filter(Boolean).slice(0, 4),
   };
 }
 

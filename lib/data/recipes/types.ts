@@ -79,6 +79,7 @@ export type GulfRecipeRow = {
   roaster_id: string | null;
   country_id: string | null;
   city_id: string | null;
+  coffee_id: string | null;
   roasters: {
     id: string;
     name: string;
@@ -94,6 +95,17 @@ export type GulfRecipeRow = {
     id: string;
     name: string;
     slug: string;
+  } | null;
+  coffees: {
+    id: string;
+    slug: string | null;
+    name: string | null;
+    product_image_url: string | null;
+    variety: string | null;
+    process: string | null;
+    roast_level: string | null;
+    flavor_notes: string[] | null;
+    region: string | null;
   } | null;
   recipe_steps: RecipeStepRow[] | null;
   recipe_equipment: RecipeEquipmentRow[] | null;
@@ -117,10 +129,11 @@ export const GULF_RECIPE_SELECT = `
   estimated_brew_time, total_brew_time, grind_size, ratio,
   coffee_dose, water_amount, water_temperature, source_url,
   water_recommendation, equipment_notes,
-  roaster_id, country_id, city_id,
+  roaster_id, country_id, city_id, coffee_id,
   roasters:roaster_id ( id, name, slug, city ),
   countries:country_id ( id, slug, name ),
   cities:city_id ( id, name, slug ),
+  coffees:coffee_id ( id, slug, name, product_image_url, variety, process, roast_level, flavor_notes, region ),
   recipe_steps ( id, recipe_id, step_key, pour_number, water_amount, time_label, notes, at_seconds, duration_seconds, sort_order ),
   recipe_equipment ( id, recipe_id, name, detail, sort_order ),
   recipe_flavor_notes ( id, recipe_id, note, sort_order ),
