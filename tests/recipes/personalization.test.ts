@@ -1,13 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
   brewSnapshotFromPlaceholder,
+  buildPoursForCount,
+  calculateTasteDirection,
   calculateTotalWaterG,
   DEFAULT_PERSONALIZATION_CONFIG,
+  distributeBrewWater,
   personalizeBrewSnapshot,
   rewriteBrewNoteGrams,
   roundBrewValue,
   scalePoursProportionally,
   splitHotAndIce,
+  temperatureBoundsForRecipe,
   validatePersonalizationInputs,
   type PersonalizationCopy,
   type PersonalizedPour,
@@ -472,18 +476,234 @@ describe("share URL param validation", () => {
     );
     // URLSearchParams keeps last value for duplicate keys in get()
     const parsed = adjustmentsFromSearchParams(
-      new URLSearchParams("dose=18&ratio=7.5&style=iced&method=v60"),
+      new URLSearchParams("dose=18&ratio=7.5&style=iced&method=v60&temp=94&pours=3&grind=-1"),
     );
     expect(parsed).toEqual({
       coffeeDoseG: 18,
       brewRatio: 7.5,
       servingStyle: "iced",
       brewMethod: "v60",
+      brewTemperatureC: 94,
+      pourCount: 3,
+      grindOffset: -1,
     });
     const invalid = adjustmentsFromSearchParams(
-      new URLSearchParams("dose=-5&ratio=abc&style=cold&method=nope"),
+      new URLSearchParams("dose=-5&ratio=abc&style=cold&method=nope&temp=0&pours=9&grind=5"),
     );
     expect(invalid).toEqual({});
     void params;
+  });
+});
+
+describe("variable pour redistribution", () => {
+  it("distributes 1–5 pours while conserving total water", () => {
+    for (const count of [1, 2, 3, 4, 5]) {
+      const amounts = distributeBrewWater(150, count);
+      expect(amounts).toHaveLength(count);
+      expect(roundBrewValue(amounts.reduce((sum, value) => sum + value, 0))).toBe(150);
+    }
+  });
+
+  it("uses even splits for 3 pours and last-pour rounding for odd totals", () => {
+    expect(distributeBrewWater(150, 3)).toEqual([50, 50, 50]);
+    expect(distributeBrewWater(112.5, 4)).toEqual([28.1, 28.1, 28.1, 28.2]);
+  });
+
+  it("preserves bloom concept when bloom amount is provided", () => {
+    expect(distributeBrewWater(150, 4, { bloomAmountG: 40 })).toEqual([40, 36.7, 36.7, 36.6]);
+  });
+
+  it("rebuilds pour count without mutating the official snapshot", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe());
+    const before = official.pours.map((pour) => ({ ...pour }));
+    const result = personalizeBrewSnapshot(
+      official,
+      { coffeeDoseG: 20, brewRatio: 7.5, pourCount: 3 },
+      copy,
+    );
+    expect(result.isPersonalized).toBe(true);
+    expect(result.personalized.pours.map((pour) => pour.waterAmountG)).toEqual([40, 55, 55]);
+    expect(official.pours).toEqual(before);
+    expect(result.official.pours).toEqual(before);
+  });
+
+  it("generates derived pours for no-pours recipes when pourCount is set", () => {
+    const official = brewSnapshotFromPlaceholder(
+      hotRecipe({ steps: [], dose: "20 g", waterAmount: "150 g", ratio: "1:7.5", bloom: "—" }),
+    );
+    const result = personalizeBrewSnapshot(
+      official,
+      { coffeeDoseG: 20, brewRatio: 7.5, pourCount: 3 },
+      copy,
+    );
+    expect(result.personalized.pours).toHaveLength(3);
+    expect(
+      roundBrewValue(
+        result.personalized.pours.reduce((sum, pour) => sum + (pour.waterAmountG ?? 0), 0),
+      ),
+    ).toBe(150);
+    expect(result.official.pours).toEqual([]);
+  });
+
+  it("keeps empty pours when no-pours recipe only changes dose", () => {
+    const official = brewSnapshotFromPlaceholder(
+      hotRecipe({ steps: [], dose: "15 g", waterAmount: "225 g", ratio: "1:15" }),
+    );
+    const result = personalizeBrewSnapshot(
+      official,
+      { coffeeDoseG: 18, brewRatio: 15 },
+      copy,
+    );
+    expect(result.personalized.pours).toEqual([]);
+  });
+
+  it("buildPoursForCount creates unique pour ids without duplicates", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe({ steps: [] }));
+    const pours = buildPoursForCount(150, 5, official);
+    const ids = pours.map((pour) => pour.id);
+    expect(new Set(ids).size).toBe(5);
+  });
+});
+
+describe("temperature and grind personalization", () => {
+  it("applies temperature within method-aware bounds", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe());
+    const bounds = temperatureBoundsForRecipe(official, "v60");
+    expect(bounds).not.toBeNull();
+    expect(bounds!.min).toBeLessThan(bounds!.officialC);
+    expect(bounds!.max).toBeGreaterThan(bounds!.officialC);
+
+    const result = personalizeBrewSnapshot(
+      official,
+      { coffeeDoseG: 20, brewRatio: 7.5, brewTemperatureC: 95 },
+      copy,
+    );
+    expect(result.isPersonalized).toBe(true);
+    expect(result.personalized.temperatureC).toBe(95);
+    expect(result.official.temperatureC).toBe(93);
+  });
+
+  it("does not mark matching official temperature as personalized alone", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe());
+    const result = personalizeBrewSnapshot(
+      official,
+      { coffeeDoseG: 20, brewRatio: 7.5, brewTemperatureC: 93 },
+      copy,
+    );
+    expect(result.isPersonalized).toBe(false);
+  });
+
+  it("applies relative grind offsets without inventing absolute settings", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe());
+    const finer = personalizeBrewSnapshot(
+      official,
+      { coffeeDoseG: 20, brewRatio: 7.5, grindOffset: -1 },
+      copy,
+    );
+    expect(finer.personalized.grindSize).toContain("finer");
+    expect(finer.official.grindSize).toBe("Medium");
+  });
+
+  it("returns null temperature bounds when official temp is missing", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe({ temperature: "—" }));
+    official.temperatureC = null;
+    expect(temperatureBoundsForRecipe(official)).toBeNull();
+  });
+});
+
+describe("taste direction guidance", () => {
+  it("shifts extraction/body up when temperature rises", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe());
+    const result = personalizeBrewSnapshot(
+      official,
+      { coffeeDoseG: 20, brewRatio: 7.5, brewTemperatureC: 97 },
+      copy,
+    );
+    const taste = calculateTasteDirection(official, result.personalized, result.adjustments);
+    const extraction = taste.metrics.find((metric) => metric.key === "extraction")!;
+    const body = taste.metrics.find((metric) => metric.key === "body")!;
+    expect(extraction.delta).toBeGreaterThan(0);
+    expect(body.delta).toBeGreaterThan(0);
+    expect(taste.summary.toLowerCase()).toMatch(/fuller|extracted|bitterness|balanced/);
+    expect(taste.bullets.some((bullet) => /may increase extraction/i.test(bullet.text))).toBe(true);
+  });
+
+  it("accounts for iced dilution and more pours", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe());
+    const result = personalizeBrewSnapshot(
+      official,
+      { servingStyle: "iced", coffeeDoseG: 20, brewRatio: 7.5, pourCount: 5 },
+      copy,
+      DEFAULT_PERSONALIZATION_CONFIG,
+    );
+    const taste = calculateTasteDirection(official, result.personalized, {
+      ...result.adjustments,
+      pourCount: 5,
+    });
+    expect(taste.bullets.some((bullet) => /dilution/i.test(bullet.text))).toBe(true);
+    expect(taste.bullets.some((bullet) => /agitation/i.test(bullet.text))).toBe(true);
+  });
+
+  it("reacts to ratio, dose, and grind changes", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe());
+    const result = personalizeBrewSnapshot(
+      official,
+      { coffeeDoseG: 22, brewRatio: 9, grindOffset: -2 },
+      copy,
+    );
+    const taste = calculateTasteDirection(official, result.personalized, result.adjustments);
+    expect(taste.bullets.some((bullet) => /ratio/i.test(bullet.text))).toBe(true);
+    expect(taste.bullets.some((bullet) => /dose/i.test(bullet.text))).toBe(true);
+    expect(taste.bullets.some((bullet) => /finer grind/i.test(bullet.text))).toBe(true);
+  });
+});
+
+describe("reset and immutability across new knobs", () => {
+  it("reset-equivalent adjustments restore the official snapshot", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe());
+    const personalized = personalizeBrewSnapshot(
+      official,
+      {
+        coffeeDoseG: 18,
+        brewRatio: 8,
+        pourCount: 2,
+        brewTemperatureC: 96,
+        grindOffset: 1,
+        servingStyle: "iced",
+      },
+      copy,
+    );
+    expect(personalized.isPersonalized).toBe(true);
+
+    const reset = personalizeBrewSnapshot(
+      official,
+      {
+        coffeeDoseG: 20,
+        brewRatio: 7.5,
+        pourCount: 4,
+        brewTemperatureC: 93,
+        grindOffset: 0,
+        servingStyle: "hot",
+      },
+      copy,
+    );
+    expect(reset.isPersonalized).toBe(false);
+    expect(reset.personalized.hotWaterG).toBe(official.hotWaterG);
+    expect(reset.personalized.pours.map((pour) => pour.waterAmountG)).toEqual(
+      official.pours.map((pour) => pour.waterAmountG),
+    );
+  });
+
+  it("never mutates official temperature or pour fields", () => {
+    const official = brewSnapshotFromPlaceholder(hotRecipe());
+    const tempBefore = official.temperatureC;
+    const poursBefore = official.pours.map((pour) => pour.waterAmountG);
+    personalizeBrewSnapshot(
+      official,
+      { coffeeDoseG: 18, brewRatio: 7.5, pourCount: 5, brewTemperatureC: 90 },
+      copy,
+    );
+    expect(official.temperatureC).toBe(tempBefore);
+    expect(official.pours.map((pour) => pour.waterAmountG)).toEqual(poursBefore);
   });
 });

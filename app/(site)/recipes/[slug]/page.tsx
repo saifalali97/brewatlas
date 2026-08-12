@@ -21,6 +21,7 @@ import {
   Sprout,
   Users,
 } from "lucide-react";
+import { personalizationControlLabels } from "@/app/components/recipes/personalization/control-labels";
 import { PersonalizedDbBrew } from "@/app/components/recipes/personalization/personalized-db-brew";
 import { DifficultyIndicator } from "@/app/components/ui/difficulty-indicator";
 import { MetaTile } from "@/app/components/ui/meta-tile";
@@ -471,38 +472,7 @@ function DbRecipeView({
           <>
             <PersonalizedDbBrew
               recipe={recipe}
-              labels={{
-                customizeTitle: dictionary.recipePersonalization.customizeTitle,
-                roastersRecipeLabel: dictionary.recipePersonalization.roastersRecipeLabel,
-                yourBrewLabel: dictionary.recipePersonalization.yourBrewLabel,
-                yourCustomizedIcedBrewLabel:
-                  dictionary.recipePersonalization.yourCustomizedIcedBrewLabel,
-                originalRecipeLabel: dictionary.recipePersonalization.originalRecipeLabel,
-                servingStyleLabel: dictionary.recipePersonalization.servingStyleLabel,
-                hotOption: dictionary.recipePersonalization.hotOption,
-                icedOption: dictionary.recipePersonalization.icedOption,
-                officialBadge: dictionary.recipePersonalization.officialBadge,
-                personalizedBadge: dictionary.recipePersonalization.personalizedBadge,
-                roasterRecommendedBadge: dictionary.recipePersonalization.roasterRecommendedBadge,
-                resetCta: dictionary.recipePersonalization.resetCta,
-                brewMethodLabel: dictionary.recipePersonalization.brewMethodLabel,
-                coffeeDoseLabel: dictionary.recipePersonalization.coffeeDoseLabel,
-                brewRatioLabel: dictionary.recipePersonalization.brewRatioLabel,
-                customValue: dictionary.recipePersonalization.customValue,
-                guidanceTitle: dictionary.recipePersonalization.guidanceTitle,
-                saveMyRecipeCta: dictionary.recipePersonalization.saveMyRecipeCta,
-                duplicateRecipeCta: dictionary.recipePersonalization.duplicateRecipeCta,
-                shareRecipeCta: dictionary.recipePersonalization.shareRecipeCta,
-                resetToRoasterCta: dictionary.recipePersonalization.resetToRoasterCta,
-                totalWaterLabel: dictionary.recipePersonalization.totalWaterLabel,
-                hotWaterLabel: dictionary.recipePersonalization.hotWaterLabel,
-                iceLabel: dictionary.recipePersonalization.iceLabel,
-                pourPrefix: dictionary.recipePersonalization.pourPrefix,
-                temperatureLabel: dictionary.recipePersonalization.temperatureLabel,
-                grindSizeLabel: dictionary.recipePersonalization.grindSizeLabel,
-                rpmLabel: dictionary.recipePersonalization.rpmLabel,
-                openInXbloomCta: dictionary.recipePersonalization.openInXbloomCta,
-              }}
+              labels={personalizationControlLabels(dictionary.recipePersonalization)}
               copy={{
                 hotWaterLabel: dictionary.recipePersonalization.hotWaterLabel,
                 iceLabel: d.iceLabel,

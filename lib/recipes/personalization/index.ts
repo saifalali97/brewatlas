@@ -55,6 +55,33 @@ export {
   parseHotAndIce,
 } from "@/lib/recipes/personalization/parse";
 export {
+  baselinePourCount,
+  buildPoursForCount,
+  clampPourCount,
+  countNumericPours,
+  DEFAULT_DERIVED_POUR_COUNT,
+  distributeBrewWater,
+  MAX_POUR_COUNT,
+  MIN_POUR_COUNT,
+} from "@/lib/recipes/personalization/pours";
+export {
+  clampTemperatureC,
+  temperatureBoundsForRecipe,
+  type TemperatureBounds,
+} from "@/lib/recipes/personalization/temperature";
+export {
+  clampGrindOffset,
+  grindLabelForOffset,
+  MAX_GRIND_OFFSET,
+  MIN_GRIND_OFFSET,
+} from "@/lib/recipes/personalization/grind";
+export {
+  calculateTasteDirection,
+  type TasteDirectionResult,
+  type TasteMetric,
+  type TasteMetricKey,
+} from "@/lib/recipes/personalization/taste-direction";
+export {
   cloneSnapshot,
   convertServingStyle,
   FLASH_HOT_WATER_FRACTION,

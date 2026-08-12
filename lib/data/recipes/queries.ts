@@ -21,6 +21,7 @@ function normalizeRow(row: GulfRecipeRow): GulfRecipeRow {
     roasters: asSingle(row.roasters as GulfRecipeRow["roasters"] | GulfRecipeRow["roasters"][]),
     countries: asSingle(row.countries as GulfRecipeRow["countries"] | GulfRecipeRow["countries"][]),
     cities: asSingle(row.cities as GulfRecipeRow["cities"] | GulfRecipeRow["cities"][]),
+    coffees: asSingle(row.coffees as GulfRecipeRow["coffees"] | GulfRecipeRow["coffees"][]),
     recipe_steps: [...(row.recipe_steps ?? [])].sort(
       (a, b) => a.sort_order - b.sort_order || a.pour_number - b.pour_number,
     ),

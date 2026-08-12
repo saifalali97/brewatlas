@@ -22,23 +22,28 @@ import {
 } from "@/app/components/recipes/personalization/recipe-personalization-controls";
 import type { PlaceholderRecipeDetail } from "@/lib/gulf-directory/placeholder-recipe-types";
 import {
+  baselinePourCount,
   brewSnapshotFromPlaceholder,
+  calculateTasteDirection,
+  clampGrindOffset,
+  clampPourCount,
+  clampTemperatureC,
+  countNumericPours,
   DEFAULT_PERSONALIZATION_CONFIG,
   displayBloom,
   displayDose,
   displayTemperature,
   displayWater,
+  formatGrams,
   inferOfficialRatio,
   personalizeBrewSnapshot,
   poursForUi,
+  temperatureBoundsForRecipe,
   type DynamicBrewMethod,
   type PersonalizationCopy,
   type RecipeServingStyle,
 } from "@/lib/recipes/personalization";
-import {
-  extractionGuidanceLabels,
-  parseBrewMethodLabel,
-} from "@/lib/recipes/personalization/dynamic-brew";
+import { parseBrewMethodLabel } from "@/lib/recipes/personalization/dynamic-brew";
 import {
   adjustmentsFromWindowLocation,
   personalRecipeShareUrl,
@@ -83,6 +88,17 @@ function isXbloomShareUrl(url: string | null | undefined): string | null {
   return null;
 }
 
+function pourChainLabel(
+  pours: Array<{ waterAmountG: number | null }>,
+): string | null {
+  const amounts = pours
+    .map((pour) => pour.waterAmountG)
+    .filter((value): value is number => value != null && value > 0)
+    .map((value) => formatGrams(value) ?? `${value}g`);
+  if (amounts.length === 0) return null;
+  return amounts.join(" → ");
+}
+
 /** Client brew band for Gulf recipes — Recipe Personalization Engine. */
 export function PersonalizedPlaceholderBrew({
   recipe,
@@ -96,6 +112,12 @@ export function PersonalizedPlaceholderBrew({
   const officialMethod = parseBrewMethodLabel(recipe.brewMethod);
   const officialDose = official.coffeeDoseG && official.coffeeDoseG > 0 ? official.coffeeDoseG : 20;
   const officialRatio = inferOfficialRatio(official) ?? 15;
+  const officialPourCount = baselinePourCount(official);
+  const hasOfficialPours = countNumericPours(official.pours) > 0;
+  const tempBounds = useMemo(
+    () => temperatureBoundsForRecipe(official, officialMethod),
+    [official, officialMethod],
+  );
   const [fromUrl] = useState(adjustmentsFromWindowLocation);
 
   const [servingStyle, setServingStyle] = useState<RecipeServingStyle>(
@@ -106,15 +128,47 @@ export function PersonalizedPlaceholderBrew({
   );
   const [coffeeDoseG, setCoffeeDoseG] = useState(() => fromUrl.coffeeDoseG ?? officialDose);
   const [brewRatio, setBrewRatio] = useState(() => fromUrl.brewRatio ?? officialRatio);
+  const [pourCount, setPourCount] = useState(() =>
+    fromUrl.pourCount != null ? clampPourCount(fromUrl.pourCount) : officialPourCount,
+  );
+  const [poursTouched, setPoursTouched] = useState(() => fromUrl.pourCount != null);
+  const [brewTemperatureC, setBrewTemperatureC] = useState<number | null>(() => {
+    if (fromUrl.brewTemperatureC != null && tempBounds) {
+      return clampTemperatureC(fromUrl.brewTemperatureC, tempBounds);
+    }
+    return official.temperatureC != null ? Math.round(official.temperatureC) : null;
+  });
+  const [tempTouched, setTempTouched] = useState(() => fromUrl.brewTemperatureC != null);
+  const [grindOffset, setGrindOffset] = useState(() => clampGrindOffset(fromUrl.grindOffset));
 
+  const methodMatchesOfficial = brewMethod === officialMethod;
   const adjustments = useMemo(
     () => ({
       servingStyle,
       brewMethod,
       coffeeDoseG,
       brewRatio,
+      pourCount:
+        poursTouched || (hasOfficialPours && methodMatchesOfficial)
+          ? pourCount
+          : undefined,
+      brewTemperatureC:
+        tempTouched && brewTemperatureC != null ? brewTemperatureC : undefined,
+      grindOffset: grindOffset !== 0 ? grindOffset : undefined,
     }),
-    [servingStyle, brewMethod, coffeeDoseG, brewRatio],
+    [
+      servingStyle,
+      brewMethod,
+      coffeeDoseG,
+      brewRatio,
+      pourCount,
+      hasOfficialPours,
+      poursTouched,
+      methodMatchesOfficial,
+      brewTemperatureC,
+      tempTouched,
+      grindOffset,
+    ],
   );
 
   const result = useMemo(
@@ -128,7 +182,49 @@ export function PersonalizedPlaceholderBrew({
 
   const brew = result.personalized;
   const pours = poursForUi(brew);
-  const guidance = extractionGuidanceLabels(brewRatio).map((item) => item.label);
+  const displayPourCount =
+    countNumericPours(brew.pours) || (hasOfficialPours || poursTouched ? pourCount : 0);
+
+  const tasteDirection = useMemo(
+    () =>
+      calculateTasteDirection(official, brew, adjustments, {
+        sweetness: labels.tasteSweetness,
+        acidity: labels.tasteAcidity,
+        body: labels.tasteBody,
+        bitterness: labels.tasteBitterness,
+        extraction: labels.tasteExtraction,
+        summaryFuller: labels.tasteSummaryFuller,
+        summaryBrighter: labels.tasteSummaryBrighter,
+        summarySofter: labels.tasteSummarySofter,
+        summaryBalanced: labels.tasteSummaryBalanced,
+        summaryIced: labels.tasteSummaryIced,
+        tempUpExtraction: labels.tasteTempUpExtraction,
+        tempUpBody: labels.tasteTempUpBody,
+        tempUpBitterness: labels.tasteTempUpBitterness,
+        tempUpAcidity: labels.tasteTempUpAcidity,
+        tempDownExtraction: labels.tasteTempDownExtraction,
+        tempDownAcidity: labels.tasteTempDownAcidity,
+        tempDownBody: labels.tasteTempDownBody,
+        tempDownBitterness: labels.tasteTempDownBitterness,
+        poursUpAgitation: labels.tastePoursUpAgitation,
+        poursUpExtraction: labels.tastePoursUpExtraction,
+        poursDownAgitation: labels.tastePoursDownAgitation,
+        poursDownExtraction: labels.tastePoursDownExtraction,
+        ratioUpDilution: labels.tasteRatioUpDilution,
+        ratioUpClarity: labels.tasteRatioUpClarity,
+        ratioDownStrength: labels.tasteRatioDownStrength,
+        ratioDownIntensity: labels.tasteRatioDownIntensity,
+        doseUpStrength: labels.tasteDoseUpStrength,
+        doseDownStrength: labels.tasteDoseDownStrength,
+        grindFinerExtraction: labels.tasteGrindFinerExtraction,
+        grindFinerBitterness: labels.tasteGrindFinerBitterness,
+        grindCoarserExtraction: labels.tasteGrindCoarserExtraction,
+        grindCoarserAcidity: labels.tasteGrindCoarserAcidity,
+        icedDilution: labels.tasteIcedDilution,
+      }),
+    [official, brew, adjustments, labels],
+  );
+
   const icedPersonalizedTotal = (brew.hotWaterG ?? 0) + (brew.iceG ?? 0);
   const totalWaterG =
     brew.servingStyle === "iced"
@@ -149,6 +245,13 @@ export function PersonalizedPlaceholderBrew({
     setBrewMethod(officialMethod);
     setCoffeeDoseG(officialDose);
     setBrewRatio(officialRatio);
+    setPourCount(officialPourCount);
+    setPoursTouched(false);
+    setBrewTemperatureC(
+      official.temperatureC != null ? Math.round(official.temperatureC) : null,
+    );
+    setTempTouched(false);
+    setGrindOffset(0);
   };
 
   const brewSpecs = [
@@ -169,13 +272,21 @@ export function PersonalizedPlaceholderBrew({
           brewMethod={brewMethod}
           coffeeDoseG={coffeeDoseG}
           brewRatio={brewRatio}
+          pourCount={pourCount}
+          brewTemperatureC={brewTemperatureC}
+          temperatureBounds={tempBounds}
+          grindOffset={grindOffset}
           isPersonalized={result.isPersonalized}
           hasOfficialRecipe={hasOfficialRecipe}
           showBrewMethod
+          poursScalable
+          temperatureScalable={tempBounds != null}
+          grindScalable
           officialSummary={{
             doseG: official.coffeeDoseG,
             waterG: officialWater && officialWater > 0 ? officialWater : null,
             ratioLabel: official.ratioLabel,
+            temperatureLabel: displayTemperature(official),
           }}
           brewSummary={{
             doseG: brew.coffeeDoseG,
@@ -186,15 +297,33 @@ export function PersonalizedPlaceholderBrew({
             temperatureLabel: displayTemperature(brew),
             grindSize: brew.grindSize,
             rpm: brew.rpm,
+            pourCount: displayPourCount || pourCount,
+            pourChainLabel: pourChainLabel(brew.pours),
             pours: brew.pours,
           }}
-          guidance={guidance}
+          tasteDirection={tasteDirection}
           labels={labels}
           xbloomShareUrl={isXbloomShareUrl(recipe.sourceUrl)}
           onServingStyleChange={setServingStyle}
           onBrewMethodChange={setBrewMethod}
           onCoffeeDoseChange={setCoffeeDoseG}
           onBrewRatioChange={setBrewRatio}
+          onPourCountChange={(count) => {
+            setPoursTouched(true);
+            setPourCount(clampPourCount(count));
+          }}
+          onTemperatureChange={(tempC) => {
+            if (!tempBounds) return;
+            setTempTouched(true);
+            setBrewTemperatureC(clampTemperatureC(tempC, tempBounds));
+          }}
+          onTemperatureReset={() => {
+            setTempTouched(false);
+            setBrewTemperatureC(
+              official.temperatureC != null ? Math.round(official.temperatureC) : null,
+            );
+          }}
+          onGrindOffsetChange={(offset) => setGrindOffset(clampGrindOffset(offset))}
           onReset={reset}
           onSaveMyRecipe={() => savePersonalRecipe(recipe.slug, adjustments)}
           onDuplicateRecipe={() => {

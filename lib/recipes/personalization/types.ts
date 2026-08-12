@@ -29,6 +29,13 @@ export type PersonalizationAdjustments = {
   /** Relative strength multiplier against official ratio (1 = unchanged). */
   strength?: number;
   brewTemperatureC?: number;
+  /** Target numeric brew pour count (1–5). */
+  pourCount?: number;
+  /**
+   * Relative grind offset vs official recommendation.
+   * Negative = finer, positive = coarser, 0 = official.
+   */
+  grindOffset?: number;
   yieldG?: number;
   cups?: number;
   grinderLabel?: string;

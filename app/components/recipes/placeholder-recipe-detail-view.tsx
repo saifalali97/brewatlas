@@ -22,6 +22,7 @@ import {
 import { GulfCountryFeaturedRecipes } from "@/app/components/recipes/gulf-country-featured-recipes";
 import { PlaceholderRecipeActions } from "@/app/components/recipes/placeholder-recipe-actions";
 import { PlaceholderRecipeFlavorWheel } from "@/app/components/recipes/placeholder-recipe-flavor-wheel";
+import { personalizationControlLabels } from "@/app/components/recipes/personalization/control-labels";
 import { PersonalizedPlaceholderBrew } from "@/app/components/recipes/personalization/personalized-placeholder-brew";
 import {
   gulfCountryPath,
@@ -143,37 +144,7 @@ export function PlaceholderRecipeDetailView({
         <PersonalizedPlaceholderBrew
           recipe={recipe}
           hasOfficialRecipe={recipe.lead.startsWith("Roaster Recommended")}
-          labels={{
-            customizeTitle: personalization.customizeTitle,
-            roastersRecipeLabel: personalization.roastersRecipeLabel,
-            yourBrewLabel: personalization.yourBrewLabel,
-            yourCustomizedIcedBrewLabel: personalization.yourCustomizedIcedBrewLabel,
-            originalRecipeLabel: personalization.originalRecipeLabel,
-            servingStyleLabel: personalization.servingStyleLabel,
-            hotOption: personalization.hotOption,
-            icedOption: personalization.icedOption,
-            officialBadge: personalization.officialBadge,
-            personalizedBadge: personalization.personalizedBadge,
-            roasterRecommendedBadge: personalization.roasterRecommendedBadge,
-            resetCta: personalization.resetCta,
-            brewMethodLabel: personalization.brewMethodLabel,
-            coffeeDoseLabel: personalization.coffeeDoseLabel,
-            brewRatioLabel: personalization.brewRatioLabel,
-            customValue: personalization.customValue,
-            guidanceTitle: personalization.guidanceTitle,
-            saveMyRecipeCta: personalization.saveMyRecipeCta,
-            duplicateRecipeCta: personalization.duplicateRecipeCta,
-            shareRecipeCta: personalization.shareRecipeCta,
-            resetToRoasterCta: personalization.resetToRoasterCta,
-            totalWaterLabel: personalization.totalWaterLabel,
-            hotWaterLabel: personalization.hotWaterLabel,
-            iceLabel: personalization.iceLabel,
-            pourPrefix: personalization.pourPrefix,
-            temperatureLabel: personalization.temperatureLabel,
-            grindSizeLabel: personalization.grindSizeLabel,
-            rpmLabel: personalization.rpmLabel,
-            openInXbloomCta: personalization.openInXbloomCta,
-          }}
+          labels={personalizationControlLabels(personalization)}
           copy={{
             hotWaterLabel: personalization.hotWaterLabel,
             iceLabel: d.iceLabel,
