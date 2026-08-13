@@ -20,13 +20,14 @@ describe("gulf dynamic catalog integrity", () => {
       "ananas-roastery",
       "kiffa-roastery",
       "c-and-b-roastery",
+      "yoof-roastery",
     ];
     for (const slug of newSlugs) {
       expect(recipes.filter((recipe) => recipe.roasterSlug === slug).length).toBeGreaterThanOrEqual(
         3,
       );
     }
-    expect(GULF_COFFEE_CATALOG_SEEDS.length).toBe(62 + GULF_COFFEE_CATALOG_EXPANSION_SEEDS.length);
+    expect(GULF_COFFEE_CATALOG_SEEDS.length).toBe(71 + GULF_COFFEE_CATALOG_EXPANSION_SEEDS.length);
     expect(recipes.length).toBe(121 + GULF_COFFEE_CATALOG_SEEDS.length);
   });
 

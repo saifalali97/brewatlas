@@ -567,6 +567,24 @@ export const GULF_ROASTER_SEEDS: GulfRoasterSeed[] = [
     description:
       "Tabuk specialty coffee café and roastery (Cup & Beans) selecting global and Saudi origins to roast for café service, retail beans, and franchise partners across the Kingdom.",
   },
+  {
+    name: "YOOF Roastery",
+    slug: "yoof-roastery",
+    country: "Saudi Arabia",
+    countrySlug: "saudi-arabia",
+    city: "Riyadh",
+    emirate: null,
+    logoUrl: "https://cdn.salla.sa/jZBlwD/lQth2Z08kEAuWdlgqGJwDhsc7pp5CcZLoVrLqIyS.png",
+    coverImage: "/images/gulf-heritage/countries/saudi-arabia.webp",
+    foundedYear: null,
+    specialty: "Specialty single-origin roasting",
+    website: "https://yoof.co",
+    instagram: "https://instagram.com/yoof.ksa",
+    verified: true,
+    featured: false,
+    description:
+      "Saudi specialty coffee roastery (محمصة يوف) offering carefully selected international coffee crops and drip envelopes through its official online store at yoof.co.",
+  },
 
   // ── Kuwait ────────────────────────────────────────────────────────────
   {
