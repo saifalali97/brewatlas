@@ -1,3 +1,5 @@
+import { GULF_COFFEE_CATALOG_EXPANSION_SEEDS } from "@/lib/data/directory/seeds/gulf-coffee-catalog-expansion";
+
 /** Official pour-over recipe published by the roaster on a product page. */
 export type OfficialRoasterRecipe = {
   method: "V60";
@@ -37,10 +39,11 @@ export type GulfCoffeeCatalogSeed = {
 };
 
 /**
- * Real filter coffees currently (or recently) sold by the newly added Gulf roasters.
+ * Real filter coffees currently (or recently) sold by Gulf roasters.
  * Fields are null when the roaster does not publish them. No invented lots.
+ * Expansion entries are audited against official storefronts.
  */
-export const GULF_COFFEE_CATALOG_SEEDS: GulfCoffeeCatalogSeed[] = [
+const GULF_COFFEE_CATALOG_BASE_SEEDS: GulfCoffeeCatalogSeed[] = [
 
   {
     name: "Watermelon",
@@ -1470,6 +1473,11 @@ export const GULF_COFFEE_CATALOG_SEEDS: GulfCoffeeCatalogSeed[] = [
     recommendedMethods: ["V60", "Origami", "Kalita", "Chemex", "AeroPress", "French Press"],
     officialRecipe: null,
   },
+];
+
+export const GULF_COFFEE_CATALOG_SEEDS: GulfCoffeeCatalogSeed[] = [
+  ...GULF_COFFEE_CATALOG_BASE_SEEDS,
+  ...GULF_COFFEE_CATALOG_EXPANSION_SEEDS,
 ];
 
 export function listGulfCoffeeCatalogByRoaster(roasterSlug: string): GulfCoffeeCatalogSeed[] {

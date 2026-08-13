@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { GULF_COFFEE_CATALOG_SEEDS } from "@/lib/data/directory/seeds/gulf-coffee-catalog";
+import {
+  GULF_COFFEE_CATALOG_SEEDS,
+  coffeeCatalogKey,
+} from "@/lib/data/directory/seeds/gulf-coffee-catalog";
+import { GULF_COFFEE_CATALOG_EXPANSION_SEEDS } from "@/lib/data/directory/seeds/gulf-coffee-catalog-expansion";
+import { GULF_ROASTER_SEEDS } from "@/lib/data/directory/seeds/gulf-roasters";
 import { listGulfRecipeDetails } from "@/lib/data/directory/seeds/recipe-library";
 import { resolveRecipeCardImage } from "@/lib/gulf-directory/recipe-card-image";
 
@@ -21,8 +26,22 @@ describe("gulf dynamic catalog integrity", () => {
         3,
       );
     }
-    expect(GULF_COFFEE_CATALOG_SEEDS.length).toBe(62);
-    expect(recipes.length).toBe(183);
+    expect(GULF_COFFEE_CATALOG_SEEDS.length).toBe(62 + GULF_COFFEE_CATALOG_EXPANSION_SEEDS.length);
+    expect(recipes.length).toBe(121 + GULF_COFFEE_CATALOG_SEEDS.length);
+  });
+
+  it("keeps catalog keys unique per roaster/slug", () => {
+    const keys = GULF_COFFEE_CATALOG_SEEDS.map(coffeeCatalogKey);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("only references verified Gulf roasters", () => {
+    const roasterSlugs = new Set(GULF_ROASTER_SEEDS.map((roaster) => roaster.slug));
+    for (const coffee of GULF_COFFEE_CATALOG_SEEDS) {
+      expect(roasterSlugs.has(coffee.roasterSlug)).toBe(true);
+      expect(coffee.productUrl.startsWith("http")).toBe(true);
+      expect(coffee.slug.length).toBeGreaterThan(0);
+    }
   });
 
   it("uses coffee product images on cards when catalog provides them", () => {
