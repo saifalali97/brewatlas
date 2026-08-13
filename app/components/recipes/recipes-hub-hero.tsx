@@ -17,7 +17,7 @@ const featureIcons = {
   love: Heart,
 } as const;
 
-/** Hero — fixed two-column layout: copy left, artwork right. */
+/** Hero — stacked on mobile/tablet; desktop keeps the fixed two-column layout. */
 export function RecipesHubHero({
   eyebrow,
   title,
@@ -36,43 +36,30 @@ export function RecipesHubHero({
   return (
     <section
       aria-labelledby="recipes-hub-heading"
-      className="mx-auto max-w-[1400px] px-8 py-8"
+      className="mx-auto w-full max-w-[1400px] px-6 py-8 sm:px-8"
     >
-      <div
-        className="grid items-center gap-[40px]"
-        style={{ gridTemplateColumns: "540px 1fr" }}
-      >
-        <div
-          className="w-[540px] shrink-0"
-          style={{ marginLeft: 56 }}
-        >
+      <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[540px_1fr] lg:gap-[40px]">
+        <div className="min-w-0 w-full lg:w-[540px] lg:shrink-0 lg:ms-14">
           <p className="mb-[22px] text-[14px] font-semibold uppercase tracking-[0.22em] text-[#A67B4A]">
             {eyebrow}
           </p>
           <h1
             id="recipes-hub-heading"
+            className="text-[clamp(2.5rem,10vw,4.75rem)] font-bold leading-[0.95] tracking-[-0.04em] text-black lg:text-[76px]"
             style={{
               fontFamily: "Arial, Helvetica, sans-serif",
               fontWeight: 700,
-              fontSize: 76,
-              lineHeight: 0.95,
-              letterSpacing: "-0.04em",
-              color: "#000",
             }}
           >
             {title}
           </h1>
           <p
-            className="mt-4 text-[#1A1410]/68"
-            style={{ width: 420, fontSize: 18, lineHeight: 1.7 }}
+            className="mt-4 w-full text-[1.0625rem] leading-[1.7] text-[#1A1410]/68 sm:text-[18px] lg:w-[420px]"
           >
             {subtitle}
           </p>
 
-          <ul
-            className="flex items-center"
-            style={{ marginTop: 34, gap: 32 }}
-          >
+          <ul className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2.5 lg:mt-[34px] lg:gap-8">
             {features.map(({ icon: Icon, label }) => (
               <li
                 key={label}
@@ -85,17 +72,15 @@ export function RecipesHubHero({
           </ul>
         </div>
 
-        <div
-          className="relative min-w-0"
-          style={{ transform: "translate(-40px, -10px)" }}
-        >
+        <div className="relative mx-auto min-w-0 w-full max-w-[760px] lg:mx-0 lg:ltr:-translate-x-10 lg:ltr:-translate-y-2.5 lg:rtl:translate-x-10 lg:rtl:-translate-y-2.5">
           <Image
             src="/images/hero/gulf-recipes-hero-transparent.png"
             alt={imageAlt}
             width={760}
             height={400}
             priority
-            className="h-auto w-[760px] max-w-[760px] object-contain"
+            sizes="(min-width: 1024px) 760px, 100vw"
+            className="h-auto w-full max-w-full object-contain lg:w-[760px] lg:max-w-[760px]"
           />
         </div>
       </div>

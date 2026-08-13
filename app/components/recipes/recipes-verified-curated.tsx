@@ -61,7 +61,7 @@ export function RecipesVerifiedCurated({
 
         <svg
           viewBox="0 0 80 60"
-          className="pointer-events-none absolute bottom-24 right-6 h-16 w-20 opacity-[0.22]"
+          className="pointer-events-none absolute bottom-24 end-6 h-16 w-20 opacity-[0.22]"
           aria-hidden
         >
           <path
@@ -79,7 +79,7 @@ export function RecipesVerifiedCurated({
           <div
             key={key}
             className={`flex flex-col items-center justify-center px-4 py-7 text-center ${
-              index > 0 ? "border-l border-[#D4C4A8]/50" : ""
+              index > 0 ? "border-s border-[#D4C4A8]/50" : ""
             }`}
           >
             <Icon className="h-5 w-5 text-[#A67B4A]" strokeWidth={1.75} aria-hidden />

@@ -49,7 +49,7 @@ export default async function RecipesHubPage() {
         }}
       />
 
-      <div className={`min-h-screen ${rdSurface.page} pb-12`}>
+      <div className={`min-h-screen ${rdSurface.page} pb-16 lg:pb-12`}>
         <RecipesHubHero
           eyebrow={copy.eyebrow}
           title={copy.heroTitle}
@@ -60,7 +60,7 @@ export default async function RecipesHubPage() {
           imageAlt={copy.heroImageAlt}
         />
 
-        <div className={rdLayout.container}>
+        <div className={`${rdLayout.container} min-w-0`}>
           <GulfCountryGrid countries={countries} dictionary={dictionary} stats={stats} />
 
           <div className="mt-10 text-center">

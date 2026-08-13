@@ -71,7 +71,7 @@ export function CountryCard({
             className={`object-cover object-center ${rdMotion.imageZoom}`}
           />
           <span
-            className="absolute left-3.5 top-3.5 text-[1.5rem] leading-none drop-shadow-[0_2px_8px_rgba(26,20,16,0.25)]"
+            className="absolute start-3.5 top-3.5 text-[1.5rem] leading-none drop-shadow-[0_2px_8px_rgba(26,20,16,0.25)]"
             aria-hidden
           >
             {flag}
