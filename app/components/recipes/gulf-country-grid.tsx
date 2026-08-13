@@ -43,11 +43,11 @@ export function GulfCountryGrid({ countries, dictionary, stats }: GulfCountryGri
   };
 
   return (
-    <div aria-label={dir.countriesAriaLabel}>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+    <div aria-label={dir.countriesAriaLabel} className="w-full min-w-0">
+      <div className="mx-auto grid w-full min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
         {rowOne.map(renderCard)}
         {rowTwo.map(renderCard)}
-        <div className="sm:col-span-2 lg:col-span-2">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-2">
           <RecipesVerifiedCurated
             title={dir.verifiedCuratedTitle}
             description={dir.verifiedCuratedCardDescription}
